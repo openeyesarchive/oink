@@ -12,11 +12,6 @@
 	<dependencies>
 
 		<!-- JavaX -->
-		<!--<dependency>
-			<groupId>javax.persistence</groupId>
-			<artifactId>persistence-api</artifactId>
-			<version>${javax.persistence.version}</version>
-		</dependency>-->
 		<dependency>
 			<groupId>javax.inject</groupId>
 			<artifactId>javax.inject</artifactId>
@@ -115,7 +110,6 @@
 			<groupId>uk.org.openeyes</groupId>
 			<artifactId>oink-data</artifactId>
 			<version>${project.version}</version>
-			<scope>test</scope>
 		</dependency>
 	</dependencies>
 </project>

@@ -15,34 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package uk.org.openeyes.oink.entity.springdata;
+package uk.org.openeyes.oink.infrastructure.commands.handler;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
+/**
+ * @param <C> The command type.
+ * @param <R> Result type - for asynchronous {@link Command}commands (asynchronous=true) should be {@link Void}.
+ */
+public interface CommandHandler<C, R> {
 
-@Entity(name="PatientIdentifier")
-public class PatientIdentiferEntity extends BaseEntity {
-	
-	@ManyToOne
-	private PatientEntity patient;
-	
-	@Column
-	private String identifier;
-
-	public String getIdentifier() {
-		return identifier;
-	}
-
-	public void setIdentifier(String identifier) {
-		this.identifier = identifier;
-	}
-
-	public PatientEntity getPatient() {
-		return patient;
-	}
-
-	public void setPatient(PatientEntity patient) {
-		this.patient = patient;
-	}
+    public R handle(C command);
 }

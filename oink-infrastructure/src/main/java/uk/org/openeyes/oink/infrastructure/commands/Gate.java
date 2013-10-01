@@ -15,34 +15,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package uk.org.openeyes.oink.entity.springdata;
+package uk.org.openeyes.oink.infrastructure.commands;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
+/**
+ * Main access point to the application.<br>
+ * It handles:
+ * <ul>
+ * <li>filtering command duplicates
+ * <li>command queues for asynchronous commands 
+ * </ul>
+ * 
+ */
+public interface Gate {
 
-@Entity(name="PatientIdentifier")
-public class PatientIdentiferEntity extends BaseEntity {
-	
-	@ManyToOne
-	private PatientEntity patient;
-	
-	@Column
-	private String identifier;
+	public abstract Object dispatch(Object command);
 
-	public String getIdentifier() {
-		return identifier;
-	}
-
-	public void setIdentifier(String identifier) {
-		this.identifier = identifier;
-	}
-
-	public PatientEntity getPatient() {
-		return patient;
-	}
-
-	public void setPatient(PatientEntity patient) {
-		this.patient = patient;
-	}
 }

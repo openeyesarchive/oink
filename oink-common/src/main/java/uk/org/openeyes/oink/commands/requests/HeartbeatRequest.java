@@ -15,34 +15,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package uk.org.openeyes.oink.entity.springdata;
+package uk.org.openeyes.oink.commands.requests;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
+public class HeartbeatRequest {
 
-@Entity(name="PatientIdentifier")
-public class PatientIdentiferEntity extends BaseEntity {
-	
-	@ManyToOne
-	private PatientEntity patient;
-	
-	@Column
-	private String identifier;
-
-	public String getIdentifier() {
-		return identifier;
-	}
-
-	public void setIdentifier(String identifier) {
-		this.identifier = identifier;
-	}
-
-	public PatientEntity getPatient() {
-		return patient;
-	}
-
-	public void setPatient(PatientEntity patient) {
-		this.patient = patient;
-	}
 }

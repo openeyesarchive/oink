@@ -15,34 +15,27 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package uk.org.openeyes.oink.entity.springdata;
+package uk.org.openeyes.oink.commands.response;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
+import uk.org.openeyes.oink.commands.Status;
 
-@Entity(name="PatientIdentifier")
-public class PatientIdentiferEntity extends BaseEntity {
+public class StatusResponse {
 	
-	@ManyToOne
-	private PatientEntity patient;
+	public StatusResponse() {
+		
+	}
 	
-	@Column
-	private String identifier;
-
-	public String getIdentifier() {
-		return identifier;
+	public StatusResponse(Status status) {
+		this.status = status;
+	}
+	
+	public Status getStatus() {
+		return status;
 	}
 
-	public void setIdentifier(String identifier) {
-		this.identifier = identifier;
+	public void setStatus(Status status) {
+		this.status = status;
 	}
 
-	public PatientEntity getPatient() {
-		return patient;
-	}
-
-	public void setPatient(PatientEntity patient) {
-		this.patient = patient;
-	}
+	private Status status;
 }

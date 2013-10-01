@@ -24,7 +24,6 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -38,8 +37,7 @@ public class PatientEntity extends BaseEntity {
 	@Column
 	private String familyName;
 	
-	@OneToMany(fetch = FetchType.EAGER, cascade = {CascadeType.ALL})
-	@JoinColumn(name = "patientId", referencedColumnName="id")
+	@OneToMany(fetch = FetchType.EAGER, cascade = {CascadeType.ALL}, mappedBy="patient")
 	private Set<PatientIdentiferEntity> identifiers;
 	
 	@Column

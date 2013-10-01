@@ -15,34 +15,41 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package uk.org.openeyes.oink.entity.springdata;
+package uk.org.openeyes.oink.commands.requests;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 
-@Entity(name="PatientIdentifier")
-public class PatientIdentiferEntity extends BaseEntity {
+public class GetPatientRequest {
 	
-	@ManyToOne
-	private PatientEntity patient;
+	public GetPatientRequest() {
+		
+	}
 	
-	@Column
-	private String identifier;
-
-	public String getIdentifier() {
-		return identifier;
+	public GetPatientRequest(String identifier) {
+		this.identifiers = new ArrayList<String>();
+		this.identifiers.add(identifier);
 	}
 
-	public void setIdentifier(String identifier) {
-		this.identifier = identifier;
+	public GetPatientRequest(Collection<String> identifiers) {
+		this.identifiers = new ArrayList<String>();
+		this.identifiers.addAll(identifiers);
 	}
 
-	public PatientEntity getPatient() {
-		return patient;
+	public GetPatientRequest(String[] identifiers) {
+		// Use Google Guava to do the hard work
+		this.identifiers = Arrays.asList(identifiers);
 	}
 
-	public void setPatient(PatientEntity patient) {
-		this.patient = patient;
+	private List<String> identifiers;
+
+	public List<String> getIdentifiers() {
+		return identifiers;
+	}
+
+	public void setIdentifiers(List<String> identifiers) {
+		this.identifiers = identifiers;
 	}
 }

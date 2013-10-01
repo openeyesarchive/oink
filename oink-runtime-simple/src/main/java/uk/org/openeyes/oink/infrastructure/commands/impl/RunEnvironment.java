@@ -15,34 +15,31 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package uk.org.openeyes.oink.entity.springdata;
+package uk.org.openeyes.oink.infrastructure.commands.impl;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
+import javax.inject.Inject;
 
-@Entity(name="PatientIdentifier")
-public class PatientIdentiferEntity extends BaseEntity {
+import org.springframework.stereotype.Component;
+
+import uk.org.openeyes.oink.infrastructure.commands.HandlersProvider;
+import uk.org.openeyes.oink.infrastructure.commands.handler.CommandHandler;
+
+@Component
+public class RunEnvironment {
+
+	@Inject
+	private HandlersProvider handlersProvider;
 	
-	@ManyToOne
-	private PatientEntity patient;
-	
-	@Column
-	private String identifier;
+	public Object run(Object command) {		
+		CommandHandler<Object, Object> handler = handlersProvider.getHandler(command);
+		
+		//You can add Your own capabilities here: dependency injection, security, transaction management, logging, profiling, spying, storing commands, etc
+		
+		Object result = handler.handle(command);
 
-	public String getIdentifier() {
-		return identifier;
+		//You can add Your own capabilities here
+		
+		return result;
 	}
 
-	public void setIdentifier(String identifier) {
-		this.identifier = identifier;
-	}
-
-	public PatientEntity getPatient() {
-		return patient;
-	}
-
-	public void setPatient(PatientEntity patient) {
-		this.patient = patient;
-	}
 }

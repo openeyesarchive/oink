@@ -7,6 +7,8 @@
 		<version>1.0.0</version>
 	</parent>
 	<artifactId>oink-data</artifactId>
+	<name>OINK Data</name>
+	<description>Data entities for use in repositories, ensure domain models are used in the application.</description>
 	<dependencies>
 
 		<!-- JavaX -->
@@ -43,6 +45,30 @@
 			<groupId>org.springframework.data</groupId>
 			<artifactId>spring-data-jpa</artifactId>
 			<version>${spring.data.version}</version>
+		</dependency>
+
+		<!-- Spring Test -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<version>${spring.version}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<!-- JUnit -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>${junit.version}</version>
+			<scope>test</scope>
+		</dependency>
+
+
+		<!-- OINK -->
+		<dependency>
+			<groupId>uk.org.openeyes</groupId>
+			<artifactId>oink-common</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 	</dependencies>
 </project>

@@ -15,34 +15,26 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package uk.org.openeyes.oink.entity.springdata;
+package uk.org.openeyes.oink.handlers;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
+import java.util.ArrayList;
+import java.util.List;
 
-@Entity(name="PatientIdentifier")
-public class PatientIdentiferEntity extends BaseEntity {
-	
-	@ManyToOne
-	private PatientEntity patient;
-	
-	@Column
-	private String identifier;
+import uk.org.openeyes.oink.commands.requests.GetPatientRequest;
+import uk.org.openeyes.oink.commands.response.GetPatientResponse;
+import uk.org.openeyes.oink.domain.Patient;
+import uk.org.openeyes.oink.infrastructure.commands.handler.CommandHandler;
 
-	public String getIdentifier() {
-		return identifier;
+public class GetPatientHandler implements CommandHandler<GetPatientRequest, GetPatientResponse> {
+
+	@Override
+	public GetPatientResponse handle(GetPatientRequest command) {
+		
+		List<Patient> patients = new ArrayList<Patient>();
+		patients.add(new Patient("11111-1", "Tyrion", "Lannister"));
+		patients.add(new Patient("11111-2", "Daenerys", "Targaryen"));
+		patients.add(new Patient("11111-3", "Bran", "Stark"));
+		return new GetPatientResponse(patients);
 	}
 
-	public void setIdentifier(String identifier) {
-		this.identifier = identifier;
-	}
-
-	public PatientEntity getPatient() {
-		return patient;
-	}
-
-	public void setPatient(PatientEntity patient) {
-		this.patient = patient;
-	}
 }
