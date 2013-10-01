@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>uk.org.openeyes</groupId>
+	<artifactId>oink-parent</artifactId>
+	<version>1.0.0</version>
+	<packaging>pom</packaging>
+	<name>OpenEyes Integration Kit Parent</name>
+	<description>Parent project for building all of OINK.</description>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<spring.version>3.2.4.RELEASE</spring.version>
+		<spring.data.version>1.3.4.RELEASE</spring.data.version>
+		<java.version>1.6</java.version>
+		<org.slf4j.version>1.7.5</org.slf4j.version>
+		<log4j.version>1.2.16</log4j.version>
+		<com.google.guava.version>14.0.1</com.google.guava.version>
+		<junit.version>4.11</junit.version>
+		<jetty.version>6.1.26</jetty.version>
+		<hsqldb.version>2.0.0</hsqldb.version>
+		<hibernate.version>4.2.6.Final</hibernate.version>
+		<hibernate.jpa2.version>1.0.0.Final</hibernate.jpa2.version>
+		<postgresql.version>9.1-901.jdbc4</postgresql.version>
+		<commons.version>2.6</commons.version>
+		<spring-data-mongodb.version>1.1.1.RELEASE</spring-data-mongodb.version>
+		<spring.rabbit.version>1.1.4.RELEASE</spring.rabbit.version>
+		<jackson.version>1.8.5</jackson.version>
+		<org.javatuples.version>1.2</org.javatuples.version>
+		<javax.inject.version>1</javax.inject.version>
+		<javax.persistence.version>1.0.2</javax.persistence.version>
+	</properties>
+	<repositories>
+		<repository>
+			<id>org.springframework.maven.milestone</id>
+			<url>http://maven.springframework.org/milestone </url>
+		</repository>
+	</repositories>
+	<modules>
+		<module>oink-infrastructure</module>
+		<module>oink-messaging-rabbitmq</module>
+		<module>oink-test-base</module>
+		<module>oink-test-integration-rabbitmq</module>
+		<module>oink-runtime-simple</module>
+		<module>oink-app-integrationagent</module>
+		<module>oink-common</module>
+		<module>oink-repo</module>
+		<module>oink-finders</module>
+		<module>oink-data</module>
+	</modules>
+	<build>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<configuration>
+						<source>${java.version}</source>
+						<target>${java.version}</target>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
+</project>
