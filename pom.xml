@@ -40,6 +40,7 @@
 	</repositories>
 	<modules>
 		<module>oink-common</module>
+		<module>oink-modules</module>
 	</modules>
 	<build>
 		<pluginManagement>
