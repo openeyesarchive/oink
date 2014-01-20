@@ -42,6 +42,7 @@
 		<module>oink-common</module>
 		<module>oink-modules</module>
 		<module>oink-samples</module>
+		<module>oink-domain</module>
 	</modules>
 	<build>
 		<pluginManagement>
