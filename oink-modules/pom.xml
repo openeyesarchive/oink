@@ -12,4 +12,7 @@
   <packaging>pom</packaging>
   <name>OpenEyes Integration Kit Modules</name>
   <description>Parent project for building all OINK Modules</description>
+  <modules>
+    <module>oink-modules-facade</module>
+  </modules>
 </project>
