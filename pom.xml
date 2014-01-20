@@ -39,16 +39,7 @@
 		</repository>
 	</repositories>
 	<modules>
-		<module>oink-infrastructure</module>
-		<module>oink-messaging-rabbitmq</module>
-		<module>oink-test-base</module>
-		<module>oink-test-integration-rabbitmq</module>
-		<module>oink-runtime-simple</module>
-		<module>oink-app-integrationagent</module>
 		<module>oink-common</module>
-		<module>oink-repo</module>
-		<module>oink-finders</module>
-		<module>oink-data</module>
 	</modules>
 	<build>
 		<pluginManagement>
