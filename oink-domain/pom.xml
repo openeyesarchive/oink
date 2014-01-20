@@ -10,7 +10,7 @@
   <groupId>uk.org.openeyes.oink</groupId>
   <artifactId>oink-domain</artifactId>
   <version>1.0.0</version>
-  <name>oink-domain</name>
+  <name>OpenEyes Integration Kit Domain</name>
   <url>http://maven.apache.org</url>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
