@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns="http://www.openeyes.org.uk/oink/facade"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:beans="http://www.springframework.org/schema/beans"
+	targetNamespace="http://www.openeyes.org.uk/oink/facade"
+	elementFormDefault="qualified">
+
+	<xsd:import namespace="http://www.springframework.org/schema/beans" />
+
+	<xsd:element name="rabbitMapper" type="RabbitMapperType"></xsd:element>
+
+	<xsd:complexType name="RabbitMapperType">
+		<xsd:complexContent>
+			<xsd:extension base="beans:identifiedType">
+				<xsd:sequence>
+					<xsd:element name="mapping" type="MappingType"
+						maxOccurs="unbounded" minOccurs="0"></xsd:element>
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+
+	<xsd:complexType name="MappingType">
+		<xsd:attribute name="resource" type="xsd:string"></xsd:attribute>
+		<xsd:attribute name="method" type="xsd:string"></xsd:attribute>
+		<xsd:attribute name="route" type="xsd:string"></xsd:attribute>
+		<xsd:attribute name="exchange" type="xsd:string"></xsd:attribute>
+	</xsd:complexType>
+</xsd:schema>
