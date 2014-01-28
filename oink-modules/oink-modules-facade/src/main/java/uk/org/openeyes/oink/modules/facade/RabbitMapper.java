@@ -13,32 +13,32 @@ import uk.org.openeyes.oink.messaging.RabbitRoute;
  * (given "/test" -> registered "/t*"). Will always match against the most
  * specific resource.
  * 
- * Can only be constructed using a {@link FhirRabbitMapperBuilder} 
+ * Can only be constructed using a {@link RabbitMapperBuilder} 
  * and cannot be modified once constructed (thread-safe).
  * 
- * @author Oliver Wilkie
+ * @author Oliver Wilkie#
  * 
  */
-public class FhirRabbitMapper {
+public class RabbitMapper {
 
-	private final FhirRabbitMapping[] mappings;
+	private final RabbitMapping[] mappings;
 
-	public FhirRabbitMapper(FhirRabbitMapperBuilder builder) {
-		List<FhirRabbitMapping> list = builder.getMappings();
-		mappings = new FhirRabbitMapping[list.size()];
+	public RabbitMapper(RabbitMapperBuilder builder) {
+		List<RabbitMapping> list = builder.getMappings();
+		mappings = new RabbitMapping[list.size()];
 		list.toArray(mappings);
 	}
 	
-	public FhirRabbitMapper(FhirRabbitMapping[] mappings) {
+	public RabbitMapper(RabbitMapping[] mappings) {
 		this.mappings = mappings;
 	}
 
 	
 	public RabbitRoute getMapping(String resource, HTTPMethod method) {
 		RabbitRoute result = null;
-		FhirRabbitMapperKey finestMatch = null;
-		for (FhirRabbitMapping e : mappings) {
-			FhirRabbitMapperKey request = e.getRequest();
+		RabbitMapperKey finestMatch = null;
+		for (RabbitMapping e : mappings) {
+			RabbitMapperKey request = e.getRequest();
 			if (request.matches(resource, method)) {
 				if (finestMatch == null || request.compareTo(finestMatch) < 0) {
 					finestMatch = request;
@@ -54,12 +54,12 @@ public class FhirRabbitMapper {
 	 * 
 	 * @author Oliver Wilkie
 	 */
-	public static class FhirRabbitMapperBuilder {
+	public static class RabbitMapperBuilder {
 		
-		private final List<FhirRabbitMapping> elems;
+		private final List<RabbitMapping> elems;
 		
-		public FhirRabbitMapperBuilder() {
-			elems = new LinkedList<FhirRabbitMapper.FhirRabbitMapping>();
+		public RabbitMapperBuilder() {
+			elems = new LinkedList<RabbitMapper.RabbitMapping>();
 		}
 		
 		/**
@@ -70,32 +70,32 @@ public class FhirRabbitMapper {
 		 * @param rabbitExchange an optional exchange on the RabbitMQ server (blank for default)
 		 */
 		public void addMapping(String fhirResource, String fhirMethod, String rabbitKey, String rabbitExchange) {
-			FhirRabbitMapperKey key = new FhirRabbitMapperKey(fhirResource, HTTPMethod.fromString(fhirMethod));
+			RabbitMapperKey key = new RabbitMapperKey(fhirResource, HTTPMethod.fromString(fhirMethod));
 			RabbitRoute route = new RabbitRoute(rabbitKey, rabbitExchange);
-			FhirRabbitMapping e = new FhirRabbitMapping(key,route);
+			RabbitMapping e = new RabbitMapping(key,route);
 			elems.add(e);
 		}
 		
-		public List<FhirRabbitMapping> getMappings() {
+		public List<RabbitMapping> getMappings() {
 			return elems;
 		}
 		
-		public FhirRabbitMapper build() {
-			return new FhirRabbitMapper(this);
+		public RabbitMapper build() {
+			return new RabbitMapper(this);
 		}
 	}
 
-	public static class FhirRabbitMapping implements Comparable<FhirRabbitMapping> {
+	public static class RabbitMapping implements Comparable<RabbitMapping> {
 
-		private final FhirRabbitMapperKey request;
+		private final RabbitMapperKey request;
 		private final RabbitRoute route;
 		
-		public FhirRabbitMapping(FhirRabbitMapperKey request, RabbitRoute route) {
+		public RabbitMapping(RabbitMapperKey request, RabbitRoute route) {
 			this.request = request;
 			this.route = route;
 		}
 
-		public FhirRabbitMapperKey getRequest() {
+		public RabbitMapperKey getRequest() {
 			return request;
 		}
 		
@@ -104,7 +104,7 @@ public class FhirRabbitMapper {
 		}
 
 		@Override
-		public int compareTo(FhirRabbitMapping o) {
+		public int compareTo(RabbitMapping o) {
 			return request.compareTo(o.getRequest());
 		}
 

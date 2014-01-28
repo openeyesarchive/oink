@@ -10,17 +10,17 @@ import uk.org.openeyes.oink.domain.HTTPMethod;
  * Similarly, if two keys have the same resource path but the second one is HTTPMethod.ANY the latter is considered to be higher.
  * @author Oliver Wilkie
  */
-public class FhirRabbitMapperKey implements Comparable<FhirRabbitMapperKey> {
+public class RabbitMapperKey implements Comparable<RabbitMapperKey> {
 		
 	String originalResource;
 	String regexResource;
 	HTTPMethod method;
 		
-	public FhirRabbitMapperKey(String resource) {
+	public RabbitMapperKey(String resource) {
 		this(resource, HTTPMethod.ANY);
 	}
 	
-	public FhirRabbitMapperKey(String resource, HTTPMethod method) {
+	public RabbitMapperKey(String resource, HTTPMethod method) {
 		originalResource = resource;
 		setResource(resource);
 		this.method = method;
@@ -64,7 +64,7 @@ public class FhirRabbitMapperKey implements Comparable<FhirRabbitMapperKey> {
 	 * A more general match should be higher than a more granular match
 	 */
 	@Override
-	public int compareTo(FhirRabbitMapperKey o) {
+	public int compareTo(RabbitMapperKey o) {
 		if (this.originalResource.equals(o.originalResource)) {
 			return this.method.compareTo(o.getMethod());
 		} else {

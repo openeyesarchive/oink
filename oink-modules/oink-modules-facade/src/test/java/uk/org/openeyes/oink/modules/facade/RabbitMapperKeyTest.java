@@ -6,17 +6,17 @@ import org.junit.Test;
 
 import uk.org.openeyes.oink.domain.HTTPMethod;
 
-public class FhirRabbitMapperKeyTest {
+public class RabbitMapperKeyTest {
 	
 	private final String validPathWithWildcard = "/Patient/*";
 	private final String validPathWithoutWildcard = "/Patient/123";
 	
 	@Test
 	public void testValidPathWithAnyMethodIsHigherThanWithAllOtherMethods() {
-		FhirRabbitMapperKey request = new FhirRabbitMapperKey(validPathWithWildcard, HTTPMethod.ANY);
+		RabbitMapperKey request = new RabbitMapperKey(validPathWithWildcard, HTTPMethod.ANY);
 		for (HTTPMethod method : HTTPMethod.values()) {
 			if (method != HTTPMethod.ANY) {
-				FhirRabbitMapperKey other = new FhirRabbitMapperKey(validPathWithWildcard, method);
+				RabbitMapperKey other = new RabbitMapperKey(validPathWithWildcard, method);
 				assertTrue(request.compareTo(other) > 0);
 			}
 		}
@@ -24,22 +24,22 @@ public class FhirRabbitMapperKeyTest {
 	
 	@Test
 	public void testPathWithWildCardIsHigherThanNonWildCard() {
-		FhirRabbitMapperKey request = new FhirRabbitMapperKey(validPathWithWildcard, HTTPMethod.ANY);
-		FhirRabbitMapperKey other = new FhirRabbitMapperKey(validPathWithoutWildcard, HTTPMethod.ANY);
+		RabbitMapperKey request = new RabbitMapperKey(validPathWithWildcard, HTTPMethod.ANY);
+		RabbitMapperKey other = new RabbitMapperKey(validPathWithoutWildcard, HTTPMethod.ANY);
 		assertTrue(request.compareTo(other)>0);
 	}
 
 	@Test
 	public void testWildCardMatchesAgainstRealPath() {
 		HTTPMethod method = HTTPMethod.GET;
-		FhirRabbitMapperKey request = new FhirRabbitMapperKey(validPathWithWildcard, method);
+		RabbitMapperKey request = new RabbitMapperKey(validPathWithWildcard, method);
 		assertTrue(request.matches(validPathWithoutWildcard, method));
 	}
 	
 	@Test
 	public void testNonWildCardOnlyMatchesExactMatch() {
 		HTTPMethod method = HTTPMethod.GET;
-		FhirRabbitMapperKey request = new FhirRabbitMapperKey(validPathWithoutWildcard, method);
+		RabbitMapperKey request = new RabbitMapperKey(validPathWithoutWildcard, method);
 		assertTrue(request.matches(validPathWithoutWildcard, method));
 		assertFalse(request.matches("/Patient/234", method));
 	}
@@ -48,7 +48,7 @@ public class FhirRabbitMapperKeyTest {
 	public void testAMethodOnlyMatchesAgainstSameMethodOrAnyMethod() {
 		for (HTTPMethod entryMethod: HTTPMethod.values()) {
 			for (HTTPMethod matchMethod: HTTPMethod.values()) {
-				FhirRabbitMapperKey request = new FhirRabbitMapperKey(validPathWithoutWildcard, entryMethod);
+				RabbitMapperKey request = new RabbitMapperKey(validPathWithoutWildcard, entryMethod);
 				boolean match = request.matches(validPathWithoutWildcard, matchMethod);
 				if (entryMethod == HTTPMethod.ANY || entryMethod == matchMethod) {
 					assertTrue(match);

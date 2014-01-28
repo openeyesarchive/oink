@@ -7,20 +7,20 @@ import org.junit.Test;
 
 import uk.org.openeyes.oink.domain.HTTPMethod;
 import uk.org.openeyes.oink.messaging.RabbitRoute;
-import uk.org.openeyes.oink.modules.facade.FhirRabbitMapper.FhirRabbitMapperBuilder;
+import uk.org.openeyes.oink.modules.facade.RabbitMapper.RabbitMapperBuilder;
 
-public class FhirRabbitMapperTest {
+public class RabbitMapperTest {
 	
 	public final String[] resources = {"/*","/Patient/*","/Patient/Tom"};
 	public final String[] methods = {"get","get","get"};
 	public final String[] routings = {"route.one","route.two","route.three"};
 	public final String[] exchanges = {"exchange.one","exchange.two","exchange.three"};
 	
-	private FhirRabbitMapper mapper;
+	private RabbitMapper mapper;
 	
 	@Before
 	public void buildMapper() {
-		FhirRabbitMapperBuilder builder = new FhirRabbitMapperBuilder();
+		RabbitMapperBuilder builder = new RabbitMapperBuilder();
 		for (int i = 0; i < resources.length; i++) {
 			builder.addMapping(resources[i], methods[i], routings[i], exchanges[i]);
 		}
