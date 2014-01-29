@@ -12,4 +12,7 @@
   <packaging>pom</packaging>
   <name>OpenEyes Integration Kit Samples</name>
   <description>Parent project for building all OINK Deployable Samples</description>
+  <modules>
+    <module>oink-samples-facade</module>
+  </modules>
 </project>
