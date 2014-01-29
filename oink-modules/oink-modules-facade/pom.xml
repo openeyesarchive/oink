@@ -26,8 +26,13 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-web</artifactId>
-			<version>4.0.0.RELEASE</version>
+			<version>${spring.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-webmvc</artifactId>
+			<version>${spring.version}</version>
+		</dependency>		
 		<dependency>
 			<groupId>servletapi</groupId>
 			<artifactId>servlet-api</artifactId>
@@ -42,6 +47,23 @@
 			<groupId>uk.org.openeyes.oink</groupId>
 			<artifactId>oink-domain</artifactId>
 			<version>1.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<version>${spring.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-all</artifactId>
+			<version>1.9.5</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>1.3.2</version>
 		</dependency>
 	</dependencies>
 	<description>Classes for a FHIR Facade which the OpenEyes application can send RESTful HTTP Requests to and recieve an HTTP Reponse in return. The Facade maps this to a RabbitMQ message which is then routed across the OINK system.</description>
