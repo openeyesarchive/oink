@@ -2,7 +2,6 @@ package uk.org.openeyes.oink.modules.facade;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.regex.Pattern;
 
 import uk.org.openeyes.oink.domain.HTTPMethod;
 import uk.org.openeyes.oink.messaging.RabbitRoute;
@@ -89,6 +88,11 @@ public class RabbitMapper {
 
 		private final RabbitMapperKey request;
 		private final RabbitRoute route;
+		
+		public RabbitMapping(String fhirResource, String fhirMethod, String rabbitKey, String rabbitExchange) {
+			this.request = new RabbitMapperKey(fhirResource, HTTPMethod.fromString(fhirMethod));
+			this.route = new RabbitRoute(rabbitKey, rabbitExchange);
+		}
 		
 		public RabbitMapping(RabbitMapperKey request, RabbitRoute route) {
 			this.request = request;
