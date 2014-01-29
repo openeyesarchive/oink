@@ -4,8 +4,8 @@ import static org.junit.Assert.*;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.http.HttpMethod;
 
-import uk.org.openeyes.oink.domain.HTTPMethod;
 import uk.org.openeyes.oink.messaging.RabbitRoute;
 import uk.org.openeyes.oink.modules.facade.RabbitMapper.RabbitMapperBuilder;
 
@@ -31,23 +31,23 @@ public class RabbitMapperTest {
 	public void testFindsMostGranular() {
 		RabbitRoute actual = null;
 		RabbitRoute expected = null;
-		actual = mapper.getMapping("/Appointment", HTTPMethod.GET);
+		actual = mapper.getMapping("/Appointment", HttpMethod.GET);
 		expected = new RabbitRoute(routings[0], exchanges[0]);
 		assertEquals(expected, actual);
 		
-		actual = mapper.getMapping("/Patient", HTTPMethod.GET);
+		actual = mapper.getMapping("/Patient", HttpMethod.GET);
 		expected =  new RabbitRoute(routings[0], exchanges[0]);
 		assertEquals(expected, actual);
 		
-		actual = mapper.getMapping("/Patient/To", HTTPMethod.GET);
+		actual = mapper.getMapping("/Patient/To", HttpMethod.GET);
 		expected = new RabbitRoute(routings[1], exchanges[1]);
 		assertEquals(expected, actual);
 		
-		actual = mapper.getMapping("/Patient/Tom", HTTPMethod.GET);
+		actual = mapper.getMapping("/Patient/Tom", HttpMethod.GET);
 		expected = new RabbitRoute(routings[2], exchanges[2]);
 		assertEquals(expected, actual);
 		
-		actual = mapper.getMapping("/Patient/Tom/Jones", HTTPMethod.GET);
+		actual = mapper.getMapping("/Patient/Tom/Jones", HttpMethod.GET);
 		expected = new RabbitRoute(routings[1], exchanges[1]);
 		assertEquals(expected, actual);
 				

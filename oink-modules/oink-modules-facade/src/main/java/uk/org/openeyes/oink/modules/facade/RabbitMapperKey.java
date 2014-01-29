@@ -2,7 +2,7 @@ package uk.org.openeyes.oink.modules.facade;
 
 import java.util.regex.Pattern;
 
-import uk.org.openeyes.oink.domain.HTTPMethod;
+import org.springframework.http.HttpMethod;
 
 /**
  * A 'key' instantiated with a FHIR resource and method. Resources are can be explicit or can end in a wildcard '*'
@@ -14,13 +14,13 @@ public class RabbitMapperKey implements Comparable<RabbitMapperKey> {
 		
 	String originalResource;
 	String regexResource;
-	HTTPMethod method;
+	HttpMethod method;	// If null, that means ANY method
 		
 	public RabbitMapperKey(String resource) {
-		this(resource, HTTPMethod.ANY);
+		this(resource, null);
 	}
 	
-	public RabbitMapperKey(String resource, HTTPMethod method) {
+	public RabbitMapperKey(String resource, HttpMethod method) {
 		originalResource = resource;
 		setResource(resource);
 		this.method = method;
@@ -45,13 +45,13 @@ public class RabbitMapperKey implements Comparable<RabbitMapperKey> {
 		return regexResource;
 	}
 
-	public HTTPMethod getMethod() {
+	public HttpMethod getMethod() {
 		return method;
 	}
 	
-	public boolean matches(String realResourcePath, HTTPMethod method) {
+	public boolean matches(String realResourcePath, HttpMethod method) {
 		// Check methods match
-		boolean methodsMatch = method == this.method || this.method == HTTPMethod.ANY;
+		boolean methodsMatch = this.method == null || method == this.method;
 		if (methodsMatch) {
 			// Check resource path matches
 			return Pattern.matches(regexResource, realResourcePath);

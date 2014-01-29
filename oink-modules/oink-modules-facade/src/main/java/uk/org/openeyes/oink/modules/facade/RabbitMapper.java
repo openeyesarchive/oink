@@ -3,7 +3,8 @@ package uk.org.openeyes.oink.modules.facade;
 import java.util.LinkedList;
 import java.util.List;
 
-import uk.org.openeyes.oink.domain.HTTPMethod;
+import org.springframework.http.HttpMethod;
+
 import uk.org.openeyes.oink.messaging.RabbitRoute;
 
 /**
@@ -33,7 +34,7 @@ public class RabbitMapper {
 	}
 
 	
-	public RabbitRoute getMapping(String resource, HTTPMethod method) {
+	public RabbitRoute getMapping(String resource, HttpMethod method) {
 		RabbitRoute result = null;
 		RabbitMapperKey finestMatch = null;
 		for (RabbitMapping e : mappings) {
@@ -69,9 +70,7 @@ public class RabbitMapper {
 		 * @param rabbitExchange an optional exchange on the RabbitMQ server (blank for default)
 		 */
 		public void addMapping(String fhirResource, String fhirMethod, String rabbitKey, String rabbitExchange) {
-			RabbitMapperKey key = new RabbitMapperKey(fhirResource, HTTPMethod.fromString(fhirMethod));
-			RabbitRoute route = new RabbitRoute(rabbitKey, rabbitExchange);
-			RabbitMapping e = new RabbitMapping(key,route);
+			RabbitMapping e = new RabbitMapping(fhirResource,fhirMethod, rabbitKey, rabbitExchange);
 			elems.add(e);
 		}
 		
@@ -90,7 +89,7 @@ public class RabbitMapper {
 		private final RabbitRoute route;
 		
 		public RabbitMapping(String fhirResource, String fhirMethod, String rabbitKey, String rabbitExchange) {
-			this.request = new RabbitMapperKey(fhirResource, HTTPMethod.fromString(fhirMethod));
+			this.request = new RabbitMapperKey(fhirResource, HttpMethod.valueOf(fhirMethod));
 			this.route = new RabbitRoute(rabbitKey, rabbitExchange);
 		}
 		
