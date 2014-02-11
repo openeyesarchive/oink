@@ -13,8 +13,7 @@
 
 	<!-- Instantiate a mapper -->
 	<oink:rabbitMapper id="mapper1">
-		<oink:mapping resource="/Search" method="GET" exchange=""
-			route="route.one" />
+		<oink:mapping resource="/Search" method="GET" route="uk.org.openeyes.oink.silverlink" />
 	</oink:rabbitMapper>
 
 	<!-- Define mapper for Urls to Facades -->
