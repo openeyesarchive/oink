@@ -62,9 +62,7 @@ public class Facade implements Controller {
 			HttpServletResponse servletResponse) {
 
 		// Obtain the path relative to this controller
-		String pathRemainder = "/"
-				+ (String) servletRequest
-						.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE);
+		String pathRemainder = getPathWithinController(servletRequest);
 
 		// Get the request method type
 		HttpMethod method = HttpMethod.valueOf(servletRequest.getMethod()); // GET
@@ -77,11 +75,21 @@ public class Facade implements Controller {
 			// Mapping was found
 			OINKMessage message = buildMessage(servletRequest);
 			OINKResponseMessage response = (OINKResponseMessage) template
-					.convertSendAndReceive(route.getExchange(),
-							route.getRoutingKey(), message);
-			populateServletResponse(servletResponse, response);
+					.convertSendAndReceive(route.getRoutingKey(), message);
+			if (response == null) {
+				servletResponse.setStatus(HttpStatus.NOT_FOUND.value());
+			} else {
+				populateServletResponse(servletResponse, response);
+			}
 		}
 		return null; // Indicate we have handled the request ourselves
+	}
+	
+	private static String getPathWithinController(
+			HttpServletRequest servletRequest) {
+		return "/"
+				+ (String) servletRequest
+						.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE);
 	}
 
 	/**
@@ -122,7 +130,7 @@ public class Facade implements Controller {
 	 * Builds an {@link OINKRequestMessage} encapsulating the incoming REST
 	 * request. The OINKRequestMessage acts as a wrapper containing, the REST
 	 * message body, the REST message headers and the REST request info i.e.
-	 * request path and method. 
+	 * request path and method.
 	 */
 	@SuppressWarnings("unchecked")
 	private OINKRequestMessage buildMessage(HttpServletRequest servletRequest) {
