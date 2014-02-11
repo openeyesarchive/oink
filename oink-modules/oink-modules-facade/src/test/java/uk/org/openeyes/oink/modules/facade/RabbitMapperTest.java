@@ -12,7 +12,7 @@ import uk.org.openeyes.oink.modules.facade.RabbitMapper.RabbitMapperBuilder;
 public class RabbitMapperTest {
 	
 	public final String[] resources = {"/*","/Patient/*","/Patient/Tom"};
-	public final String[] methods = {"get","get","get"};
+	public final String[] methods = {"GET","GET","GET"};
 	public final String[] routings = {"route.one","route.two","route.three"};
 	public final String[] exchanges = {"exchange.one","exchange.two","exchange.three"};
 	

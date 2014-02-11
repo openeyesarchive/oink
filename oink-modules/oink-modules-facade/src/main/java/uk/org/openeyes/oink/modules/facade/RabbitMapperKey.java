@@ -66,7 +66,15 @@ public class RabbitMapperKey implements Comparable<RabbitMapperKey> {
 	@Override
 	public int compareTo(RabbitMapperKey o) {
 		if (this.originalResource.equals(o.originalResource)) {
-			return this.method.compareTo(o.getMethod());
+			if (this.method == null && o.getMethod() == null) {
+				return 0;
+			} else if (this.method == null) {
+				return 1;
+			} else if (o.getMethod() == null) {
+				return -1;
+			} else {
+				return this.method.compareTo(o.getMethod());
+			}
 		} else {
 			return this.originalResource.compareTo(o.originalResource)*-1;
 		}
