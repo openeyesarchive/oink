@@ -7,14 +7,13 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.springframework.util.xml.DomUtils;
 import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 
 import uk.org.openeyes.oink.modules.facade.RabbitMapper;
 import uk.org.openeyes.oink.modules.facade.RabbitMapper.RabbitMapping;
 
 public class RabbitMapperBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
 
-	protected Class getBeanClass(Element element) {
+	protected Class<?> getBeanClass(Element element) {
 		return RabbitMapper.class;
 	}
 	

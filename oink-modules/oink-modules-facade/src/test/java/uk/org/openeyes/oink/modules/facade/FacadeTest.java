@@ -1,9 +1,5 @@
 package uk.org.openeyes.oink.modules.facade;
 
-import java.lang.reflect.Method;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -33,9 +29,6 @@ public class FacadeTest {
 	RabbitMapper mapper;
 
 	OINKResponseMessage mockResponseMessage;
-
-	private final String route = "route.one";
-	private final String exchange = "";
 
 	@Before
 	public void setUp() {

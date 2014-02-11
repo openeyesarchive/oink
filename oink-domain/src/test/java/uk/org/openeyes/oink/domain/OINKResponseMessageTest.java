@@ -5,7 +5,6 @@ import java.io.IOException;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
