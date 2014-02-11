@@ -1,5 +1,9 @@
 package uk.org.openeyes.oink.modules.facade;
 
+import java.lang.reflect.Method;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -37,7 +41,8 @@ public class FacadeTest {
 	public void setUp() {
 		MockitoAnnotations.initMocks(this);
 	}
-
+	
+	
 	@Test
 	public void testValidGetRequestAndValidRabbitResponseGivesOkCode()
 			throws Exception {
