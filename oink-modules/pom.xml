@@ -14,6 +14,6 @@
   <description>Parent project for building all OINK Modules</description>
   <modules>
     <module>oink-modules-facade</module>
-    <module>oink-modules-silverware</module>
+    <module>oink-modules-silverlink</module>
   </modules>
 </project>
