@@ -30,6 +30,7 @@
 		<javax.inject.version>1</javax.inject.version>
 		<javax.persistence.version>1.0.2</javax.persistence.version>
 		<jodatime.version>2.3</jodatime.version>
+		<jackson.version>2.0.0</jackson.version>
 	</properties>
 	<modules>
 		<module>oink-common</module>
