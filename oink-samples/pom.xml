@@ -14,5 +14,6 @@
   <description>Parent project for building all OINK Deployable Samples</description>
   <modules>
     <module>oink-samples-facade</module>
+    <module>oink-samples-silverlink</module>
   </modules>
 </project>
