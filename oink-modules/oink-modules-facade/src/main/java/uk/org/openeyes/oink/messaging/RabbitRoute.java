@@ -28,6 +28,17 @@ public class RabbitRoute {
 	}
 
 	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((exchange == null) ? 0 : exchange.hashCode());
+		result = prime * result
+				+ ((routingKey == null) ? 0 : routingKey.hashCode());
+		return result;
+	}
+
+	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;

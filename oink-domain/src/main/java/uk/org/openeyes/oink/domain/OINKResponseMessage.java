@@ -48,26 +48,6 @@ public class OINKResponseMessage extends OINKMessage {
 		this.body = body;
 	}
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		OINKResponseMessage other = (OINKResponseMessage) obj;
-		if (!Arrays.equals(body, other.body))
-			return false;
-		if (headers == null) {
-			if (other.headers != null)
-				return false;
-		} else if (!headers.equals(other.headers))
-			return false;
-		if (status != other.status)
-			return false;
-		return true;
-	}
 	
 	public static class Builder {
 		
@@ -99,5 +79,37 @@ public class OINKResponseMessage extends OINKMessage {
 			return new OINKResponseMessage(status, headers, body);
 		}
 		
+	}
+
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + Arrays.hashCode(body);
+		result = prime * result + ((headers == null) ? 0 : headers.hashCode());
+		result = prime * result + ((status == null) ? 0 : status.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		OINKResponseMessage other = (OINKResponseMessage) obj;
+		if (!Arrays.equals(body, other.body))
+			return false;
+		if (headers == null) {
+			if (other.headers != null)
+				return false;
+		} else if (!headers.equals(other.headers))
+			return false;
+		if (status != other.status)
+			return false;
+		return true;
 	}
 }

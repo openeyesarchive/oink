@@ -57,6 +57,18 @@ public class OINKRequestMessage extends OINKMessage {
 	}
 
 	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + Arrays.hashCode(body);
+		result = prime * result + ((headers == null) ? 0 : headers.hashCode());
+		result = prime * result + ((method == null) ? 0 : method.hashCode());
+		result = prime * result
+				+ ((resourcePath == null) ? 0 : resourcePath.hashCode());
+		return result;
+	}
+
+	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
@@ -81,6 +93,8 @@ public class OINKRequestMessage extends OINKMessage {
 			return false;
 		return true;
 	}
+
+
 
 	
 	
