@@ -11,6 +11,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.web.servlet.HandlerMapping;
 
 import uk.org.openeyes.oink.domain.OINKResponseMessage;
 import uk.org.openeyes.oink.messaging.RabbitRoute;
@@ -39,19 +40,21 @@ public class FacadeTest {
 	@Test
 	public void testValidGetRequestAndValidRabbitResponseGivesOkCode()
 			throws Exception {
+		
+		String resourceOnRemoteSystem = "Patient/123";
 
 		// Build request
 		MockHttpServletRequest request = new MockHttpServletRequest();
-		request.setMethod("GET");
-		request.setPathInfo("/Patient");
+		request.setMethod("GET");		
+		request.setAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE, resourceOnRemoteSystem);
 
 		// Mock Return Oink Message
-		when(mapper.getMapping("/Patient", HttpMethod.GET)).thenReturn(
+		when(mapper.getMapping(resourceOnRemoteSystem, HttpMethod.GET)).thenReturn(
 				new RabbitRoute("", ""));
 		mockResponseMessage = new OINKResponseMessage(HttpStatus.OK,
 				new HttpHeaders(), new byte[0]);
 		when(
-				rabbitTemplate.convertSendAndReceive(anyString(), anyString(),
+				rabbitTemplate.convertSendAndReceive(anyString(),
 						anyObject())).thenReturn(mockResponseMessage);
 
 		// Build expected response
@@ -64,18 +67,20 @@ public class FacadeTest {
 
 	@Test
 	public void testGetRequestWithErrorGetsPassedBackWithError() {
+		
+		String resourceOnRemoteSystem = "Patient/123";
 
 		// Build request
 		MockHttpServletRequest request = new MockHttpServletRequest();
-		request.setMethod("GET");
-		request.setPathInfo("/Patient");
+		request.setMethod("GET");		
+		request.setAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE, resourceOnRemoteSystem);
 
 		// Mock Return Oink Message
-		when(mapper.getMapping("/Patient", HttpMethod.GET)).thenReturn(
+		when(mapper.getMapping(resourceOnRemoteSystem, HttpMethod.GET)).thenReturn(
 				new RabbitRoute("", ""));
 		mockResponseMessage = new OINKResponseMessage(HttpStatus.FORBIDDEN,
 				new HttpHeaders(), new byte[0]);
-		when(rabbitTemplate.convertSendAndReceive(anyString(), anyString(),
+		when(rabbitTemplate.convertSendAndReceive(anyString(),
 						anyObject())).thenReturn(mockResponseMessage);
 
 		// Build expected response

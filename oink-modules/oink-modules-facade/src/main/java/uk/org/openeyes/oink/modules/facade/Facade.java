@@ -34,6 +34,14 @@ import uk.org.openeyes.oink.messaging.RabbitRoute;
  * {@link RabbitMapper} which acts as a dictionary to match incoming requests to
  * rabbit routes. Returns 404 if no mapping exists for incoming request
  * 
+ * Incoming requests to the Facade Server take the following format
+ * OPERATION [base]/[type]/[id] {?_format=[mime-type]}
+ * 
+ * OPERATION is GET/PUT/DELETE/POST 
+ * [base] is the leading part of the URL that maps to this Facade controller
+ * The rest of the request i.e. /[type]/[id] serves as a key that is looked 
+ * up in the mapper for this Facade.
+ * 
  * @author Oliver Wilkie
  * 
  */
@@ -62,7 +70,7 @@ public class Facade implements Controller {
 			HttpServletResponse servletResponse) {
 
 		// Obtain the path relative to this controller
-		String pathRemainder = getPathWithinController(servletRequest);
+		String pathRemainder = getPathWithinHandler(servletRequest);
 
 		// Get the request method type
 		HttpMethod method = HttpMethod.valueOf(servletRequest.getMethod()); // GET
@@ -85,10 +93,9 @@ public class Facade implements Controller {
 		return null; // Indicate we have handled the request ourselves
 	}
 	
-	private static String getPathWithinController(
+	private String getPathWithinHandler(
 			HttpServletRequest servletRequest) {
-		return "/"
-				+ (String) servletRequest
+		return (String) servletRequest
 						.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE);
 	}
 
@@ -138,9 +145,8 @@ public class Facade implements Controller {
 		// Get HTML requestedResource
 
 		// http://facadeServer/facadeApp/fhir/Patient/Search?name=Bob
-		// the part we need to forward is /Patient/Search?name=Bob
-		UrlPathHelper pathHelper = mapping.getUrlPathHelper();
-		String destUrl = pathHelper.getPathWithinServletMapping(servletRequest);
+		// the part we need to forward is Patient/Search?name=Bob		
+		String destUrl = getPathWithinHandler(servletRequest);
 		destUrl += "?" + servletRequest.getQueryString();
 
 		// Get HTML method

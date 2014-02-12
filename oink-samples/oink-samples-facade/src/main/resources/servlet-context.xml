@@ -13,7 +13,7 @@
 
 	<!-- Instantiate a mapper -->
 	<oink:rabbitMapper id="mapper1">
-		<oink:mapping resource="/Search" method="GET" route="uk.org.openeyes.oink.silverlink" />
+		<oink:mapping resource="Patient/*" method="GET" route="uk.org.openeyes.oink.silverlink" />
 	</oink:rabbitMapper>
 
 	<!-- Define mapper for Urls to Facades -->
@@ -21,13 +21,13 @@
 		class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
 		<beans:property name="mappings">
 			<beans:props>
-				<beans:prop key="/Patient/**">patientFacade</beans:prop>
+				<beans:prop key="/silverlink/*">silverlinkFacade</beans:prop>
 			</beans:props>
 		</beans:property>
 	</beans:bean>
 
 	<!-- Instantiate a facade -->
-	<beans:bean id="patientFacade" class="uk.org.openeyes.oink.modules.facade.Facade">
+	<beans:bean id="silverlinkFacade" class="uk.org.openeyes.oink.modules.facade.Facade">
 		<beans:constructor-arg name="mapper" ref="mapper1" />
 		<beans:constructor-arg name="template" ref="rabbitTemplate" />
 	</beans:bean>
