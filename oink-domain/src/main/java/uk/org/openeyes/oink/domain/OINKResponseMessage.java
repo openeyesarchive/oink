@@ -8,20 +8,22 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
 public class OINKResponseMessage extends OINKMessage {
-	
+
 	HttpStatus status;
 	HttpHeaders headers;
 	byte[] body;
-	
+
 	public OINKResponseMessage() {
-		
+
 	}
-	
+
 	public OINKResponseMessage(HttpStatus status, HttpHeaders headers,
 			byte[] body) {
 		this.status = status;
 		this.headers = headers;
-		this.body = body.clone();
+		if (body != null) {
+			this.body = body.clone();
+		}
 	}
 
 	public HttpStatus getStatus() {
@@ -41,46 +43,52 @@ public class OINKResponseMessage extends OINKMessage {
 	}
 
 	public byte[] getBody() {
-		return body.clone();
+		if (body != null) {
+			return body.clone();
+		} else {
+			return null;
+		}
 	}
 
 	public void setBody(byte[] body) {
-		this.body = body.clone();
+		if (body != null) {
+			this.body = body.clone();
+		} else {
+			this.body = null;
+		}
 	}
 
-	
 	public static class Builder {
-		
+
 		HttpStatus status;
 		HttpHeaders headers;
 		byte[] body;
-		
+
 		public Builder() {
 			headers = new HttpHeaders();
 		}
-		
+
 		public Builder setHTTPStatus(HttpStatus s) {
 			status = s;
 			return this;
 		}
-		
+
 		public Builder setBody(String message) {
 			body = message.getBytes(Charset.forName("UTF-8"));
 			headers.setContentType(MediaType.TEXT_PLAIN);
 			headers.setContentLength(body.length);
 			return this;
 		}
-		
+
 		public Builder setBody(byte[] body) {
 			return this;
 		}
-		
+
 		public OINKResponseMessage build() {
 			return new OINKResponseMessage(status, headers, body);
 		}
-		
-	}
 
+	}
 
 	@Override
 	public int hashCode() {

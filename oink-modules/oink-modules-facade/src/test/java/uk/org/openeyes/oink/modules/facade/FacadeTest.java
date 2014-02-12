@@ -1,5 +1,7 @@
 package uk.org.openeyes.oink.modules.facade;
 
+import java.io.IOException;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -66,7 +68,7 @@ public class FacadeTest {
 	}
 
 	@Test
-	public void testGetRequestWithErrorGetsPassedBackWithError() {
+	public void testGetRequestWithErrorGetsPassedBackWithError() throws NoRabbitMappingFoundException, RabbitReplyTimeoutException, IOException {
 		
 		String resourceOnRemoteSystem = "Patient/123";
 
@@ -92,7 +94,7 @@ public class FacadeTest {
 	}
 
 	@Test
-	public void testInvalidGetRequest() {
+	public void testInvalidGetRequest() throws NoRabbitMappingFoundException, RabbitReplyTimeoutException, IOException {
 		// Build request
 		MockHttpServletRequest request = new MockHttpServletRequest();
 		request.setMethod("GET");

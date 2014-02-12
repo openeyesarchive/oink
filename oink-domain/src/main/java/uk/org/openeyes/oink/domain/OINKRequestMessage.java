@@ -6,22 +6,24 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 
 public class OINKRequestMessage extends OINKMessage {
-	
+
 	private String resourcePath;
 	private HttpMethod method;
 	private HttpHeaders headers;
 	private byte[] body;
-	
+
 	public OINKRequestMessage() {
-		
+
 	}
-	
+
 	public OINKRequestMessage(String resourcePath, HttpMethod method,
 			HttpHeaders headers, byte[] body) {
 		this.resourcePath = resourcePath;
 		this.method = method;
 		this.headers = headers;
-		this.body = body.clone();
+		if (body != null) {
+			this.body = body.clone();
+		}
 	}
 
 	public String getResourcePath() {
@@ -49,11 +51,19 @@ public class OINKRequestMessage extends OINKMessage {
 	}
 
 	public byte[] getBody() {
-		return body.clone();
+		if (body != null) {
+			return body.clone();
+		} else {
+			return null;
+		}
 	}
 
 	public void setBody(byte[] body) {
-		this.body = body.clone();
+		if (body != null) {
+			this.body = body.clone();
+		} else {
+			this.body = null;
+		}
 	}
 
 	@Override
@@ -94,8 +104,4 @@ public class OINKRequestMessage extends OINKMessage {
 		return true;
 	}
 
-
-
-	
-	
 }
