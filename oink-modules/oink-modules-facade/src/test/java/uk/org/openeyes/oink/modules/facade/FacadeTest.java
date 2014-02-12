@@ -93,12 +93,13 @@ public class FacadeTest {
 
 	}
 
-	@Test
+	@Test(expected=NoRabbitMappingFoundException.class)
 	public void testInvalidGetRequest() throws NoRabbitMappingFoundException, RabbitReplyTimeoutException, IOException {
 		// Build request
 		MockHttpServletRequest request = new MockHttpServletRequest();
-		request.setMethod("GET");
-		request.setPathInfo("/Patient");
+		request.setMethod("GET");		
+		request.setAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE, "NULL");
+
 
 		mockResponseMessage = new OINKResponseMessage(HttpStatus.OK,
 				new HttpHeaders(), new byte[0]);
@@ -110,8 +111,6 @@ public class FacadeTest {
 		MockHttpServletResponse response = new MockHttpServletResponse();
 
 		facade.handleRequest(request, response);
-
-		assertEquals(HttpStatus.NOT_FOUND.value(), response.getStatus());
 
 	}
 
