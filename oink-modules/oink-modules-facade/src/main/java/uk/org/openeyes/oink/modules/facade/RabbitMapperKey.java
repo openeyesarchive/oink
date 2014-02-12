@@ -80,4 +80,43 @@ public class RabbitMapperKey implements Comparable<RabbitMapperKey> {
 		}
 	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((method == null) ? 0 : method.hashCode());
+		result = prime
+				* result
+				+ ((originalResource == null) ? 0 : originalResource.hashCode());
+		result = prime * result
+				+ ((regexResource == null) ? 0 : regexResource.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		RabbitMapperKey other = (RabbitMapperKey) obj;
+		if (method != other.method)
+			return false;
+		if (originalResource == null) {
+			if (other.originalResource != null)
+				return false;
+		} else if (!originalResource.equals(other.originalResource))
+			return false;
+		if (regexResource == null) {
+			if (other.regexResource != null)
+				return false;
+		} else if (!regexResource.equals(other.regexResource))
+			return false;
+		return true;
+	}
+	
+	
+
 }

@@ -30,7 +30,7 @@ public class RabbitMapper {
 	}
 	
 	public RabbitMapper(RabbitMapping[] mappings) {
-		this.mappings = mappings;
+		this.mappings = mappings.clone();
 	}
 
 	
@@ -109,6 +109,38 @@ public class RabbitMapper {
 		@Override
 		public int compareTo(RabbitMapping o) {
 			return request.compareTo(o.getRequest());
+		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result
+					+ ((request == null) ? 0 : request.hashCode());
+			result = prime * result + ((route == null) ? 0 : route.hashCode());
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			RabbitMapping other = (RabbitMapping) obj;
+			if (request == null) {
+				if (other.request != null)
+					return false;
+			} else if (!request.equals(other.request))
+				return false;
+			if (route == null) {
+				if (other.route != null)
+					return false;
+			} else if (!route.equals(other.route))
+				return false;
+			return true;
 		}
 
 	}

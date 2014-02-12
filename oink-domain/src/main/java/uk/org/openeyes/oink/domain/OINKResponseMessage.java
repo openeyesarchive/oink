@@ -21,7 +21,7 @@ public class OINKResponseMessage extends OINKMessage {
 			byte[] body) {
 		this.status = status;
 		this.headers = headers;
-		this.body = body;
+		this.body = body.clone();
 	}
 
 	public HttpStatus getStatus() {
@@ -41,11 +41,11 @@ public class OINKResponseMessage extends OINKMessage {
 	}
 
 	public byte[] getBody() {
-		return body;
+		return body.clone();
 	}
 
 	public void setBody(byte[] body) {
-		this.body = body;
+		this.body = body.clone();
 	}
 
 	
