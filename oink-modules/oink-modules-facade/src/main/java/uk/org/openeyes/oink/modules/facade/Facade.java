@@ -65,12 +65,14 @@ public class Facade implements Controller {
 	 * @param servletResponse
 	 *            see {@link Controller}
 	 * @return null because we build the servlet response ourselves
-	 * @throws NoRabbitMappingFoundException 
-	 * @throws RabbitReplyTimeoutException 
+	 * @throws NoRabbitMappingFoundException
+	 * @throws RabbitReplyTimeoutException
 	 * @throws IOException
 	 */
 	public ModelAndView handleRequest(HttpServletRequest servletRequest,
-			HttpServletResponse servletResponse) throws NoRabbitMappingFoundException, RabbitReplyTimeoutException, IOException {
+			HttpServletResponse servletResponse)
+			throws NoRabbitMappingFoundException, RabbitReplyTimeoutException,
+			IOException {
 
 		// Obtain the path relative to this controller
 		String resource = getPathWithinHandler(servletRequest);
@@ -108,23 +110,23 @@ public class Facade implements Controller {
 		response.sendError(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE);
 		return new ModelAndView();
 	}
-	
+
 	@ExceptionHandler(NoRabbitMappingFoundException.class)
-	public ModelAndView handleNoRabbitMappingFoundException(NoRabbitMappingFoundException ex,
-			HttpServletRequest request, HttpServletResponse response)
-			throws Exception {
+	public ModelAndView handleNoRabbitMappingFoundException(
+			NoRabbitMappingFoundException ex, HttpServletRequest request,
+			HttpServletResponse response) throws Exception {
 		response.sendError(HttpServletResponse.SC_NOT_FOUND);
 		return new ModelAndView();
 	}
-	
+
 	@ExceptionHandler(RabbitReplyTimeoutException.class)
-	public ModelAndView handleRabbitReplyTimeoutException(NoRabbitMappingFoundException ex,
-			HttpServletRequest request, HttpServletResponse response)
-			throws Exception {
+	public ModelAndView handleRabbitReplyTimeoutException(
+			NoRabbitMappingFoundException ex, HttpServletRequest request,
+			HttpServletResponse response) throws Exception {
 		response.sendError(HttpServletResponse.SC_BAD_GATEWAY);
 		return new ModelAndView();
 	}
-	
+
 	@ExceptionHandler(AmqpConnectException.class)
 	public ModelAndView handleAmqpConnectException(AmqpConnectException ex,
 			HttpServletRequest request, HttpServletResponse response)
@@ -137,7 +139,8 @@ public class Facade implements Controller {
 	 * Uses the contents of the {@link OINKResponseMessage} to populate the
 	 * servletResponse. There is no manipulation of the contents of the OINK
 	 * message although this will probably be needed in the future.
-	 * @throws IOException 
+	 * 
+	 * @throws IOException
 	 * 
 	 */
 	private void populateServletResponse(HttpServletResponse servletResponse,
@@ -166,9 +169,10 @@ public class Facade implements Controller {
 	 * request. The OINKRequestMessage acts as a wrapper containing, the REST
 	 * message body, the REST message headers and the REST request info i.e.
 	 * request path and method.
+	 * @throws IOException 
 	 */
 	@SuppressWarnings("unchecked")
-	private OINKRequestMessage buildMessage(HttpServletRequest servletRequest) {
+	private OINKRequestMessage buildMessage(HttpServletRequest servletRequest) throws IOException {
 
 		// Get HTML requestedResource
 
@@ -197,11 +201,7 @@ public class Facade implements Controller {
 		// Get HTML body
 		byte[] body = null;
 		if (servletRequest.getContentLength() > 0) {
-			try {
-				body = IOUtils.toByteArray(servletRequest.getInputStream());
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			body = IOUtils.toByteArray(servletRequest.getInputStream());
 		}
 
 		return new OINKRequestMessage(destUrl, method, headers, body);
