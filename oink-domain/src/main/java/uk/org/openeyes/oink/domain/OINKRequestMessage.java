@@ -21,7 +21,7 @@ public class OINKRequestMessage extends OINKMessage {
 		this.resourcePath = resourcePath;
 		this.method = method;
 		this.headers = headers;
-		this.body = body;
+		this.body = body.clone();
 	}
 
 	public String getResourcePath() {
@@ -49,11 +49,11 @@ public class OINKRequestMessage extends OINKMessage {
 	}
 
 	public byte[] getBody() {
-		return body;
+		return body.clone();
 	}
 
 	public void setBody(byte[] body) {
-		this.body = body;
+		this.body = body.clone();
 	}
 
 	@Override

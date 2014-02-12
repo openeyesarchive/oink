@@ -21,7 +21,7 @@
 		class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
 		<beans:property name="mappings">
 			<beans:props>
-				<beans:prop key="/silverlink/*">silverlinkFacade</beans:prop>
+				<beans:prop key="/silverlink/**">silverlinkFacade</beans:prop>
 			</beans:props>
 		</beans:property>
 	</beans:bean>
