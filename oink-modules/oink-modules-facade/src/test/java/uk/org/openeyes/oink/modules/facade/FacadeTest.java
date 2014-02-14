@@ -16,6 +16,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.servlet.HandlerMapping;
 
 import uk.org.openeyes.oink.domain.OINKResponseMessage;
+import uk.org.openeyes.oink.map.HttpMatcher;
 import uk.org.openeyes.oink.messaging.RabbitRoute;
 import static org.mockito.Mockito.*;
 import static org.junit.Assert.*;
@@ -29,7 +30,7 @@ public class FacadeTest {
 	RabbitTemplate rabbitTemplate;
 
 	@Mock
-	RabbitMapper mapper;
+	HttpMatcher<RabbitRoute> mapper;
 
 	OINKResponseMessage mockResponseMessage;
 
@@ -51,7 +52,7 @@ public class FacadeTest {
 		request.setAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE, resourceOnRemoteSystem);
 
 		// Mock Return Oink Message
-		when(mapper.getMapping(resourceOnRemoteSystem, HttpMethod.GET)).thenReturn(
+		when(mapper.get(resourceOnRemoteSystem, HttpMethod.GET)).thenReturn(
 				new RabbitRoute("", ""));
 		mockResponseMessage = new OINKResponseMessage(HttpStatus.OK,
 				new HttpHeaders(), new byte[0]);
@@ -78,7 +79,7 @@ public class FacadeTest {
 		request.setAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE, resourceOnRemoteSystem);
 
 		// Mock Return Oink Message
-		when(mapper.getMapping(resourceOnRemoteSystem, HttpMethod.GET)).thenReturn(
+		when(mapper.get(resourceOnRemoteSystem, HttpMethod.GET)).thenReturn(
 				new RabbitRoute("", ""));
 		mockResponseMessage = new OINKResponseMessage(HttpStatus.FORBIDDEN,
 				new HttpHeaders(), new byte[0]);

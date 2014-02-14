@@ -27,6 +27,7 @@ import org.springframework.web.util.UrlPathHelper;
 import uk.org.openeyes.oink.domain.OINKMessage;
 import uk.org.openeyes.oink.domain.OINKRequestMessage;
 import uk.org.openeyes.oink.domain.OINKResponseMessage;
+import uk.org.openeyes.oink.map.HttpMatcher;
 import uk.org.openeyes.oink.messaging.RabbitRoute;
 
 /**
@@ -49,12 +50,13 @@ import uk.org.openeyes.oink.messaging.RabbitRoute;
 public class Facade implements Controller {
 
 	private RabbitTemplate template;
-	private RabbitMapper mapper;
+	private HttpMatcher<RabbitRoute> mapper;
+	// private RabbitMapper mapper;
 
 	@Autowired
 	SimpleUrlHandlerMapping mapping;
 
-	public Facade(RabbitTemplate template, RabbitMapper mapper) {
+	public Facade(RabbitTemplate template, HttpMatcher<RabbitRoute> mapper) {
 		this.template = template;
 		this.mapper = mapper;
 	}
@@ -80,7 +82,7 @@ public class Facade implements Controller {
 		// Get the request method type
 		HttpMethod method = HttpMethod.valueOf(servletRequest.getMethod()); // GET
 
-		RabbitRoute route = mapper.getMapping(resource, method);
+		RabbitRoute route = mapper.get(resource, method);
 		if (route == null) {
 			// No mapping was found
 			throw new NoRabbitMappingFoundException(resource, method);
@@ -121,7 +123,7 @@ public class Facade implements Controller {
 
 	@ExceptionHandler(RabbitReplyTimeoutException.class)
 	public ModelAndView handleRabbitReplyTimeoutException(
-			NoRabbitMappingFoundException ex, HttpServletRequest request,
+			RabbitReplyTimeoutException ex, HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
 		response.sendError(HttpServletResponse.SC_BAD_GATEWAY);
 		return new ModelAndView();
@@ -157,11 +159,14 @@ public class Facade implements Controller {
 		}
 
 		// Copy body with no regard to the body type.
-		ByteArrayInputStream in = new ByteArrayInputStream(message.getBody());
-		ServletOutputStream out = servletResponse.getOutputStream();
-		IOUtils.copy(in, out);
-		IOUtils.closeQuietly(in);
-		IOUtils.closeQuietly(out);
+		if (message.getBody() != null) {
+			ByteArrayInputStream in = new ByteArrayInputStream(
+					message.getBody());
+			ServletOutputStream out = servletResponse.getOutputStream();
+			IOUtils.copy(in, out);
+			IOUtils.closeQuietly(in);
+			IOUtils.closeQuietly(out);
+		}
 	}
 
 	/**
@@ -169,10 +174,12 @@ public class Facade implements Controller {
 	 * request. The OINKRequestMessage acts as a wrapper containing, the REST
 	 * message body, the REST message headers and the REST request info i.e.
 	 * request path and method.
-	 * @throws IOException 
+	 * 
+	 * @throws IOException
 	 */
 	@SuppressWarnings("unchecked")
-	private OINKRequestMessage buildMessage(HttpServletRequest servletRequest) throws IOException {
+	private OINKRequestMessage buildMessage(HttpServletRequest servletRequest)
+			throws IOException {
 
 		// Get HTML requestedResource
 
