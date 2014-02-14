@@ -1,37 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:rabbit="http://www.springframework.org/schema/rabbit"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:rabbit="http://www.springframework.org/schema/rabbit"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:oink="http://www.openeyes.org.uk/schema/oink"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-	http://www.springframework.org/schema/rabbit http://www.springframework.org/schema/rabbit/spring-rabbit-1.0.xsd">
-	
-	<!-- Messaging Components -->
-	<rabbit:connection-factory id="rabbitConnectionFactory" host="127.0.0.1"/>
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+	http://www.springframework.org/schema/rabbit http://www.springframework.org/schema/rabbit/spring-rabbit-1.0.xsd
+	http://www.openeyes.org.uk/schema/oink http://www.openeyes.org.uk/schema/oink/oink-1.0.xsd">
 
-	<rabbit:queue id="silverlinkQueue" name="uk.org.openeyes.oink.silverlink"/> 
-	
-	<rabbit:admin connection-factory="rabbitConnectionFactory"/>
-	
-	<rabbit:listener-container connection-factory="rabbitConnectionFactory" message-converter="jsonConverter" concurrency="5"  >
+	<!-- Third Party Filter Components -->
+	<context:component-scan base-package="uk.org.openeyes.oink.filter, uk.org.openeyes.oink.modules.silverlink.filter" />
+
+	<!-- Rabbit Messaging Components -->
+	<rabbit:connection-factory id="rabbitConnectionFactory"
+		host="127.0.0.1" />
+	<rabbit:admin connection-factory="rabbitConnectionFactory" />
+
+	<rabbit:queue id="silverlinkQueue" name="uk.org.openeyes.oink.silverlink" />
+	<bean id="jsonConverter"
+		class="org.springframework.amqp.support.converter.Jackson2JsonMessageConverter" />
+
+	<!-- Incoming Rabbit Message Components -->
+	<rabbit:listener-container
+		connection-factory="rabbitConnectionFactory" message-converter="jsonConverter"
+		concurrency="5">
 		<rabbit:listener queues="silverlinkQueue" ref="silverlinkHandler"
 			method="handle" />
 	</rabbit:listener-container>
 	
-	<!-- Handler Components -->
-	<bean id="customErrorHandler" class="uk.org.openeyes.oink.modules.silverlink.LoggingErrorHandler"/>
-	
-	<bean id="jsonConverter" class="org.springframework.amqp.support.converter.Jackson2JsonMessageConverter"/>
-	
-	<bean id="silverlinkHandler" class="uk.org.openeyes.oink.modules.silverlink.SilverlinkHandler">
-		<constructor-arg ref="appointmentService"/>
-		<constructor-arg ref="patientService"/>
+	<bean id="silverlinkHandler" class="uk.org.openeyes.oink.messaging.Handler">
+		<constructor-arg name="resourceToChainMatcher" ref="mapper"/>
 	</bean>
 
-	<!-- Silverlink Service Components -->
-	<bean id="appointmentService"
-		class="uk.org.openeyes.oink.modules.silverlink.SilverlinkAppointmentServiceStub">
-	</bean>
-	<bean id="patientService"
-		class="uk.org.openeyes.oink.modules.silverlink.SilverlinkPatientServiceStub">
-	</bean>
+	<oink:requestChainKeyMapper id="mapper">
+		<oink:mapping method="GET" resourcePath="Patient/*"
+			chainKey="silverlinkPatientFilterChain" />
+	</oink:requestChainKeyMapper>
+
 </beans>
