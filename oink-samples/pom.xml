@@ -15,5 +15,6 @@
   <modules>
     <module>oink-samples-facade</module>
     <module>oink-samples-silverlink</module>
+    <module>oink-samples-integration</module>
   </modules>
 </project>

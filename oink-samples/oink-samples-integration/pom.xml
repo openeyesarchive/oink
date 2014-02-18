@@ -1,0 +1,165 @@
+<?xml version="1.0"?>
+<project
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>uk.org.openeyes.oink</groupId>
+		<artifactId>oink-samples</artifactId>
+		<version>1.0.0</version>
+	</parent>
+	<groupId>uk.org.openeyes.oink</groupId>
+	<artifactId>oink-samples-integration</artifactId>
+	<version>1.0.0</version>
+	<name>OpenEyes Integration Kit Integration Tests</name>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>${junit.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-server</artifactId>
+			<version>${jetty.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-servlet</artifactId>
+			<version>${jetty.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-webapp</artifactId>
+			<version>${jetty.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-servlets</artifactId>
+			<version>${jetty.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>4.3.2</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-web</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-webmvc</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>uk.org.openeyes</groupId>
+			<artifactId>oink-common</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>uk.org.openeyes.oink.samples</groupId>
+			<artifactId>oink-samples-silverlink</artifactId>
+			<version>1.0.0</version>
+			<type>war</type>
+		</dependency>
+		<dependency>
+			<groupId>uk.org.openeyes.oink.samples</groupId>
+			<artifactId>oink-samples-facade</artifactId>
+			<version>1.0.0</version>
+			<type>war</type>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-jsp</artifactId>
+			<version>${jetty.version}</version>
+		</dependency>
+	</dependencies>
+	<build>
+
+		<!-- <plugins> <plugin> <artifactId>maven-failsafe-plugin</artifactId> 
+			<version>${maven.failsafe.version}</version> <executions> <execution> <goals> 
+			<goal>integration-test</goal> <goal>verify</goal> </goals> </execution> </executions> 
+			</plugin> <plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-dependency-plugin</artifactId> 
+			<executions> <execution> <id>copy</id> <phase>package</phase> <goals> <goal>copy</goal> 
+			</goals> <configuration> <artifactItems> <artifactItem> <groupId>uk.org.openeyes.oink.samples</groupId> 
+			<artifactId>oink-samples-silverlink</artifactId> <version>1.0.0</version> 
+			<type>war</type> <overWrite>true</overWrite> <destFileName>silverlink.war</destFileName> 
+			</artifactItem> <artifactItem> <groupId>uk.org.openeyes.oink.samples</groupId> 
+			<artifactId>oink-samples-facade</artifactId> <version>1.0.0</version> <type>war</type> 
+			<overWrite>true</overWrite> <destFileName>facade.war</destFileName> </artifactItem> 
+			</artifactItems> <outputDirectory> ${project.build.directory}/war </outputDirectory> 
+			<overWriteReleases>true</overWriteReleases> <overWriteSnapshots>true</overWriteSnapshots> 
+			</configuration> </execution> </executions> </plugin> <plugin> <groupId>org.mortbay.jetty</groupId> 
+			<artifactId>jetty-maven-plugin</artifactId> <version>${jetty.maven.plugin.version}</version> 
+			<configuration> <contextHandlers> <contextHandler implementation="org.eclipse.jetty.webapp.WebAppContext"> 
+			<contextPath>/facade</contextPath> <war>${project.build.directory}/war/facade.war</war> 
+			</contextHandler> <contextHandler implementation="org.eclipse.jetty.webapp.WebAppContext"> 
+			<contextPath>/silverlink</contextPath> <war>${project.build.directory}/war/silverlink.war</war> 
+			</contextHandler> </contextHandlers> </configuration> <executions> <execution> 
+			<id>start-jetty</id> <phase>pre-integration-test</phase> <goals> <goal>run-war</goal> 
+			</goals> <configuration> force Jetty to execute only while Maven is running, 
+			instead of running indefinitely. <daemon>true</daemon> </configuration> </execution> 
+			<execution> <id>stop-jetty</id> <phase>post-integration-test</phase> <goals> 
+			<goal>stop</goal> </goals> </execution> </executions> </plugin> </plugins> -->
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>copy</id>
+						<phase>package</phase>
+						<goals>
+							<goal>copy</goal>
+						</goals>
+						<configuration>
+							<artifactItems>
+								<artifactItem>
+									<groupId>uk.org.openeyes.oink.samples</groupId>
+									<artifactId>oink-samples-facade</artifactId>
+									<version>1.0.0</version>
+									<type>war</type>
+									<overWrite>true</overWrite>
+									<destFileName>facade-web.war</destFileName>
+								</artifactItem>
+								<artifactItem>
+									<groupId>uk.org.openeyes.oink.samples</groupId>
+									<artifactId>oink-samples-silverlink</artifactId>
+									<version>1.0.0</version>
+									<type>war</type>
+									<overWrite>true</overWrite>
+									<destFileName>silverlink-web.war</destFileName>
+								</artifactItem>
+							</artifactItems>
+							<outputDirectory>
+								${project.build.directory}/war
+							</outputDirectory>
+							<overWriteReleases>true</overWriteReleases>
+							<overWriteSnapshots>true</overWriteSnapshots>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-failsafe-plugin</artifactId>
+				<version>${maven.failsafe.version}</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>integration-test</goal>
+							<goal>verify</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+</project>
