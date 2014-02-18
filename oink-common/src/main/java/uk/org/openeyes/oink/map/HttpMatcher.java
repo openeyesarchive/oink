@@ -1,16 +1,12 @@
 package uk.org.openeyes.oink.map;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 
-import org.javatuples.Pair;
 import org.javatuples.Triplet;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 
 //TODO Make class for a resource path instead of a plain string
 
