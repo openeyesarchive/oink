@@ -17,9 +17,12 @@
 		<log4j.version>1.2.16</log4j.version>
 		<junit.version>4.11</junit.version>
 		<commonschain.version>1.2</commonschain.version>
-		<spring.rabbit.version>1.1.4.RELEASE</spring.rabbit.version>
+		<spring.rabbit.version>1.2.1.RELEASE</spring.rabbit.version>
 		<jackson.version>2.0.0</jackson.version>
 		<javatuples.version>1.2</javatuples.version>
+		<maven.failsafe.version>2.6</maven.failsafe.version>
+		<jetty.version>8.1.5.v20120716</jetty.version>
+		<jetty.maven.plugin.version>8.1.14.v20131031</jetty.maven.plugin.version>
 	</properties>
 	<modules>
 		<module>oink-common</module>

@@ -16,14 +16,11 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.SimpleUrlHandlerMapping;
 import org.springframework.web.servlet.mvc.Controller;
-import org.springframework.web.util.UrlPathHelper;
-
 import uk.org.openeyes.oink.domain.OINKMessage;
 import uk.org.openeyes.oink.domain.OINKRequestMessage;
 import uk.org.openeyes.oink.domain.OINKResponseMessage;

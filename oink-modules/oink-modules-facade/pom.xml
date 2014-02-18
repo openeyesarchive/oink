@@ -11,7 +11,7 @@
 	<groupId>uk.org.openeyes.oink</groupId>
 	<artifactId>oink-modules-facade</artifactId>
 	<version>1.0.0</version>
-	<name>OpenEyes Interoperability Kit FHIR Facade</name>
+	<name>OpenEyes Integration Kit Facade</name>
 	<url>http://maven.apache.org</url>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

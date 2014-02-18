@@ -12,8 +12,7 @@
 	<artifactId>oink-samples-facade</artifactId>
 	<version>1.0.0</version>
 	<packaging>war</packaging>
-	<name>oink-samples-facade Maven Webapp</name>
-	<url>http://maven.apache.org</url>
+	<name>OpenEyes Integration Kit Sample Facade Webapp</name>
 	<dependencies>
 		<dependency>
 			<groupId>uk.org.openeyes.oink</groupId>

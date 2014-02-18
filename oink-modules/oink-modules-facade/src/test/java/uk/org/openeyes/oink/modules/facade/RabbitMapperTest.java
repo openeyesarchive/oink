@@ -1,11 +1,5 @@
 package uk.org.openeyes.oink.modules.facade;
 
-import static org.junit.Assert.*;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.springframework.http.HttpMethod;
-
 
 public class RabbitMapperTest {
 	
