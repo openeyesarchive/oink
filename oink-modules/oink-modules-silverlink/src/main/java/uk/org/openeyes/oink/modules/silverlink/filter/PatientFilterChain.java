@@ -5,12 +5,6 @@ import org.apache.commons.chain.Context;
 import org.apache.commons.chain.impl.ChainBase;
 
 import uk.org.openeyes.oink.annotation.FilterChain;
-import uk.org.openeyes.oink.filter.HttpRequestToServletRequestCommand;
-import uk.org.openeyes.oink.filter.HttpResponseToOinkResponseCommand;
-import uk.org.openeyes.oink.filter.OinkRequestToHttpRequestCommand;
-import uk.org.openeyes.oink.filter.OpenMapsToServletResponseCommand;
-import uk.org.openeyes.oink.filter.ServletRequestToOpenMapsCommand;
-import uk.org.openeyes.oink.filter.ServletResponseToHttpResponseCommand;
 
 @FilterChain(name = PatientFilterChain.FILTER_KEY)
 public class PatientFilterChain extends ChainBase {

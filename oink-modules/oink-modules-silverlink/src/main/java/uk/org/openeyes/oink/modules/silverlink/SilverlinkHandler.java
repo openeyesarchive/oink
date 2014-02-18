@@ -1,11 +1,6 @@
 package uk.org.openeyes.oink.modules.silverlink;
 
-import java.nio.charset.Charset;
-
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-
 import uk.org.openeyes.oink.domain.OINKRequestMessage;
 import uk.org.openeyes.oink.domain.OINKResponseMessage;
 
