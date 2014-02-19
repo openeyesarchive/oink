@@ -6,18 +6,18 @@
 	<parent>
 		<groupId>uk.org.openeyes.oink</groupId>
 		<artifactId>oink-samples</artifactId>
-		<version>1.0.0</version>
+		<version>1.0.0-SNAPSHOT</version>
 	</parent>
 	<groupId>uk.org.openeyes.oink.samples</groupId>
 	<artifactId>oink-samples-facade</artifactId>
-	<version>1.0.0</version>
+	<version>1.0.0-SNAPSHOT</version>
 	<packaging>war</packaging>
 	<name>OpenEyes Integration Kit Sample Facade Webapp</name>
 	<dependencies>
 		<dependency>
 			<groupId>uk.org.openeyes.oink</groupId>
 			<artifactId>oink-modules-facade</artifactId>
-			<version>1.0.0</version>
+			<version>1.0.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
