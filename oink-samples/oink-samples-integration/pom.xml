@@ -124,7 +124,6 @@
 								<artifactItem>
 									<groupId>uk.org.openeyes.oink.samples</groupId>
 									<artifactId>oink-samples-facade</artifactId>
-									<version>1.0.0</version>
 									<type>war</type>
 									<overWrite>true</overWrite>
 									<destFileName>facade-web.war</destFileName>
@@ -132,7 +131,6 @@
 								<artifactItem>
 									<groupId>uk.org.openeyes.oink.samples</groupId>
 									<artifactId>oink-samples-silverlink</artifactId>
-									<version>1.0.0</version>
 									<type>war</type>
 									<overWrite>true</overWrite>
 									<destFileName>silverlink-web.war</destFileName>
