@@ -22,7 +22,7 @@
 		<javatuples.version>1.2</javatuples.version>
 		<maven.failsafe.version>2.6</maven.failsafe.version>
 		<maven.release.version>2.4.2</maven.release.version>
-		<jetty.version>8.1.5.v20120716</jetty.version>
+		<jetty.version>8.1.7.v20120910</jetty.version>
 		<jetty.maven.plugin.version>8.1.14.v20131031</jetty.maven.plugin.version>
 	</properties>
 	<modules>

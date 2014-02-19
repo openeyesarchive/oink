@@ -2,10 +2,7 @@ package uk.org.oink.modules.integration;
 
 import java.io.File;
 
-import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.nio.SelectChannelConnector;
-import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.eclipse.jetty.webapp.WebAppContext;
 
 public class JettyServer {
@@ -15,9 +12,7 @@ public class JettyServer {
 
 	public JettyServer(int port, String warFile) {
 		this.port = port;
-		server = new Server();
-		server.setThreadPool(getThreadPool());
-		server.setConnectors(new Connector[] { getConnector() });
+		server = new Server(port);
 		String resolvedWarFile = resolveWarPath(warFile);
 		server.setHandler(getWebAppContext(resolvedWarFile));
 		server.setStopAtShutdown(true);
@@ -47,19 +42,6 @@ public class JettyServer {
 		context.setWar(warFile);
 		context.setContextPath("/");
 		return context;
-	}
-
-	private Connector getConnector() {
-		SelectChannelConnector connector = new SelectChannelConnector();
-		connector.setMaxIdleTime(30000);
-		connector.setPort(port);
-		return connector;
-	}
-
-	private QueuedThreadPool getThreadPool() {
-		QueuedThreadPool threadPool = new QueuedThreadPool();
-		threadPool.setMaxThreads(100);
-		return threadPool;
 	}
 
 	public void join() throws InterruptedException {
