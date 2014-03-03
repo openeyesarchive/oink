@@ -1,30 +1,51 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:rabbit="http://www.springframework.org/schema/rabbit"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:jee="http://www.springframework.org/schema/jee"
+	xmlns:rabbit="http://www.springframework.org/schema/rabbit"
 	xmlns:context="http://www.springframework.org/schema/context"
 	xmlns:oink="http://www.openeyes.org.uk/schema/oink"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
 	http://www.springframework.org/schema/rabbit http://www.springframework.org/schema/rabbit/spring-rabbit-1.0.xsd
-	http://www.openeyes.org.uk/schema/oink http://www.openeyes.org.uk/schema/oink/oink-1.0.xsd">
+	http://www.openeyes.org.uk/schema/oink http://www.openeyes.org.uk/schema/oink/oink-1.0.xsd
+	http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd">
 
 	<!-- Third Party Filter Components -->
 	<context:component-scan
-		base-package="uk.org.openeyes.oink.filter, uk.org.openeyes.oink.modules.silverlink.filter" />
-	<context:property-placeholder location="classpath:/environment.properties" />
+		base-package="uk.org.openeyes.oink.filterchain, uk.org.openeyes.oink.modules.silverlink.filter" />
+	
+		<!-- add JNDI based property exposed by the container -->
+	<bean class="java.util.Properties" id="jndiProperties">
+		<constructor-arg>
+			<map>
+				<entry key="properties.location">
+					<jee:jndi-lookup jndi-name="properties/location" default-value="SKIP" />
+				</entry>
+			</map>
+		</constructor-arg>
+	</bean>
+	
+	<context:property-placeholder order="0"
+		properties-ref="jndiProperties" ignore-unresolvable="true" ignore-resource-not-found="true" />
+	<context:property-placeholder location="${properties.location}"
+		order="1" ignore-unresolvable="true" ignore-resource-not-found="true" />
+	<context:property-placeholder location="file:environment.properties" order="2" ignore-unresolvable="true" ignore-resource-not-found="true" />
+	<context:property-placeholder order="3"
+		location="classpath:/default.properties" />
 
 	<!-- Rabbit Messaging Components -->
 	<rabbit:connection-factory id="connectionFactory"
 		host="${rabbit.server}" username="${rabbit.user}" password="${rabbit.password}"
 		port="${rabbit.port}" />
 
-	<rabbit:admin connection-factory="connectionFactory" />
-
-	<rabbit:queue id="silverlinkQueue" name="uk.org.openeyes.oink.silverlink" />
 	<bean id="jsonConverter"
 		class="org.springframework.amqp.support.converter.Jackson2JsonMessageConverter" />
-
-	<!-- Incoming Rabbit Message Components -->
+	
+	<rabbit:admin connection-factory="connectionFactory" />
+	<rabbit:queue id="silverlinkQueue" name="uk.org.openeyes.oink.silverlink" />
+	
+	<!-- Create Rabbit message listener that runs in the background -->
  	<rabbit:listener-container
 		connection-factory="connectionFactory" message-converter="jsonConverter"
 		concurrency="5">
@@ -32,12 +53,14 @@
 			method="handle" />
 	</rabbit:listener-container>
 
-	<bean id="silverlinkHandler" class="uk.org.openeyes.oink.messaging.Handler">
+	<bean id="silverlinkHandler" class="uk.org.openeyes.oink.messaging.RabbitListener">
 		<constructor-arg name="resourceToChainMatcher" ref="mapper" />
 	</bean>
 
 	<oink:requestChainKeyMapper id="mapper">
 		<oink:mapping method="GET" resourcePath="Patient/*"
+			chainKey="silverlinkPatientFilterChain" />
+		<oink:mapping method="GET" resourcePath="Patient"
 			chainKey="silverlinkPatientFilterChain" />
 	</oink:requestChainKeyMapper>
 

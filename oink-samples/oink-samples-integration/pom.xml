@@ -22,24 +22,13 @@
 			<version>${junit.version}</version>
 			<scope>test</scope>
 		</dependency>
-
-		<!-- Servlet -->
-		<!-- <dependency> <groupId>javax.servlet</groupId> <artifactId>javax.servlet-api</artifactId> 
-			<version>3.0.1</version> <scope>provided</scope> </dependency> <dependency> 
-			<groupId>javax.servlet.jsp</groupId> <artifactId>jsp-api</artifactId> <version>2.1</version> 
-			<scope>provided</scope> </dependency> <dependency> <groupId>javax.servlet</groupId> 
-			<artifactId>jstl</artifactId> <version>1.2</version> <scope>provided</scope> 
-			</dependency> -->
-
-		<!-- the dependency can be commented if no jsp -->
-		<!-- the dependency can be commented if no jsp -->
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpclient</artifactId>
 			<version>4.3.2</version>
 			<scope>test</scope>
 		</dependency>
-		<dependency> 
+		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-web</artifactId>
 			<version>${spring.version}</version>
@@ -66,19 +55,35 @@
 			<version>1.0.0-SNAPSHOT</version>
 			<type>war</type>
 		</dependency>
-	    <dependency>
-	      <groupId>org.eclipse.jetty</groupId>
-	      <artifactId>jetty-webapp</artifactId>
-	      <version>${jetty.version}</version>
-	    </dependency>
-		<!-- Important Dependency for Jetty JSP support  -->
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-webapp</artifactId>
+			<version>${jetty.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-jndi</artifactId>
+			<version>${jetty.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-plus</artifactId>
+			<version>${jetty.version}</version>
+		</dependency>
+		<!-- Important Dependency for Jetty JSP support -->
 		<!-- http://wiki.eclipse.org/Jetty/Tutorial/Embedding_Jetty#Embedding_JSP -->
-	    <dependency>
-		    <groupId>org.mortbay.jetty</groupId>
-		    <artifactId>jsp-2.1-glassfish</artifactId>
-		    <version>2.1.v20100127</version>
-		    <type>jar</type>
-		    <scope>compile</scope>
+		<dependency>
+			<groupId>org.mortbay.jetty</groupId>
+			<artifactId>jsp-2.1-glassfish</artifactId>
+			<version>2.1.v20100127</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.openMap1.mapper</groupId>
+			<artifactId>openmap-mapper-fhir-webapp</artifactId>
+			<version>${openmap.version}</version>
+			<type>war</type>
 		</dependency>
 	</dependencies>
 	<build>
@@ -109,6 +114,13 @@
 									<overWrite>true</overWrite>
 									<destFileName>silverlink-web.war</destFileName>
 								</artifactItem>
+								<artifactItem>
+									<groupId>com.openMap1.mapper</groupId>
+									<artifactId>openmap-mapper-fhir-webapp</artifactId>
+									<type>war</type>
+									<overWrite>true</overWrite>
+									<destFileName>openmap-web.war</destFileName>
+								</artifactItem>
 							</artifactItems>
 							<outputDirectory>
 								${project.build.directory}/war
@@ -123,6 +135,9 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-failsafe-plugin</artifactId>
 				<version>${maven.failsafe.version}</version>
+				<configuration>
+					<oink.config>/Users/Oli/oink.config</oink.config>
+				</configuration>
 				<executions>
 					<execution>
 						<goals>

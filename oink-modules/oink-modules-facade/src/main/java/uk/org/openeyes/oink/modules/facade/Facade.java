@@ -2,29 +2,39 @@ package uk.org.openeyes.oink.modules.facade;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.util.Collections;
 import java.util.Enumeration;
+import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map.Entry;
+import java.util.Map;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
+import org.hl7.fhir.instance.formats.Composer;
+import org.hl7.fhir.instance.formats.JsonComposer;
 import org.springframework.amqp.AmqpConnectException;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.SimpleUrlHandlerMapping;
 import org.springframework.web.servlet.mvc.Controller;
+
+import com.google.api.client.http.HttpHeaders;
+
+import uk.org.openeyes.oink.common.HttpMapper;
+import uk.org.openeyes.oink.domain.OINKBody;
 import uk.org.openeyes.oink.domain.OINKMessage;
 import uk.org.openeyes.oink.domain.OINKRequestMessage;
 import uk.org.openeyes.oink.domain.OINKResponseMessage;
-import uk.org.openeyes.oink.map.HttpMatcher;
 import uk.org.openeyes.oink.messaging.RabbitRoute;
 
 /**
@@ -47,15 +57,18 @@ import uk.org.openeyes.oink.messaging.RabbitRoute;
 public class Facade implements Controller {
 
 	private RabbitTemplate template;
-	private HttpMatcher<RabbitRoute> mapper;
+	private HttpMapper<RabbitRoute> mapper;
 	// private RabbitMapper mapper;
+
+	private Composer hl7JsonComposer;
 
 	@Autowired
 	SimpleUrlHandlerMapping mapping;
 
-	public Facade(RabbitTemplate template, HttpMatcher<RabbitRoute> mapper) {
+	public Facade(RabbitTemplate template, HttpMapper<RabbitRoute> mapper) {
 		this.template = template;
 		this.mapper = mapper;
+		hl7JsonComposer = new JsonComposer();
 	}
 
 	/**
@@ -145,24 +158,25 @@ public class Facade implements Controller {
 	private void populateServletResponse(HttpServletResponse servletResponse,
 			OINKResponseMessage message) throws IOException {
 		// Set status code
-		servletResponse.setStatus(message.getStatus().value());
+		servletResponse.setStatus(message.getStatus());
 
-		// Set headers
-		HttpHeaders headers = message.getHeaders();
-		for (Entry<String, List<String>> entry : headers.entrySet()) {
-			for (String value : entry.getValue()) {
-				servletResponse.setHeader(entry.getKey(), value);
+		// Return body of OINK Message
+		OutputStream os = servletResponse.getOutputStream();
+		try {
+			OINKBody body = message.getBody();
+			if (body != null) {
+				if (body.getFeed() != null) {
+					servletResponse.setContentType("application/json+fhir");
+					hl7JsonComposer.compose(os, body.getFeed(), true);
+				} else if (body.getResource() != null) {
+					servletResponse.setContentType("application/json+fhir");
+					hl7JsonComposer.compose(os, body.getResource(), true);
+				}
 			}
-		}
-
-		// Copy body with no regard to the body type.
-		if (message.getBody() != null) {
-			ByteArrayInputStream in = new ByteArrayInputStream(
-					message.getBody());
-			ServletOutputStream out = servletResponse.getOutputStream();
-			IOUtils.copy(in, out);
-			IOUtils.closeQuietly(in);
-			IOUtils.closeQuietly(out);
+		} catch (Exception e) {
+			throw new IOException();
+		} finally {
+			os.close();
 		}
 	}
 
@@ -183,31 +197,43 @@ public class Facade implements Controller {
 		// http://facadeServer/facadeApp/fhir/Patient/Search?name=Bob
 		// the part we need to forward is Patient/Search?name=Bob
 		String destUrl = getPathWithinHandler(servletRequest);
-		destUrl += "?" + servletRequest.getQueryString();
+
+		String queryString = servletRequest.getQueryString();
+		Map<String, String> params = splitQuery(queryString);
 
 		// Get HTML method
-		HttpMethod method = HttpMethod.valueOf(servletRequest.getMethod()); // e.g.
-																			// GET
+		String method = servletRequest.getMethod(); // e.g.
+													// GET
 
 		// Get HTML headers
 		HttpHeaders headers = new HttpHeaders();
 		Enumeration<String> headerNames = servletRequest.getHeaderNames();
 		while (headerNames.hasMoreElements()) {
 			String headerName = headerNames.nextElement();
-			Enumeration<String> headerValues = servletRequest
-					.getHeaders(headerName);
-			while (headerValues.hasMoreElements()) {
-				String headerValue = headerValues.nextElement();
-				headers.add(headerName, headerValue);
-			}
+			List<String> headerValues = Collections.list(servletRequest
+					.getHeaders(headerName));
+			headers.set(headerName, headerValues);
 		}
 
-		// Get HTML body
-		byte[] body = null;
-		if (servletRequest.getContentLength() > 0) {
-			body = IOUtils.toByteArray(servletRequest.getInputStream());
-		}
+		return new OINKRequestMessage(destUrl, method, params, null);
+	}
 
-		return new OINKRequestMessage(destUrl, method, headers, body);
+	public static Map<String, String> splitQuery(String query)
+			throws UnsupportedEncodingException {
+		Map<String, String> query_pairs = new LinkedHashMap<String, String>();
+		if (query.isEmpty()) {
+			return query_pairs;
+		}
+		String[] pairs = query.split("&");
+		for (String pair : pairs) {
+			int idx = pair.indexOf("=");
+			query_pairs.put(URLDecoder.decode(pair.substring(0, idx), "UTF-8"),
+					URLDecoder.decode(pair.substring(idx + 1), "UTF-8"));
+		}
+		return query_pairs;
+	}
+
+	public final HttpMapper<RabbitRoute> getMapper() {
+		return mapper;
 	}
 }

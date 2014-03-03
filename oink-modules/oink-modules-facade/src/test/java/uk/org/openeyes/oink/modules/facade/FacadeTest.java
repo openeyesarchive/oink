@@ -8,15 +8,17 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.servlet.HandlerMapping;
 
+import com.google.api.client.http.HttpHeaders;
+import com.google.api.client.http.HttpStatusCodes;
+
+import uk.org.openeyes.oink.common.HttpMapper;
+import uk.org.openeyes.oink.domain.OINKBody;
 import uk.org.openeyes.oink.domain.OINKResponseMessage;
-import uk.org.openeyes.oink.map.HttpMatcher;
 import uk.org.openeyes.oink.messaging.RabbitRoute;
 import static org.mockito.Mockito.*;
 import static org.junit.Assert.*;
@@ -30,7 +32,7 @@ public class FacadeTest {
 	RabbitTemplate rabbitTemplate;
 
 	@Mock
-	HttpMatcher<RabbitRoute> mapper;
+	HttpMapper<RabbitRoute> mapper;
 
 	OINKResponseMessage mockResponseMessage;
 
@@ -50,12 +52,13 @@ public class FacadeTest {
 		MockHttpServletRequest request = new MockHttpServletRequest();
 		request.setMethod("GET");		
 		request.setAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE, resourceOnRemoteSystem);
-
+		request.setQueryString("");
+		
 		// Mock Return Oink Message
 		when(mapper.get(resourceOnRemoteSystem, HttpMethod.GET)).thenReturn(
 				new RabbitRoute("", ""));
-		mockResponseMessage = new OINKResponseMessage(HttpStatus.OK,
-				new HttpHeaders(), new byte[0]);
+		mockResponseMessage = new OINKResponseMessage(HttpStatusCodes.STATUS_CODE_OK,
+				new OINKBody());
 		when(
 				rabbitTemplate.convertSendAndReceive(anyString(),
 						anyObject())).thenReturn(mockResponseMessage);
@@ -65,7 +68,7 @@ public class FacadeTest {
 
 		facade.handleRequest(request, response);
 
-		assertEquals(HttpStatus.OK.value(), response.getStatus());
+		assertEquals(HttpStatusCodes.STATUS_CODE_OK, response.getStatus());
 	}
 
 	@Test
@@ -77,12 +80,13 @@ public class FacadeTest {
 		MockHttpServletRequest request = new MockHttpServletRequest();
 		request.setMethod("GET");		
 		request.setAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE, resourceOnRemoteSystem);
-
+		request.setQueryString("");
+		
 		// Mock Return Oink Message
 		when(mapper.get(resourceOnRemoteSystem, HttpMethod.GET)).thenReturn(
 				new RabbitRoute("", ""));
-		mockResponseMessage = new OINKResponseMessage(HttpStatus.FORBIDDEN,
-				new HttpHeaders(), new byte[0]);
+		mockResponseMessage = new OINKResponseMessage(HttpStatusCodes.STATUS_CODE_FORBIDDEN,
+				new OINKBody());
 		when(rabbitTemplate.convertSendAndReceive(anyString(),
 						anyObject())).thenReturn(mockResponseMessage);
 
@@ -90,7 +94,7 @@ public class FacadeTest {
 		MockHttpServletResponse response = new MockHttpServletResponse();
 		
 		facade.handleRequest(request, response);
-		assertEquals(HttpStatus.FORBIDDEN.value(), response.getStatus());
+		assertEquals(HttpStatusCodes.STATUS_CODE_FORBIDDEN, response.getStatus());
 
 	}
 
@@ -102,8 +106,8 @@ public class FacadeTest {
 		request.setAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE, "NULL");
 
 
-		mockResponseMessage = new OINKResponseMessage(HttpStatus.OK,
-				new HttpHeaders(), new byte[0]);
+		mockResponseMessage = new OINKResponseMessage(HttpStatusCodes.STATUS_CODE_OK,
+				new OINKBody());
 		when(
 				rabbitTemplate.convertSendAndReceive(anyString(), anyString(),
 						anyObject())).thenReturn(mockResponseMessage);
