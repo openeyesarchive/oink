@@ -10,13 +10,13 @@ import org.springframework.http.HttpMethod;
 import org.springframework.util.xml.DomUtils;
 import org.w3c.dom.Element;
 
-import uk.org.openeyes.oink.map.HttpMatcher;
+import uk.org.openeyes.oink.common.HttpMapper;
 import uk.org.openeyes.oink.messaging.RabbitRoute;
 
 public class RequestRabbitMapperBeanDefinitionParser extends RequestMapperBeanDefinitionParser {
 
 	protected Class<?> getBeanClass(Element element) {
-		return HttpMatcher.class;
+		return HttpMapper.class;
 	}
 	
 	protected void doParse(Element element, BeanDefinitionBuilder bean) {

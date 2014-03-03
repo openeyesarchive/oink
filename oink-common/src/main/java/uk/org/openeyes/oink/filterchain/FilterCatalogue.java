@@ -1,4 +1,4 @@
-package uk.org.openeyes.oink.filter;
+package uk.org.openeyes.oink.filterchain;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -11,8 +11,6 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
 
-import uk.org.openeyes.oink.annotation.FilterChain;
-
 /**
  * Stores references to all {@link FilterChain} beans in the application context.
  * This class is annotated as a component and will be automatically initialised in an annotation-driven context.
@@ -20,9 +18,9 @@ import uk.org.openeyes.oink.annotation.FilterChain;
  * @author Oli
  */
 @Component
-public class ChainCatalogue extends CatalogBase implements BeanPostProcessor,ApplicationListener<ContextRefreshedEvent> {
+public class FilterCatalogue extends CatalogBase implements BeanPostProcessor,ApplicationListener<ContextRefreshedEvent> {
 	
-	static Logger log = Logger.getLogger(ChainCatalogue.class.getName());
+	static Logger log = Logger.getLogger(FilterCatalogue.class.getName());
 	
 	private int count = 0;
 

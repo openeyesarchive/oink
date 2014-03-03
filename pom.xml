@@ -12,7 +12,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<spring.version>3.1.4.RELEASE</spring.version>
-		<java.version>1.6</java.version>
+		<java.version>1.7</java.version>
 		<org.slf4j.version>1.7.5</org.slf4j.version>
 		<log4j.version>1.2.16</log4j.version>
 		<junit.version>4.11</junit.version>
@@ -23,7 +23,12 @@
 		<maven.failsafe.version>2.6</maven.failsafe.version>
 		<maven.release.version>2.4.2</maven.release.version>
 		<jetty.version>8.1.7.v20120910</jetty.version>
+		<commonsio.version>2.4</commonsio.version>
 		<jetty.maven.plugin.version>8.1.14.v20131031</jetty.maven.plugin.version>
+		<google.http.version>1.17.0-rc</google.http.version>
+		<google.gson.version>2.2.4</google.gson.version>
+		<openmap.version>1.0-SNAPSHOT</openmap.version>
+		<fhir.version>0.13</fhir.version>
 	</properties>
 	<modules>
 		<module>oink-common</module>

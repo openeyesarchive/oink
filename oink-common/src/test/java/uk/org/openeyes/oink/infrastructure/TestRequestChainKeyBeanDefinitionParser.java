@@ -4,7 +4,6 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 
 public class TestRequestChainKeyBeanDefinitionParser {
 

@@ -1,11 +1,13 @@
-package uk.org.openeyes.oink.map;
+package uk.org.openeyes.oink.common;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import org.javatuples.Pair;
 import org.javatuples.Triplet;
+import org.javatuples.Tuple;
 import org.springframework.http.HttpMethod;
 
 //TODO Make class for a resource path instead of a plain string
@@ -21,12 +23,20 @@ import org.springframework.http.HttpMethod;
  *
  * @param <T>
  */
-public class HttpMatcher<T> {
+public class HttpMapper<T> {
 	
 	private final List<Triplet<String, HttpMethod, T>> list;
 	
-	public HttpMatcher(List<Triplet<String, HttpMethod, T>> list) {
+	public HttpMapper(List<Triplet<String, HttpMethod, T>> list) {
 		this.list = list;
+	}
+	
+	public List<Pair<String, HttpMethod>> getHttpKey() {
+		List<Pair<String,HttpMethod>> result = new LinkedList<Pair<String,HttpMethod>>();
+		for (Triplet<String, HttpMethod, T> entry: list) {
+			result.add(new Pair<String, HttpMethod>(entry.getValue0(), entry.getValue1()));
+		}
+		return result;
 	}
 
 	
@@ -150,8 +160,8 @@ public class HttpMatcher<T> {
 			return this;
 		}
 		
-		public HttpMatcher<T> build() {
-			return new HttpMatcher<T>(list);
+		public HttpMapper<T> build() {
+			return new HttpMapper<T>(list);
 		}
 		
 	}

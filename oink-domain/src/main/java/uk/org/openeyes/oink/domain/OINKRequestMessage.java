@@ -1,68 +1,70 @@
 package uk.org.openeyes.oink.domain;
 
-import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-
+/**
+ * This message encapsulates a request for a resource (FHIR REST style)
+ * somewhere on the OINK System.
+ * 
+ * @author Oliver Wilkie
+ * 
+ */
 public class OINKRequestMessage extends OINKMessage {
 
-	private String resourcePath;
-	private HttpMethod method;
-	private HttpHeaders headers;
-	private byte[] body;
+	private String fhirResourcePath; // Portion of the original FHIR URL
+										// following [base]. No leading slash.
+	private String method; // HTTP Request Method e.g. GET, POST
+	private Map<String, String> parameters; // HTTP Query Parameters
+
+	private OINKBody body;
 
 	public OINKRequestMessage() {
-
+		this.parameters = new HashMap<String, String>();
 	}
 
-	public OINKRequestMessage(String resourcePath, HttpMethod method,
-			HttpHeaders headers, byte[] body) {
-		this.resourcePath = resourcePath;
+	public OINKRequestMessage(String resourcePath, String method, Map<String, String> params, OINKBody body) {
+		this.fhirResourcePath = resourcePath;
 		this.method = method;
-		this.headers = headers;
-		if (body != null) {
-			this.body = body.clone();
-		}
+		this.body = body;
+		this.parameters = params;
 	}
 
 	public String getResourcePath() {
-		return resourcePath;
+		return fhirResourcePath;
 	}
 
 	public void setResourcePath(String resourcePath) {
-		this.resourcePath = resourcePath;
+		this.fhirResourcePath = resourcePath;
 	}
 
-	public HttpMethod getMethod() {
+	public String getMethod() {
 		return method;
 	}
 
-	public void setMethod(HttpMethod method) {
+	public void setMethod(String method) {
 		this.method = method;
 	}
 
-	public HttpHeaders getHeaders() {
-		return headers;
+	public OINKBody getBody() {
+		return body;
 	}
 
-	public void setHeaders(HttpHeaders headers) {
-		this.headers = headers;
+	public boolean hasBody() {
+		return body != null;
 	}
 
-	public byte[] getBody() {
-		if (body != null) {
-			return body.clone();
-		} else {
-			return null;
-		}
+	public void setBody(OINKBody body) {
+		this.body = body;
 	}
 
-	public void setBody(byte[] body) {
-		if (body != null) {
-			this.body = body.clone();
-		} else {
-			this.body = null;
+	public Map<String, String> getParameters() {
+		return parameters;
+	}
+
+	public void setParameters(Map<String, String> parameters) {
+		if (parameters != null) {
+			this.parameters = parameters;
 		}
 	}
 
@@ -70,11 +72,11 @@ public class OINKRequestMessage extends OINKMessage {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + Arrays.hashCode(body);
-		result = prime * result + ((headers == null) ? 0 : headers.hashCode());
+		result = prime * result + body.hashCode();
 		result = prime * result + ((method == null) ? 0 : method.hashCode());
-		result = prime * result
-				+ ((resourcePath == null) ? 0 : resourcePath.hashCode());
+		result = prime
+				* result
+				+ ((fhirResourcePath == null) ? 0 : fhirResourcePath.hashCode());
 		return result;
 	}
 
@@ -87,19 +89,14 @@ public class OINKRequestMessage extends OINKMessage {
 		if (getClass() != obj.getClass())
 			return false;
 		OINKRequestMessage other = (OINKRequestMessage) obj;
-		if (!Arrays.equals(body, other.body))
-			return false;
-		if (headers == null) {
-			if (other.headers != null)
-				return false;
-		} else if (!headers.equals(other.headers))
+		if (!body.equals(other.body))
 			return false;
 		if (method != other.method)
 			return false;
-		if (resourcePath == null) {
-			if (other.resourcePath != null)
+		if (fhirResourcePath == null) {
+			if (other.fhirResourcePath != null)
 				return false;
-		} else if (!resourcePath.equals(other.resourcePath))
+		} else if (!fhirResourcePath.equals(other.fhirResourcePath))
 			return false;
 		return true;
 	}

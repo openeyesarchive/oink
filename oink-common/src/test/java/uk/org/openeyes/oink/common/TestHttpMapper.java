@@ -1,11 +1,13 @@
-package uk.org.openeyes.oink.map;
+package uk.org.openeyes.oink.common;
 
 import static org.junit.Assert.*;
 
 import org.junit.Test;
 import org.springframework.http.HttpMethod;
 
-public class TestHttpMatcher {
+import uk.org.openeyes.oink.common.HttpMapper;
+
+public class TestHttpMapper {
 	
 	public static final String path1 = "";
 	public static final String path2 = "*";
@@ -16,9 +18,9 @@ public class TestHttpMatcher {
 
 	@Test
 	public void testReturnsNullIfNoMatchExists() {
-		HttpMatcher.Builder<Integer> builder = new HttpMatcher.Builder<Integer>();
+		HttpMapper.Builder<Integer> builder = new HttpMapper.Builder<Integer>();
 		builder.addMapping(path4, HttpMethod.GET, 4);
-		HttpMatcher<Integer> matcher = builder.build();
+		HttpMapper<Integer> matcher = builder.build();
 		
 		assertNull(matcher.get("Bar", HttpMethod.GET));
 		assertNull(matcher.get(path4, HttpMethod.POST));		
@@ -26,14 +28,14 @@ public class TestHttpMatcher {
 	
 	@Test
 	public void testAlwaysReturnsMostExplicit() {
-		HttpMatcher.Builder<Integer> builder = new HttpMatcher.Builder<Integer>();
+		HttpMapper.Builder<Integer> builder = new HttpMapper.Builder<Integer>();
 		builder.addMapping(path1, HttpMethod.GET, 1);
 		builder.addMapping(path2, HttpMethod.GET, 2);
 		builder.addMapping(path3, HttpMethod.GET, 3);
 		builder.addMapping(path4, HttpMethod.GET, 4);
 		builder.addMapping(path5, HttpMethod.GET, 5);
 		builder.addMapping(path6, HttpMethod.GET, 6);
-		HttpMatcher<Integer> matcher = builder.build();
+		HttpMapper<Integer> matcher = builder.build();
 		
 		assertEquals(Integer.valueOf(1), matcher.get(path1, HttpMethod.GET));
 		assertEquals(Integer.valueOf(2), matcher.get("Appointment", HttpMethod.GET));
