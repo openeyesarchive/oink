@@ -1,6 +1,8 @@
 package uk.org.openeyes.oink.messaging;
 
 import org.apache.commons.chain.Command;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
@@ -25,6 +27,9 @@ import uk.org.openeyes.oink.filterchain.FilterChainContext;
  */
 public class RabbitListener {
 
+	private static final Logger logger = LoggerFactory
+			.getLogger(RabbitListener.class);
+
 	private HttpMapper<String> resourceToChainMatcher;
 
 	@Autowired
@@ -43,23 +48,28 @@ public class RabbitListener {
 	 * @throws Exception
 	 */
 	public OINKResponseMessage handle(OINKRequestMessage request) {
-		try {
-			// Extract chain key based on Oink Message
-			String chainName = getChainKeyFromOinkMessage(request);
-			// Get chain from catalogue
-			Command chain = catalogue.getCommand(chainName);
+		logger.debug("Recieved an inbound OINK request");
+		// Extract chain key based on Oink Message
+		String chainName = getChainKeyFromOinkMessage(request);
+		// Get chain from catalogue
+		Command chain = catalogue.getCommand(chainName);
+		if (chain != null) {
 			// Prepare context
 			FilterChainContext context = new FilterChainContext();
 			context.setRequest(request);
 			// Execute
-			chain.execute(context);
+			try {
+				chain.execute(context);
+			} catch (Exception e) {
+				logger.error("An exception occured whilst executing the filter chain");
+				return null;
+			}
 			// Extract response message
 			OINKResponseMessage message = context.getResponse();
 			// Return message
 			return message;
-		} catch (Exception e) {
-			//OINKResponseMessage.Builder builder = new OINKResponseMessage.Builder();
-			//builder.setHTTPStatus(HttpStatusCodes.STATUS_CODE_SERVER_ERROR);
+		} else {
+			logger.error("No filter chain was found to handle the inbound OINK request");
 			return null;
 		}
 	}

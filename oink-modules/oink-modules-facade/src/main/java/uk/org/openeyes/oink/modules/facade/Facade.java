@@ -1,6 +1,5 @@
 package uk.org.openeyes.oink.modules.facade;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
@@ -11,13 +10,13 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.io.IOUtils;
 import org.hl7.fhir.instance.formats.Composer;
 import org.hl7.fhir.instance.formats.JsonComposer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.amqp.AmqpConnectException;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,6 +55,8 @@ import uk.org.openeyes.oink.messaging.RabbitRoute;
  */
 public class Facade implements Controller {
 
+	private static final Logger logger = LoggerFactory.getLogger(Facade.class);
+
 	private RabbitTemplate template;
 	private HttpMapper<RabbitRoute> mapper;
 	// private RabbitMapper mapper;
@@ -85,12 +86,13 @@ public class Facade implements Controller {
 			HttpServletResponse servletResponse)
 			throws NoRabbitMappingFoundException, RabbitReplyTimeoutException,
 			IOException {
-
 		// Obtain the path relative to this controller
 		String resource = getPathWithinHandler(servletRequest);
 
 		// Get the request method type
 		HttpMethod method = HttpMethod.valueOf(servletRequest.getMethod()); // GET
+		
+		logger.debug("Received a request for the following resource: "+resource +" via method: " + method);
 
 		RabbitRoute route = mapper.get(resource, method);
 		if (route == null) {
@@ -128,6 +130,7 @@ public class Facade implements Controller {
 			NoRabbitMappingFoundException ex, HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
 		response.sendError(HttpServletResponse.SC_NOT_FOUND);
+		logger.error("The requested resource under the selected method has no mapping to an OINK Service");
 		return new ModelAndView();
 	}
 
@@ -136,6 +139,7 @@ public class Facade implements Controller {
 			RabbitReplyTimeoutException ex, HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
 		response.sendError(HttpServletResponse.SC_BAD_GATEWAY);
+		logger.error("The Service on the other side of OINK did not reply in time");
 		return new ModelAndView();
 	}
 
@@ -144,6 +148,7 @@ public class Facade implements Controller {
 			HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		response.sendError(HttpServletResponse.SC_BAD_GATEWAY);
+		logger.error("The underlying Rabbit Server could not be reached");
 		return new ModelAndView();
 	}
 

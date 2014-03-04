@@ -15,20 +15,8 @@
 	<context:component-scan
 		base-package="uk.org.openeyes.oink.filterchain, uk.org.openeyes.oink.modules.silverlink.filter" />
 	
-		<!-- add JNDI based property exposed by the container -->
-	<bean class="java.util.Properties" id="jndiProperties">
-		<constructor-arg>
-			<map>
-				<entry key="properties.location">
-					<jee:jndi-lookup jndi-name="properties/location" default-value="SKIP" />
-				</entry>
-			</map>
-		</constructor-arg>
-	</bean>
-	
-	<context:property-placeholder order="0"
-		properties-ref="jndiProperties" ignore-unresolvable="true" ignore-resource-not-found="true" />
-	<context:property-placeholder location="${properties.location}"
+	<context:property-placeholder order="0" ignore-unresolvable="true" ignore-resource-not-found="true" />
+	<context:property-placeholder location="${oink.silverlink.properties}"
 		order="1" ignore-unresolvable="true" ignore-resource-not-found="true" />
 	<context:property-placeholder location="file:environment.properties" order="2" ignore-unresolvable="true" ignore-resource-not-found="true" />
 	<context:property-placeholder order="3"

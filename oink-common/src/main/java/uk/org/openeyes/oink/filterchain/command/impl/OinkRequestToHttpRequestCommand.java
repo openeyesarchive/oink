@@ -3,6 +3,8 @@ package uk.org.openeyes.oink.filterchain.command.impl;
 import java.io.IOException;
 
 import org.apache.commons.chain.Command;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -13,6 +15,7 @@ import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpRequestFactory;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
+
 import uk.org.openeyes.oink.domain.OINKRequestMessage;
 import uk.org.openeyes.oink.filterchain.InvalidContextException;
 import uk.org.openeyes.oink.filterchain.FilterChainContext;
@@ -25,17 +28,24 @@ import uk.org.openeyes.oink.filterchain.command.FilterCommand;
 public class OinkRequestToHttpRequestCommand extends FilterCommand {
 
 	private final HttpTransport t = new NetHttpTransport();
+	
+	private final static Logger logger = LoggerFactory.getLogger(OinkRequestToHttpRequestCommand.class);
 
 	@Override
 	protected boolean execute(FilterChainContext context) throws Exception {
-		OINKRequestMessage request = context.getRequest();
-		if (request == null) {
-			throw new InvalidContextException(
-					"Could not find OINKRequestMessage in context");
+		try {
+			OINKRequestMessage request = context.getRequest();
+			if (request == null) {
+				throw new InvalidContextException(
+						"Could not find OINKRequestMessage in context");
+			}
+			HttpRequest httpRequest = unwrapHttpRequest(request);
+			context.setHttpRequest(httpRequest);
+			return Command.CONTINUE_PROCESSING;
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			throw e;
 		}
-		HttpRequest httpRequest = unwrapHttpRequest(request);
-		context.setHttpRequest(httpRequest);
-		return Command.CONTINUE_PROCESSING;
 	}
 
 	private HttpRequest unwrapHttpRequest(OINKRequestMessage message)

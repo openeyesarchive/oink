@@ -14,6 +14,8 @@
 	<name>OpenEyes Integration Kit Integration Tests</name>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<oink.facade.it.properties>classpath:/facade.properties</oink.facade.it.properties>
+		<oink.silverlink.it.properties>classpath:/silverlink.properties</oink.silverlink.it.properties>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -136,7 +138,10 @@
 				<artifactId>maven-failsafe-plugin</artifactId>
 				<version>${maven.failsafe.version}</version>
 				<configuration>
-					<oink.config>/Users/Oli/oink.config</oink.config>
+					<systemPropertyVariables>
+						<oink.facade.properties>${oink.facade.it.properties}</oink.facade.properties>
+						<oink.silverlink.properties>${oink.silverlink.it.properties}</oink.silverlink.properties>
+					</systemPropertyVariables>
 				</configuration>
 				<executions>
 					<execution>

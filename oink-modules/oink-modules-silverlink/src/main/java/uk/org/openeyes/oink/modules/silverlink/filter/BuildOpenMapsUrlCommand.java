@@ -4,6 +4,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.chain.Command;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -23,6 +25,9 @@ import uk.org.openeyes.oink.filterchain.command.FilterCommand;
 @Component
 public class BuildOpenMapsUrlCommand extends FilterCommand {
 
+	private final static Logger logger = LoggerFactory
+			.getLogger(BuildOpenMapsUrlCommand.class);
+
 	@Value("${openmaps.scheme}")
 	private String scheme;
 	@Value("${openmaps.host}")
@@ -34,22 +39,27 @@ public class BuildOpenMapsUrlCommand extends FilterCommand {
 
 	@Override
 	protected boolean execute(FilterChainContext context) throws Exception {
-		OINKRequestMessage request = context.getRequest();
-		String fhirResource = request.getResourcePath();
-		Map<String, String> parameters = request.getParameters();
+		try {
+			OINKRequestMessage request = context.getRequest();
+			String fhirResource = request.getResourcePath();
+			Map<String, String> parameters = request.getParameters();
 
-		GenericUrl builder = new GenericUrl();
-		builder.setScheme(scheme);
-		builder.setHost(host);
-		builder.setPort(port);
-		builder.setRawPath(mergePaths(fhirRoot, fhirResource));
-		for (Entry<String, String> entry : parameters.entrySet()) {
-			builder.set(entry.getKey(), entry.getValue());
+			GenericUrl builder = new GenericUrl();
+			builder.setScheme(scheme);
+			builder.setHost(host);
+			builder.setPort(port);
+			builder.setRawPath(mergePaths(fhirRoot, fhirResource));
+			for (Entry<String, String> entry : parameters.entrySet()) {
+				builder.set(entry.getKey(), entry.getValue());
+			}
+
+			HttpRequest httpRequest = context.getHttpRequest();
+			httpRequest.setUrl(builder);
+			return Command.CONTINUE_PROCESSING;
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			throw e;
 		}
-
-		HttpRequest httpRequest = context.getHttpRequest();
-		httpRequest.setUrl(builder);
-		return Command.CONTINUE_PROCESSING;
 	}
 
 	private static String mergePaths(String fhirRoot, String fhirResource) {
