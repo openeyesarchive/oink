@@ -25,11 +25,5 @@
 		host="${rabbit.server}" username="${rabbit.user}" password="${rabbit.password}"
 		port="${rabbit.port}" />
 
-	<bean id="jsonConverter"
-		class="org.springframework.amqp.support.converter.Jackson2JsonMessageConverter" />
-
-	<rabbit:template id="rabbitTemplate"
-		connection-factory="connectionFactory" message-converter="jsonConverter" />
-
 
 </beans>

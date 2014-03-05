@@ -5,7 +5,7 @@ import java.io.IOException;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
+import static org.mockito.Mock.*;
 import org.mockito.MockitoAnnotations;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.http.HttpMethod;
@@ -25,20 +25,21 @@ import static org.junit.Assert.*;
 
 public class FacadeTest {
 
-	@InjectMocks
 	Facade facade;
 
-	@Mock
 	RabbitTemplate rabbitTemplate;
 
-	@Mock
 	HttpMapper<RabbitRoute> mapper;
 
 	OINKResponseMessage mockResponseMessage;
 
 	@Before
+	@SuppressWarnings("unchecked") 
 	public void setUp() {
-		MockitoAnnotations.initMocks(this);
+		mapper = mock(HttpMapper.class);
+		rabbitTemplate = mock(RabbitTemplate.class);
+		facade = new Facade(mapper, "");
+		facade.setTemplate(rabbitTemplate);
 	}
 	
 	

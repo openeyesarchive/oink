@@ -10,6 +10,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -18,8 +20,14 @@ import org.hl7.fhir.instance.formats.JsonComposer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.AmqpConnectException;
+import org.springframework.amqp.core.Queue;
+import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
+import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
+import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.support.ReplaceOverride;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.HandlerMapping;
@@ -56,20 +64,47 @@ import uk.org.openeyes.oink.messaging.RabbitRoute;
 public class Facade implements Controller {
 
 	private static final Logger logger = LoggerFactory.getLogger(Facade.class);
-
-	private RabbitTemplate template;
+	
+	private String replyQueueName;
 	private HttpMapper<RabbitRoute> mapper;
-	// private RabbitMapper mapper;
-
 	private Composer hl7JsonComposer;
 
 	@Autowired
 	SimpleUrlHandlerMapping mapping;
-
-	public Facade(RabbitTemplate template, HttpMapper<RabbitRoute> mapper) {
-		this.template = template;
+	
+	@Autowired
+	CachingConnectionFactory rabbitConnectionFactory;
+	
+	@Autowired
+	RabbitAdmin rabbitAdmin;
+	
+	SimpleMessageListenerContainer container;
+	
+	private RabbitTemplate template;
+	
+	public Facade(HttpMapper<RabbitRoute> mapper, String replyQueue) {
+		this.replyQueueName = replyQueue;
 		this.mapper = mapper;
 		hl7JsonComposer = new JsonComposer();
+	}
+	
+	@PostConstruct
+	public void initRabbitTemplate() {
+		template = new RabbitTemplate(rabbitConnectionFactory);
+		template.setMessageConverter(new Jackson2JsonMessageConverter());
+		// A fixed name reply queue is essential for Rabbit Warrens
+		Queue replyQueue = new Queue(replyQueueName);
+		rabbitAdmin.declareQueue(replyQueue);
+		template.setReplyQueue(replyQueue);
+		container = new SimpleMessageListenerContainer(rabbitConnectionFactory);
+		container.setQueues(replyQueue);
+		container.setMessageListener(template);
+		container.start();
+	}
+	
+	@PreDestroy
+	public void stopContainer() {
+		container.stop();
 	}
 
 	/**
@@ -240,5 +275,9 @@ public class Facade implements Controller {
 
 	public final HttpMapper<RabbitRoute> getMapper() {
 		return mapper;
+	}
+	
+	public void setTemplate(RabbitTemplate template) {
+		this.template = template;
 	}
 }
