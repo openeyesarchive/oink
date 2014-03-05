@@ -22,7 +22,7 @@ mvn verify -Dfacade.it.properties=file:/foo.properties -Dsilverlink.it.propertie
 An official OINK release is not possible until all of its dependancies are also officially released. In the meantime you can build and run OINK in its current SNAPSHOT version.
 
 ### Current Dependancies
-- FHIR Java Implementation - Latest snapshot manually installed to local Maven repo
+- [FHIR Java Implementation](http://www.hl7.org/implement/standards/fhir/downloads.html) - Latest snapshot manually installed to local Maven repo
 
 ```
 		<dependency>
@@ -31,7 +31,7 @@ An official OINK release is not possible until all of its dependancies are also 
 			<version>${fhir.version}</version>
 		</dependency>
 ```
-- OpenMaps - Latest snapshot from the oink-refactoring branch installed to local Maven repo
+- [OpenMaps](https://github.com/openmapsoftware/mappingtools) - Latest snapshot from the [oink-refactoring branch](https://github.com/openmapsoftware/mappingtools/tree/oink-refactoring/) installed to local Maven repo
 
 ```
 		<dependency>
@@ -41,6 +41,8 @@ An official OINK release is not possible until all of its dependancies are also 
 			<type>war</type>
 		</dependency>
 ```
+
+NB. Properties ${} are set in parent POM
 
 
 ### How to use OINK
