@@ -38,7 +38,7 @@ public class FacadeTest {
 	public void setUp() {
 		mapper = mock(HttpMapper.class);
 		rabbitTemplate = mock(RabbitTemplate.class);
-		facade = new Facade(mapper, "");
+		facade = new Facade("",mapper, "");
 		facade.setTemplate(rabbitTemplate);
 	}
 	

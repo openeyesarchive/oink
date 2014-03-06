@@ -11,6 +11,14 @@
 	<!-- DispatcherServlet Context: defines this servlet's request-processing 
 		infrastructure -->
 
+	<!-- Properties need to be scanned in each context regardless of hierarchy -->
+	<context:property-placeholder location="${oink.facade.properties}"
+		order="1" ignore-unresolvable="true" ignore-resource-not-found="true" />
+	<context:property-placeholder location="file:environment.properties"
+		order="2" ignore-unresolvable="true" ignore-resource-not-found="true" />
+	<context:property-placeholder order="3"
+		location="classpath:/default.properties" ignore-unresolvable="true" />
+
 	<!-- Instantiate a mapper -->
 	<oink:requestRabbitRouteMapper id="mapper1">
 		<oink:mapping resource="Patient" method="GET"
@@ -25,10 +33,19 @@
 		<beans:property name="mappings">
 			<beans:props>
 				<beans:prop key="/">infoController</beans:prop>
-				<beans:prop key="/silverlink/**">silverlinkFacade</beans:prop>
 			</beans:props>
 		</beans:property>
 	</beans:bean>
+
+	<beans:bean
+		class="uk.org.openeyes.oink.modules.facade.SimpleFacadeHandlerMapping">
+		<beans:constructor-arg>
+			<beans:list>
+				<beans:ref bean="silverlinkFacade" />
+			</beans:list>
+		</beans:constructor-arg>
+	</beans:bean>
+
 
 	<!-- Info controller -->
 	<beans:bean id="infoController"
@@ -36,8 +53,10 @@
 
 	<!-- Instantiate a facade -->
 	<beans:bean id="silverlinkFacade" class="uk.org.openeyes.oink.modules.facade.Facade">
+		<beans:constructor-arg name="service" value="silverlink" />
 		<beans:constructor-arg name="mapper" ref="mapper1" />
-		<beans:constructor-arg name="replyQueue" value="uk.org.openeyes.oink.facade" />
+		<beans:constructor-arg name="replyQueue"
+			value="uk.org.openeyes.oink.facade" />
 	</beans:bean>
 
 	<!-- Resolves view names to protected .jsp resources within the /WEB-INF/views 

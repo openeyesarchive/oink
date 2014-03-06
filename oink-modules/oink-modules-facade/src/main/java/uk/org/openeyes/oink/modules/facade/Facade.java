@@ -6,6 +6,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,12 +31,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.support.ReplaceOverride;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.servlet.HandlerExecutionChain;
 import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.SimpleUrlHandlerMapping;
 import org.springframework.web.servlet.mvc.Controller;
 
 import com.google.api.client.http.HttpHeaders;
+import com.google.api.client.util.Maps;
 
 import uk.org.openeyes.oink.common.HttpMapper;
 import uk.org.openeyes.oink.domain.OINKBody;
@@ -65,12 +68,10 @@ public class Facade implements Controller {
 
 	private static final Logger logger = LoggerFactory.getLogger(Facade.class);
 	
+	private String service;
 	private String replyQueueName;
 	private HttpMapper<RabbitRoute> mapper;
 	private Composer hl7JsonComposer;
-
-	@Autowired
-	SimpleUrlHandlerMapping mapping;
 	
 	@Autowired
 	CachingConnectionFactory rabbitConnectionFactory;
@@ -82,13 +83,18 @@ public class Facade implements Controller {
 	
 	private RabbitTemplate template;
 	
-	public Facade(HttpMapper<RabbitRoute> mapper, String replyQueue) {
+	public Facade(String service, HttpMapper<RabbitRoute> mapper, String replyQueue) {
+		this.service = service;
 		this.replyQueueName = replyQueue;
 		this.mapper = mapper;
 		hl7JsonComposer = new JsonComposer();
 	}
 	
 	@PostConstruct
+	public void init() {
+		initRabbitTemplate();
+	}
+	
 	public void initRabbitTemplate() {
 		template = new RabbitTemplate(rabbitConnectionFactory);
 		template.setMessageConverter(new Jackson2JsonMessageConverter());
@@ -101,6 +107,7 @@ public class Facade implements Controller {
 		container.setMessageListener(template);
 		container.start();
 	}
+	
 	
 	@PreDestroy
 	public void stopContainer() {
@@ -145,6 +152,10 @@ public class Facade implements Controller {
 			}
 		}
 		return null; // Indicate we have handled the request ourselves
+	}
+	
+	public String getServiceName() {
+		return service;
 	}
 
 	private String getPathWithinHandler(HttpServletRequest servletRequest) {
