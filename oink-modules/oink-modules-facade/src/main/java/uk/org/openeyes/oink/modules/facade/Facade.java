@@ -76,9 +76,6 @@ public class Facade implements Controller {
 	@Autowired
 	CachingConnectionFactory rabbitConnectionFactory;
 	
-	@Autowired
-	RabbitAdmin rabbitAdmin;
-	
 	SimpleMessageListenerContainer container;
 	
 	private RabbitTemplate template;
@@ -100,7 +97,6 @@ public class Facade implements Controller {
 		template.setMessageConverter(new Jackson2JsonMessageConverter());
 		// A fixed name reply queue is essential for Rabbit Warrens
 		Queue replyQueue = new Queue(replyQueueName);
-		rabbitAdmin.declareQueue(replyQueue);
 		template.setReplyQueue(replyQueue);
 		container = new SimpleMessageListenerContainer(rabbitConnectionFactory);
 		container.setQueues(replyQueue);

@@ -18,11 +18,8 @@
 	<context:property-placeholder order="3"
 		location="classpath:/default.properties" ignore-unresolvable="true" />
 
-	<rabbit:admin connection-factory="connectionFactory" />
-
-	<rabbit:connection-factory id="connectionFactory"
+	<rabbit:connection-factory id="connectionFactory" 
 		host="${rabbit.server}" username="${rabbit.user}" password="${rabbit.password}"
-		port="${rabbit.port}" />
-
+		port="${rabbit.port}" virtual-host="${rabbit.vhost}" />
 
 </beans>
