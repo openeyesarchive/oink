@@ -13,7 +13,7 @@
   <name>OpenEyes Integration Kit Samples</name>
   <description>Parent project for building all OINK Deployable Samples</description>
   <modules>
-    <module>oink-samples-facade</module>
+    <module>oink-samples-openeyes</module>
     <module>oink-samples-silverlink</module>
     <module>oink-samples-integration</module>
   </modules>

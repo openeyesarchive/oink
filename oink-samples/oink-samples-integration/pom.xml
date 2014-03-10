@@ -53,7 +53,7 @@
 		</dependency>
 		<dependency>
 			<groupId>uk.org.openeyes.oink.samples</groupId>
-			<artifactId>oink-samples-facade</artifactId>
+			<artifactId>oink-samples-openeyes</artifactId>
 			<version>1.0.0-SNAPSHOT</version>
 			<type>war</type>
 		</dependency>
@@ -104,7 +104,7 @@
 							<artifactItems>
 								<artifactItem>
 									<groupId>uk.org.openeyes.oink.samples</groupId>
-									<artifactId>oink-samples-facade</artifactId>
+									<artifactId>oink-samples-openeyes</artifactId>
 									<type>war</type>
 									<overWrite>true</overWrite>
 									<destFileName>facade-web.war</destFileName>
@@ -139,7 +139,7 @@
 				<version>${maven.failsafe.version}</version>
 				<configuration>
 					<systemPropertyVariables>
-						<oink.facade.properties>${oink.facade.it.properties}</oink.facade.properties>
+						<oink.openeyes.properties>${oink.openeyes.it.properties}</oink.openeyes.properties>
 						<oink.silverlink.properties>${oink.silverlink.it.properties}</oink.silverlink.properties>
 					</systemPropertyVariables>
 				</configuration>
