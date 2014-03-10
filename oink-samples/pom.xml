@@ -10,7 +10,7 @@
   <artifactId>oink-samples</artifactId>
   <version>1.0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
-  <name>OpenEyes Integration Kit Samples</name>
+  <name>OINK Samples</name>
   <description>Parent project for building all OINK Deployable Samples</description>
   <modules>
     <module>oink-samples-openeyes</module>

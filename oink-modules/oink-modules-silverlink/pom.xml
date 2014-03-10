@@ -11,7 +11,7 @@
 	<groupId>uk.org.openeyes.oink</groupId>
 	<artifactId>oink-modules-silverlink</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
-	<name>OpenEyes Integration Kit Silverlink</name>
+	<name>OINK Silverlink</name>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>

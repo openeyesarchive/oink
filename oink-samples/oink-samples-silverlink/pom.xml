@@ -11,8 +11,7 @@
 	<groupId>uk.org.openeyes.oink.samples</groupId>
 	<artifactId>oink-samples-silverlink</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
-	<name>OpenEyes Integration Kit Sample Silverlink Webapp</name>
-	<url>http://maven.apache.org</url>
+	<name>OINK Sample Silverlink PAS Adapter</name>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>

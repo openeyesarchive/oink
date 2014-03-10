@@ -10,7 +10,7 @@
   <artifactId>oink-modules</artifactId>
   <version>1.0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
-  <name>OpenEyes Integration Kit Modules</name>
+  <name>OINK Modules</name>
   <description>Parent project for building all OINK Modules</description>
   <modules>
     <module>oink-modules-web</module>

@@ -10,7 +10,7 @@
   <groupId>uk.org.openeyes.oink</groupId>
   <artifactId>oink-modules-web</artifactId>
   <version>1.0.0-SNAPSHOT</version>
-  <name>OpenEyes Integration Kit Web</name>
+  <name>OINK Web</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>

@@ -6,7 +6,7 @@
 	<artifactId>oink-parent</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
-	<name>OpenEyes Integration Kit Parent</name>
+	<name>OINK Parent</name>
 	<description>Parent project for building all of OINK.</description>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
