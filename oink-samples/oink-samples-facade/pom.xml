@@ -15,11 +15,6 @@
 	<name>OpenEyes Integration Kit Sample Facade Webapp</name>
 	<dependencies>
 		<dependency>
-			<groupId>uk.org.openeyes.oink</groupId>
-			<artifactId>oink-modules-facade</artifactId>
-			<version>1.0.0-SNAPSHOT</version>
-		</dependency>
-		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-webmvc</artifactId>
 			<version>${spring.version}</version>
@@ -48,6 +43,11 @@
 			<groupId>jstl</groupId>
 			<artifactId>jstl</artifactId>
 			<version>1.2</version>
+		</dependency>
+		<dependency>
+			<groupId>uk.org.openeyes.oink</groupId>
+			<artifactId>oink-modules-web</artifactId>
+			<version>1.0.0-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 	<profiles>

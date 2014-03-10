@@ -13,7 +13,7 @@
   <name>OpenEyes Integration Kit Modules</name>
   <description>Parent project for building all OINK Modules</description>
   <modules>
-    <module>oink-modules-facade</module>
+    <module>oink-modules-web</module>
     <module>oink-modules-silverlink</module>
   </modules>
 </project>
