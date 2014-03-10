@@ -6,13 +6,10 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Collections;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -21,30 +18,21 @@ import org.hl7.fhir.instance.formats.JsonComposer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.AmqpConnectException;
-import org.springframework.amqp.core.Queue;
-import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
-import org.springframework.amqp.rabbit.core.RabbitAdmin;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
-import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.support.ReplaceOverride;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.servlet.HandlerExecutionChain;
 import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.handler.SimpleUrlHandlerMapping;
 import org.springframework.web.servlet.mvc.Controller;
 
 import com.google.api.client.http.HttpHeaders;
-import com.google.api.client.util.Maps;
 
 import uk.org.openeyes.oink.common.HttpMapper;
 import uk.org.openeyes.oink.domain.OINKBody;
 import uk.org.openeyes.oink.domain.OINKMessage;
 import uk.org.openeyes.oink.domain.OINKRequestMessage;
 import uk.org.openeyes.oink.domain.OINKResponseMessage;
+import uk.org.openeyes.oink.messaging.OutboundOinkService;
 import uk.org.openeyes.oink.messaging.RabbitRoute;
 
 /**
@@ -68,47 +56,21 @@ public class Facade implements Controller {
 
 	private static final Logger logger = LoggerFactory.getLogger(Facade.class);
 	
-	private String service;
-	private String replyQueueName;
-	private HttpMapper<RabbitRoute> mapper;
-	private Composer hl7JsonComposer;
+	private String facadeServiceName;
+	private HttpMapper<RabbitRoute> resourceToRabbitRouteMapper;
+	private Composer fhirJsonComposer;
 	
 	@Autowired
-	CachingConnectionFactory rabbitConnectionFactory;
+	OutboundOinkService rabbitService;
 	
-	SimpleMessageListenerContainer container;
 	
-	private RabbitTemplate template;
 	
-	public Facade(String service, HttpMapper<RabbitRoute> mapper, String replyQueue) {
-		this.service = service;
-		this.replyQueueName = replyQueue;
-		this.mapper = mapper;
-		hl7JsonComposer = new JsonComposer();
+	public Facade(String service, HttpMapper<RabbitRoute> mapper) {
+		this.facadeServiceName = service;
+		this.resourceToRabbitRouteMapper = mapper;
+		fhirJsonComposer = new JsonComposer();
 	}
 	
-	@PostConstruct
-	public void init() {
-		initRabbitTemplate();
-	}
-	
-	public void initRabbitTemplate() {
-		template = new RabbitTemplate(rabbitConnectionFactory);
-		template.setMessageConverter(new Jackson2JsonMessageConverter());
-		// A fixed name reply queue is essential for Rabbit Warrens
-		Queue replyQueue = new Queue(replyQueueName);
-		template.setReplyQueue(replyQueue);
-		container = new SimpleMessageListenerContainer(rabbitConnectionFactory);
-		container.setQueues(replyQueue);
-		container.setMessageListener(template);
-		container.start();
-	}
-	
-	
-	@PreDestroy
-	public void stopContainer() {
-		container.stop();
-	}
 
 	/**
 	 * @param servletRequest
@@ -132,14 +94,14 @@ public class Facade implements Controller {
 		
 		logger.debug("Received a request for the following resource: "+resource +" via method: " + method);
 
-		RabbitRoute route = mapper.get(resource, method);
+		RabbitRoute route = resourceToRabbitRouteMapper.get(resource, method);
 		if (route == null) {
 			// No mapping was found
 			throw new NoRabbitMappingFoundException(resource, method);
 		} else {
 			// Mapping was found
 			OINKMessage message = buildMessage(servletRequest);
-			OINKResponseMessage response = (OINKResponseMessage) template
+			OINKResponseMessage response = (OINKResponseMessage) rabbitService
 					.convertSendAndReceive(route.getRoutingKey(), message);
 			if (response == null) {
 				throw new RabbitReplyTimeoutException("");
@@ -151,7 +113,7 @@ public class Facade implements Controller {
 	}
 	
 	public String getServiceName() {
-		return service;
+		return facadeServiceName;
 	}
 
 	private String getPathWithinHandler(HttpServletRequest servletRequest) {
@@ -214,10 +176,10 @@ public class Facade implements Controller {
 			if (body != null) {
 				if (body.getFeed() != null) {
 					servletResponse.setContentType("application/json+fhir");
-					hl7JsonComposer.compose(os, body.getFeed(), true);
+					fhirJsonComposer.compose(os, body.getFeed(), true);
 				} else if (body.getResource() != null) {
 					servletResponse.setContentType("application/json+fhir");
-					hl7JsonComposer.compose(os, body.getResource(), true);
+					fhirJsonComposer.compose(os, body.getResource(), true);
 				}
 			}
 		} catch (Exception e) {
@@ -281,10 +243,10 @@ public class Facade implements Controller {
 	}
 
 	public final HttpMapper<RabbitRoute> getMapper() {
-		return mapper;
+		return resourceToRabbitRouteMapper;
 	}
 	
-	public void setTemplate(RabbitTemplate template) {
-		this.template = template;
+	public void setOinkService(OutboundOinkService service) {
+		this.rabbitService = service;
 	}
 }

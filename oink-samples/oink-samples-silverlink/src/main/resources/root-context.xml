@@ -26,22 +26,14 @@
 	<rabbit:connection-factory id="connectionFactory"
 		host="${rabbit.server}" username="${rabbit.user}" password="${rabbit.password}"
 		port="${rabbit.port}" virtual-host="${rabbit.vhost}" />
-
-	<bean id="jsonConverter"
-		class="org.springframework.amqp.support.converter.Jackson2JsonMessageConverter" />
 	
-	<rabbit:admin connection-factory="connectionFactory" />
-	<rabbit:queue id="silverlinkQueue" name="uk.org.openeyes.oink.silverlink" />
-	
-	<!-- Create Rabbit message listener that runs in the background -->
- 	<rabbit:listener-container
-		connection-factory="connectionFactory" message-converter="jsonConverter"
-		concurrency="5">
-		<rabbit:listener queues="silverlinkQueue" ref="silverlinkHandler"
-			method="handle" />
-	</rabbit:listener-container>
+	<bean class="uk.org.openeyes.oink.messaging.InboundOinkService">
+		<constructor-arg name="rabbitConnection" ref="connectionFactory" />
+		<constructor-arg name="rabbitQueueName" value="uk.org.openeyes.oink.silverlink"/>
+		<constructor-arg name="handler" ref="silverlinkHandler"/>
+	</bean>
 
-	<bean id="silverlinkHandler" class="uk.org.openeyes.oink.messaging.RabbitListener">
+	<bean id="silverlinkHandler" class="uk.org.openeyes.oink.messaging.InboundOinkHandler">
 		<constructor-arg name="resourceToChainMatcher" ref="mapper" />
 	</bean>
 
@@ -51,5 +43,7 @@
 		<oink:mapping method="GET" resourcePath="Patient"
 			chainKey="silverlinkPatientFilterChain" />
 	</oink:requestChainKeyMapper>
+	
+	<context:annotation-config/>
 
 </beans>

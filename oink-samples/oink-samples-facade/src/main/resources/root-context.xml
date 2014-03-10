@@ -21,5 +21,12 @@
 	<rabbit:connection-factory id="connectionFactory" 
 		host="${rabbit.server}" username="${rabbit.user}" password="${rabbit.password}"
 		port="${rabbit.port}" virtual-host="${rabbit.vhost}" />
+		
+	<bean id="outOinkService" class="uk.org.openeyes.oink.messaging.OutboundOinkService">
+		<constructor-arg name="rabbitConnection" ref="connectionFactory" />
+		<constructor-arg name="replyQueueName" value="uk.org.openeyes.oink.facade.reply" />
+	</bean>
+	
+	<context:annotation-config />
 
 </beans>

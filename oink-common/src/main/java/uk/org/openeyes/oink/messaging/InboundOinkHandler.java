@@ -3,12 +3,9 @@ package uk.org.openeyes.oink.messaging;
 import org.apache.commons.chain.Command;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
-import org.springframework.stereotype.Component;
-
-import com.google.api.client.http.HttpStatusCodes;
-
 import uk.org.openeyes.oink.common.HttpMapper;
 import uk.org.openeyes.oink.domain.OINKRequestMessage;
 import uk.org.openeyes.oink.domain.OINKResponseMessage;
@@ -25,17 +22,17 @@ import uk.org.openeyes.oink.filterchain.FilterChainContext;
  * @author Oliver Wilkie
  * 
  */
-public class RabbitListener {
+public class InboundOinkHandler {
 
 	private static final Logger logger = LoggerFactory
-			.getLogger(RabbitListener.class);
+			.getLogger(InboundOinkHandler.class);
 
 	private HttpMapper<String> resourceToChainMatcher;
 
 	@Autowired
 	private FilterCatalogue catalogue;
 
-	public RabbitListener(HttpMapper<String> resourceToChainMatcher) {
+	public InboundOinkHandler(HttpMapper<String> resourceToChainMatcher) {
 		this.resourceToChainMatcher = resourceToChainMatcher;
 	}
 
@@ -47,7 +44,7 @@ public class RabbitListener {
 	 * @return the returned response message
 	 * @throws Exception
 	 */
-	public OINKResponseMessage handle(OINKRequestMessage request) {
+	public OINKResponseMessage handleMessage(OINKRequestMessage request) {
 		logger.debug("Recieved an inbound OINK request");
 		// Extract chain key based on Oink Message
 		String chainName = getChainKeyFromOinkMessage(request);

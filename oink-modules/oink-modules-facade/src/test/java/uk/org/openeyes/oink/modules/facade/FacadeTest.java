@@ -4,21 +4,17 @@ import java.io.IOException;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.InjectMocks;
-import static org.mockito.Mock.*;
-import org.mockito.MockitoAnnotations;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.http.HttpMethod;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.servlet.HandlerMapping;
 
-import com.google.api.client.http.HttpHeaders;
 import com.google.api.client.http.HttpStatusCodes;
 
 import uk.org.openeyes.oink.common.HttpMapper;
 import uk.org.openeyes.oink.domain.OINKBody;
 import uk.org.openeyes.oink.domain.OINKResponseMessage;
+import uk.org.openeyes.oink.messaging.OutboundOinkService;
 import uk.org.openeyes.oink.messaging.RabbitRoute;
 import static org.mockito.Mockito.*;
 import static org.junit.Assert.*;
@@ -27,7 +23,7 @@ public class FacadeTest {
 
 	Facade facade;
 
-	RabbitTemplate rabbitTemplate;
+	OutboundOinkService rabbitTemplate;
 
 	HttpMapper<RabbitRoute> mapper;
 
@@ -37,9 +33,9 @@ public class FacadeTest {
 	@SuppressWarnings("unchecked") 
 	public void setUp() {
 		mapper = mock(HttpMapper.class);
-		rabbitTemplate = mock(RabbitTemplate.class);
-		facade = new Facade("",mapper, "");
-		facade.setTemplate(rabbitTemplate);
+		rabbitTemplate = mock(OutboundOinkService.class);
+		facade = new Facade("",mapper);
+		facade.setOinkService(rabbitTemplate);
 	}
 	
 	

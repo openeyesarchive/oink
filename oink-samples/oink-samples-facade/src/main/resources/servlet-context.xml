@@ -55,8 +55,6 @@
 	<beans:bean id="silverlinkFacade" class="uk.org.openeyes.oink.modules.facade.Facade">
 		<beans:constructor-arg name="service" value="silverlink" />
 		<beans:constructor-arg name="mapper" ref="mapper1" />
-		<beans:constructor-arg name="replyQueue"
-			value="uk.org.openeyes.oink.facade" />
 	</beans:bean>
 
 	<!-- Resolves view names to protected .jsp resources within the /WEB-INF/views 

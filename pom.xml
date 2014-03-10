@@ -12,6 +12,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<spring.version>3.1.4.RELEASE</spring.version>
+		<spring.rabbit.version>1.2.1.RELEASE</spring.rabbit.version>
 		<java.version>1.7</java.version>
 		<org.slf4j.version>1.7.5</org.slf4j.version>
 		<log4j.version>1.2.16</log4j.version>
