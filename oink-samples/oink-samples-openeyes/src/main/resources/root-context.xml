@@ -25,6 +25,7 @@
 	<bean id="outOinkService" class="uk.org.openeyes.oink.messaging.OutboundOinkService">
 		<constructor-arg name="rabbitConnection" ref="connectionFactory" />
 		<constructor-arg name="replyQueueName" value="uk.org.openeyes.oink.facade.reply" />
+		<constructor-arg name="exchangeName" value="openeyes.direct" />
 	</bean>
 	
 	<context:annotation-config />
