@@ -23,7 +23,7 @@
 			<version>${junit.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.fhir</groupId>
+			<groupId>org.hl7</groupId>
 			<artifactId>fhir</artifactId>
 			<version>${fhir.version}</version>
 		</dependency>

@@ -43,64 +43,10 @@
 			<version>1.0.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
-			<groupId>org.fhir</groupId>
+			<groupId>org.hl7</groupId>
 			<artifactId>fhir</artifactId>
 			<version>${fhir.version}</version>
 		</dependency>
 	</dependencies>
-	<profiles>
-		<profile>
-			<id>test</id>
-			<build>
-				<plugins>
-					<plugin>
-						<artifactId>maven-antrun-plugin</artifactId>
-						<executions>
-							<execution>
-								<phase>test</phase>
-								<goals>
-									<goal>run</goal>
-								</goals>
-								<configuration>
-									<tasks>
-										<delete
-											file="${project.build.outputDirectory}/environment.properties" />
-										<copy file="src/main/resources/environment.test.properties"
-											tofile="${project.build.outputDirectory}/environment.properties" />
-									</tasks>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-		<profile>
-			<id>prod</id>
-			<build>
-				<plugins>
-					<plugin>
-						<artifactId>maven-antrun-plugin</artifactId>
-						<executions>
-							<execution>
-								<phase>test</phase>
-								<goals>
-									<goal>run</goal>
-								</goals>
-								<configuration>
-									<tasks>
-										<delete
-											file="${project.build.outputDirectory}/environment.properties" />
-										<copy file="src/main/resources/environment.prod.properties"
-											tofile="${project.build.outputDirectory}/environment.properties" />
-									</tasks>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
 	<packaging>war</packaging>
 </project>
