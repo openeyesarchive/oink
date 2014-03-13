@@ -4,11 +4,11 @@
   <parent>
         <artifactId>oink-parent</artifactId>
         <groupId>uk.org.openeyes</groupId>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>0.1-SNAPSHOT</version>
     </parent>
   <groupId>uk.org.openeyes.oink</groupId>
   <artifactId>oink-samples</artifactId>
-  <version>1.0.0-SNAPSHOT</version>
+  <version>0.1-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>OINK Samples</name>
   <description>Parent project for building all OINK Deployable Samples</description>
