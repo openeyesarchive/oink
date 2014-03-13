@@ -38,8 +38,8 @@
 		<module>oink-domain</module>
 	</modules>
 	<scm>
-		<connection>scm:git:https://github.com/openeyes/oink.git</connection>
-		<developerConnection>scm:git:ssh://git@github.com:openeyes/oink.git</developerConnection>
+		<connection>scm:git:git://github.com/openeyes/oink.git</connection>
+		<developerConnection>scm:git:git@github.com:openeyes/oink.git</developerConnection>
 		<url>https://github.com/openeyes/oink.git</url>
 	</scm>
 	<build>
