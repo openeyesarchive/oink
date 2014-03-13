@@ -4,11 +4,11 @@
 	<parent>
 		<groupId>uk.org.openeyes.oink</groupId>
 		<artifactId>oink-samples</artifactId>
-		<version>0.1</version>
+		<version>0.2-SNAPSHOT</version>
 	</parent>
 	<groupId>uk.org.openeyes.oink.samples</groupId>
 	<artifactId>oink-samples-openeyes</artifactId>
-	<version>0.1</version>
+	<version>0.2-SNAPSHOT</version>
 	<packaging>war</packaging>
 	<name>OINK Sample Openeyes Adapter</name>
 	<dependencies>
@@ -45,7 +45,7 @@
 		<dependency>
 			<groupId>uk.org.openeyes.oink</groupId>
 			<artifactId>oink-modules-web</artifactId>
-			<version>0.1</version>
+			<version>0.2-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 	<profiles>

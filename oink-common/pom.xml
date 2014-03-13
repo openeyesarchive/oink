@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>uk.org.openeyes</groupId>
 		<artifactId>oink-parent</artifactId>
-		<version>0.1</version>
+		<version>0.2-SNAPSHOT</version>
 	</parent>
 	<artifactId>oink-common</artifactId>
 	<name>OINK Common</name>
@@ -98,7 +98,7 @@
 		<dependency>
 			<groupId>uk.org.openeyes.oink</groupId>
 			<artifactId>oink-domain</artifactId>
-			<version>0.1</version>
+			<version>0.2-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>

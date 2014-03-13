@@ -4,11 +4,11 @@
 	<parent>
 		<groupId>uk.org.openeyes</groupId>
 		<artifactId>oink-parent</artifactId>
-		<version>0.1</version>
+		<version>0.2-SNAPSHOT</version>
 	</parent>
 	<groupId>uk.org.openeyes.oink</groupId>
 	<artifactId>oink-domain</artifactId>
-	<version>0.1</version>
+	<version>0.2-SNAPSHOT</version>
 	<name>OINK Domain</name>
 	<url>http://maven.apache.org</url>
 	<properties>
