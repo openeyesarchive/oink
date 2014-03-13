@@ -4,11 +4,11 @@
 	<parent>
 		<groupId>uk.org.openeyes.oink</groupId>
 		<artifactId>oink-samples</artifactId>
-		<version>0.1-SNAPSHOT</version>
+		<version>0.1</version>
 	</parent>
 	<groupId>uk.org.openeyes.oink.samples</groupId>
 	<artifactId>oink-samples-silverlink</artifactId>
-	<version>0.1-SNAPSHOT</version>
+	<version>0.1</version>
 	<name>OINK Sample Silverlink PAS Adapter</name>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -28,17 +28,17 @@
 		<dependency>
 			<groupId>uk.org.openeyes.oink</groupId>
 			<artifactId>oink-domain</artifactId>
-			<version>0.1-SNAPSHOT</version>
+			<version>0.1</version>
 		</dependency>
 		<dependency>
 			<groupId>uk.org.openeyes.oink</groupId>
 			<artifactId>oink-modules-silverlink</artifactId>
-			<version>0.1-SNAPSHOT</version>
+			<version>0.1</version>
 		</dependency>
 		<dependency>
 			<groupId>uk.org.openeyes</groupId>
 			<artifactId>oink-common</artifactId>
-			<version>0.1-SNAPSHOT</version>
+			<version>0.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.hl7</groupId>
