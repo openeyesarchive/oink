@@ -6,11 +6,11 @@ import java.util.List;
 
 import org.javatuples.Triplet;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.springframework.http.HttpMethod;
 import org.springframework.util.xml.DomUtils;
 import org.w3c.dom.Element;
 
 import uk.org.openeyes.oink.common.HttpMapper;
+import uk.org.openeyes.oink.domain.HttpMethod;
 import uk.org.openeyes.oink.messaging.RabbitRoute;
 
 public class RequestRabbitMapperBeanDefinitionParser extends RequestMapperBeanDefinitionParser {

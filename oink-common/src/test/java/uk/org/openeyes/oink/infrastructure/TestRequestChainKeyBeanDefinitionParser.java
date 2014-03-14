@@ -3,7 +3,8 @@ package uk.org.openeyes.oink.infrastructure;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
-import org.springframework.http.HttpMethod;
+
+import uk.org.openeyes.oink.domain.HttpMethod;
 
 public class TestRequestChainKeyBeanDefinitionParser {
 

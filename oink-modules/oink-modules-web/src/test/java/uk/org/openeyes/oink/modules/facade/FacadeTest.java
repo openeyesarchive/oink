@@ -4,7 +4,6 @@ import java.io.IOException;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.http.HttpMethod;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.servlet.HandlerMapping;
@@ -12,6 +11,7 @@ import org.springframework.web.servlet.HandlerMapping;
 import com.google.api.client.http.HttpStatusCodes;
 
 import uk.org.openeyes.oink.common.HttpMapper;
+import uk.org.openeyes.oink.domain.HttpMethod;
 import uk.org.openeyes.oink.domain.OINKBody;
 import uk.org.openeyes.oink.domain.OINKResponseMessage;
 import uk.org.openeyes.oink.messaging.OutboundOinkService;

@@ -8,7 +8,8 @@ import java.util.regex.Pattern;
 import org.javatuples.Pair;
 import org.javatuples.Triplet;
 import org.javatuples.Tuple;
-import org.springframework.http.HttpMethod;
+
+import uk.org.openeyes.oink.domain.HttpMethod;
 
 //TODO Make class for a resource path instead of a plain string
 

@@ -1,6 +1,6 @@
 package uk.org.openeyes.oink.modules.facade;
 
-import org.springframework.http.HttpMethod;
+import uk.org.openeyes.oink.domain.HttpMethod;
 
 public class NoRabbitMappingFoundException extends Exception {
 

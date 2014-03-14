@@ -3,9 +3,9 @@ package uk.org.openeyes.oink.common;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
-import org.springframework.http.HttpMethod;
 
 import uk.org.openeyes.oink.common.HttpMapper;
+import uk.org.openeyes.oink.domain.HttpMethod;
 
 public class TestHttpMapper {
 	
