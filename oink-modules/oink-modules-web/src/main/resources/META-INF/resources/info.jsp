@@ -4,16 +4,12 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>OINK Facade Module</title>
+<title>OINK REST Interface</title>
 </head>
 <body>
 	<center>
-		<h1>OINK Facade Module</h1>
-		<p>
-			<%
-				Date date = new Date();
-				out.print(date.toString());
-			%>
+		<h1>OINK Web Module</h1>
+		<p>The time on the server is ${serverTime}.
 		</p>
 		<c:if test="${not empty oinkVersion}">
 			<p>Version ${oinkVersion}</p>
@@ -22,9 +18,8 @@
 	<p></p>
 	<h2>Overview</h2>
 	<p>
-		This is a fhir adapter to the OINK System that allows <a
-			href="http://www.openeyes.org.uk">OpenEyes</a> to interact with other
-		components using OINK by making FHIR requests.
+		This is a REST interface to the OINK System that allows third party REST clients to interact with other
+		systems over OINK using <a href="http://www.hl7.org/implement/standards/fhir/http.html">FHIR requests.</a>
 	</p>
 
 	<h2>Configured Services</h2>
