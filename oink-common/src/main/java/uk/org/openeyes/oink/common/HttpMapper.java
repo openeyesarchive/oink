@@ -129,7 +129,7 @@ public class HttpMapper<T> {
 	}
 	
 	private boolean checkMethodMath(HttpMethod methodInMap, HttpMethod method) {
-		if (methodInMap == null) {
+		if (methodInMap == null || methodInMap == HttpMethod.ANY) {
 			// Treat as wildcard
 			return true;
 		} else {

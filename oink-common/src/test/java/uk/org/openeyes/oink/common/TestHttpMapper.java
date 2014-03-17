@@ -44,5 +44,14 @@ public class TestHttpMapper {
 		assertEquals(Integer.valueOf(6), matcher.get("Patient/Bob", HttpMethod.GET));
 		assertEquals(Integer.valueOf(5), matcher.get("Patient/B", HttpMethod.GET));
 	}
+	
+	@Test
+	public void testSingleEntryWithSingleAsterix() {
+		HttpMapper.Builder<Integer> builder = new HttpMapper.Builder<Integer>();
+		builder.addMapping("*", HttpMethod.ANY, 2);
+		HttpMapper<Integer> matcher = builder.build();
+		assertEquals(Integer.valueOf(2), matcher.get("Foo", HttpMethod.GET));
+		assertEquals(Integer.valueOf(2), matcher.get("Foo/Bar", HttpMethod.POST));
+	}
 
 }
