@@ -15,7 +15,11 @@
 		<java.version>1.7</java.version>
 		<org.slf4j.version>1.7.5</org.slf4j.version>
 		<log4j.version>1.2.16</log4j.version>
+		<org.aspectj.version>1.6.10</org.aspectj.version>
 		<junit.version>4.11</junit.version>
+		<servlet.version>3.0.1</servlet.version>
+		<jsp.version>2.1</jsp.version>
+		<jstl.version>1.2</jstl.version>
 		<commonschain.version>1.2</commonschain.version>
 		<spring.rabbit.version>1.2.1.RELEASE</spring.rabbit.version>
 		<jackson.version>2.0.0</jackson.version>
@@ -35,7 +39,8 @@
 		<module>oink-modules</module>
 		<module>oink-samples</module>
 		<module>oink-domain</module>
-	</modules>
+    <module>oink-archetype-web</module>
+  </modules>
 	<scm>
 		<connection>scm:git:git://github.com/openeyes/oink.git</connection>
 		<developerConnection>scm:git:git@github.com:openeyes/oink.git</developerConnection>
