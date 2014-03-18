@@ -224,7 +224,7 @@ public class Facade implements Controller {
 			headers.set(headerName, headerValues);
 		}
 
-		return new OINKRequestMessage(destUrl, method, params, null);
+		return new OINKRequestMessage(getServiceName(), destUrl, method, params, null);
 	}
 
 	public static Map<String, String> splitQuery(String query)

@@ -12,6 +12,7 @@ import java.util.Map;
  */
 public class OINKRequestMessage extends OINKMessage {
 
+	private String destination;
 	private String fhirResourcePath; // Portion of the original FHIR URL
 										// following [base]. No leading slash.
 	private String method; // HTTP Request Method e.g. GET, POST
@@ -23,11 +24,20 @@ public class OINKRequestMessage extends OINKMessage {
 		this.parameters = new HashMap<String, String>();
 	}
 
-	public OINKRequestMessage(String resourcePath, String method, Map<String, String> params, OINKBody body) {
+	public OINKRequestMessage(String destination, String resourcePath, String method, Map<String, String> params, OINKBody body) {
+		this.destination = destination;
 		this.fhirResourcePath = resourcePath;
 		this.method = method;
 		this.body = body;
 		this.parameters = params;
+	}
+	
+	public String getDestination() {
+		return destination;
+	}
+	
+	public void setDestination(String destination) {
+		this.destination = destination;
 	}
 
 	public String getResourcePath() {
@@ -77,6 +87,7 @@ public class OINKRequestMessage extends OINKMessage {
 		result = prime
 				* result
 				+ ((fhirResourcePath == null) ? 0 : fhirResourcePath.hashCode());
+		result = prime * result + ((destination == null) ? 0 : destination.hashCode());
 		return result;
 	}
 
@@ -98,6 +109,12 @@ public class OINKRequestMessage extends OINKMessage {
 				return false;
 		} else if (!fhirResourcePath.equals(other.fhirResourcePath))
 			return false;
+		if (destination == null) {
+			if (other.destination != null)
+				return false;
+		} else if (!destination.equals(other.destination)) {
+			return false;
+		}
 		return true;
 	}
 

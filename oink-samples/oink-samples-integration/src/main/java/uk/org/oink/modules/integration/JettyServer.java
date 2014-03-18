@@ -61,7 +61,7 @@ public class JettyServer {
 			throws NamingException {
 		EnvEntry wiggle = new EnvEntry(server, key, value, false);
 	}
-
+	
 	private static String resolveWarPath(String war) {
 		File file = new File(war);
 		if (!file.exists()) {
