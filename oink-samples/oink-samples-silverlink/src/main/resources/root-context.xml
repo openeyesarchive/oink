@@ -16,9 +16,6 @@
 		base-package="uk.org.openeyes.oink.filterchain, uk.org.openeyes.oink.modules.silverlink.filter" />
 	
 	<context:property-placeholder order="0" ignore-unresolvable="true" ignore-resource-not-found="true" />
-	<context:property-placeholder location="${oink.silverlink.properties}"
-		order="1" ignore-unresolvable="true" ignore-resource-not-found="true" />
-	<context:property-placeholder location="file:environment.properties" order="2" ignore-unresolvable="true" ignore-resource-not-found="true" />
 	<context:property-placeholder order="3"
 		location="classpath:/default.properties" ignore-unresolvable="true" />
 
@@ -29,20 +26,13 @@
 	
 	<bean class="uk.org.openeyes.oink.messaging.InboundOinkService">
 		<constructor-arg name="rabbitConnection" ref="connectionFactory" />
-		<constructor-arg name="rabbitQueueName" value="uk.org.openeyes.oink.silverlink"/>
+		<constructor-arg name="rabbitQueueName" value="${rabbit.queue}"/>
 		<constructor-arg name="handler" ref="silverlinkHandler"/>
 	</bean>
 
-	<bean id="silverlinkHandler" class="uk.org.openeyes.oink.messaging.InboundOinkHandler">
+	<bean id="silverlinkHandler" class="uk.org.openeyes.oink.messaging.FilterChainInboundOinkHandler">
 		<constructor-arg name="resourceToChainMatcher" ref="mapper" />
 	</bean>
-
-	<oink:requestChainKeyMapper id="mapper">
-		<oink:mapping method="GET" resourcePath="Patient/*"
-			chainKey="silverlinkPatientFilterChain" />
-		<oink:mapping method="GET" resourcePath="Patient"
-			chainKey="silverlinkPatientFilterChain" />
-	</oink:requestChainKeyMapper>
 	
 	<context:annotation-config/>
 
