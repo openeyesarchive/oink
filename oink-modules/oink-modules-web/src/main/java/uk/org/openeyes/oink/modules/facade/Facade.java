@@ -49,28 +49,29 @@ import uk.org.openeyes.oink.messaging.RabbitRoute;
  * maps to this Facade controller The rest of the request i.e. /[type]/[id]
  * serves as a key that is looked up in the mapper for this Facade.
  * 
+ * At the moment all incoming REST requests will expect an RPC reply from a
+ * Rabbit message consumer. For example, a POST will expect a consumer to
+ * response with a CREATED code.
+ * 
  * @author Oliver Wilkie
  * 
  */
 public class Facade implements Controller {
 
 	private static final Logger logger = LoggerFactory.getLogger(Facade.class);
-	
+
 	private String facadeServiceName;
 	private HttpMapper<RabbitRoute> resourceToRabbitRouteMapper;
 	private Composer fhirJsonComposer;
-	
+
 	@Autowired
 	OutboundOinkService rabbitService;
-	
-	
-	
+
 	public Facade(String service, HttpMapper<RabbitRoute> mapper) {
 		this.facadeServiceName = service;
 		this.resourceToRabbitRouteMapper = mapper;
 		fhirJsonComposer = new JsonComposer();
 	}
-	
 
 	/**
 	 * @param servletRequest
@@ -91,8 +92,9 @@ public class Facade implements Controller {
 
 		// Get the request method type
 		HttpMethod method = HttpMethod.valueOf(servletRequest.getMethod()); // GET
-		
-		logger.debug("Received a request for the following resource: "+resource +" via method: " + method);
+
+		logger.debug("Received a request for the following resource: "
+				+ resource + " via method: " + method);
 
 		RabbitRoute route = resourceToRabbitRouteMapper.get(resource, method);
 		if (route == null) {
@@ -111,7 +113,7 @@ public class Facade implements Controller {
 		}
 		return null; // Indicate we have handled the request ourselves
 	}
-	
+
 	public String getServiceName() {
 		return facadeServiceName;
 	}
@@ -224,7 +226,8 @@ public class Facade implements Controller {
 			headers.set(headerName, headerValues);
 		}
 
-		return new OINKRequestMessage(getServiceName(), destUrl, method, params, null);
+		return new OINKRequestMessage(getServiceName(), destUrl, method,
+				params, null);
 	}
 
 	public static Map<String, String> splitQuery(String query)
@@ -245,7 +248,7 @@ public class Facade implements Controller {
 	public final HttpMapper<RabbitRoute> getMapper() {
 		return resourceToRabbitRouteMapper;
 	}
-	
+
 	public void setOinkService(OutboundOinkService service) {
 		this.rabbitService = service;
 	}

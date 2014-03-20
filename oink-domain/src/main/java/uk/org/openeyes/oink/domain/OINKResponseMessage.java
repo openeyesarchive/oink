@@ -2,11 +2,11 @@ package uk.org.openeyes.oink.domain;
 
 public class OINKResponseMessage extends OINKMessage {
 
-	int status;
-	OINKBody body;
+	private int status; // Same as HTTP Codes
+	private OINKBody body;
 
 	public OINKResponseMessage() {
-
+		body = new OINKBody();
 	}
 
 	public OINKResponseMessage(int status,
