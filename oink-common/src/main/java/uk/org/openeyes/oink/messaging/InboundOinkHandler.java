@@ -32,7 +32,7 @@ public abstract class InboundOinkHandler {
 	
 	public OINKResponseMessage handleMessage(InvalidOinkMessageException e) {
 		logger.warn("Message recieved is not an OINK message");
-		return new OINKResponseMessage(HttpStatus.SC_UNPROCESSABLE_ENTITY, null);
+		return new OINKResponseMessage(HttpStatus.SC_UNPROCESSABLE_ENTITY);
 	}
 
 }
