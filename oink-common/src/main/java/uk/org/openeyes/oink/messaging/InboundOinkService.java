@@ -22,7 +22,7 @@ public class InboundOinkService {
 		container.setChannelTransacted(true);	// Forces messages to be acknowledged
 		container.setAcknowledgeMode(AcknowledgeMode.AUTO); // the container will acknowledge the message automatically, unless the MessageListener throws an exception.
 		listenerAdapter = new MessageListenerAdapter();
-		listenerAdapter.setMessageConverter(new Jackson2JsonMessageConverter());
+		listenerAdapter.setMessageConverter(new OinkMessageConverter());
 		listenerAdapter.setDelegate(handler);
 		container.setMessageListener(listenerAdapter);
 	}

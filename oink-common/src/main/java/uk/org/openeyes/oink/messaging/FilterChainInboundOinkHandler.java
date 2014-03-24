@@ -23,7 +23,7 @@ import uk.org.openeyes.oink.filterchain.FilterChainContext;
  * @author Oliver Wilkie
  * 
  */
-public class FilterChainInboundOinkHandler implements InboundOinkHandler {
+public class FilterChainInboundOinkHandler extends InboundOinkHandler {
 
 	private static final Logger logger = LoggerFactory
 			.getLogger(FilterChainInboundOinkHandler.class);
