@@ -6,14 +6,21 @@ public class OINKResponseMessage extends OINKMessage {
 	private OINKBody body;
 
 	public OINKResponseMessage() {
-		body = new OINKBody();
+		this.body = new OINKBody();
 	}
 
+	public OINKResponseMessage(int status) {
+		this.status = status;
+		this.body = new OINKBody();
+	}
+	
 	public OINKResponseMessage(int status,
 			OINKBody body) {
 		this.status = status;
 		if (body != null) {
 			this.body = body;
+		} else {
+			this.body = new OINKBody();
 		}
 	}
 
