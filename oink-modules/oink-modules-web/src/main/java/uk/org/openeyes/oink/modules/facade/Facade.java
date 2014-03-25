@@ -60,17 +60,27 @@ public class Facade implements Controller {
 
 	private static final Logger logger = LoggerFactory.getLogger(Facade.class);
 
-	private String facadeServiceName;
+	private final String facadeServiceName;
 	private HttpMapper<RabbitRoute> resourceToRabbitRouteMapper;
 	private Composer fhirJsonComposer;
 
 	@Autowired
 	OutboundOinkService rabbitService;
 
+	public Facade(HttpMapper<RabbitRoute> mapper) {
+		this.facadeServiceName = null;
+		this.resourceToRabbitRouteMapper = mapper;
+		fhirJsonComposer = new JsonComposer();
+	}
+
 	public Facade(String service, HttpMapper<RabbitRoute> mapper) {
 		this.facadeServiceName = service;
 		this.resourceToRabbitRouteMapper = mapper;
 		fhirJsonComposer = new JsonComposer();
+	}
+
+	public boolean hasServiceName() {
+		return facadeServiceName != null && !facadeServiceName.isEmpty();
 	}
 
 	/**
@@ -93,8 +103,11 @@ public class Facade implements Controller {
 		// Get the request method type
 		HttpMethod method = HttpMethod.valueOf(servletRequest.getMethod()); // GET
 
-		logger.debug("Received a request for the following resource: "
-				+ resource + " via method: " + method);
+		String infoMessage = String.format(
+				"Facade (%s) received a request for resource: %s , method: %s",
+				(hasServiceName()) ? facadeServiceName : "root", resource,
+				method);
+		logger.debug(infoMessage);
 
 		RabbitRoute route = resourceToRabbitRouteMapper.get(resource, method);
 		if (route == null) {
@@ -233,7 +246,7 @@ public class Facade implements Controller {
 	public static Map<String, String> splitQuery(String query)
 			throws UnsupportedEncodingException {
 		Map<String, String> query_pairs = new LinkedHashMap<String, String>();
-		if (query.isEmpty()) {
+		if (query == null || query.isEmpty()) {
 			return query_pairs;
 		}
 		String[] pairs = query.split("&");
