@@ -3,6 +3,8 @@ package uk.org.openeyes.oink.modules.facade.info;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -10,6 +12,7 @@ import java.util.Map.Entry;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.javatuples.Pair;
 import org.springframework.amqp.AmqpException;
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.Connection;
@@ -20,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
+import uk.org.openeyes.oink.domain.HttpMethod;
 import uk.org.openeyes.oink.modules.facade.Facade;
 import uk.org.openeyes.oink.modules.facade.SimpleFacadeHandlerMapping;
 
@@ -72,24 +76,17 @@ public class InfoController {
 
 		// put rabbit management port
 		model.put("rabbitManagementPort", rabbitManagementPort);
-
-		// put servlet path
-		String contextPath = request.getContextPath();
-		String servletPath = request.getServletPath();
-		String path = contextPath + servletPath;
-		model.put("servletPath", path);
-
-		Map<String, ?> handlerMap = facadeMapping.getUrlMap();
-		Map<String, String> facadesInfo = new HashMap<String, String>();
-		for (Entry<String, ?> entry : handlerMap.entrySet()) {
-			String url = entry.getKey();
-			String relUrl = contextPath + servletPath + url;
-			relUrl = relUrl.replace("//", "/"); // TODO Improve
-			Facade f = (Facade) entry.getValue();
-			String serviceName = f.getServiceName();
-			facadesInfo.put(serviceName, relUrl);
+		
+		List<Facade> facades = facadeMapping.getMappedFacades();
+		List<Pair<String, HttpMethod>> exposedResources = new LinkedList<>();
+		for (Facade f : facades) {
+			List<Pair<String, HttpMethod>> resources = f.getResources();
+			for (Pair<String, HttpMethod> resource : resources) {
+				String facadeBase = f.hasServiceName() ? "/"+f.getServiceName()+"/" : "/";
+				exposedResources.add(new Pair<String, HttpMethod>(facadeBase+resource.getValue0(), resource.getValue1()));
+			}
 		}
-		model.put("servicePaths", facadesInfo);
+		model.put("exposedResources", exposedResources);
 
 		return new ModelAndView("info.jsp", model);
 	}

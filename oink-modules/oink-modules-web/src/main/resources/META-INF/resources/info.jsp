@@ -23,16 +23,16 @@
 	</p>
 
 	<h2>Configured Services</h2>
-	<p>Facades are currently exposed for the following services:</p>
+	<p>The following Resources are currently exposed from the base ${pageContext.request.contextPath}:</p>
 	<table>
 		<tr>
-			<th>Service Name</th>
-			<th>Relative Path</th>
+			<th>URL</th>
+			<th>HTTP Verb</th>
 		</tr>
-		<c:forEach items="${servicePaths}" var="servicePath">
+		<c:forEach items="${exposedResources}" var="resource">
 			<tr>
-				<td>${servicePath.key}</td>
-				<td><a href="<c:url value="${servicePath.value}"/>">${servicePath.value}</a></td>
+				<td><a href="<c:url value="${resource.value0}"/>">${resource.value0}</a></td>
+				<td><c:out value="${resource.value1}"/></td>
 			</tr>
 		</c:forEach>
 	</table>

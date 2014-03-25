@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.hl7.fhir.instance.formats.Composer;
 import org.hl7.fhir.instance.formats.JsonComposer;
+import org.javatuples.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.AmqpConnectException;
@@ -261,6 +262,11 @@ public class Facade implements Controller {
 	public final HttpMapper<RabbitRoute> getMapper() {
 		return resourceToRabbitRouteMapper;
 	}
+	
+	public List<Pair<String, HttpMethod>> getResources() {
+		return resourceToRabbitRouteMapper.getHttpKey();
+	}
+
 
 	public void setOinkService(OutboundOinkService service) {
 		this.rabbitService = service;
