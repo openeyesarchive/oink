@@ -19,6 +19,7 @@ import org.javatuples.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.AmqpConnectException;
+import org.springframework.amqp.AmqpException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.HandlerMapping;
@@ -262,8 +263,17 @@ public abstract class Facade implements Controller {
 	public ModelAndView handleRabbitReplyTimeoutException(
 			RabbitReplyTimeoutException ex, HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
+		response.sendError(HttpServletResponse.SC_ACCEPTED);
+		logger.warn("The request was pushed onto the Rabbit broker system but no response was returned in time. The request might or might not eventually be acted upon.");
+		return new ModelAndView();
+	}
+	
+	@ExceptionHandler(AmqpException.class)
+	public ModelAndView handleAmqpException(AmqpConnectException ex,
+			HttpServletRequest request, HttpServletResponse response)
+			throws Exception {
 		response.sendError(HttpServletResponse.SC_BAD_GATEWAY);
-		logger.error("The Service on the other side of OINK did not reply in time");
+		logger.error("An error occured pushing placing the request on the Rabbit broker system");
 		return new ModelAndView();
 	}
 
