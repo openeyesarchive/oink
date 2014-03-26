@@ -23,7 +23,7 @@
 	</p>
 
 	<h2>Configured Services</h2>
-	<p>The following Resources are currently exposed from the base ${pageContext.request.contextPath}:</p>
+	<p>The following Resources are currently exposed from the base ${pageContext.request.contextPath} :</p>
 	<table>
 		<tr>
 			<th>URL</th>
