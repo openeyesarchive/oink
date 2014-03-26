@@ -44,7 +44,7 @@
 
 
 	<!-- Instantiate a facade -->
-	<beans:bean id="silverlinkFacade" class="uk.org.openeyes.oink.modules.facade.Facade">
+	<beans:bean id="silverlinkFacade" class="uk.org.openeyes.oink.modules.facade.ServiceFacade">
 		<beans:constructor-arg name="service" value="silverlink" />
 		<beans:constructor-arg name="mapper" ref="mapper1" />
 	</beans:bean>
