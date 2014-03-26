@@ -14,6 +14,11 @@ public class RabbitRoute {
 		this.exchange = exchange;
 	}
 	
+	public RabbitRoute(RabbitRoute other) {
+		this.routingKey = other.getRoutingKey();
+		this.exchange = other.getExchange();
+	}
+	
 	public String getRoutingKey() {
 		return routingKey;
 	}

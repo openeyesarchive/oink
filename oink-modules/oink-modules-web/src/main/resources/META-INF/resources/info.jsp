@@ -36,6 +36,7 @@
 			</tr>
 		</c:forEach>
 	</table>
+	<small>Replace the * with a Service Destination</small>
 	<small>Replace the ** with a FHIR Resource</small>
 
 	<h2>RabbitMQ Information</h2>

@@ -34,7 +34,7 @@ public class FacadeTest {
 	public void setUp() {
 		mapper = mock(HttpMapper.class);
 		rabbitTemplate = mock(OutboundOinkService.class);
-		facade = new Facade("",mapper);
+		facade = new ServiceFacade("",mapper);
 		facade.setOinkService(rabbitTemplate);
 	}
 	

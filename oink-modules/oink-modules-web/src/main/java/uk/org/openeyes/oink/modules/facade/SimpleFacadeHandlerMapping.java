@@ -37,11 +37,7 @@ public class SimpleFacadeHandlerMapping extends SimpleUrlHandlerMapping {
 		Map<String, Object> mappings = new HashMap<String, Object>();
 		for (Facade facade : facades) {
 			StringBuilder facadeBaseSb = new StringBuilder();
-			facadeBaseSb.append("/");
-			if (facade.hasServiceName()) {
-				facadeBaseSb.append(facade.getServiceName());
-				facadeBaseSb.append("/");
-			}
+			facadeBaseSb.append(facade.getFhirBase());
 			facadeBaseSb.append("**");
 			if (mappings.containsKey(facadeBaseSb.toString())) {
 				logger.error("Tried to register a Facade but there is already a Facade registered with the same mapping");

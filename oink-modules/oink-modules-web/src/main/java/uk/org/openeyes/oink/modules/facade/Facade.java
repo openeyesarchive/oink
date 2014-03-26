@@ -38,17 +38,17 @@ import uk.org.openeyes.oink.messaging.RabbitRoute;
 
 /**
  * 
+ * A RESTful Gateway to OINK infrastrucure.
+ * 
  * Takes incoming REST requests and forwards them onwards as RabbitMQ messages.
- * RabbitMQ responses are then mapped to REST responses. Each Facade has a
- * {@link RabbitMapper} which acts as a dictionary to match incoming requests to
- * rabbit routes. Returns 404 if no mapping exists for incoming request
+ * The Facade then waits for a set period of time for a response RabbitMQ
+ * message which is then returned as an HTTP response. 
  * 
- * Incoming requests to the Facade Server take the following format OPERATION
- * [base]/[type]/[id] {?_format=[mime-type]}
+ * Each Facade has a {@link RabbitMapper} which
+ * acts as a dictionary to match incoming FHIR requests to rabbit routes. 
+ * Returns 404 if no mapping exists for incoming request
  * 
- * OPERATION is GET/PUT/DELETE/POST [base] is the leading part of the URL that
- * maps to this Facade controller The rest of the request i.e. /[type]/[id]
- * serves as a key that is looked up in the mapper for this Facade.
+ * See implementations for examples of requests.
  * 
  * At the moment all incoming REST requests will expect an RPC reply from a
  * Rabbit message consumer. For example, a POST will expect a consumer to
@@ -57,31 +57,34 @@ import uk.org.openeyes.oink.messaging.RabbitRoute;
  * @author Oliver Wilkie
  * 
  */
-public class Facade implements Controller {
+public abstract class Facade implements Controller {
 
 	private static final Logger logger = LoggerFactory.getLogger(Facade.class);
 
-	private final String facadeServiceName;
-	private HttpMapper<RabbitRoute> resourceToRabbitRouteMapper;
-	private Composer fhirJsonComposer;
+	protected HttpMapper<RabbitRoute> resourceToRabbitRouteMapper;
+	private final Composer fhirJsonComposer = new JsonComposer();
 
 	@Autowired
 	OutboundOinkService rabbitService;
 
 	public Facade(HttpMapper<RabbitRoute> mapper) {
-		this.facadeServiceName = null;
 		this.resourceToRabbitRouteMapper = mapper;
-		fhirJsonComposer = new JsonComposer();
 	}
 
-	public Facade(String service, HttpMapper<RabbitRoute> mapper) {
-		this.facadeServiceName = service;
-		this.resourceToRabbitRouteMapper = mapper;
-		fhirJsonComposer = new JsonComposer();
-	}
+	/**
+	 * Returns the portion of the path between the application context name and
+	 * the start of a FHIR resource
+	 * 
+	 * @return
+	 */
+	public abstract String getFhirBase();
 
-	public boolean hasServiceName() {
-		return facadeServiceName != null && !facadeServiceName.isEmpty();
+	protected abstract String getDestinationService(
+			HttpServletRequest servletRequest);
+
+	public RabbitRoute getRoute(String resource, HttpMethod method,
+			HttpServletRequest servletRequest) {
+		return resourceToRabbitRouteMapper.get(resource, method);
 	}
 
 	/**
@@ -99,18 +102,17 @@ public class Facade implements Controller {
 			throws NoRabbitMappingFoundException, RabbitReplyTimeoutException,
 			IOException {
 		// Obtain the path relative to this controller
-		String resource = getPathWithinHandler(servletRequest);
+		String resource = getFhirPartFromPath(servletRequest);
 
 		// Get the request method type
 		HttpMethod method = HttpMethod.valueOf(servletRequest.getMethod()); // GET
 
-		String infoMessage = String.format(
-				"Facade (%s) received a request for resource: %s , method: %s",
-				(hasServiceName()) ? facadeServiceName : "root", resource,
-				method);
+		String infoMessage = String
+				.format("Facade with FHIR base %s received a request for resource: %s , method: %s",
+						getFhirBase(), resource, method);
 		logger.debug(infoMessage);
 
-		RabbitRoute route = resourceToRabbitRouteMapper.get(resource, method);
+		RabbitRoute route = getRoute(resource, method, servletRequest);
 		if (route == null) {
 			// No mapping was found
 			throw new NoRabbitMappingFoundException(resource, method);
@@ -128,49 +130,13 @@ public class Facade implements Controller {
 		return null; // Indicate we have handled the request ourselves
 	}
 
-	public String getServiceName() {
-		return facadeServiceName;
-	}
-
 	private String getPathWithinHandler(HttpServletRequest servletRequest) {
 		return (String) servletRequest
 				.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE);
 	}
 
-	@ExceptionHandler(IOException.class)
-	public ModelAndView handleIOException(IOException ex,
-			HttpServletRequest request, HttpServletResponse response)
-			throws Exception {
-		response.sendError(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE);
-		return new ModelAndView();
-	}
-
-	@ExceptionHandler(NoRabbitMappingFoundException.class)
-	public ModelAndView handleNoRabbitMappingFoundException(
-			NoRabbitMappingFoundException ex, HttpServletRequest request,
-			HttpServletResponse response) throws Exception {
-		response.sendError(HttpServletResponse.SC_NOT_FOUND);
-		logger.error("The requested resource under the selected method has no mapping to an OINK Service");
-		return new ModelAndView();
-	}
-
-	@ExceptionHandler(RabbitReplyTimeoutException.class)
-	public ModelAndView handleRabbitReplyTimeoutException(
-			RabbitReplyTimeoutException ex, HttpServletRequest request,
-			HttpServletResponse response) throws Exception {
-		response.sendError(HttpServletResponse.SC_BAD_GATEWAY);
-		logger.error("The Service on the other side of OINK did not reply in time");
-		return new ModelAndView();
-	}
-
-	@ExceptionHandler(AmqpConnectException.class)
-	public ModelAndView handleAmqpConnectException(AmqpConnectException ex,
-			HttpServletRequest request, HttpServletResponse response)
-			throws Exception {
-		response.sendError(HttpServletResponse.SC_BAD_GATEWAY);
-		logger.error("The underlying Rabbit Server could not be reached");
-		return new ModelAndView();
-	}
+	protected abstract String getFhirPartFromPath(
+			HttpServletRequest servletRequest);
 
 	/**
 	 * Uses the contents of the {@link OINKResponseMessage} to populate the
@@ -240,8 +206,8 @@ public class Facade implements Controller {
 			headers.set(headerName, headerValues);
 		}
 
-		return new OINKRequestMessage(getServiceName(), destUrl, method,
-				params, null);
+		// Get destination service from path
+		return new OINKRequestMessage("", destUrl, method, params, null);
 	}
 
 	public static Map<String, String> splitQuery(String query)
@@ -262,13 +228,51 @@ public class Facade implements Controller {
 	public final HttpMapper<RabbitRoute> getMapper() {
 		return resourceToRabbitRouteMapper;
 	}
-	
+
 	public List<Pair<String, HttpMethod>> getResources() {
 		return resourceToRabbitRouteMapper.getHttpKey();
 	}
 
-
 	public void setOinkService(OutboundOinkService service) {
 		this.rabbitService = service;
+	}
+	
+	/*
+	 * Exception Handlers 
+	 */
+	
+	@ExceptionHandler(IOException.class)
+	public ModelAndView handleIOException(IOException ex,
+			HttpServletRequest request, HttpServletResponse response)
+			throws Exception {
+		response.sendError(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE);
+		return new ModelAndView();
+	}
+
+	@ExceptionHandler(NoRabbitMappingFoundException.class)
+	public ModelAndView handleNoRabbitMappingFoundException(
+			NoRabbitMappingFoundException ex, HttpServletRequest request,
+			HttpServletResponse response) throws Exception {
+		response.sendError(HttpServletResponse.SC_NOT_FOUND);
+		logger.error("The requested resource under the selected method has no mapping to an OINK Service");
+		return new ModelAndView();
+	}
+
+	@ExceptionHandler(RabbitReplyTimeoutException.class)
+	public ModelAndView handleRabbitReplyTimeoutException(
+			RabbitReplyTimeoutException ex, HttpServletRequest request,
+			HttpServletResponse response) throws Exception {
+		response.sendError(HttpServletResponse.SC_BAD_GATEWAY);
+		logger.error("The Service on the other side of OINK did not reply in time");
+		return new ModelAndView();
+	}
+
+	@ExceptionHandler(AmqpConnectException.class)
+	public ModelAndView handleAmqpConnectException(AmqpConnectException ex,
+			HttpServletRequest request, HttpServletResponse response)
+			throws Exception {
+		response.sendError(HttpServletResponse.SC_BAD_GATEWAY);
+		logger.error("The underlying Rabbit Server could not be reached");
+		return new ModelAndView();
 	}
 }

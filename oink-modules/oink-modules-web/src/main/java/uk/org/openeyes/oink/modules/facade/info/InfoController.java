@@ -82,7 +82,7 @@ public class InfoController {
 		for (Facade f : facades) {
 			List<Pair<String, HttpMethod>> resources = f.getResources();
 			for (Pair<String, HttpMethod> resource : resources) {
-				String facadeBase = f.hasServiceName() ? "/"+f.getServiceName()+"/" : "/";
+				String facadeBase = f.getFhirBase();
 				exposedResources.add(new Pair<String, HttpMethod>(facadeBase+resource.getValue0(), resource.getValue1()));
 			}
 		}
