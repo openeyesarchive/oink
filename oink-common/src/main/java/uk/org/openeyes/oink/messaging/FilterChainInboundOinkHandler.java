@@ -86,7 +86,7 @@ public class FilterChainInboundOinkHandler extends InboundOinkHandler {
 
 	private String getChainKeyFromOinkMessage(OINKRequestMessage message) {
 		String resourcePath = message.getResourcePath();
-		HttpMethod method = HttpMethod.valueOf(message.getMethod());
+		HttpMethod method = message.getMethod();
 		return resourceToChainMatcher.get(resourcePath, method);
 	}
 

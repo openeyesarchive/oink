@@ -40,15 +40,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import uk.org.openeyes.oink.domain.HttpMethod;
-import uk.org.openeyes.oink.modules.facade.Facade;
-import uk.org.openeyes.oink.modules.facade.SimpleFacadeHandlerMapping;
 
 @Controller
 @RequestMapping(value="/")
 public class InfoController {
 
-	@Autowired
-	SimpleFacadeHandlerMapping facadeMapping;
+	//@Autowired
+	//SimpleFacadeHandlerMapping facadeMapping;
 
 	@Autowired
 	CachingConnectionFactory rabbitConnectionFactory;
@@ -93,15 +91,15 @@ public class InfoController {
 		// put rabbit management port
 		model.put("rabbitManagementPort", rabbitManagementPort);
 		
-		List<Facade> facades = facadeMapping.getMappedFacades();
+//		List<Facade> facades = facadeMapping.getMappedFacades();
 		List<Pair<String, HttpMethod>> exposedResources = new LinkedList<>();
-		for (Facade f : facades) {
-			List<Pair<String, HttpMethod>> resources = f.getResources();
-			for (Pair<String, HttpMethod> resource : resources) {
-				String facadeBase = f.getFhirBase();
-				exposedResources.add(new Pair<String, HttpMethod>(facadeBase+resource.getValue0(), resource.getValue1()));
-			}
-		}
+//		for (Facade f : facades) {
+//			List<Pair<String, HttpMethod>> resources = f.getResources();
+//			for (Pair<String, HttpMethod> resource : resources) {
+//				String facadeBase = f.getFhirBase();
+//				exposedResources.add(new Pair<String, HttpMethod>(facadeBase+resource.getValue0(), resource.getValue1()));
+//			}
+//		}
 		model.put("exposedResources", exposedResources);
 
 		return new ModelAndView("info.jsp", model);

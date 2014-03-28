@@ -58,14 +58,14 @@ public class BuildOpenMapsUrlCommand extends FilterCommand {
 		try {
 			OINKRequestMessage request = context.getRequest();
 			String fhirResource = request.getResourcePath();
-			Map<String, String> parameters = request.getParameters();
+			Map<String, String[]> parameters = request.getParameters();
 
 			GenericUrl builder = new GenericUrl();
 			builder.setScheme(scheme);
 			builder.setHost(host);
 			builder.setPort(port);
 			builder.setRawPath(mergePaths(fhirRoot, fhirResource));
-			for (Entry<String, String> entry : parameters.entrySet()) {
+			for (Entry<String, String[]> entry : parameters.entrySet()) {
 				builder.set(entry.getKey(), entry.getValue());
 			}
 

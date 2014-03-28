@@ -33,7 +33,7 @@ public class OINKRequestMessageTest {
 	public void testMessageIsSerialisableToJSONWithJackson() throws Exception {
 		Resource r = ResourceFactory.createResource("Patient"); // dummy resource
 		OINKBody body = new OINKBody(r);
-		OINKRequestMessage message = new OINKRequestMessage("service","/path", "GET", new HashMap<String, String>(), body);
+		OINKRequestMessage message = new OINKRequestMessage("from", "service","/path", HttpMethod.GET, new HashMap<String, String[]>(), body);
 		
 		// Serialize
 		ObjectMapper mapper = new ObjectMapper();
