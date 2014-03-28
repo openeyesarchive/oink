@@ -17,6 +17,7 @@
 package uk.org.openeyes.oink.modules.facade;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -31,6 +32,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.hl7.fhir.instance.formats.Composer;
 import org.hl7.fhir.instance.formats.JsonComposer;
+import org.hl7.fhir.instance.formats.JsonParser;
+import org.hl7.fhir.instance.formats.Parser;
+import org.hl7.fhir.instance.formats.ParserBase.ResourceOrFeed;
 import org.javatuples.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -80,6 +84,7 @@ public abstract class Facade implements Controller {
 
 	protected HttpMapper<RabbitRoute> resourceToRabbitRouteMapper;
 	private final Composer fhirJsonComposer = new JsonComposer();
+	private final Parser fhirJsonParser = new JsonParser();
 
 	@Autowired
 	OutboundOinkService rabbitService;
@@ -122,7 +127,7 @@ public abstract class Facade implements Controller {
 		String resource = getFhirPartFromPath(servletRequest);
 
 		// Get the request method type
-		HttpMethod method = HttpMethod.valueOf(servletRequest.getMethod()); // GET
+		HttpMethod method = HttpMethod.valueOf(servletRequest.getMethod());
 
 		String infoMessage = String
 				.format("Facade with FHIR base %s received a request for resource: %s , method: %s",
@@ -222,9 +227,21 @@ public abstract class Facade implements Controller {
 					.getHeaders(headerName));
 			headers.set(headerName, headerValues);
 		}
-
+		
+		// Get HTML Body
+		OINKBody body = null;
+		try {
+			if (servletRequest.getContentLength() > 0) {
+				InputStream is = servletRequest.getInputStream();
+				ResourceOrFeed contents = fhirJsonParser.parseGeneral(is);
+				body = new OINKBody(contents);
+			}
+		} catch (Exception e) {
+			
+		}
+		
 		// Get destination service from path
-		return new OINKRequestMessage("", destUrl, method, params, null);
+		return new OINKRequestMessage("", destUrl, method, params, body);
 	}
 
 	public static Map<String, String> splitQuery(String query)
