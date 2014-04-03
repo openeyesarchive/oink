@@ -29,25 +29,15 @@
 			route="uk.org.openeyes.oink.silverlink" />
 	</oink:requestRabbitRouteMapper>
 
-	<beans:bean
-		class="uk.org.openeyes.oink.modules.facade.SimpleFacadeHandlerMapping">
-		<beans:constructor-arg>
-			<beans:list>
-				<beans:ref bean="silverlinkFacade" />
-			</beans:list>
-		</beans:constructor-arg>
+	<beans:bean class="uk.org.openeyes.oink.modules.facade.SingleDestinationRoutingService">
+		<beans:constructor-arg name="destination" value="silverlink" />
+		<beans:constructor-arg name="mapper" ref="mapper1" />	
 	</beans:bean>
+
 
 	<!-- Enable info page -->
 	<context:component-scan base-package="uk.org.openeyes.oink.modules.facade.info" />
 	<mvc:annotation-driven/>
-
-
-	<!-- Instantiate a facade -->
-	<beans:bean id="silverlinkFacade" class="uk.org.openeyes.oink.modules.facade.ServiceFacade">
-		<beans:constructor-arg name="service" value="silverlink" />
-		<beans:constructor-arg name="mapper" ref="mapper1" />
-	</beans:bean>
 
 	<context:annotation-config />
 
