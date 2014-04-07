@@ -7,10 +7,10 @@
 		<artifactId>oink-modules</artifactId>
 		<version>0.2-SNAPSHOT</version>
 	</parent>
-	<groupId>uk.org.openeyes.oink</groupId>
 	<artifactId>oink-modules-web</artifactId>
 	<version>0.2-SNAPSHOT</version>
 	<name>OINK Web</name>
+	<description>Classes for a FHIR Facade which the OpenEyes application can send RESTful HTTP Requests to and recieve an HTTP Reponse in return. The Facade maps this to a RabbitMQ message which is then routed across the OINK system.</description>	
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
@@ -75,5 +75,4 @@
 			<version>0.2-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
-	<description>Classes for a FHIR Facade which the OpenEyes application can send RESTful HTTP Requests to and recieve an HTTP Reponse in return. The Facade maps this to a RabbitMQ message which is then routed across the OINK system.</description>
 </project>

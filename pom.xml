@@ -1,16 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>uk.org.openeyes</groupId>
-	<artifactId>oink-parent</artifactId>
+	<groupId>uk.org.openeyes.oink</groupId>
+	<artifactId>oink</artifactId>
 	<version>0.2-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>OINK Parent</name>
-	<description>Parent project for building the OINK libraries.</description>
+	<description>The OINK Project</description>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<spring.version>3.1.4.RELEASE</spring.version>
+		<maven-bundle-plugin.version>2.4.0</maven-bundle-plugin.version>
 		<spring.rabbit.version>1.2.1.RELEASE</spring.rabbit.version>
 		<java.version>1.7</java.version>
 		<org.slf4j.version>1.7.5</org.slf4j.version>
@@ -38,14 +40,14 @@
 		<module>oink-common</module>
 		<module>oink-modules</module>
 		<module>oink-domain</module>
-    	<module>oink-archetype-web</module>
-  </modules>
+		<module>oink-archetype-web</module>
+	</modules>
 	<scm>
 		<connection>scm:git:git://github.com/openeyes/oink.git</connection>
 		<developerConnection>scm:git:git@github.com:openeyes/oink.git</developerConnection>
 		<url>https://github.com/openeyes/oink.git</url>
-	  <tag>HEAD</tag>
-  </scm>
+		<tag>HEAD</tag>
+	</scm>
 	<build>
 		<pluginManagement>
 			<plugins>
@@ -96,6 +98,51 @@
 						</archive>
 						<archiveClasses>true</archiveClasses>
 					</configuration>
+				</plugin>
+				<!-- Create a special artifact containing OSGi Features Repository -->
+				<plugin>
+					<artifactId>maven-resources-plugin</artifactId>
+					<version>2.4.3</version>
+					<executions>
+						<execution>
+							<id>copy-resources</id>
+							<phase>validate</phase>
+							<goals>
+								<goal>copy-resources</goal>
+							</goals>
+							<configuration>
+								<outputDirectory>${basedir}/target</outputDirectory>
+								<resources>
+									<resource>
+										<directory>src/main/resources</directory>
+										<filtering>true</filtering>
+									</resource>
+								</resources>
+							</configuration>
+						</execution>
+					</executions>
+				</plugin>
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>build-helper-maven-plugin</artifactId>
+					<executions>
+						<execution>
+							<id>attach-artifacts</id>
+							<phase>package</phase>
+							<goals>
+								<goal>attach-artifact</goal>
+							</goals>
+							<configuration>
+								<artifacts>
+									<artifact>
+										<file>target/features.xml</file>
+										<type>xml</type>
+										<classifier>features</classifier>
+									</artifact>
+								</artifacts>
+							</configuration>
+						</execution>
+					</executions>
 				</plugin>
 			</plugins>
 		</pluginManagement>

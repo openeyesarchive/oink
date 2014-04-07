@@ -2,13 +2,16 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>uk.org.openeyes</groupId>
-		<artifactId>oink-parent</artifactId>
+		<groupId>uk.org.openeyes.oink</groupId>
+		<artifactId>oink</artifactId>
 		<version>0.2-SNAPSHOT</version>
 	</parent>
 	<artifactId>oink-common</artifactId>
 	<name>OINK Common</name>
 	<description>Common classes and utilities for OINK.</description>
+	<properties>
+		<osgi.version>5.0.0</osgi.version>
+	</properties>
 	<dependencies>
 		<!-- Spring -->
 		<dependency>
@@ -123,4 +126,27 @@
 			<version>1.1.4c</version>
 		</dependency>
 	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<version>${maven-bundle-plugin.version}</version>
+				<extensions>true</extensions>
+				<configuration>
+					<instructions>
+						<Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+						<Bundle-Version>${project.version}</Bundle-Version>
+						<Export-Package>
+							*;version=${project.version}
+						</Export-Package>
+						<Import-Package>
+							*
+						</Import-Package>
+					</instructions>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 </project>
