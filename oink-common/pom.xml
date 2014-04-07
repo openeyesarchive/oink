@@ -139,14 +139,13 @@
 						<Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
 						<Bundle-Version>${project.version}</Bundle-Version>
 						<Export-Package>
-							*;version=${project.version}
+							uk.org.openeyes.oink.*;version=${project.version}
 						</Export-Package>
-						<Import-Package>
-							*
-						</Import-Package>
+						<Import-Package>*</Import-Package>
 					</instructions>
 				</configuration>
 			</plugin>
 		</plugins>
 	</build>
+	<packaging>bundle</packaging>
 </project>

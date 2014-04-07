@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <features>
-<!--     <feature name="tool-feature" version="${version}">
-        <bundle>mvn:us.justjohn.osgi/test-tools/1.1/jar/osgi</bundle>
-        <bundle>mvn:us.justjohn.osgi/utilities/1.0/jar/osgi</bundle>
-    </feature> -->
+     <feature name="oink-feature" version="${version}">
+        <bundle>mvn:uk.org.openeyes.oink/oink-common/${version}/jar/osgi</bundle>
+        <bundle>mvn:uk.org.openeyes.oink/oink-domain/${version}/jar/osgi</bundle>
+    </feature>
 </features>
