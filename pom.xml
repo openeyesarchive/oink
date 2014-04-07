@@ -37,7 +37,6 @@
 	<modules>
 		<module>oink-common</module>
 		<module>oink-modules</module>
-		<module>oink-samples</module>
 		<module>oink-domain</module>
     	<module>oink-archetype-web</module>
   </modules>
