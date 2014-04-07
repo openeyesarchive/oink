@@ -40,9 +40,10 @@
 			<artifactId>oink-common</artifactId>
 			<version>0.2-SNAPSHOT</version>
 		</dependency>
+		<!-- See parent POM for comments about this dependency -->
 		<dependency>
-			<groupId>org.hl7</groupId>
-			<artifactId>fhir</artifactId>
+			<groupId>me.fhir</groupId>
+			<artifactId>fhir-0.12</artifactId>
 			<version>${fhir.version}</version>
 		</dependency>
 	</dependencies>

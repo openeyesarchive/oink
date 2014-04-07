@@ -6,7 +6,7 @@
 	<version>0.2-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>OINK Parent</name>
-	<description>Parent project for building all of OINK.</description>
+	<description>Parent project for building the OINK libraries.</description>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -32,14 +32,14 @@
 		<google.http.version>1.17.0-rc</google.http.version>
 		<google.gson.version>2.2.4</google.gson.version>
 		<openmap.version>1.0-SNAPSHOT</openmap.version>
-		<fhir.version>0.80</fhir.version>
+		<fhir.version>r2324-SNAPSHOT</fhir.version>
 	</properties>
 	<modules>
 		<module>oink-common</module>
 		<module>oink-modules</module>
 		<module>oink-samples</module>
 		<module>oink-domain</module>
-    <module>oink-archetype-web</module>
+    	<module>oink-archetype-web</module>
   </modules>
 	<scm>
 		<connection>scm:git:git://github.com/openeyes/oink.git</connection>
