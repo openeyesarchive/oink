@@ -6,8 +6,8 @@
 		<artifactId>oink</artifactId>
 		<version>0.2-SNAPSHOT</version>
 	</parent>
-	<artifactId>oink-common</artifactId>
-	<name>OINK Common</name>
+	<artifactId>oink-core</artifactId>
+	<name>OINK Core</name>
 	<description>Common classes and utilities for OINK.</description>
 	<properties>
 		<osgi.version>5.0.0</osgi.version>

@@ -37,7 +37,7 @@
 		<fhir.version>r2324-SNAPSHOT</fhir.version>
 	</properties>
 	<modules>
-		<module>oink-common</module>
+		<module>oink-core</module>
 		<module>oink-domain</module>
 	</modules>
 	<scm>
