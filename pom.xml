@@ -38,7 +38,6 @@
 	</properties>
 	<modules>
 		<module>oink-common</module>
-		<module>oink-modules</module>
 		<module>oink-domain</module>
 	</modules>
 	<scm>
