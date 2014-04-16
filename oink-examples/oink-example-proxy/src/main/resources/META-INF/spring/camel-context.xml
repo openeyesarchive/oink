@@ -12,14 +12,14 @@
 
 	<bean id="authenticator" class="uk.org.openeyes.oink.http.UserAuthenticator" />
 
-	<bean id="fhirValidator" class="uk.org.openeyes.oink.http.FhirValidator">
-	</bean>
+	<bean id="fhirValidator" class="uk.org.openeyes.oink.http.FhirJsonValidator" />
 
 	<bean id="oinkWrapper" class="uk.org.openeyes.oink.messaging.OinkWrapper" />
 
 	<bean id="rabbitProcessor" class="uk.org.openeyes.oink.rabbit.RabbitProcessor" />
 
-	<spring-security:authentication-manager id="authenticationManager">
+	<spring-security:authentication-manager
+		id="authenticationManager">
 		<spring-security:authentication-provider>
 			<spring-security:user-service>
 				<spring-security:user name="bob" password="bob"
@@ -27,18 +27,20 @@
 			</spring-security:user-service>
 		</spring-security:authentication-provider>
 	</spring-security:authentication-manager>
-	
-	<bean id="accessDecisionManager" class="org.springframework.security.access.vote.AffirmativeBased">
-        <property name="allowIfAllAbstainDecisions" value="true"/>
-        <property name="decisionVoters">
-            <list>
-                <bean class="org.springframework.security.access.vote.RoleVoter"/>
-            </list>
-        </property>
-    </bean>
 
-	<authorizationPolicy id="user" accessDecisionManager="accessDecisionManager"
-		access="ROLE_USER" xmlns="http://camel.apache.org/schema/spring-security" />
+	<bean id="accessDecisionManager"
+		class="org.springframework.security.access.vote.AffirmativeBased">
+		<property name="allowIfAllAbstainDecisions" value="true" />
+		<property name="decisionVoters">
+			<list>
+				<bean class="org.springframework.security.access.vote.RoleVoter" />
+			</list>
+		</property>
+	</bean>
+
+	<authorizationPolicy id="user"
+		accessDecisionManager="accessDecisionManager" access="ROLE_USER"
+		xmlns="http://camel.apache.org/schema/spring-security" />
 
 	<camelContext xmlns="http://camel.apache.org/schema/spring">
 
@@ -47,7 +49,9 @@
 			<from uri="jetty:http://localhost:8023/proxy?matchOnUriPrefix=true" />
 			<bean ref="authenticator" method="extractAuthenticationDetailsFromHttp" />
 			<policy ref="user">
-				<bean ref="fhirValidator" method="validateFhir" />
+				<convertBodyTo type="uk.org.openeyes.oink.domain.FhirBody" />
+				<bean ref="fhirValidator" method="validateRequestHeaders" />
+				<bean ref="fhirValidator" method="validateBody" />
 				<bean ref="oinkWrapper" method="wrapRequest" />
 				<bean ref="rabbitProcessor" method="prepare" />
 				<to
