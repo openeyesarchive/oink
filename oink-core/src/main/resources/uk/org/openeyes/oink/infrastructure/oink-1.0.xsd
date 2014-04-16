@@ -6,26 +6,7 @@
 
 	<xsd:import namespace="http://www.springframework.org/schema/beans" />
 
-	<xsd:element name="requestRabbitRouteMapper" type="RabbitMapperType"></xsd:element>
-
-	<xsd:element name="requestChainKeyMapper" type="requestChainKeyMapperType" />
-
-	<xsd:complexType name="requestChainKeyMapperType">
-		<xsd:complexContent>
-			<xsd:extension base="beans:identifiedType">
-				<xsd:sequence>
-					<xsd:element name="mapping" maxOccurs="unbounded"
-						minOccurs="0">
-						<xsd:complexType>
-							<xsd:attribute name="resourcePath" type="xsd:string"></xsd:attribute>
-							<xsd:attribute name="method" type="xsd:string"></xsd:attribute>
-							<xsd:attribute name="chainKey" type="xsd:string"></xsd:attribute>
-						</xsd:complexType>
-					</xsd:element>
-				</xsd:sequence>
-			</xsd:extension>
-		</xsd:complexContent>
-	</xsd:complexType>
+	<xsd:element name="facadeRabbitMapper" type="RabbitMapperType"></xsd:element>
 
 	<xsd:complexType name="RabbitMapperType">
 		<xsd:complexContent>
@@ -39,6 +20,7 @@
 	</xsd:complexType>
 
 	<xsd:complexType name="MappingType">
+		<xsd:attribute name="service" type="xsd:string"></xsd:attribute>
 		<xsd:attribute name="resource" type="xsd:string"></xsd:attribute>
 		<xsd:attribute name="method" type="xsd:string"></xsd:attribute>
 		<xsd:attribute name="route" type="xsd:string"></xsd:attribute>

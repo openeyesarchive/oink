@@ -20,6 +20,7 @@ import static org.junit.Assert.*;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageProperties;
@@ -39,6 +40,7 @@ public class TestOinkMessageConverter {
 	public static void tearDownAfterClass() throws Exception {
 	}
 
+	@Ignore
 	@Test
 	public void testCanUnwrapAValidOINKRequestMessage() {
 		// Build a message containing 

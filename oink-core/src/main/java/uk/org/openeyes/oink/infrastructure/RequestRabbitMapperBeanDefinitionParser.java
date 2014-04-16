@@ -20,12 +20,12 @@ package uk.org.openeyes.oink.infrastructure;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.javatuples.Triplet;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.util.xml.DomUtils;
 import org.w3c.dom.Element;
 
 import uk.org.openeyes.oink.common.HttpMapper;
+import uk.org.openeyes.oink.common.HttpMapperEntry;
 import uk.org.openeyes.oink.domain.HttpMethod;
 import uk.org.openeyes.oink.messaging.RabbitRoute;
 
@@ -39,14 +39,23 @@ public class RequestRabbitMapperBeanDefinitionParser extends RequestMapperBeanDe
 		
 		List<Element> mappingElems = DomUtils.getChildElements(element);
 		
-		List<Triplet<String,HttpMethod,RabbitRoute>> list = new ArrayList<Triplet<String,HttpMethod,RabbitRoute>>();
+		List<HttpMapperEntry<RabbitRoute>> list = new ArrayList<HttpMapperEntry<RabbitRoute>>();
 		
 		for(int i = 0; i < mappingElems.size(); i++) {
 			Element mappingElem = mappingElems.get(i);
 			String resource = mappingElem.getAttribute("resource");
+			String service = mappingElem.getAttribute("service");
+			StringBuilder sb = new StringBuilder();
+			if (service != null && !service.isEmpty()) {
+				sb.append(service);
+				sb.append("/");				
+			}
+			sb.append(resource);
+			String uri = sb.toString();
+			
 			HttpMethod method = parseMethod(mappingElem.getAttribute("method"));
 			RabbitRoute route = new RabbitRoute(mappingElem.getAttribute("route"), mappingElem.getAttribute("exchange"));
-			list.add(new Triplet<String, HttpMethod, RabbitRoute>(resource, method, route));
+			list.add(new HttpMapperEntry<RabbitRoute>(uri, method, route));
 		}
 		bean.addConstructorArgValue(list);
 

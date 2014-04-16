@@ -1,28 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camel="http://camel.apache.org/schema/spring"
-	xmlns:osgi="http://www.springframework.org/schema/osgi"
+	xmlns:osgi="http://www.springframework.org/schema/osgi" xmlns:oink="http://www.openeyes.org.uk/schema/oink"
 	xmlns:spring-security="http://www.springframework.org/schema/security"
 	xsi:schemaLocation="
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd  
        http://camel.apache.org/schema/spring-security http://camel.apache.org/schema/spring-security/camel-spring-security.xsd
-       http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd">
+       http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
+       http://www.openeyes.org.uk/schema/oink http://www.openeyes.org.uk/schema/oink/oink-1.0.xsd">
 
 	<bean id="authenticator" class="uk.org.openeyes.oink.http.UserAuthenticator" />
 
+	<bean id="identityService" class="uk.org.openeyes.oink.security.SimpleIdentityService" />
+
+	<bean id="oinkWrapper" class="uk.org.openeyes.oink.messaging.OinkWrapper">
+		<constructor-arg ref="identityService" />
+	</bean>
+
 	<bean id="fhirValidator" class="uk.org.openeyes.oink.http.FhirJsonValidator" />
 
-	<bean id="oinkWrapper" class="uk.org.openeyes.oink.messaging.OinkWrapper" />
+	<bean id="rabbitProcessor" class="uk.org.openeyes.oink.rabbit.SynchronousRabbitProcessor" />
 
-	<bean id="rabbitProcessor" class="uk.org.openeyes.oink.rabbit.RabbitProcessor" />
+	<bean id="routingService" class="uk.org.openeyes.oink.facade.SimpleRoutingService">
+		<property name="mappings">
+			<oink:facadeRabbitMapper>
+				<oink:mapping resource="Patient" method="POST" exchange="test" route="routeTest" />
+			</oink:facadeRabbitMapper>
+		</property>
+	</bean>
+
+	<bean id="facadeProcessor" class="uk.org.openeyes.oink.facade.FacadeProcessor">
+		<constructor-arg ref="routingService" />
+	</bean>
 
 	<spring-security:authentication-manager
 		id="authenticationManager">
 		<spring-security:authentication-provider>
 			<spring-security:user-service>
-				<spring-security:user name="bob" password="bob"
+				<spring-security:user name="bob@ucc1" password="bob"
 					authorities="ROLE_USER" />
 			</spring-security:user-service>
 		</spring-security:authentication-provider>
@@ -44,16 +61,24 @@
 
 	<camelContext xmlns="http://camel.apache.org/schema/spring">
 
-		<!-- Route 1 (external facing) -->
+		<!-- Route 1 (facade) -->
 		<route>
-			<from uri="jetty:http://localhost:8023/proxy?matchOnUriPrefix=true" />
+			<from uri="jetty:http://localhost:8023/oink?matchOnUriPrefix=true" />
 			<bean ref="authenticator" method="extractAuthenticationDetailsFromHttp" />
 			<policy ref="user">
+				<bean ref="facadeProcessor" method="stripFacadeUriBase" />
 				<convertBodyTo type="uk.org.openeyes.oink.domain.FhirBody" />
 				<bean ref="fhirValidator" method="validateRequestHeaders" />
 				<bean ref="fhirValidator" method="validateBody" />
 				<bean ref="oinkWrapper" method="wrapRequest" />
+				<bean ref="facadeProcessor" method="setRabbitRouteHeaders" />
 				<bean ref="rabbitProcessor" method="prepare" />
+				<setHeader headerName="rabbitmq.ROUTING_KEY">
+					<constant>endService</constant>
+				</setHeader>
+				<setHeader headerName="rabbitmq.REPLY_TO">
+					<constant>proxyResponse</constant>
+				</setHeader>
 				<to
 					uri="rabbitmq://localhost:5672/test?username=admin&amp;password=admin" />
 				<bean ref="rabbitProcessor" method="waitForResponse" />
@@ -61,12 +86,20 @@
 			</policy>
 		</route>
 
+		<route>
+			<from
+				uri="rabbitmq://localhost:5672/test?username=admin&amp;password=admin&amp;queue=proxyResponse&amp;routingKey=proxyResponse" />
+			<recipientList>
+				<simple>seda:${headers.rabbitmq.CORRELATIONID}</simple>
+			</recipientList>
+		</route>
+
 		<!-- Route 2 (internal facing) -->
 		<route>
 			<from
 				uri="rabbitmq://localhost:5672/test?username=admin&amp;password=admin&amp;queue=endService&amp;routingKey=endService" />
 			<bean ref="oinkWrapper" method="unwrapRequest" />
-			<to uri="http4://localhost:8023" />
+			<to uri="http4://localhost:8024" />
 			<bean ref="oinkWrapper" method="wrapResponse" />
 			<to
 				uri="rabbitmq://localhost:5672/test?username=admin&amp;password=admin&amp;queue=reply&amp;routingKey=reply" />
@@ -74,7 +107,7 @@
 
 		<!-- Route 3 (sample end server) -->
 		<route>
-			<from uri="jetty:http://localhost:8024?mathOnUriPrefix=true" />
+			<from uri="jetty:http://localhost:8024?matchOnUriPrefix=true" />
 			<setBody>
 				<simple>Hello World</simple>
 			</setBody>

@@ -19,16 +19,11 @@ package uk.org.openeyes.oink.modules.facade.info;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Map.Entry;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.javatuples.Pair;
 import org.springframework.amqp.AmqpException;
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.Connection;
@@ -38,8 +33,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
-
-import uk.org.openeyes.oink.domain.HttpMethod;
 
 @Controller
 @RequestMapping(value="/")
@@ -92,7 +85,7 @@ public class InfoController {
 		model.put("rabbitManagementPort", rabbitManagementPort);
 		
 //		List<Facade> facades = facadeMapping.getMappedFacades();
-		List<Pair<String, HttpMethod>> exposedResources = new LinkedList<>();
+//		List<Pair<String, HttpMethod>> exposedResources = new LinkedList<>();
 //		for (Facade f : facades) {
 //			List<Pair<String, HttpMethod>> resources = f.getResources();
 //			for (Pair<String, HttpMethod> resource : resources) {
@@ -100,7 +93,7 @@ public class InfoController {
 //				exposedResources.add(new Pair<String, HttpMethod>(facadeBase+resource.getValue0(), resource.getValue1()));
 //			}
 //		}
-		model.put("exposedResources", exposedResources);
+//		model.put("exposedResources", exposedResources);
 
 		return new ModelAndView("info.jsp", model);
 	}

@@ -16,6 +16,7 @@
  *******************************************************************************/
 package uk.org.openeyes.oink.domain;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,28 +27,37 @@ import java.util.Map;
  * @author Oliver Wilkie
  * 
  */
-public class OINKRequestMessage extends OINKMessage {
+public class OINKRequestMessage extends OINKMessage implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	/*
+	 * OINK Headers
+	 */
 	private String origin;
 	private String destination;
-	private String fhirResourcePath; // Portion of the original FHIR URL
-										// following [base]. No leading slash.
+	
+	/*
+	 * FHIR REST components
+	 */
+	private String resourcePath; // URI path corresponding to a Fhir Resource
 	private HttpMethod method; // HTTP Request Method e.g. GET, POST
-	private Map<String, String[]> parameters; // HTTP Query Parameters
+	private String query;
 
-	private OINKBody body;
+	private FhirBody body;
 
 	public OINKRequestMessage() {
-		this.parameters = new HashMap<String, String[]>();
 	}
 
-	public OINKRequestMessage(String origin, String destination, String resourcePath, HttpMethod method, Map<String, String[]> params, OINKBody body) {
+	public OINKRequestMessage(String origin, String destination, String resourcePath, HttpMethod method, String query, FhirBody body) {
 		this.origin = origin;
 		this.destination = destination;
-		this.fhirResourcePath = resourcePath;
+		this.resourcePath = resourcePath;
 		this.method = method;
 		this.body = body;
-		this.parameters = params;
+		this.query = query;
 	}
 	
 	public String getOrigin() {
@@ -67,11 +77,11 @@ public class OINKRequestMessage extends OINKMessage {
 	}
 
 	public String getResourcePath() {
-		return fhirResourcePath;
+		return resourcePath;
 	}
 
 	public void setResourcePath(String resourcePath) {
-		this.fhirResourcePath = resourcePath;
+		this.resourcePath = resourcePath;
 	}
 
 	public HttpMethod getMethod() {
@@ -82,7 +92,7 @@ public class OINKRequestMessage extends OINKMessage {
 		this.method = method;
 	}
 
-	public OINKBody getBody() {
+	public FhirBody getBody() {
 		return body;
 	}
 
@@ -90,17 +100,17 @@ public class OINKRequestMessage extends OINKMessage {
 		return body != null;
 	}
 
-	public void setBody(OINKBody body) {
+	public void setBody(FhirBody body) {
 		this.body = body;
 	}
 
-	public Map<String, String[]> getParameters() {
-		return parameters;
+	public String getParameters() {
+		return query;
 	}
 
-	public void setParameters(Map<String, String[]> parameters) {
-		if (parameters != null) {
-			this.parameters = parameters;
+	public void setParameters(String query) {
+		if (query != null) {
+			this.query = query;
 		}
 	}
 

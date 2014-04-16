@@ -22,8 +22,7 @@ public class OinkNamespaceHandler extends NamespaceHandlerSupport {
 
 	@Override
 	public void init() {
-		registerBeanDefinitionParser("requestRabbitRouteMapper", new RequestRabbitMapperBeanDefinitionParser());
-		registerBeanDefinitionParser("requestChainKeyMapper", new RequestChainKeyBeanDefinitionParser());
+		registerBeanDefinitionParser("facadeRabbitMapper", new RequestRabbitMapperBeanDefinitionParser());
 	}
 
 }

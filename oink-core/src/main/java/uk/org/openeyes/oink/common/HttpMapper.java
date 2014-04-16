@@ -21,10 +21,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import org.javatuples.Pair;
-import org.javatuples.Triplet;
-import org.javatuples.Tuple;
-
 import uk.org.openeyes.oink.domain.HttpMethod;
 
 //TODO Make class for a resource path instead of a plain string
@@ -42,20 +38,11 @@ import uk.org.openeyes.oink.domain.HttpMethod;
  */
 public class HttpMapper<T> {
 	
-	private final List<Triplet<String, HttpMethod, T>> list;
+	private final List<HttpMapperEntry<T>> list;
 	
-	public HttpMapper(List<Triplet<String, HttpMethod, T>> list) {
+	public HttpMapper(List<HttpMapperEntry<T>> list) {
 		this.list = list;
 	}
-	
-	public List<Pair<String, HttpMethod>> getHttpKey() {
-		List<Pair<String,HttpMethod>> result = new LinkedList<Pair<String,HttpMethod>>();
-		for (Triplet<String, HttpMethod, T> entry: list) {
-			result.add(new Pair<String, HttpMethod>(entry.getValue0(), entry.getValue1()));
-		}
-		return result;
-	}
-
 	
 	/**
 	 * Finds the most explicit match from a list of wildcard matches.
@@ -75,15 +62,15 @@ public class HttpMapper<T> {
 	 * Most explicit is Patient
 	 * 
 	 */
-	private Triplet<String, HttpMethod, T> getMostExplicitMatch(List<Triplet<String, HttpMethod, T>> matches) {
-		Triplet<String, HttpMethod, T> currBest = matches.get(0);
+	private HttpMapperEntry<T> getMostExplicitMatch(List<HttpMapperEntry<T>> matches) {
+		HttpMapperEntry<T> currBest = matches.get(0);
 		
 		// Iterate over list
-		for (Triplet<String, HttpMethod, T> elem : matches) {
-			String currResourcePath = elem.getValue0();
-			HttpMethod currMethodPath = elem.getValue1();
+		for (HttpMapperEntry<T> elem : matches) {
+			String currResourcePath = elem.getUri();
+			HttpMethod currMethodPath = elem.getMethod();
 			
-			String currBestResourcePath = currBest.getValue0();
+			String currBestResourcePath = currBest.getUri();
 			
 			if (isExplicit(currResourcePath)) {
 				currBest = elem;
@@ -108,12 +95,12 @@ public class HttpMapper<T> {
 		return !isWildcard(path);
 	}
 	
-	private List<Triplet<String, HttpMethod, T>> getPossibleMatches(String resourcePath, HttpMethod method) {
-		List<Triplet<String, HttpMethod, T>> result = new LinkedList<Triplet<String,HttpMethod,T>>();
+	private List<HttpMapperEntry<T>> getPossibleMatches(String resourcePath, HttpMethod method) {
+		List<HttpMapperEntry<T>> result = new LinkedList<HttpMapperEntry<T>>();
 		// Iterate over list
-		for (Triplet<String, HttpMethod, T> elem : list) {
-			String currResourcePath = elem.getValue0();
-			HttpMethod currMethodPath = elem.getValue1();
+		for (HttpMapperEntry<T> elem : list) {
+			String currResourcePath = elem.getUri();
+			HttpMethod currMethodPath = elem.getMethod();
 			
 			// Check if there is a match
 			if (checkMethodMath(currMethodPath, method) && checkResourceMatch(currResourcePath, resourcePath)) {
@@ -155,25 +142,25 @@ public class HttpMapper<T> {
 	}
 	
 	public T get(String resourcePath, HttpMethod method) {
-		List<Triplet<String, HttpMethod, T>> matches = getPossibleMatches(resourcePath, method);
+		List<HttpMapperEntry<T>> matches = getPossibleMatches(resourcePath, method);
 		if (matches.isEmpty()) {
 			return null;
 		} else {
-			Triplet<String, HttpMethod, T> closestMatch = getMostExplicitMatch(matches);
-			return closestMatch.getValue2();
+			HttpMapperEntry<T> closestMatch = getMostExplicitMatch(matches);
+			return closestMatch.getValue();
 		}
 	}
 	
 	public static class Builder<T> {
 		
-		ArrayList<Triplet<String,HttpMethod,T>> list;
+		ArrayList<HttpMapperEntry<T>> list;
 		
 		public Builder() {
-			list = new ArrayList<Triplet<String,HttpMethod,T>>();
+			list = new ArrayList<HttpMapperEntry<T>>();
 		}
 		
 		public Builder<T> addMapping(String resourcePath, HttpMethod status, T value) {
-			list.add(new Triplet<String, HttpMethod, T>(resourcePath, status, value));
+			list.add(new HttpMapperEntry<T>(resourcePath, status, value));
 			return this;
 		}
 		

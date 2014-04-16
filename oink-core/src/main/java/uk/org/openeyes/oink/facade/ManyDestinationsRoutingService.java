@@ -1,4 +1,4 @@
-package uk.org.openeyes.oink.modules.facade;
+package uk.org.openeyes.oink.facade;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -7,7 +7,7 @@ import uk.org.openeyes.oink.common.HttpMapper;
 import uk.org.openeyes.oink.domain.HttpMethod;
 import uk.org.openeyes.oink.messaging.RabbitRoute;
 
-public class ManyDestinationsRoutingService implements RoutingService {
+public class ManyDestinationsRoutingService {
 	
 	private final Map<String, HttpMapper<RabbitRoute>> routeMaps;
 	
@@ -24,12 +24,10 @@ public class ManyDestinationsRoutingService implements RoutingService {
 		routeMaps.put("*", routeMap);
 	}
 
-	@Override
 	public boolean isDestinationValid(String destination) {
 		return (routeMaps.size() == 1 && routeMaps.containsKey("*")) || routeMaps.containsKey(destination);
 	}
 
-	@Override
 	public RabbitRoute getRouting(String destination, String fhirUri,
 			HttpMethod method) {
 		HttpMapper<RabbitRoute> destinationMapper;

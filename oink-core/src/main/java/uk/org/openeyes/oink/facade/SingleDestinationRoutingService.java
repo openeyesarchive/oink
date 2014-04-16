@@ -1,10 +1,10 @@
-package uk.org.openeyes.oink.modules.facade;
+package uk.org.openeyes.oink.facade;
 
 import uk.org.openeyes.oink.common.HttpMapper;
 import uk.org.openeyes.oink.domain.HttpMethod;
 import uk.org.openeyes.oink.messaging.RabbitRoute;
 
-public class SingleDestinationRoutingService implements RoutingService {
+public class SingleDestinationRoutingService {
 	
 	private final HttpMapper<RabbitRoute> mapper;
 	private final String destination;
@@ -14,12 +14,10 @@ public class SingleDestinationRoutingService implements RoutingService {
 		this.mapper = mapper;
 	}
 
-	@Override
 	public boolean isDestinationValid(String destination) {
 		return destination.equals(this.destination);
 	}
 
-	@Override
 	public RabbitRoute getRouting(String destination, String fhirUri,
 			HttpMethod method) {
 		if (!destination.equals(this.destination)) {

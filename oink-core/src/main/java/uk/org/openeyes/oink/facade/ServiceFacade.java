@@ -1,4 +1,4 @@
-package uk.org.openeyes.oink.modules.facade;
+package uk.org.openeyes.oink.facade;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -75,15 +75,14 @@ public class ServiceFacade {
 		String originId = "";
 
 		// Check destination is valid
-		boolean destinationExists = routingService
-				.isDestinationValid(destinationId);
-		if (!destinationExists) {
-			throw new DestinationNotRecognisedException();
-		}
+//		boolean destinationExists = routingService
+//				.isDestinationValid(destinationId);
+//		if (!destinationExists) {
+//			throw new DestinationNotRecognisedException();
+//		}
 
 		// Check route exists
-		RabbitRoute route = routingService.getRouting(destinationId,
-				fhirResourcePath, requestMethod);
+		RabbitRoute route = null;
 		if (route == null) {
 			throw new NoRabbitMappingFoundException();
 		}
@@ -93,7 +92,7 @@ public class ServiceFacade {
 		message.setOrigin(originId);
 		message.setDestination(destinationId);
 		message.setMethod(requestMethod);
-		message.setParameters(request.getParameterMap());
+		//message.setParameters(request.g);
 		message.setResourcePath(fhirResourcePath);
 
 		// Build Request Body if required
@@ -115,7 +114,7 @@ public class ServiceFacade {
 			}
 
 		}
-		message.setBody(body);
+		//message.setBody(body);
 
 		// Send OINK Request Message
 		OINKResponseMessage oinkResponse = (OINKResponseMessage) oinkService
