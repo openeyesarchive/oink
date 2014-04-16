@@ -33,7 +33,6 @@ import uk.org.openeyes.oink.domain.OINKRequestMessage;
 import uk.org.openeyes.oink.domain.OINKResponseMessage;
 import uk.org.openeyes.oink.messaging.OutboundOinkService;
 import uk.org.openeyes.oink.messaging.RabbitRoute;
-import uk.org.openeyes.oink.security.SecurityService;
 
 /**
  * 
@@ -41,9 +40,6 @@ import uk.org.openeyes.oink.security.SecurityService;
  */
 @Controller
 public class ServiceFacade {
-
-	@Autowired
-	SecurityService securityService;
 
 	@Autowired
 	RoutingService routingService;
@@ -76,7 +72,7 @@ public class ServiceFacade {
 		
 		// Get origin of request from authenticated user
 		Principal authenticatedUser = request.getUserPrincipal();
-		String originId = securityService.getOrganisation(authenticatedUser);
+		String originId = "";
 
 		// Check destination is valid
 		boolean destinationExists = routingService

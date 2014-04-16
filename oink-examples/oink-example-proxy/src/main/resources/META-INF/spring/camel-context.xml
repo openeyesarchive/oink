@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camel="http://camel.apache.org/schema/spring"
+	xmlns:osgi="http://www.springframework.org/schema/osgi"
+	xmlns:spring-security="http://www.springframework.org/schema/security"
+	xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd
+       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd  
+       http://camel.apache.org/schema/spring-security http://camel.apache.org/schema/spring-security/camel-spring-security.xsd
+       http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd">
+
+	<bean id="authenticator" class="uk.org.openeyes.oink.http.UserAuthenticator" />
+
+	<bean id="fhirValidator" class="uk.org.openeyes.oink.http.FhirValidator">
+	</bean>
+
+	<bean id="oinkWrapper" class="uk.org.openeyes.oink.messaging.OinkWrapper" />
+
+	<bean id="rabbitProcessor" class="uk.org.openeyes.oink.rabbit.RabbitProcessor" />
+
+	<spring-security:authentication-manager id="authenticationManager">
+		<spring-security:authentication-provider>
+			<spring-security:user-service>
+				<spring-security:user name="bob" password="bob"
+					authorities="ROLE_USER" />
+			</spring-security:user-service>
+		</spring-security:authentication-provider>
+	</spring-security:authentication-manager>
+	
+	<bean id="accessDecisionManager" class="org.springframework.security.access.vote.AffirmativeBased">
+        <property name="allowIfAllAbstainDecisions" value="true"/>
+        <property name="decisionVoters">
+            <list>
+                <bean class="org.springframework.security.access.vote.RoleVoter"/>
+            </list>
+        </property>
+    </bean>
+
+	<authorizationPolicy id="user" accessDecisionManager="accessDecisionManager"
+		access="ROLE_USER" xmlns="http://camel.apache.org/schema/spring-security" />
+
+	<camelContext xmlns="http://camel.apache.org/schema/spring">
+
+		<!-- Route 1 (external facing) -->
+		<route>
+			<from uri="jetty:http://localhost:8023/proxy?matchOnUriPrefix=true" />
+			<bean ref="authenticator" method="extractAuthenticationDetailsFromHttp" />
+			<policy ref="user">
+				<bean ref="fhirValidator" method="validateFhir" />
+				<bean ref="oinkWrapper" method="wrapRequest" />
+				<bean ref="rabbitProcessor" method="prepare" />
+				<to
+					uri="rabbitmq://localhost:5672/test?username=admin&amp;password=admin" />
+				<bean ref="rabbitProcessor" method="waitForResponse" />
+				<bean ref="oinkWrapper" method="unwrapResponse" />
+			</policy>
+		</route>
+
+		<!-- Route 2 (internal facing) -->
+		<route>
+			<from
+				uri="rabbitmq://localhost:5672/test?username=admin&amp;password=admin&amp;queue=endService&amp;routingKey=endService" />
+			<bean ref="oinkWrapper" method="unwrapRequest" />
+			<to uri="http4://localhost:8023" />
+			<bean ref="oinkWrapper" method="wrapResponse" />
+			<to
+				uri="rabbitmq://localhost:5672/test?username=admin&amp;password=admin&amp;queue=reply&amp;routingKey=reply" />
+		</route>
+
+		<!-- Route 3 (sample end server) -->
+		<route>
+			<from uri="jetty:http://localhost:8024?mathOnUriPrefix=true" />
+			<setBody>
+				<simple>Hello World</simple>
+			</setBody>
+		</route>
+	</camelContext>
+
+</beans>
