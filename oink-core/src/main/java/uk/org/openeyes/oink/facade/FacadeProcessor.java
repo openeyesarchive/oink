@@ -2,10 +2,7 @@ package uk.org.openeyes.oink.facade;
 
 import java.util.Map;
 
-import org.apache.camel.Body;
 import org.apache.camel.Exchange;
-import org.apache.camel.OutHeaders;
-
 import uk.org.openeyes.oink.domain.OINKRequestMessage;
 import uk.org.openeyes.oink.messaging.RabbitRoute;
 
@@ -25,7 +22,10 @@ public class FacadeProcessor {
 		ex.getIn().setHeader(Exchange.HTTP_PATH, uri);
 	}
 	
-	public OINKRequestMessage setRabbitRouteHeaders(@Body OINKRequestMessage message, @OutHeaders Map<String,Object> outHeaders) throws NoRabbitMappingFoundException {
+	public void setRabbitRouteHeaders(Exchange exchange) throws NoRabbitMappingFoundException {
+		
+		Map<String,Object> headers = exchange.getIn().getHeaders();
+		OINKRequestMessage message = exchange.getIn().getBody(OINKRequestMessage.class);
 		
 		// Find the routing key and exchange using the requested URI and method.
 		RabbitRoute mappedRoute = rabbitRoutingService.getRouting(message.getResourcePath(), message.getMethod());
@@ -33,11 +33,10 @@ public class FacadeProcessor {
 		if (mappedRoute == null) {
 			throw new NoRabbitMappingFoundException();
 		}
+		headers.clear();
+		headers.put("rabbitmq.ROUTING_KEY", mappedRoute.getRoutingKey());
+		headers.put("rabbitmq.EXCHANGE_NAME", mappedRoute.getExchange());
 		
-		outHeaders.put("rabbitmq.ROUTING_KEY", mappedRoute.getRoutingKey());
-		outHeaders.put("rabbitmq.EXCHANGE_NAME", mappedRoute.getExchange());
-		
-		return message;
 	}
 
 }

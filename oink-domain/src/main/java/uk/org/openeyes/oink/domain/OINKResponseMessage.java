@@ -19,24 +19,20 @@ package uk.org.openeyes.oink.domain;
 public class OINKResponseMessage extends OINKMessage {
 
 	private int status; // Same as HTTP Codes
-	private OINKBody body;
+	private FhirBody body;
 
 	public OINKResponseMessage() {
-		this.body = new OINKBody();
 	}
 
 	public OINKResponseMessage(int status) {
 		this.status = status;
-		this.body = new OINKBody();
 	}
 	
 	public OINKResponseMessage(int status,
-			OINKBody body) {
+			FhirBody body) {
 		this.status = status;
 		if (body != null) {
 			this.body = body;
-		} else {
-			this.body = new OINKBody();
 		}
 	}
 
@@ -48,11 +44,11 @@ public class OINKResponseMessage extends OINKMessage {
 		this.status = status;
 	}
 
-	public OINKBody getBody() {
+	public FhirBody getBody() {
 		return body;
 	}
 
-	public void setBody(OINKBody body) {
+	public void setBody(FhirBody body) {
 		this.body = body;
 	}
 

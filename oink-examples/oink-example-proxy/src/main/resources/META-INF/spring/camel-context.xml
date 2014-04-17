@@ -15,25 +15,30 @@
 
 	<bean id="identityService" class="uk.org.openeyes.oink.security.SimpleIdentityService" />
 
-	<bean id="oinkWrapper" class="uk.org.openeyes.oink.messaging.OinkWrapper">
-		<constructor-arg ref="identityService" />
+	<bean id="oinkHttpConverter" class="uk.org.openeyes.oink.http.OinkHttpConverter">
 	</bean>
 
-	<bean id="fhirValidator" class="uk.org.openeyes.oink.http.FhirJsonValidator" />
+	<bean id="validator" class="uk.org.openeyes.oink.http.FhirJsonValidator" />
 
-	<bean id="rabbitProcessor" class="uk.org.openeyes.oink.rabbit.SynchronousRabbitProcessor" />
+	<bean id="synchRabbitProcessor" class="uk.org.openeyes.oink.rabbit.SynchronousRabbitProcessor">
+		<constructor-arg name="timeOut" value="5000"/>
+	</bean>
 
 	<bean id="routingService" class="uk.org.openeyes.oink.facade.SimpleRoutingService">
-		<property name="mappings">
+		<constructor-arg name="mappings">
 			<oink:facadeRabbitMapper>
-				<oink:mapping resource="Patient" method="POST" exchange="test" route="routeTest" />
+				<oink:mapping resource="Patient" method="POST"
+					exchange="test" route="siteB" />
 			</oink:facadeRabbitMapper>
-		</property>
+		</constructor-arg>
+		<constructor-arg name="replyRouting" value="siteAResponse"/>
 	</bean>
 
-	<bean id="facadeProcessor" class="uk.org.openeyes.oink.facade.FacadeProcessor">
+	<bean id="rabbitProcessor" class="uk.org.openeyes.oink.rabbit.RabbitProcessor">
 		<constructor-arg ref="routingService" />
 	</bean>
+	
+	<bean id="echoer" class="uk.org.openeyes.oink.messaging.EchoResponder"/>
 
 	<spring-security:authentication-manager
 		id="authenticationManager">
@@ -66,52 +71,43 @@
 			<from uri="jetty:http://localhost:8023/oink?matchOnUriPrefix=true" />
 			<bean ref="authenticator" method="extractAuthenticationDetailsFromHttp" />
 			<policy ref="user">
-				<bean ref="facadeProcessor" method="stripFacadeUriBase" />
-				<convertBodyTo type="uk.org.openeyes.oink.domain.FhirBody" />
-				<bean ref="fhirValidator" method="validateRequestHeaders" />
-				<bean ref="fhirValidator" method="validateBody" />
-				<bean ref="oinkWrapper" method="wrapRequest" />
-				<bean ref="facadeProcessor" method="setRabbitRouteHeaders" />
-				<bean ref="rabbitProcessor" method="prepare" />
-				<setHeader headerName="rabbitmq.ROUTING_KEY">
-					<constant>endService</constant>
-				</setHeader>
-				<setHeader headerName="rabbitmq.REPLY_TO">
-					<constant>proxyResponse</constant>
-				</setHeader>
-				<to
-					uri="rabbitmq://localhost:5672/test?username=admin&amp;password=admin" />
-				<bean ref="rabbitProcessor" method="waitForResponse" />
-				<bean ref="oinkWrapper" method="unwrapResponse" />
+				<bean ref="oinkHttpConverter" method="buildOinkRequest" />
+				<bean ref="validator" method="validateRequest" />
+				<removeHeaders pattern="*"/>
+				<bean ref="rabbitProcessor" method="setRabbitRouteHeaders" />
+				<bean ref="synchRabbitProcessor" method="prepare" />
+				<to uri="rabbitmq://localhost:5672/test?username=admin&amp;password=admin" />
+				<bean ref="synchRabbitProcessor" method="waitForResponse" />
+				<removeHeaders pattern="*"/>
+				<bean ref="oinkHttpConverter" method="buildHttpResponse" />		
+				<log message="Returning response over http"/>
 			</policy>
 		</route>
 
 		<route>
 			<from
-				uri="rabbitmq://localhost:5672/test?username=admin&amp;password=admin&amp;queue=proxyResponse&amp;routingKey=proxyResponse" />
+				uri="rabbitmq://localhost:5672/test?username=admin&amp;password=admin&amp;queue=siteAResponse&amp;routingKey=siteAResponse" />
+			<log message="Received response ${body}"/>
 			<recipientList>
 				<simple>seda:${headers.rabbitmq.CORRELATIONID}</simple>
 			</recipientList>
 		</route>
 
-		<!-- Route 2 (internal facing) -->
+		<!-- Route 2 (proxy) -->
 		<route>
 			<from
-				uri="rabbitmq://localhost:5672/test?username=admin&amp;password=admin&amp;queue=endService&amp;routingKey=endService" />
-			<bean ref="oinkWrapper" method="unwrapRequest" />
-			<to uri="http4://localhost:8024" />
-			<bean ref="oinkWrapper" method="wrapResponse" />
+				uri="rabbitmq://localhost:5672/test?username=admin&amp;password=admin&amp;queue=siteB&amp;routingKey=siteB" />
+			<setHeader headerName="rabbitmq.ROUTING_KEY">
+				<simple>${headers.rabbitmq.REPLY_TO}</simple>
+			</setHeader>
+			<bean ref="echoer"/>
 			<to
-				uri="rabbitmq://localhost:5672/test?username=admin&amp;password=admin&amp;queue=reply&amp;routingKey=reply" />
+				uri="rabbitmq://localhost:5672/test?username=admin&amp;password=admin" />
 		</route>
 
 		<!-- Route 3 (sample end server) -->
-		<route>
-			<from uri="jetty:http://localhost:8024?matchOnUriPrefix=true" />
-			<setBody>
-				<simple>Hello World</simple>
-			</setBody>
-		</route>
+		<!-- <route> <from uri="jetty:http://localhost:8024?matchOnUriPrefix=true" 
+			/> <setBody> <simple>Hello World</simple> </setBody> </route> -->
 	</camelContext>
 
 </beans>

@@ -127,7 +127,7 @@ public class ServiceFacade {
 		// Prepare REST response
 		response.setStatus(oinkResponse.getStatus());
 		OutputStream os = response.getOutputStream();
-		OINKBody oinkResponseBody = oinkResponse.getBody();
+		OINKBody oinkResponseBody = null;// = oinkResponse.getBody();
 		if (oinkResponseBody != null) {
 			try {
 				if (oinkResponseBody.getFeed() != null) {

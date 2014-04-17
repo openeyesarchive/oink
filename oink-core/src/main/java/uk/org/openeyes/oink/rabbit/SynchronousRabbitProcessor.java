@@ -8,6 +8,10 @@ import org.apache.camel.Exchange;
 public class SynchronousRabbitProcessor {
 
 	private int timeOut;
+	
+	public SynchronousRabbitProcessor(int timeOut) {
+		this.timeOut = timeOut;
+	}
 
 	public void setTimeOut(int timeOut) {
 		this.timeOut = timeOut;
@@ -34,10 +38,10 @@ public class SynchronousRabbitProcessor {
 
 		if (resultFromQueuingSystem != null) {
 			
-			e.setOut(resultFromQueuingSystem.getOut());
+			e.setOut(resultFromQueuingSystem.getIn());
 
 		} else {
-			// tell http client the request is timed out
+			// tell http client the request timed out
 			e.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, 504);
 		}
 	}

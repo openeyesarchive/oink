@@ -6,5 +6,7 @@ import uk.org.openeyes.oink.messaging.RabbitRoute;
 public interface RoutingService {
 	
 	public RabbitRoute getRouting(String path, HttpMethod method);
+	
+	public String getReplyRoutingKey(String path, HttpMethod method);
 
 }
