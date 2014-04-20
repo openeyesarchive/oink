@@ -15,8 +15,7 @@ import uk.org.openeyes.oink.domain.OINKRequestMessage;
 import uk.org.openeyes.oink.domain.OINKResponseMessage;
 
 /**
- * 
- * A Processor for building OINK messages originating from HTTP Endpoints
+ * Builds an {@link OINKRequestMessage} from an Http Inbound Component.
  * 
  */
 public class OinkHttpConverter {

@@ -1,11 +1,11 @@
-package uk.org.openeyes.oink.http;
+package uk.org.openeyes.oink.messaging;
 
 import uk.org.openeyes.oink.domain.FhirBody;
 import uk.org.openeyes.oink.domain.OINKRequestMessage;
+import uk.org.openeyes.oink.http.InvalidFhirMessageException;
+import uk.org.openeyes.oink.http.InvalidRestOperation;
 
-public class FhirJsonValidator {
-
-	private final static String jsonContentType = "application/json+fhir";
+public class OinkMessageValidator {
 	
 	public void validateRequest(OINKRequestMessage message) throws Exception {
 		validateBody(message);
@@ -19,11 +19,11 @@ public class FhirJsonValidator {
 		// Check content-type
 		if (verb.equals("PUT") || verb.equals("POST")) {
 			if (body == null) {
-				throw new InvalidRestOperation("Invalid Body. A body is required for the verb: "+verb);
+				throw new InvalidFhirMessageException("Invalid Body. A body is required for the verb: "+verb);
 			}
 		} else {
 			if (body != null) {
-				throw new InvalidRestOperation("Body detected. A body is not applicable for the verb: "+verb);
+				throw new InvalidFhirMessageException("Body detected. A body is not applicable for the verb: "+verb);
 			}
 		}
 	}

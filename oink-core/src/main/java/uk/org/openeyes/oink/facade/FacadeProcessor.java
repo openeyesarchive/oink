@@ -3,8 +3,10 @@ package uk.org.openeyes.oink.facade;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
+
 import uk.org.openeyes.oink.domain.OINKRequestMessage;
 import uk.org.openeyes.oink.messaging.RabbitRoute;
+import uk.org.openeyes.oink.rabbit.NoRabbitMappingFoundException;
 
 public class FacadeProcessor {
 	

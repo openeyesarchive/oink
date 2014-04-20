@@ -24,7 +24,7 @@ public class SynchronousRabbitProcessor {
 		e.getIn().setHeader("rabbitmq.CORRELATIONID", synchronousRequestId);
 	}
 
-	public void waitForResponse(Exchange e) {
+	public void waitForResponse(Exchange e) throws SynchronousRabbitTimeoutException {
 		CamelContext camelContext = e.getContext();
 
 		final String synchronousRequestId = e.getIn().getHeader(
@@ -41,8 +41,7 @@ public class SynchronousRabbitProcessor {
 			e.setOut(resultFromQueuingSystem.getIn());
 
 		} else {
-			// tell http client the request timed out
-			e.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, 504);
+			throw new SynchronousRabbitTimeoutException();
 		}
 	}
 

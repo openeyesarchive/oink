@@ -18,10 +18,10 @@
 	<bean id="oinkHttpConverter" class="uk.org.openeyes.oink.http.OinkHttpConverter">
 	</bean>
 
-	<bean id="validator" class="uk.org.openeyes.oink.http.FhirJsonValidator" />
+	<bean id="validator" class="uk.org.openeyes.oink.messaging.OinkMessageValidator" />
 
 	<bean id="synchRabbitProcessor" class="uk.org.openeyes.oink.rabbit.SynchronousRabbitProcessor">
-		<constructor-arg name="timeOut" value="5000"/>
+		<constructor-arg name="timeOut" value="5000" />
 	</bean>
 
 	<bean id="routingService" class="uk.org.openeyes.oink.facade.SimpleRoutingService">
@@ -31,14 +31,16 @@
 					exchange="test" route="siteB" />
 			</oink:facadeRabbitMapper>
 		</constructor-arg>
-		<constructor-arg name="replyRouting" value="siteAResponse"/>
+		<constructor-arg name="replyRouting" value="siteAResponse" />
 	</bean>
 
 	<bean id="rabbitProcessor" class="uk.org.openeyes.oink.rabbit.RabbitProcessor">
 		<constructor-arg ref="routingService" />
 	</bean>
+
+	<bean id="echoer" class="uk.org.openeyes.oink.messaging.EchoResponder" />
 	
-	<bean id="echoer" class="uk.org.openeyes.oink.messaging.EchoResponder"/>
+	<bean id="errorHandler" class="uk.org.openeyes.oink.facade.WebExceptionProcessor"/>
 
 	<spring-security:authentication-manager
 		id="authenticationManager">
@@ -69,25 +71,31 @@
 		<!-- Route 1 (facade) -->
 		<route>
 			<from uri="jetty:http://localhost:8023/oink?matchOnUriPrefix=true" />
+			<onException>
+				<exception>java.lang.Exception</exception>
+				<handled><constant>true</constant></handled>
+				<process ref="errorHandler"/>
+			</onException>
 			<bean ref="authenticator" method="extractAuthenticationDetailsFromHttp" />
 			<policy ref="user">
 				<bean ref="oinkHttpConverter" method="buildOinkRequest" />
 				<bean ref="validator" method="validateRequest" />
-				<removeHeaders pattern="*"/>
+				<removeHeaders pattern="*" />
 				<bean ref="rabbitProcessor" method="setRabbitRouteHeaders" />
 				<bean ref="synchRabbitProcessor" method="prepare" />
-				<to uri="rabbitmq://localhost:5672/test?username=admin&amp;password=admin" />
+				<to
+					uri="rabbitmq://localhost:5672/test?username=admin&amp;password=admin" />
 				<bean ref="synchRabbitProcessor" method="waitForResponse" />
-				<removeHeaders pattern="*"/>
-				<bean ref="oinkHttpConverter" method="buildHttpResponse" />		
-				<log message="Returning response over http"/>
+				<removeHeaders pattern="*" />
+				<bean ref="oinkHttpConverter" method="buildHttpResponse" />
+				<log message="Returning response over http" />
 			</policy>
 		</route>
 
 		<route>
 			<from
 				uri="rabbitmq://localhost:5672/test?username=admin&amp;password=admin&amp;queue=siteAResponse&amp;routingKey=siteAResponse" />
-			<log message="Received response ${body}"/>
+			<log message="Received response ${body}" />
 			<recipientList>
 				<simple>seda:${headers.rabbitmq.CORRELATIONID}</simple>
 			</recipientList>
@@ -100,7 +108,7 @@
 			<setHeader headerName="rabbitmq.ROUTING_KEY">
 				<simple>${headers.rabbitmq.REPLY_TO}</simple>
 			</setHeader>
-			<bean ref="echoer"/>
+			<bean ref="echoer" />
 			<to
 				uri="rabbitmq://localhost:5672/test?username=admin&amp;password=admin" />
 		</route>

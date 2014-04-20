@@ -8,7 +8,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 
 public class UserAuthenticator {
 	
-	public void extractAuthenticationDetailsFromHttp(Exchange exchange) throws Exception {
+	public void extractAuthenticationDetailsFromHttp(Exchange exchange) throws SecurityException {
 		// get the username and password from the HTTP header
         // http://en.wikipedia.org/wiki/Basic_access_authentication
 		String authorizationHeader = exchange.getIn().getHeader("Authorization", String.class);

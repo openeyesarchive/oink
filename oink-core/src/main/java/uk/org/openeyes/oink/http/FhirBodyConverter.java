@@ -19,7 +19,7 @@ public class FhirBodyConverter {
 	public static FhirBody toFhirBody(InputStream jsonIs, Exchange exchange) throws Exception {
 		
 		if (!exchange.getIn().getHeader(Exchange.CONTENT_TYPE,String.class).equals("application/json+fhir")) {
-			throw new InvalidFhirMessage("Could not parse Fhir Body. Content-Type should be application/json+fhir");
+			throw new InvalidFhirMessageException("Could not parse Fhir Body. Content-Type should be application/json+fhir");
 		}
 		
 		if (jsonIs.available() <= 0) {
@@ -35,7 +35,7 @@ public class FhirBodyConverter {
 				return new FhirBody(res.getResource());
 			}
 		} catch (Exception e) {
-			throw new InvalidFhirMessage("Could not parse Fhir Body. Details: "
+			throw new InvalidFhirMessageException("Could not parse Fhir Body. Details: "
 					+ e.getMessage());
 		}
 

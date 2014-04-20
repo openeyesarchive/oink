@@ -6,7 +6,6 @@ import org.apache.camel.Body;
 import org.apache.camel.OutHeaders;
 
 import uk.org.openeyes.oink.domain.OINKRequestMessage;
-import uk.org.openeyes.oink.facade.NoRabbitMappingFoundException;
 import uk.org.openeyes.oink.facade.RoutingService;
 import uk.org.openeyes.oink.messaging.RabbitRoute;
 
