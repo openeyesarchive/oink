@@ -20,7 +20,7 @@
 			value="classpath:uk/org/openeyes/oink/example/proxy/facade.properties" />
 	</bean>
 
-	<bean id="authenticator" class="uk.org.openeyes.oink.http.UserAuthenticator" />
+	<bean id="authenticator" class="uk.org.openeyes.oink.http.HttpBasicAuthenticator" />
 
 	<bean id="identityService" class="uk.org.openeyes.oink.security.SimpleIdentityService" />
 
@@ -33,7 +33,7 @@
 		<constructor-arg name="timeOut" value="5000" />
 	</bean>
 
-	<bean id="routingService" class="uk.org.openeyes.oink.facade.SimpleRoutingService">
+	<bean id="routingService" class="uk.org.openeyes.oink.facade.FacadeRoutingService">
 		<constructor-arg name="mappings">
 			<oink:facadeRabbitMapper>
 				<oink:mapping resource="Patient" method="POST"

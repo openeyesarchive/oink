@@ -22,7 +22,10 @@ import uk.org.openeyes.oink.domain.OINKRequestMessage;
 import uk.org.openeyes.oink.domain.OINKResponseMessage;
 
 /**
- * Builds an {@link OINKRequestMessage} from an Http Inbound Component.
+ * Builds an {@link OINKRequestMessage} from an Http Consumer (i.e. Camel Jetty
+ * Component). It also has methods for converting the contents of an
+ * {@link OINKResponseMessage} into the format able to be handled by an Http
+ * Processor.
  * 
  */
 public class OinkHttpConverter {
@@ -66,8 +69,9 @@ public class OinkHttpConverter {
 		return message;
 	}
 
-	public static FhirBody readFhirBody(InputStream is) throws InvalidFhirRequestException {
-		
+	public static FhirBody readFhirBody(InputStream is)
+			throws InvalidFhirRequestException {
+
 		JsonParser parser = new JsonParser();
 		try {
 			ResourceOrFeed res = parser.parseGeneral(is);
@@ -77,28 +81,28 @@ public class OinkHttpConverter {
 				return new FhirBody(res.getResource());
 			}
 		} catch (Exception e) {
-			throw new InvalidFhirRequestException("Could not read Fhir Body. Details: "
-					+ e.getMessage());
+			throw new InvalidFhirRequestException(
+					"Could not read Fhir Body. Details: " + e.getMessage());
 		}
-
 
 	}
 
 	public String buildHttpResponse(@Body OINKResponseMessage message,
-			@OutHeaders Map<String, Object> headers) throws InvalidFhirResponseException {
+			@OutHeaders Map<String, Object> headers)
+			throws InvalidFhirResponseException {
 		headers.put(Exchange.HTTP_RESPONSE_CODE, message.getStatus());
 		headers.put(Exchange.CONTENT_TYPE, "application/json+fhir");
-		
+
 		try {
-		FhirBody body = message.getBody();
-		ByteArrayOutputStream os = new ByteArrayOutputStream();
-		JsonComposer composer = new JsonComposer();
-		if (body.isResource()) {
-			composer.compose(os, body.getResource(), false);
-		} else {
-			composer.compose(os, body.getBundle(), false);
-		}
-		return os.toString();
+			FhirBody body = message.getBody();
+			ByteArrayOutputStream os = new ByteArrayOutputStream();
+			JsonComposer composer = new JsonComposer();
+			if (body.isResource()) {
+				composer.compose(os, body.getResource(), false);
+			} else {
+				composer.compose(os, body.getBundle(), false);
+			}
+			return os.toString();
 		} catch (Exception e) {
 			throw new InvalidFhirResponseException(e.getMessage());
 		}

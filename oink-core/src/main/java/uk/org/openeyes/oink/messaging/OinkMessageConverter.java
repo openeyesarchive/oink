@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.lang.reflect.Type;
 
 import org.apache.camel.Converter;
+import org.apache.camel.TypeConverter;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.commons.lang3.SerializationUtils;
 import org.hl7.fhir.instance.formats.JsonComposer;
@@ -27,6 +28,13 @@ import com.google.gson.JsonSerializer;
 import uk.org.openeyes.oink.domain.OINKRequestMessage;
 import uk.org.openeyes.oink.domain.OINKResponseMessage;
 
+/**
+ * A custom Camel {@link TypeConverter} for converting
+ * {@link OINKRequestMessage} and {@link OINKResponseMessage} into byte arrays
+ * and strings.
+ * 
+ * @author Oliver Wilkie
+ */
 @Converter
 public class OinkMessageConverter {
 

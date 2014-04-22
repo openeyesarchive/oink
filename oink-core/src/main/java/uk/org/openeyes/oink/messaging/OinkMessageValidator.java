@@ -3,7 +3,6 @@ package uk.org.openeyes.oink.messaging;
 import uk.org.openeyes.oink.domain.FhirBody;
 import uk.org.openeyes.oink.domain.OINKRequestMessage;
 import uk.org.openeyes.oink.http.InvalidFhirRequestException;
-import uk.org.openeyes.oink.http.InvalidRestOperation;
 
 public class OinkMessageValidator {
 	

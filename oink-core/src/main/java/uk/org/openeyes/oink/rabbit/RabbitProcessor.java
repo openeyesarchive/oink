@@ -7,7 +7,6 @@ import org.apache.camel.OutHeaders;
 
 import uk.org.openeyes.oink.domain.OINKRequestMessage;
 import uk.org.openeyes.oink.facade.RoutingService;
-import uk.org.openeyes.oink.messaging.RabbitRoute;
 
 /**
  * Prepares an OINKRequestMessage for sending over a rabbit broker.

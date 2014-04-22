@@ -27,7 +27,7 @@ import org.w3c.dom.Element;
 import uk.org.openeyes.oink.common.HttpMapper;
 import uk.org.openeyes.oink.common.HttpMapperEntry;
 import uk.org.openeyes.oink.domain.HttpMethod;
-import uk.org.openeyes.oink.messaging.RabbitRoute;
+import uk.org.openeyes.oink.rabbit.RabbitRoute;
 
 public class RequestRabbitMapperBeanDefinitionParser extends RequestMapperBeanDefinitionParser {
 

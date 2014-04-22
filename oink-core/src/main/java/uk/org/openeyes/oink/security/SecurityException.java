@@ -1,4 +1,4 @@
-package uk.org.openeyes.oink.http;
+package uk.org.openeyes.oink.security;
 
 import uk.org.openeyes.oink.exception.HttpStatusCode;
 import uk.org.openeyes.oink.exception.OinkException;

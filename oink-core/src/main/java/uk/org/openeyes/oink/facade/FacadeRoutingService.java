@@ -2,15 +2,15 @@ package uk.org.openeyes.oink.facade;
 
 import uk.org.openeyes.oink.common.HttpMapper;
 import uk.org.openeyes.oink.domain.HttpMethod;
-import uk.org.openeyes.oink.messaging.RabbitRoute;
+import uk.org.openeyes.oink.rabbit.RabbitRoute;
 
-public class SimpleRoutingService implements RoutingService {
+public class FacadeRoutingService implements RoutingService {
 	
 	private HttpMapper<RabbitRoute> mappings;
 	
 	private final String replyRoutingKey;
 	
-	public SimpleRoutingService(HttpMapper<RabbitRoute> mappings, String replyRouting) {
+	public FacadeRoutingService(HttpMapper<RabbitRoute> mappings, String replyRouting) {
 		this.replyRoutingKey = replyRouting;
 		this.mappings = mappings;
 	}

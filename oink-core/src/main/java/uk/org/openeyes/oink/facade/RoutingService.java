@@ -1,7 +1,7 @@
 package uk.org.openeyes.oink.facade;
 
 import uk.org.openeyes.oink.domain.HttpMethod;
-import uk.org.openeyes.oink.messaging.RabbitRoute;
+import uk.org.openeyes.oink.rabbit.RabbitRoute;
 
 public interface RoutingService {
 	
