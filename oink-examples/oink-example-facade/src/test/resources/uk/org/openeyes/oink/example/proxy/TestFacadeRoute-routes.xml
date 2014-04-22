@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camel="http://camel.apache.org/schema/spring"
+	xmlns:osgi="http://www.springframework.org/schema/osgi" xmlns:oink="http://www.openeyes.org.uk/schema/oink"
+	xmlns:spring-security="http://www.springframework.org/schema/security"
+	xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd
+       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd  
+       http://camel.apache.org/schema/spring-security http://camel.apache.org/schema/spring-security/camel-spring-security.xsd
+       http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
+       http://www.openeyes.org.uk/schema/oink http://www.openeyes.org.uk/schema/oink/oink-1.0.xsd">
+
+	<camelContext xmlns="http://camel.apache.org/schema/spring">
+
+		<!-- Route 1 (facade) -->
+		<route>
+			<from
+				uri="jetty:http://localhost:{{facade.port}}{{facade.path}}?matchOnUriPrefix=true" />
+			<onException>
+				<exception>java.lang.Exception</exception>
+				<handled>
+					<constant>true</constant>
+				</handled>
+				<process ref="errorHandler" />
+				<to
+					uri="log:GeneralError?level=ERROR&amp;showAll=true&amp;multiline=true" />
+			</onException>
+			<bean ref="authenticator" method="extractAuthenticationDetailsFromHttp" />
+			<policy ref="user">
+				<bean ref="oinkHttpConverter" method="buildOinkRequest" />
+				<bean ref="validator" method="validateRequest" />
+				<removeHeaders pattern="*" />
+				<bean ref="rabbitProcessor" method="setRabbitRouteHeaders" />
+				<bean ref="synchRabbitProcessor" method="prepare" />
+				<to
+					uri="rabbitmq://localhost:{{rabbit.port}}/{{rabbit.defaultExchange}}?vhost={{rabbit.vhost}}&amp;username={{rabbit.username}}&amp;password={{rabbit.password}}" />
+				<bean ref="synchRabbitProcessor" method="waitForResponse" />
+				<removeHeaders pattern="*" />
+				<bean ref="oinkHttpConverter" method="buildHttpResponse" />
+			</policy>
+		</route>
+
+		<!-- Facade response router -->
+		<route>
+			<from
+				uri="rabbitmq://localhost:{{rabbit.port}}/{{rabbit.defaultExchange}}?vhost={{rabbit.vhost}}&amp;username={{rabbit.username}}&amp;password={{rabbit.password}}&amp;queue=siteAResponse&amp;routingKey=siteAResponse" />
+			<recipientList>
+				<simple>seda:${headers.rabbitmq.CORRELATIONID}</simple>
+			</recipientList>
+		</route>
+
+		<!-- Route 2 (Dummy Remote OINK System) -->
+		<route>
+			<from
+				uri="rabbitmq://localhost:{{rabbit.port}}/{{rabbit.defaultExchange}}?vhost={{rabbit.vhost}}&amp;username={{rabbit.username}}&amp;password={{rabbit.password}}&amp;queue=siteB&amp;routingKey=siteB" />
+			<setHeader headerName="rabbitmq.ROUTING_KEY">
+				<simple>${headers.rabbitmq.REPLY_TO}</simple>
+			</setHeader>
+			<bean ref="echoer" />
+			<to
+				uri="rabbitmq://localhost:{{rabbit.port}}/{{rabbit.defaultExchange}}?vhost={{rabbit.vhost}}&amp;username={{rabbit.username}}&amp;password={{rabbit.password}}" />
+		</route>
+		
+		<!-- Route 3 (Dummy Remote OINK System that will never reply -->
+		<route>
+			<from
+				uri="rabbitmq://localhost:{{rabbit.port}}/{{rabbit.defaultExchange}}?vhost={{rabbit.vhost}}&amp;username={{rabbit.username}}&amp;password={{rabbit.password}}&amp;queue=siteBTimeout&amp;routingKey=siteBTimeout" />	
+			<to uri="mock:result"/>
+		</route>
+
+	</camelContext>
+
+</beans>

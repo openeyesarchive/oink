@@ -40,7 +40,7 @@
 
 	<bean id="echoer" class="uk.org.openeyes.oink.messaging.EchoResponder" />
 	
-	<bean id="errorHandler" class="uk.org.openeyes.oink.facade.WebExceptionProcessor"/>
+	<bean id="errorHandler" class="uk.org.openeyes.oink.exception.WebExceptionProcessor"/>
 
 	<spring-security:authentication-manager
 		id="authenticationManager">

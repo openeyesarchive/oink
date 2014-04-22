@@ -12,12 +12,15 @@ public class UserAuthenticator {
 		// get the username and password from the HTTP header
         // http://en.wikipedia.org/wiki/Basic_access_authentication
 		String authorizationHeader = exchange.getIn().getHeader("Authorization", String.class);
+        if (authorizationHeader == null) {
+        	throw new SecurityException("No HttpBasic Authorization Header was found in the request");
+        }
 		String basicPrefix = "Basic ";
 		String userPassword = authorizationHeader.substring(basicPrefix.length());
 		byte[] header = Base64.decodeBase64(userPassword.getBytes());
         if (header == null) {
-        	throw new SecurityException("No HttpBasic Authorization Header was found in the request");
-        }
+        	throw new SecurityException("Invalid Authorization Header found in the request");
+        }		
 		String userpass = new String(header);
         String[] tokens = userpass.split(":");
         

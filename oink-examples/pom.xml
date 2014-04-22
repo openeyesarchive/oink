@@ -12,6 +12,6 @@
   <packaging>pom</packaging>
   <name>oink-examples</name>
   <modules>
-    <module>oink-example-proxy</module>
+    <module>oink-example-facade</module>
   </modules>
 </project>
