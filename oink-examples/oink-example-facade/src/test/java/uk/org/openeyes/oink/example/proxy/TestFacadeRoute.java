@@ -14,8 +14,7 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -50,7 +49,7 @@ public class TestFacadeRoute {
 	@Test
 	public void testFacadeDoesAValidRoundTrip() throws IOException {
 		// Prepare Request
-		CloseableHttpClient httpClient = HttpClients.createDefault();
+		DefaultHttpClient httpClient = new DefaultHttpClient();
 		HttpPost httpPost = new HttpPost("http://localhost:8899/oink/Patient");
 		
 		String encoding = Base64.encodeBase64String("bob@ucc1:bob".getBytes());
@@ -70,7 +69,7 @@ public class TestFacadeRoute {
 	@Test
 	public void testFacadeRejectsUnauthenticatedUserWithErrorCode403() throws ClientProtocolException, IOException {
 		// Prepare Request
-		CloseableHttpClient httpClient = HttpClients.createDefault();
+		DefaultHttpClient httpClient = new DefaultHttpClient();
 		HttpPost httpPost = new HttpPost("http://localhost:8899/oink/Patient");
 		
 		// Post request
@@ -83,7 +82,7 @@ public class TestFacadeRoute {
 	@Test
 	public void testFacadeRejectsInvalidRequestBodiesWithErrorCode400() throws IOException {
 		// Prepare Request
-		CloseableHttpClient httpClient = HttpClients.createDefault();
+		DefaultHttpClient httpClient = new DefaultHttpClient();
 		HttpPost httpPost = new HttpPost("http://localhost:8899/oink/Patient");
 		
 		String encoding = Base64.encodeBase64String("bob@ucc1:bob".getBytes());
@@ -103,7 +102,7 @@ public class TestFacadeRoute {
 	@Test
 	public void testFacadeRejectsRequestsWithNoMatchingMappingsWith404() throws ClientProtocolException, IOException {
 		// Prepare Request
-		CloseableHttpClient httpClient = HttpClients.createDefault();
+		DefaultHttpClient httpClient = new DefaultHttpClient();
 		HttpPost httpPost = new HttpPost("http://localhost:8899/oink/Alien");
 		
 		String encoding = Base64.encodeBase64String("bob@ucc1:bob".getBytes());
@@ -123,7 +122,7 @@ public class TestFacadeRoute {
 	@Test
 	public void testFacadeHandlesTimeoutOnOtherOinkSystemWith504() throws IOException {
 		// Prepare Request
-		CloseableHttpClient httpClient = HttpClients.createDefault();
+		DefaultHttpClient httpClient = new DefaultHttpClient();
 		HttpPost httpPost = new HttpPost("http://localhost:8899/oink/Practitioner");
 		
 		String encoding = Base64.encodeBase64String("bob@ucc1:bob".getBytes());
@@ -143,7 +142,7 @@ public class TestFacadeRoute {
 	@Test
 	public void testSendingInvalidContentTypeReturnsErrorCode400() throws IOException {
 		// Prepare Request
-		CloseableHttpClient httpClient = HttpClients.createDefault();
+		DefaultHttpClient httpClient = new DefaultHttpClient();
 		HttpPost httpPost = new HttpPost("http://localhost:8899/oink/Patient");
 		
 		String encoding = Base64.encodeBase64String("bob@ucc1:bob".getBytes());
