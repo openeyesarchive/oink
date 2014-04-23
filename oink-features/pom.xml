@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+	<!-- Licensed to the Apache Software Foundation (ASF) under one or more 
+		contributor license agreements. See the NOTICE file distributed with this 
+		work for additional information regarding copyright ownership. The ASF licenses 
+		this file to You under the Apache License, Version 2.0 (the "License"); you 
+		may not use this file except in compliance with the License. You may obtain 
+		a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 Unless 
+		required by applicable law or agreed to in writing, software distributed 
+		under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES 
+		OR CONDITIONS OF ANY KIND, either express or implied. See the License for 
+		the specific language governing permissions and limitations under the License. -->
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<artifactId>oink</artifactId>
+		<groupId>uk.org.openeyes.oink</groupId>
+		<version>0.2-SNAPSHOT</version>
+	</parent>
+
+	<artifactId>oink-features</artifactId>
+	<version>0.2-SNAPSHOT</version>
+
+	<name>OINK Features Repository</name>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.karaf.tooling</groupId>
+				<artifactId>karaf-maven-plugin</artifactId>
+				<version>3.0.1</version>
+				<extensions>true</extensions>
+				<executions>
+					<execution>
+						<id>generate-features-file</id>
+						<phase>package</phase>
+						<goals>
+							<goal>features-generate-descriptor</goal>
+						</goals>
+						<configuration>
+							<aggregateFeatures>true</aggregateFeatures>
+							<checkDependencyChange>false</checkDependencyChange>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<!-- https://issues.apache.org/jira/browse/KARAF-1512 -->
+ 			<plugin>
+				<groupId>com.google.code.maven-replacer-plugin</groupId>
+				<artifactId>replacer</artifactId>
+				<version>1.5.3</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>replace</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<file>${project.basedir}/target/feature/feature.xml</file>
+					<replacements>
+						<replacement>
+							<token>http://karaf.apache.org/xmlns/features/v1.2.0</token>
+							<value>http://karaf.apache.org/xmlns/features/v1.0.0</value>
+						</replacement>
+					</replacements>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+	<dependencies>
+		<dependency>
+			<groupId>uk.org.openeyes.oink</groupId>
+			<artifactId>oink-domain</artifactId>
+			<version>0.2-SNAPSHOT</version>
+			<type>xml</type>
+			<classifier>features</classifier>
+		</dependency>
+		<dependency>
+			<groupId>uk.org.openeyes.oink</groupId>
+			<artifactId>oink-core</artifactId>
+			<version>0.2-SNAPSHOT</version>
+			<type>xml</type>
+			<classifier>features</classifier>
+		</dependency>
+		<dependency>
+			<groupId>uk.org.openeyes.oink.examples</groupId>
+			<artifactId>oink-example-facade</artifactId>
+			<version>0.2-SNAPSHOT</version>
+			<type>xml</type>
+			<classifier>features</classifier>
+		</dependency>
+	</dependencies>
+	<description>A Karaf XML feature repository for the OINK Library. </description>
+</project>

@@ -9,11 +9,17 @@
 	<artifactId>oink-core</artifactId>
 	<name>OINK Core</name>
 	<description>Common classes and utilities for OINK.</description>
-	<properties>
-		<osgi.version>5.0.0</osgi.version>
-	</properties>
-	<dependencies>
+	<packaging>bundle</packaging>
 
+	<dependencies>
+		<!-- Oink -->
+		<dependency>
+			<groupId>uk.org.openeyes.oink</groupId>
+			<artifactId>oink-domain</artifactId>
+			<version>0.2-SNAPSHOT</version>
+		</dependency>
+
+		<!-- Camel -->
 		<dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-core</artifactId>
@@ -31,14 +37,7 @@
 			<scope>test</scope>
 		</dependency>
 
-		<!-- Spring -->
-		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>servlet-api</artifactId>
-			<version>2.5</version>
-		</dependency>
-
-		<!-- SLF4J -->
+		<!-- SLF4J (Logging) -->
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
@@ -50,17 +49,6 @@
 			<version>${org.slf4j.version}</version>
 			<scope>runtime</scope>
 		</dependency>
-		<!-- route slf4j events to log4j for processing -->
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-log4j12</artifactId>
-			<version>${org.slf4j.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>log4j</groupId>
-			<artifactId>log4j</artifactId>
-			<version>1.2.14</version>
-		</dependency>
 
 		<!-- JUnit -->
 		<dependency>
@@ -70,7 +58,7 @@
 			<scope>test</scope>
 		</dependency>
 
-
+		<!-- Apache Commons -->
 		<dependency>
 			<groupId>commons-chain</groupId>
 			<artifactId>commons-chain</artifactId>
@@ -81,16 +69,7 @@
 			<artifactId>commons-io</artifactId>
 			<version>${commonsio.version}</version>
 		</dependency>
-		<dependency>
-			<groupId>uk.org.openeyes.oink</groupId>
-			<artifactId>oink-domain</artifactId>
-			<version>0.2-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>xpp3</groupId>
-			<artifactId>xpp3</artifactId>
-			<version>1.1.4c</version>
-		</dependency>
+
 	</dependencies>
 
 	<build>
@@ -111,7 +90,22 @@
 					</instructions>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.karaf.tooling</groupId>
+				<artifactId>karaf-maven-plugin</artifactId>
+				<version>3.0.1</version>
+				<executions>
+					<execution>
+						<id>generate-features-file</id>
+						<phase>package</phase>
+						<goals>
+							<goal>features-generate-descriptor</goal>
+						</goals>
+						<configuration>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
-	<packaging>bundle</packaging>
 </project>

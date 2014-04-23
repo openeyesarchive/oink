@@ -10,8 +10,9 @@
   <artifactId>oink-examples</artifactId>
   <version>0.2-SNAPSHOT</version>
   <packaging>pom</packaging>
-  <name>oink-examples</name>
+  <name>OINK Examples</name>
   <modules>
     <module>oink-example-facade</module>
   </modules>
+  <description>Example deployable OINK applications demonstrating usage of OINK components.</description>
 </project>
