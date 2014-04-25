@@ -60,11 +60,6 @@
 
 		<!-- Apache Commons -->
 		<dependency>
-			<groupId>commons-chain</groupId>
-			<artifactId>commons-chain</artifactId>
-			<version>${commonschain.version}</version>
-		</dependency>
-		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
 			<version>${commonsio.version}</version>

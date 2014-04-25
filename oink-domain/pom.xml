@@ -10,21 +10,33 @@
 	<artifactId>oink-domain</artifactId>
 	<version>0.2-SNAPSHOT</version>
 	<name>OINK Domain</name>
-	<url>http://maven.apache.org</url>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 	<dependencies>
 		<dependency>
+			<groupId>me.fhir</groupId>
+			<artifactId>fhir-0.12</artifactId>
+			<version>${fhir.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
+				</exclusion>				
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.ops4j.pax.logging</groupId>
+			<artifactId>pax-logging-api</artifactId>
+			<version>1.7.2</version>
+			<type>bundle</type>
+		</dependency>
+
+		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>${junit.version}</version>
 			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>me.fhir</groupId>
-			<artifactId>fhir-0.12</artifactId>
-			<version>${fhir.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.google.http-client</groupId>
