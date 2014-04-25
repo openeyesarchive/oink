@@ -1,20 +1,28 @@
-Camel Router Project for Spring-DM (OSGi)
-=========================================
+Facade Example
+===================
 
-To build this project use
+This example shows how to build an OINK Facade. It can be run using Maven.
 
-    mvn install
+This example is built assuming...
 
-You can run this project using he following Maven goal:
+Running from cmd line outside OSGi container
+============================================
 
-    mvn camel:run
+To run the example using Maven type
 
-To deploy the project in OSGi. For example using Apache ServiceMix
-or Apache Karaf. You will run the following command from its shell:
+	mvn:camel:run
+	
+To stop the example hit ctrl+c
 
-    osgi:install -s mvn:uk.org.openeyes.oink.examples/oink-example-proxy/0.2-SNAPSHOT
+Running inside OSGi container
+=============================
 
-For more help see the Apache Camel documentation
+You will need to compile and install this example first:
+ 	
+ 	mvn compile install
 
-    http://camel.apache.org/
 
+If using Apache Karaf you can install this example from the shell
+
+  features:addurl mvn:uk.org.openeyes.oink/oink-features/<camel version>/xml/features
+  features:install camel-example-facade
