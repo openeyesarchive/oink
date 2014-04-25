@@ -9,32 +9,15 @@
 	<name>OINK Parent</name>
 	<description>The OINK Project</description>
 	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<spring.version>3.1.4.RELEASE</spring.version>
-		<maven-bundle-plugin.version>2.4.0</maven-bundle-plugin.version>
-		<spring.rabbit.version>1.2.1.RELEASE</spring.rabbit.version>
 		<java.version>1.7</java.version>
-		<org.slf4j.version>1.7.5</org.slf4j.version>
-		<log4j.version>1.2.16</log4j.version>
-		<org.aspectj.version>1.6.10</org.aspectj.version>
 		<junit.version>4.11</junit.version>
-		<servlet.version>3.0.1</servlet.version>
-		<jsp.version>2.1</jsp.version>
-		<jstl.version>1.2</jstl.version>
-		<commonschain.version>1.2</commonschain.version>
-		<jackson.version>2.0.0</jackson.version>
-		<javatuples.version>1.2</javatuples.version>
-		<maven.failsafe.version>2.6</maven.failsafe.version>
-		<maven.release.version>2.4.2</maven.release.version>
-		<jetty.version>8.1.7.v20120910</jetty.version>
+		<spring.version>3.1.4.RELEASE</spring.version>
+		<camel.version>2.12.3</camel.version>
 		<commonsio.version>2.4</commonsio.version>
-		<jetty.maven.plugin.version>8.1.14.v20131031</jetty.maven.plugin.version>
-		<google.http.version>1.17.0-rc</google.http.version>
-		<google.gson.version>2.2.4</google.gson.version>
-		<openmap.version>1.0-SNAPSHOT</openmap.version>
 		<fhir.version>r2324-SNAPSHOT</fhir.version>
-		<apache.camel.version>2.12.3</apache.camel.version>
+		<paxlogging.version>1.7.2</paxlogging.version>
+		<org.slf4j.version>1.7.5</org.slf4j.version>
+		<maven-bundle-plugin.version>2.4.0</maven-bundle-plugin.version>
 	</properties>
 	<modules>
 		<module>oink-core</module>
@@ -48,6 +31,90 @@
 		<url>https://github.com/openeyes/oink.git</url>
 		<tag>HEAD</tag>
 	</scm>
+	<dependencyManagement>
+		<dependencies>
+			<!-- FHIR (OSGi-proof) -->
+			<dependency>
+				<groupId>me.fhir</groupId>
+				<artifactId>fhir-0.12</artifactId>
+				<version>${fhir.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>commons-logging</groupId>
+						<artifactId>commons-logging</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<!-- Spring -->
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-aop</artifactId>
+				<version>${spring.version}</version>
+			</dependency>			
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-context</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-test</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-tx</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
+			<!-- Camel -->
+			<dependency>
+				<groupId>org.apache.camel</groupId>
+				<artifactId>camel-core</artifactId>
+				<version>${camel.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.camel</groupId>
+				<artifactId>camel-http</artifactId>
+				<version>${camel.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.servicemix.bundles</groupId>
+				<artifactId>org.apache.servicemix.bundles.commons-httpclient</artifactId>
+				<version>3.1_7</version>
+			</dependency>			
+			<dependency>
+				<groupId>org.apache.camel</groupId>
+				<artifactId>camel-spring</artifactId>
+				<version>${camel.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.camel</groupId>
+				<artifactId>camel-jetty</artifactId>
+				<version>${camel.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.camel</groupId>
+				<artifactId>camel-rabbitmq</artifactId>
+				<version>${camel.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.camel</groupId>
+				<artifactId>camel-http4</artifactId>
+				<version>${camel.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.camel</groupId>
+				<artifactId>camel-spring-security</artifactId>
+				<version>${camel.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.camel</groupId>
+				<artifactId>camel-test-spring</artifactId>
+				<version>${camel.version}</version>
+				<scope>test</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 	<build>
 		<pluginManagement>
 			<plugins>

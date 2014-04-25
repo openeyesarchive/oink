@@ -41,7 +41,7 @@
 							<goal>features-generate-descriptor</goal>
 						</goals>
 						<configuration>
-							<aggregateFeatures>true</aggregateFeatures>
+							<aggregateFeatures>false</aggregateFeatures>
 							<checkDependencyChange>false</checkDependencyChange>
 						</configuration>
 					</execution>
@@ -73,28 +73,5 @@
 		</plugins>
 	</build>
 
-	<dependencies>
-		<dependency>
-			<groupId>uk.org.openeyes.oink</groupId>
-			<artifactId>oink-domain</artifactId>
-			<version>0.2-SNAPSHOT</version>
-			<type>xml</type>
-			<classifier>features</classifier>
-		</dependency>
-		<dependency>
-			<groupId>uk.org.openeyes.oink</groupId>
-			<artifactId>oink-core</artifactId>
-			<version>0.2-SNAPSHOT</version>
-			<type>xml</type>
-			<classifier>features</classifier>
-		</dependency>
-		<dependency>
-			<groupId>uk.org.openeyes.oink.examples</groupId>
-			<artifactId>oink-example-facade</artifactId>
-			<version>0.2-SNAPSHOT</version>
-			<type>xml</type>
-			<classifier>features</classifier>
-		</dependency>
-	</dependencies>
 	<description>A Karaf XML feature repository for the OINK Library. </description>
 </project>

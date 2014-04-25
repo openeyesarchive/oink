@@ -17,18 +17,11 @@
 		<dependency>
 			<groupId>me.fhir</groupId>
 			<artifactId>fhir-0.12</artifactId>
-			<version>${fhir.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>commons-logging</groupId>
-					<artifactId>commons-logging</artifactId>
-				</exclusion>				
-			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.ops4j.pax.logging</groupId>
 			<artifactId>pax-logging-api</artifactId>
-			<version>1.7.2</version>
+			<version>${paxlogging.version}</version>
 			<type>bundle</type>
 		</dependency>
 
@@ -36,12 +29,6 @@
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>${junit.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.google.http-client</groupId>
-			<artifactId>google-http-client</artifactId>
-			<version>${google.http.version}</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
@@ -61,23 +48,6 @@
 						</Export-Package>
 					</instructions>
 				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.karaf.tooling</groupId>
-				<artifactId>karaf-maven-plugin</artifactId>
-				<version>3.0.1</version>
-				<executions>
-					<execution>
-						<id>generate-features-file</id>
-						<phase>package</phase>
-						<goals>
-							<goal>features-generate-descriptor</goal>
-						</goals>
-						<configuration>
-						
-						</configuration>
-					</execution>
-				</executions>
 			</plugin>
 		</plugins>
 	</build>

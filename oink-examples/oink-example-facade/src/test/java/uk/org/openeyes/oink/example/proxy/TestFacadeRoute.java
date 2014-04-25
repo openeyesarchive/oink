@@ -51,7 +51,6 @@ public class TestFacadeRoute {
 		// Prepare Request
 		DefaultHttpClient httpClient = new DefaultHttpClient();
 		HttpPost httpPost = new HttpPost("http://localhost:8899/oink/Patient");
-		
 		String encoding = Base64.encodeBase64String("bob@ucc1:bob".getBytes());
 		httpPost.addHeader("Authorization", "Basic " + encoding);
 		
