@@ -22,6 +22,10 @@ public class WebExceptionProcessor implements Processor {
 	public void process(Exchange exchange) throws Exception {
 		Exception e = exchange.getProperty(Exchange.EXCEPTION_CAUGHT,
 				Exception.class);
+		
+		if (e == null) {
+			return;
+		}
 
 		int errorCode = DEFAULT_ERROR_CODE;
 
