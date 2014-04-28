@@ -24,6 +24,7 @@
 
 	<dependencies>
 
+		<!-- Oink -->
 		<dependency>
 			<groupId>uk.org.openeyes.oink</groupId>
 			<artifactId>oink-core</artifactId>
@@ -37,6 +38,31 @@
 			</exclusions>
 		</dependency>
 
+		<!-- Spring -->
+		<dependency>
+			<groupId>org.springframework.osgi</groupId>
+			<artifactId>spring-osgi-core</artifactId>
+			<version>1.2.1</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>org.springframework.aop</artifactId>
+					<groupId>org.springframework</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>org.springframework.context</artifactId>
+					<groupId>org.springframework</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<!-- OSGi -->
+		<dependency>
+			<groupId>org.apache.felix</groupId>
+			<artifactId>org.osgi.core</artifactId>
+			<version>1.4.0</version>
+		</dependency>
+
+		<!-- Camel -->
 		<dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-core</artifactId>
@@ -84,12 +110,13 @@
 			<artifactId>camel-test-spring</artifactId>
 			<scope>test</scope>
 		</dependency>
-		
+
+		<!-- Logging -->
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-simple</artifactId>
 			<version>1.7.7</version>
-		</dependency>		
+		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>jcl-over-slf4j</artifactId>
@@ -135,8 +162,8 @@
 					<instructions>
 						<Bundle-SymbolicName>oink-example-facade</Bundle-SymbolicName>
 						<Private-Package></Private-Package>
- 						<Import-Package>*,org.springframework.security.provisioning,org.apache.camel.component.spring.security</Import-Package>
- 					</instructions>
+						<Import-Package>*,org.springframework.security.provisioning,org.apache.camel.component.spring.security</Import-Package>
+					</instructions>
 				</configuration>
 			</plugin>
 

@@ -17,7 +17,7 @@
 		<route>
 			<from
 				uri="jetty:http://localhost:{{facade.port}}{{facade.path}}?matchOnUriPrefix=true" />
-			<!-- Return Java Exceptions as HTTP Codes  -->
+			<!-- Return Java Exceptions as HTTP Codes -->
 			<onException>
 				<exception>java.lang.Exception</exception>
 				<handled>
