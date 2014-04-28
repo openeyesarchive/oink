@@ -133,9 +133,10 @@
 				<extensions>true</extensions>
 				<configuration>
 					<instructions>
-						<Bundle-SymbolicName>oink-example-proxy</Bundle-SymbolicName>
+						<Bundle-SymbolicName>oink-example-facade</Bundle-SymbolicName>
 						<Private-Package></Private-Package>
-					</instructions>
+ 						<Import-Package>*,org.springframework.security.provisioning,org.apache.camel.component.spring.security</Import-Package>
+ 					</instructions>
 				</configuration>
 			</plugin>
 

@@ -1,0 +1,16 @@
+Karaf 3.x Features Repository
+===============================
+
+A deployment descriptor of OINK Bundles for the Apache Karaf 3.x platform.
+
+Deployment
+=============================
+
+You will need to install this repo first:
+ 	
+ 	mvn compile install
+
+If using Apache Karaf you can install this repo from the shell
+
+ 	feature:repo-add mvn:uk.org.openeyes.oink/oink-features/<oink version>/xml/features
+ 	feature:list
