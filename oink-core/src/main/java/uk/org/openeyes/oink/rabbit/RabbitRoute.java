@@ -22,8 +22,8 @@ package uk.org.openeyes.oink.rabbit;
  */
 public class RabbitRoute {
 	
-	private String routingKey;
-	private String exchange;
+	private final String routingKey;
+	private final String exchange;
 	
 	public RabbitRoute(String routingKey, String exchange) {
 		this.routingKey = routingKey;
@@ -38,14 +38,9 @@ public class RabbitRoute {
 	public String getRoutingKey() {
 		return routingKey;
 	}
-	public void setRoutingKey(String routingKey) {
-		this.routingKey = routingKey;
-	}
+
 	public String getExchange() {
 		return exchange;
-	}
-	public void setExchange(String exchange) {
-		this.exchange = exchange;
 	}
 
 	@Override
