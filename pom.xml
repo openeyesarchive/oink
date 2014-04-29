@@ -12,6 +12,7 @@
 		<junit.version>4.11</junit.version>
 		<spring.version>3.1.4.RELEASE</spring.version>
 		<camel.version>2.12.3</camel.version>
+		<karaf.version>3.0.1</karaf.version>
 		<commonsio.version>2.4</commonsio.version>
 		<fhir.version>r2324-SNAPSHOT</fhir.version>
 		<paxlogging.version>1.7.2</paxlogging.version>
