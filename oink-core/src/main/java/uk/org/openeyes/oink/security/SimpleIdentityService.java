@@ -7,16 +7,22 @@ import javax.security.auth.Subject;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 
 /**
- * Simple Identity Service. Assumes a subject has only one principle which is a {@link UsernamePasswordAuthenticationToken}.
- * Assumes the principle's name is of the format userId@organizationId.
+ * Simple Identity Service. Assumes a subject has only one principle which is a
+ * {@link UsernamePasswordAuthenticationToken}. Assumes the principle's name is
+ * of the format userId@organizationId.
+ * 
  * @author Oliver Wilkie
- *
+ * 
  */
 public class SimpleIdentityService implements IdentityService {
 
 	@Override
 	public String getOrganisation(Subject s) {
-		for (Principal p: s.getPrincipals()) {
+		if (s == null) {
+			return null;
+		}
+
+		for (Principal p : s.getPrincipals()) {
 			if (p instanceof UsernamePasswordAuthenticationToken) {
 				UsernamePasswordAuthenticationToken details = (UsernamePasswordAuthenticationToken) p;
 				String name = details.getName();
@@ -31,7 +37,7 @@ public class SimpleIdentityService implements IdentityService {
 
 	@Override
 	public String getUserId(Subject s) {
-		for (Principal p: s.getPrincipals()) {
+		for (Principal p : s.getPrincipals()) {
 			if (p instanceof UsernamePasswordAuthenticationToken) {
 				UsernamePasswordAuthenticationToken details = (UsernamePasswordAuthenticationToken) p;
 				String name = details.getName();
