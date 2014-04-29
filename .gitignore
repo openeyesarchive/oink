@@ -10,3 +10,4 @@ pom.xml.releaseBackup
 pom.xml.next
 release.properties
 derby.log
+maven-metadata-local.xml

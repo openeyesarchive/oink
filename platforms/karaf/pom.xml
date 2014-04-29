@@ -13,5 +13,6 @@
 
   <modules>
   	<module>features</module>
+  	<module>kar</module>
   </modules>
 </project>
