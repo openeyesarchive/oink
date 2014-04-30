@@ -1,5 +1,6 @@
 package uk.org.openeyes.oink.exception;
 
+import org.apache.camel.CamelAuthorizationException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.slf4j.Logger;
@@ -40,6 +41,11 @@ public class WebExceptionProcessor implements Processor {
 					+ DEFAULT_ERROR_CODE + " because the exception "
 					+ e.getClass().getName()
 					+ " is not associated with a response code");
+		}
+		
+		// TODO Is there a better way for this?
+		if (e instanceof CamelAuthorizationException) {
+			errorCode = 401;
 		}
 
 		exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, errorCode);

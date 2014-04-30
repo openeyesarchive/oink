@@ -22,7 +22,9 @@
 
 	<bean id="identityService" class="uk.org.openeyes.oink.security.SimpleIdentityService" />
 
-	<bean id="conformanceService" class="uk.org.openeyes.oink.facade.ConformanceService" />
+	<bean id="conformanceService" class="uk.org.openeyes.oink.facade.ConformanceService">
+		<constructor-arg ref="routingService" />
+	</bean>
 
 	<bean id="oinkHttpConverter" class="uk.org.openeyes.oink.http.OinkHttpConverter">
 	</bean>

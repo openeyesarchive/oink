@@ -5,6 +5,8 @@ import javax.security.auth.Subject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.commons.codec.binary.Base64;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 
 import uk.org.openeyes.oink.security.SecurityException;
@@ -15,6 +17,8 @@ import uk.org.openeyes.oink.security.SecurityException;
  * @author Oliver Wilkie
  */
 public class HttpBasicAuthenticator {
+	
+	private Logger logger = LoggerFactory.getLogger(HttpBasicAuthenticator.class);
 
 	public void extractAuthenticationDetailsFromHttp(Exchange exchange)
 			throws SecurityException {
@@ -47,6 +51,8 @@ public class HttpBasicAuthenticator {
 
 		// place the Subject in the In message
 		exchange.getIn().setHeader(Exchange.AUTHENTICATION, subject);
+		
+		logger.debug("Found HttpBasic Authentication header");
 
 		// Spring security will intercept this and authenticate
 
