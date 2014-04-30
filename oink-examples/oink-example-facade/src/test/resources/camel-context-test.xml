@@ -17,13 +17,17 @@
 	<bean id="routingService" class="uk.org.openeyes.oink.facade.FacadeRoutingService">
 		<constructor-arg>
 			<oink:facadeRabbitMapper>
-				<oink:mapping resource="Patient" method="GET"
-					exchange="test" route="siteB" />
+				<oink:mapping resource="Patient" method="GET" exchange="test"
+					route="siteB" />
 				<oink:mapping resource="Practitioner" method="POST"
 					exchange="test" route="siteBTimeout" />
 			</oink:facadeRabbitMapper>
 		</constructor-arg>
-		<constructor-arg value="siteAResponse" />
+		<constructor-arg value="${rabbit.responseRoutingKey}" />
+	</bean>
+
+	<bean id="synchRabbitProcessor" class="uk.org.openeyes.oink.rabbit.SynchronousRabbitProcessor">
+		<constructor-arg value="10000" />
 	</bean>
 
 </beans>

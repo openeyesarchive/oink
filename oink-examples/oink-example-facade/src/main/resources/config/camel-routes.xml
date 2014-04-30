@@ -15,8 +15,7 @@
 
 		<!-- Route 1 (facade) -->
 		<route>
-			<from
-				uri="jetty:{{facade.uri}}?matchOnUriPrefix=true" />
+			<from uri="jetty:{{facade.uri}}?matchOnUriPrefix=true" />
 			<!-- Return Java Exceptions as HTTP Codes -->
 			<onException>
 				<exception>java.lang.Exception</exception>
@@ -43,7 +42,7 @@
 						<bean ref="rabbitProcessor" method="setRabbitRouteHeaders" />
 						<bean ref="synchRabbitProcessor" method="prepare" />
 						<to
-							uri="rabbitmq://localhost:{{rabbit.port}}/{{rabbit.defaultExchange}}?vhost={{rabbit.vhost}}&amp;username={{rabbit.username}}&amp;password={{rabbit.password}}" />
+							uri="rabbitmq://{{rabbit.host}}:{{rabbit.port}}/{{rabbit.defaultExchange}}?vhost={{rabbit.vhost}}&amp;username={{rabbit.username}}&amp;password={{rabbit.password}}" />
 						<bean ref="synchRabbitProcessor" method="waitForResponse" />
 						<removeHeaders pattern="*" />
 						<bean ref="oinkHttpConverter" method="buildHttpResponse" />
@@ -55,7 +54,7 @@
 		<!-- Facade response router -->
 		<route>
 			<from
-				uri="rabbitmq://localhost:{{rabbit.port}}/{{rabbit.defaultExchange}}?vhost={{rabbit.vhost}}&amp;username={{rabbit.username}}&amp;password={{rabbit.password}}&amp;queue=siteAResponse&amp;routingKey=siteAResponse" />
+				uri="rabbitmq://{{rabbit.host}}:{{rabbit.port}}/{{rabbit.defaultExchange}}?vhost={{rabbit.vhost}}&amp;username={{rabbit.username}}&amp;password={{rabbit.password}}&amp;queue={{rabbit.responseRoutingKey}}&amp;routingKey={{rabbit.responseRoutingKey}}" />
 			<recipientList>
 				<simple>seda:${headers.rabbitmq.CORRELATIONID}</simple>
 			</recipientList>

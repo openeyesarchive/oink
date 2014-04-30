@@ -44,7 +44,7 @@
 					exchange="test" route="siteBTimeout" />
 			</oink:facadeRabbitMapper>
 		</constructor-arg>
-		<constructor-arg value="siteAResponse" />
+		<constructor-arg value="${rabbit.responseRoutingKey}" />
 	</bean>
 
 	<bean id="rabbitProcessor" class="uk.org.openeyes.oink.rabbit.RabbitProcessor">

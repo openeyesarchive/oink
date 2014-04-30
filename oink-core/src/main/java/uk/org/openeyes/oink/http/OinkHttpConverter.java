@@ -8,6 +8,7 @@ import javax.security.auth.Subject;
 import org.apache.camel.Body;
 import org.apache.camel.Exchange;
 import org.apache.camel.Header;
+import org.apache.camel.Headers;
 import org.apache.camel.OutHeaders;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.hl7.fhir.instance.formats.JsonComposer;
@@ -33,14 +34,15 @@ public class OinkHttpConverter {
 	private static final Logger logger = LoggerFactory
 			.getLogger(OinkHttpConverter.class);
 
-	public OINKRequestMessage buildOinkRequest(@Body InputStream body,
-			@Header(Exchange.CONTENT_TYPE) String mimeType,
-			@Header(Exchange.CONTENT_LENGTH) int length,
-			@Header(Exchange.AUTHENTICATION) Subject subject,
-			@Header(Exchange.HTTP_PATH) String path,
-			@Header(Exchange.HTTP_METHOD) String verb,
-			@Header(Exchange.HTTP_QUERY) String query)
+	public OINKRequestMessage buildOinkRequest(
+			@Headers Map<String, Object> headers, @Body InputStream body)
 			throws InvalidFhirRequestException {
+
+		String mimeType = (String) headers.get(Exchange.CONTENT_TYPE);
+		Integer length = (Integer) headers.get(Exchange.CONTENT_LENGTH);
+		String path = (String) headers.get(Exchange.HTTP_PATH);
+		String verb = (String) headers.get(Exchange.HTTP_METHOD);
+		String query = (String) headers.get(Exchange.HTTP_QUERY);
 
 		OINKRequestMessage message = new OINKRequestMessage();
 
@@ -55,7 +57,12 @@ public class OinkHttpConverter {
 
 		message.setParameters(query);
 
-		if (length > 0) {
+		if (length != null && length > 0) {
+			if (mimeType == null) {
+				logger.error("Could parse message body as FhirBody because the Content-Type header was missing");
+				throw new InvalidFhirRequestException(
+						"Could not parse Fhir Body. Content-Type header should be set");
+			}
 			if (!mimeType.equals("application/json+fhir")) {
 				logger.error("Could parse message body as FhirBody because the Content-Type:"
 						+ mimeType + " is not supported");
@@ -91,21 +98,24 @@ public class OinkHttpConverter {
 			@OutHeaders Map<String, Object> headers)
 			throws InvalidFhirResponseException {
 		headers.put(Exchange.HTTP_RESPONSE_CODE, message.getStatus());
-		headers.put(Exchange.CONTENT_TYPE, "application/json+fhir");
 
 		try {
 			FhirBody body = message.getBody();
-			ByteArrayOutputStream os = new ByteArrayOutputStream();
-			JsonComposer composer = new JsonComposer();
-			if (body.isResource()) {
-				composer.compose(os, body.getResource(), false);
-			} else {
-				composer.compose(os, body.getBundle(), false);
+			if (body != null) {
+				ByteArrayOutputStream os = new ByteArrayOutputStream();
+				JsonComposer composer = new JsonComposer();
+				if (body.isResource()) {
+					composer.compose(os, body.getResource(), false);
+				} else {
+					composer.compose(os, body.getBundle(), false);
+				}
+				headers.put(Exchange.CONTENT_TYPE, "application/json+fhir");
+				return os.toString();
 			}
-			return os.toString();
 		} catch (Exception e) {
 			throw new InvalidFhirResponseException(e.getMessage());
 		}
+		return "";
 	}
 
 }
