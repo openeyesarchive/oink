@@ -17,7 +17,7 @@
 	<bean id="routingService" class="uk.org.openeyes.oink.facade.FacadeRoutingService">
 		<constructor-arg>
 			<oink:facadeRabbitMapper>
-				<oink:mapping resource="*" method="ANY" exchange="test"
+				<oink:mapping resource="*" method="ANY" exchange="${rabbit.defaultExchange}"
 					route="siteB" />
 			</oink:facadeRabbitMapper>
 		</constructor-arg>
