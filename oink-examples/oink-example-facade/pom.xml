@@ -150,6 +150,11 @@
 				<groupId>org.apache.camel</groupId>
 				<artifactId>camel-maven-plugin</artifactId>
 				<version>${camel.version}</version>
+				<configuration>
+					<fileApplicationContextUri>
+						src/main/resources/config/camel-non-osgi-context.xml
+					</fileApplicationContextUri>
+				</configuration>
 			</plugin>
 
 			<!-- to generate the MANIFEST-FILE of the bundle -->

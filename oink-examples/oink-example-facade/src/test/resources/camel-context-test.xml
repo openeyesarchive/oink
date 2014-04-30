@@ -22,42 +22,5 @@
   		<property name="properties" ref="osgiProps"/>
 	</bean>
 
-	<import resource="camel-security.xml" />
-	<import resource="camel-routes.xml" />
-
-	<bean id="authenticator" class="uk.org.openeyes.oink.http.HttpBasicAuthenticator" />
-
-	<bean id="identityService" class="uk.org.openeyes.oink.security.SimpleIdentityService" />
-
-	<bean id="conformanceService" class="uk.org.openeyes.oink.facade.ConformanceService" />
-
-	<bean id="oinkHttpConverter" class="uk.org.openeyes.oink.http.OinkHttpConverter">
-	</bean>
-
-	<bean id="validator" class="uk.org.openeyes.oink.messaging.OinkMessageValidator" />
-
-	<bean id="synchRabbitProcessor" class="uk.org.openeyes.oink.rabbit.SynchronousRabbitProcessor">
-		<constructor-arg value="5000" />
-	</bean>
-
-	<bean id="routingService" class="uk.org.openeyes.oink.facade.FacadeRoutingService">
-		<constructor-arg>
-			<oink:facadeRabbitMapper>
-				<oink:mapping resource="Patient" method="POST"
-					exchange="test" route="siteB" />
-				<oink:mapping resource="Practitioner" method="POST"
-					exchange="test" route="siteBTimeout" />
-			</oink:facadeRabbitMapper>
-		</constructor-arg>
-		<constructor-arg value="siteAResponse" />
-	</bean>
-
-	<bean id="rabbitProcessor" class="uk.org.openeyes.oink.rabbit.RabbitProcessor">
-		<constructor-arg ref="routingService" />
-	</bean>
-
-	<bean id="echoer" class="uk.org.openeyes.oink.messaging.EchoResponder" />
-
-	<bean id="errorHandler" class="uk.org.openeyes.oink.exception.WebExceptionProcessor" />
 
 </beans>
