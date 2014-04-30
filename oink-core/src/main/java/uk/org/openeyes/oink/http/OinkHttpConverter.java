@@ -47,8 +47,8 @@ public class OinkHttpConverter {
 		OINKRequestMessage message = new OINKRequestMessage();
 
 		// Wrap FHIR Request
-		if (path.startsWith("/")) {
-			path = path.substring(1);
+		if (!path.startsWith("/")) {
+			path = "/" + path;
 		}
 		message.setResourcePath(path);
 

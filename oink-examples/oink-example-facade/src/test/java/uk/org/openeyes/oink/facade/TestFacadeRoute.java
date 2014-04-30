@@ -11,8 +11,12 @@ import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.auth.BasicScheme;
 import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpStatus;
+import org.hl7.fhir.instance.formats.JsonParser;
+import org.hl7.fhir.instance.formats.ParserBase.ResourceOrFeed;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -22,6 +26,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import uk.org.openeyes.oink.domain.FhirBody;
 import uk.org.openeyes.oink.domain.OINKRequestMessage;
 import uk.org.openeyes.oink.domain.OINKResponseMessage;
 
@@ -43,6 +48,8 @@ public class TestFacadeRoute {
 	private static ConnectionFactory factory;
 
 	private final static String THIRD_PARTY_QUEUE_NAME = "siteB";
+	
+	private volatile AssertionError thirdPartyAssertionError; 
 
 	@Autowired
 	CamelContext camelCtx;
@@ -64,6 +71,11 @@ public class TestFacadeRoute {
 		factory.setPassword(testProperties.getProperty("rabbit.password"));
 		factory.setVirtualHost(testProperties.getProperty("rabbit.vhost"));
 
+	}
+	
+	@Before
+	public void before() {
+		thirdPartyAssertionError = null;
 	}
 
 	@Test
@@ -134,27 +146,42 @@ public class TestFacadeRoute {
 
 	@Test
 	@DirtiesContext
-	public void testSimplePatientGet() throws HttpException,
-			IOException, ShutdownSignalException, ConsumerCancelledException,
-			InterruptedException {
+	public void testSimplePatientGet() throws Exception {
 
-		// Mock third party service
+		/*
+		 * Set up Third Party Service
+		 */
+		
+		// Specify what the third party service should receive
 		IncomingMessageVerifier v = new IncomingMessageVerifier() {
 			@Override
 			public boolean isValid(OINKRequestMessage incoming) {
-				return true;
+				boolean isValid = true;
+				isValid &= incoming.getMethod().equals(uk.org.openeyes.oink.domain.HttpMethod.GET);
+				isValid &= incoming.getResourcePath().equals("/Patient/2342452");
+				isValid &= incoming.getBody() == null;
+				return isValid;
 			}
 		};
-		OINKResponseMessage mockResponse = new OINKResponseMessage(200);
 		
+		// Specify what the third party service should return
+		OINKResponseMessage mockResponse = new OINKResponseMessage();
+		mockResponse.setStatus(200);
+		mockResponse.setBody(buildFhirBodyFromResource("/patient.json"));
+
+		// Start the third party service
 		SimulatedThirdParty thirdp = new SimulatedThirdParty(v, mockResponse);
 		thirdp.start();
+		
+		/*
+		 * Make REST request
+		 */
 
 		// Prepare request
 		HttpClient client = new HttpClient();
 
 		HttpMethod method = new GetMethod(
-				testProperties.getProperty("facade.uri") + "/Patient");
+				testProperties.getProperty("facade.uri") + "/Patient/2342452");
 
 		UsernamePasswordCredentials creds = new UsernamePasswordCredentials(
 				testProperties.getProperty("testUser.username"),
@@ -164,12 +191,37 @@ public class TestFacadeRoute {
 				BasicScheme.authenticate(creds, "US-ASCII"));
 
 		client.executeMethod(method);
-		byte[] responseBody = method.getResponseBody();
-		method.releaseConnection();
-
 		thirdp.close();
 
-		Assert.assertEquals(HttpStatus.SC_OK, method.getStatusCode());
+		/*
+		 * Process REST response
+		 */
+		byte[] responseBody = method.getResponseBody();
+		String responseJson = new String(responseBody);
+		int responseCode = method.getStatusCode();
+		String responseContentType = method.getResponseHeader("Content-Type").getValue();
+		method.releaseConnection();
+		
+		if (thirdPartyAssertionError != null) {
+			throw thirdPartyAssertionError;
+		}
+		
+		Assert.assertEquals(HttpStatus.SC_OK, responseCode);
+		Assert.assertEquals("application/json+fhir", responseContentType);
+		Assert.assertEquals(IOUtils.toString(this.getClass().getResourceAsStream("/patient.json"),"UTF-8"), responseJson);
+	}
+	
+	private static FhirBody buildFhirBodyFromResource(String resourcePath) throws Exception {
+		InputStream is = TestFacadeRoute.class.getResourceAsStream(resourcePath);
+		FhirBody body = null;
+		JsonParser parser = new JsonParser();
+		ResourceOrFeed res = parser.parseGeneral(is);
+		if (res.getFeed() != null) {
+			body = new FhirBody(res.getFeed());
+		} else if (res.getResource() != null) {
+			body = new FhirBody(res.getResource());
+		}
+		return body;
 	}
 	
 	private interface IncomingMessageVerifier {
@@ -235,7 +287,11 @@ public class TestFacadeRoute {
 						.convertTo(OINKRequestMessage.class, delivery.getBody());
 				
 				// Check is valid
-				Assert.assertTrue(verifier.isValid(message));
+				try {
+					Assert.assertTrue(verifier.isValid(message));
+				} catch (AssertionError e) {
+					thirdPartyAssertionError = e;
+				}
 
 				// Prepare an empty response
 				com.rabbitmq.client.AMQP.BasicProperties replyProps = new AMQP.BasicProperties.Builder()

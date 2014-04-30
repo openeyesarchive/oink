@@ -51,8 +51,6 @@
 		<constructor-arg ref="routingService" />
 	</bean>
 
-	<bean id="echoer" class="uk.org.openeyes.oink.messaging.EchoResponder" />
-
 	<bean id="errorHandler" class="uk.org.openeyes.oink.exception.WebExceptionProcessor" />
 
 </beans>

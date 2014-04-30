@@ -17,10 +17,8 @@
 	<bean id="routingService" class="uk.org.openeyes.oink.facade.FacadeRoutingService">
 		<constructor-arg>
 			<oink:facadeRabbitMapper>
-				<oink:mapping resource="Patient" method="GET" exchange="test"
+				<oink:mapping resource="*" method="GET" exchange="test"
 					route="siteB" />
-				<oink:mapping resource="Practitioner" method="POST"
-					exchange="test" route="siteBTimeout" />
 			</oink:facadeRabbitMapper>
 		</constructor-arg>
 		<constructor-arg value="${rabbit.responseRoutingKey}" />
