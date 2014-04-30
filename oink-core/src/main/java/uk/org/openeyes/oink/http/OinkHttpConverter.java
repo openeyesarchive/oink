@@ -39,7 +39,7 @@ public class OinkHttpConverter {
 			throws InvalidFhirRequestException {
 
 		String mimeType = (String) headers.get(Exchange.CONTENT_TYPE);
-		Integer length = (Integer) headers.get(Exchange.CONTENT_LENGTH);
+		Integer length = headers.containsKey(Exchange.CONTENT_LENGTH) ? Integer.parseInt((String) headers.get(Exchange.CONTENT_LENGTH)) : null;
 		String path = (String) headers.get(Exchange.HTTP_PATH);
 		String verb = (String) headers.get(Exchange.HTTP_METHOD);
 		String query = (String) headers.get(Exchange.HTTP_QUERY);
@@ -115,7 +115,7 @@ public class OinkHttpConverter {
 		} catch (Exception e) {
 			throw new InvalidFhirResponseException(e.getMessage());
 		}
-		return "";
+		return null;
 	}
 
 }

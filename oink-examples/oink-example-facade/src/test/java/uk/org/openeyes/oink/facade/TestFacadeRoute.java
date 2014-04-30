@@ -1,5 +1,6 @@
 package uk.org.openeyes.oink.facade;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
@@ -11,8 +12,11 @@ import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.auth.BasicScheme;
 import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.commons.httpclient.methods.InputStreamRequestEntity;
+import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpStatus;
+import org.hl7.fhir.instance.formats.JsonComposer;
 import org.hl7.fhir.instance.formats.JsonParser;
 import org.hl7.fhir.instance.formats.ParserBase.ResourceOrFeed;
 import org.junit.Assert;
@@ -143,6 +147,89 @@ public class TestFacadeRoute {
 		Assert.assertNotEquals(HttpStatus.SC_UNAUTHORIZED,
 				method.getStatusCode());
 	}
+	
+	@Test
+	@DirtiesContext
+	public void testSimplePatientPost() throws Exception {
+		
+		
+		/*
+		 * Set up Third Party Service
+		 */		
+		
+		// Specify what the third party service should receive
+		IncomingMessageVerifier v = new IncomingMessageVerifier() {
+			@Override
+			public void isValid(OINKRequestMessage incoming) {
+				Assert.assertEquals(uk.org.openeyes.oink.domain.HttpMethod.POST, incoming.getMethod());
+				Assert.assertEquals("/Patient", incoming.getResourcePath());
+
+				try {
+					// FHIR Resource Impl Team haven't implemented equals() yet
+					JsonComposer composer = new JsonComposer();
+					ByteArrayOutputStream os = new ByteArrayOutputStream();
+					composer.compose(os, incoming.getBody().getResource(), false);
+					String receivedJson = os.toString();
+					String expectedJson = IOUtils.toString(this.getClass().getResourceAsStream("/patient.json"));
+					Assert.assertEquals(expectedJson, receivedJson);
+				} catch (Exception e) {
+					Assert.assertTrue(false);
+				}
+				
+			}
+		};
+		
+		// Specify what the third party service should return
+		OINKResponseMessage mockResponse = new OINKResponseMessage();
+		mockResponse.setStatus(201);
+		mockResponse.setBody(null);
+
+		// Start the third party service
+		SimulatedThirdParty thirdp = new SimulatedThirdParty(v, mockResponse);
+		thirdp.start();
+		
+		/*
+		 * Make REST request
+		 */
+
+		// Prepare request
+		HttpClient client = new HttpClient();
+
+		PostMethod method = new PostMethod(
+				testProperties.getProperty("facade.uri") + "/Patient");
+
+		UsernamePasswordCredentials creds = new UsernamePasswordCredentials(
+				testProperties.getProperty("testUser.username"),
+				testProperties.getProperty("testUser.password"));
+
+		method.addRequestHeader("Authorization",
+				BasicScheme.authenticate(creds, "US-ASCII"));
+		
+		method.addRequestHeader("Content-Type", "application/json+fhir");
+
+		InputStream is = this.getClass().getResourceAsStream("/patient.json");
+		method.setRequestEntity(new InputStreamRequestEntity(is));
+		client.executeMethod(method);
+		thirdp.close();
+		
+		/*
+		 * Process REST response
+		 */
+		byte[] responseBody = method.getResponseBody();
+		String s = method.getResponseBodyAsString();
+		int responseCode = method.getStatusCode();
+		method.releaseConnection();
+		
+		if (thirdPartyAssertionError != null) {
+			throw thirdPartyAssertionError;
+		}
+		
+		
+		Assert.assertEquals(HttpStatus.SC_CREATED, responseCode);
+		Assert.assertNull(method.getResponseHeader("Content-Type"));
+		Assert.assertArrayEquals(responseBody, new byte[]{});		
+		
+	}
 
 	@Test
 	@DirtiesContext
@@ -152,15 +239,14 @@ public class TestFacadeRoute {
 		 * Set up Third Party Service
 		 */
 		
+		
 		// Specify what the third party service should receive
 		IncomingMessageVerifier v = new IncomingMessageVerifier() {
 			@Override
-			public boolean isValid(OINKRequestMessage incoming) {
-				boolean isValid = true;
-				isValid &= incoming.getMethod().equals(uk.org.openeyes.oink.domain.HttpMethod.GET);
-				isValid &= incoming.getResourcePath().equals("/Patient/2342452");
-				isValid &= incoming.getBody() == null;
-				return isValid;
+			public void isValid(OINKRequestMessage incoming) {
+				Assert.assertEquals(uk.org.openeyes.oink.domain.HttpMethod.GET, incoming.getMethod());
+				Assert.assertEquals("/Patient/2342452", incoming.getResourcePath());
+				Assert.assertNull(incoming.getBody());
 			}
 		};
 		
@@ -225,7 +311,7 @@ public class TestFacadeRoute {
 	}
 	
 	private interface IncomingMessageVerifier {
-		public boolean isValid(OINKRequestMessage incoming);
+		public void isValid(OINKRequestMessage incoming);
 	}
 
 	private class SimulatedThirdParty extends Thread {
@@ -245,8 +331,12 @@ public class TestFacadeRoute {
 		public void run() {
 			try {
 				simulateThirdParty();
-			} catch (Exception e) {
-
+			} catch (AssertionError e) {
+				thirdPartyAssertionError = e;
+			} catch (ShutdownSignalException e) {
+			} catch (ConsumerCancelledException e) {
+			} catch (IOException e) {
+			} catch (InterruptedException e) {
 			}
 		}
 
@@ -272,7 +362,6 @@ public class TestFacadeRoute {
 				// Get delivery (timeout if necessary)
 				QueueingConsumer.Delivery delivery = consumer
 						.nextDelivery(5000);
-
 				if (delivery != null) {
 					isRunning = false;
 				} else {
@@ -287,11 +376,7 @@ public class TestFacadeRoute {
 						.convertTo(OINKRequestMessage.class, delivery.getBody());
 				
 				// Check is valid
-				try {
-					Assert.assertTrue(verifier.isValid(message));
-				} catch (AssertionError e) {
-					thirdPartyAssertionError = e;
-				}
+				verifier.isValid(message);
 
 				// Prepare an empty response
 				com.rabbitmq.client.AMQP.BasicProperties replyProps = new AMQP.BasicProperties.Builder()

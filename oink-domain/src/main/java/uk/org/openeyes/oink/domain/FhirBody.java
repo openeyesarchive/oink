@@ -5,21 +5,21 @@ import org.hl7.fhir.instance.model.Resource;
 
 public class FhirBody {
 	
-	private final AtomFeed a;
+	private final AtomFeed bundle;
 	private final Resource r;
 	
 	public FhirBody(AtomFeed a) {
-		this.a = a;
+		this.bundle = a;
 		this.r = null;
 	}
 	
 	public FhirBody(Resource r) {
-		this.a = null;
+		this.bundle = null;
 		this.r = r;
 	}
 	
 	public boolean isBundle() {
-		return a != null;
+		return bundle != null;
 	}
 	
 	public boolean isResource() {
@@ -27,7 +27,7 @@ public class FhirBody {
 	}
 	
 	public AtomFeed getBundle() {
-		return a;
+		return bundle;
 	}
 	
 	public Resource getResource() {
