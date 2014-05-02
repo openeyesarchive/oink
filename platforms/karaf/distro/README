@@ -1,0 +1,19 @@
+Karaf 3.x Custom OINK Distribution
+=================================
+
+Builds a customised distribution of Apache Karaf for faster provisioning of OINK modules.
+
+Building
+============
+
+You will need to build this distribution first:
+ 	
+ 	mvn compile install
+
+Then check the target folder for .zip and .tar.gz packages of the distro
+
+
+Running
+=========
+
+See normal Karaf documentation http://karaf.apache.org/manual/latest/
