@@ -14,6 +14,15 @@
 
 	<packaging>kar</packaging>
 
+	<dependencies>
+		<dependency>
+			<groupId>uk.org.openeyes.oink.karaf</groupId>
+			<artifactId>shell-commands</artifactId>
+			<version>${project.version}</version>
+			<type>bundle</type>
+		</dependency>
+	</dependencies>
+
 	<build>
 		<plugins>
 			<plugin>
@@ -64,5 +73,4 @@
 			</plugin>
 		</plugins>
 	</build>
-
 </project>
