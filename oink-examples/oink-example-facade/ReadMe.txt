@@ -21,7 +21,6 @@ You will need to compile and install this example first:
  	
  	mvn compile install
 
-
 If using Apache Karaf you can install this example from the shell
 
   features:addurl mvn:uk.org.openeyes.oink/oink-features/<camel version>/xml/features

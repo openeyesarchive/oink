@@ -15,9 +15,6 @@
        http://www.springframework.org/schema/osgi-compendium http://www.springframework.org/schema/osgi-compendium/spring-osgi-compendium.xsd
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
-	<import resource="camel-security.xml" />
-	<import resource="camel-routes.xml" />
-
 	<bean id="authenticator" class="uk.org.openeyes.oink.http.HttpBasicAuthenticator" />
 
 	<bean id="identityService" class="uk.org.openeyes.oink.security.SimpleIdentityService" />

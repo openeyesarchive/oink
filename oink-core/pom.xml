@@ -54,6 +54,11 @@
 		</dependency>
 
 		<!-- SLF4J (Logging) -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>${org.slf4j.version}</version>
+		</dependency>
 
 		<!-- JUnit -->
 		<dependency>
@@ -74,11 +79,6 @@
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
 			<version>${commonsio.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-test</artifactId>
-			<version>1.0.0.RELEASE</version>
 		</dependency>
 	</dependencies>
 

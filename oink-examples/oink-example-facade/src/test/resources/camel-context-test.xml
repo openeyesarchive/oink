@@ -12,12 +12,12 @@
 		<property name="location" value="classpath:facade-test.properties" />
 	</bean>
 
-	<import resource="classpath:config/camel-context.xml" />
+	<import resource="classpath:spring-plain/camel-non-osgi-context.xml" />
 
 	<bean id="routingService" class="uk.org.openeyes.oink.facade.FacadeRoutingService">
 		<constructor-arg>
 			<oink:facadeRabbitMapper>
-				<oink:mapping resource="*" method="ANY" exchange="${rabbit.defaultExchange}"
+				<oink:mapping resource="*" method="ANY" exchange="test"
 					route="siteB" />
 			</oink:facadeRabbitMapper>
 		</constructor-arg>

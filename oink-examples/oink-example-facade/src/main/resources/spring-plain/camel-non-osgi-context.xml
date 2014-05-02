@@ -11,7 +11,9 @@
 	<bean id="bridgePropertyPlaceholder" class="org.apache.camel.spring.spi.BridgePropertyPlaceholderConfigurer">
   		<property name="location" value="classpath:facade.properties"/>
 	</bean>
-
-	<import resource="classpath:config/camel-context.xml" />
+	
+	<import resource="classpath:META-INF/spring/camel-general-context.xml" />
+	<import resource="classpath:META-INF/spring/camel-security.xml" />
+	<import resource="classpath:META-INF/spring/camel-routes.xml" />
 
 </beans>

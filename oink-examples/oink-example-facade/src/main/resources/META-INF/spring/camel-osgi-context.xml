@@ -15,13 +15,12 @@
        http://www.springframework.org/schema/osgi-compendium http://www.springframework.org/schema/osgi-compendium/spring-osgi-compendium.xsd
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
+	<osgix:cm-properties id="osgiProps"
+		persistent-id="uk.org.openeyes.oink.facade" />
 
-	<osgix:cm-properties id="osgiProps" persistent-id="uk.org.openeyes.oink.facade"/>
-	
-	<bean id="bridgePropertyPlaceholder" class="org.apache.camel.spring.spi.BridgePropertyPlaceholderConfigurer">
-  		<property name="properties" ref="osgiProps"/>
+	<bean id="bridgePropertyPlaceholder"
+		class="org.apache.camel.spring.spi.BridgePropertyPlaceholderConfigurer">
+		<property name="properties" ref="osgiProps" />
 	</bean>
-
-	<import resource="classpath:config/camel-context.xml" />
 
 </beans>

@@ -114,13 +114,21 @@
 		<!-- Logging -->
 		<dependency>
 			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-simple</artifactId>
-			<version>1.7.7</version>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>1.7.6</version>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>jcl-over-slf4j</artifactId>
 			<version>1.7.7</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.17</version>
+			<scope>test</scope>
 		</dependency>
 
 		<!-- testing -->
@@ -157,7 +165,7 @@
 				<version>${camel.version}</version>
 				<configuration>
 					<fileApplicationContextUri>
-						src/main/resources/config/camel-non-osgi-context.xml
+						src/main/resources/META-INF/spring/camel-non-osgi-context.xml
 					</fileApplicationContextUri>
 				</configuration>
 			</plugin>
@@ -174,6 +182,7 @@
 						<Private-Package></Private-Package>
 						<Import-Package>*,org.springframework.security.provisioning,org.apache.camel.component.spring.security</Import-Package>
 					</instructions>
+					
 				</configuration>
 			</plugin>
 

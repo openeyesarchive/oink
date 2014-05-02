@@ -239,7 +239,6 @@ public class TestFacadeRoute {
 		 * Set up Third Party Service
 		 */
 		
-		
 		// Specify what the third party service should receive
 		IncomingMessageVerifier v = new IncomingMessageVerifier() {
 			@Override
