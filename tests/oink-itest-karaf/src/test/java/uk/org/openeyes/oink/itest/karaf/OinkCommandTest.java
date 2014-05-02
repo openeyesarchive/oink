@@ -57,13 +57,28 @@ public class OinkCommandTest {
 	}
 	
 	@Test
-	public void testOinkCommandsAreAvailableOnShellOnAFreshCopyOfCustomDistro() throws Exception {
+	public void testOinkEnableCommandIsAvailableOnShellOnAFreshCopyOfCustomDistro() throws Exception {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		ByteArrayOutputStream err = new ByteArrayOutputStream();
 		PrintStream psout = new PrintStream(out);		
 		PrintStream pser = new PrintStream(err);
 		CommandSession cs = commandProcessor.createSession(System.in, psout, pser);
 		cs.execute("help oink:enable");
+		cs.close();
+		psout.close();
+		pser.close();
+		assertTrue(err.toString().isEmpty());
+		assertFalse(out.toString().contains("COMMANDS"));		
+	}	
+	
+	@Test
+	public void testOinkDisableCommandIsAvailableOnShellOnAFreshCopyOfCustomDistro() throws Exception {
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		ByteArrayOutputStream err = new ByteArrayOutputStream();
+		PrintStream psout = new PrintStream(out);		
+		PrintStream pser = new PrintStream(err);
+		CommandSession cs = commandProcessor.createSession(System.in, psout, pser);
+		cs.execute("help oink:disable");
 		cs.close();
 		psout.close();
 		pser.close();

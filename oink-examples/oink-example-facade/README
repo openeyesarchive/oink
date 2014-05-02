@@ -1,0 +1,33 @@
+Facade Example
+===================
+
+A route serving as an OINK Facade. It can be run using Maven.
+
+Running outside OSGi container
+================================
+
+To run the example using Maven type
+
+	mvn:camel:run
+	
+Note that method uses the settings found in facade.properties in src/main/resources
+	
+To stop the example hit ctrl+c
+
+Running inside OSGi container
+=============================
+
+You will need to compile and install this example first:
+ 	
+ 	mvn compile install
+
+If using the OINK custom Apache Karaf you can enable this example from the shell
+
+	feature:repo-refresh
+	oink:enable oink-example-facade <configuration file path>
+
+If using standard Apache Karaf you can install this example by setting config 
+file ${karaf.Basedir}/etc/uk.org.openeyes.oink.facade.cfg then from the shell:
+
+	feature:addurl mvn:uk.org.openeyes.oink/oink-features/<camel version>/xml/features
+	feature:install camel-example-facade

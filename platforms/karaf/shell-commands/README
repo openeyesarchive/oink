@@ -1,0 +1,35 @@
+Oink Commands
+===================
+
+This bundle contains commands for easily enabling and configuring oink modules in the Karaf container.
+
+Installation 
+============
+
+Oink Karaf Custom Distro
+------------------------
+
+This bundle is preinstalled and running in the Oink Custom Karam Distribution by default.
+
+General Karaf
+-------------
+
+You will need to compile and install this bundle first:
+
+	mvn compile install
+
+You can then install this example from the shell
+
+  features:addurl mvn:uk.org.openeyes.oink.karaf/oink-features/<camel version>/xml/features
+  features:install oink-commands
+
+Usage
+======
+
+The oink:enable command installs an oink feature using the environment settings file provided as a
+second argument. If no environment settings file is provided it will look for an existing suitable config file in ${karaf.BaseDir}/etc/
+
+	oink:enable <feature-name> <path to desired configuration file> 
+		
+The oink:disable command uninstalls an oink feature.
+	

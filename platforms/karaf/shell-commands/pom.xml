@@ -31,7 +31,7 @@
 
     <name>Oink :: Platforms :: Apache Karaf :: Shell Commands</name>
 
-    <description>Provides the OSGi runtime commands</description>
+    <description>Provides helper commands on the Karaf Shell for OINK</description>
 
     <dependencies>
         <dependency>
