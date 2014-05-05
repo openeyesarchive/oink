@@ -1,5 +1,6 @@
 package uk.org.openeyes.oink.http;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 
@@ -34,12 +35,27 @@ public class OinkHttpConverter {
 	private static final Logger logger = LoggerFactory
 			.getLogger(OinkHttpConverter.class);
 
+	public OINKResponseMessage buildOinkResponse(
+			@Headers Map<String, Object> headers, @Body InputStream body)
+			throws InvalidFhirRequestException, IOException {
+		FhirBody fhirBody = readFhirBody(body);
+		OINKResponseMessage response = new OINKResponseMessage();
+		response.setBody(fhirBody);
+		if (headers.containsKey(Exchange.HTTP_RESPONSE_CODE)) {
+			int code = (int) headers
+					.get(Exchange.HTTP_RESPONSE_CODE);
+			response.setStatus(code);
+		}
+		return response;
+	}
+
 	public OINKRequestMessage buildOinkRequest(
 			@Headers Map<String, Object> headers, @Body InputStream body)
-			throws InvalidFhirRequestException {
+			throws InvalidFhirRequestException, IOException {
 
 		String mimeType = (String) headers.get(Exchange.CONTENT_TYPE);
-		Integer length = headers.containsKey(Exchange.CONTENT_LENGTH) ? Integer.parseInt((String) headers.get(Exchange.CONTENT_LENGTH)) : null;
+		Integer length = headers.containsKey(Exchange.CONTENT_LENGTH) ? Integer
+				.parseInt((String) headers.get(Exchange.CONTENT_LENGTH)) : null;
 		String path = (String) headers.get(Exchange.HTTP_PATH);
 		String verb = (String) headers.get(Exchange.HTTP_METHOD);
 		String query = (String) headers.get(Exchange.HTTP_QUERY);
@@ -77,7 +93,11 @@ public class OinkHttpConverter {
 	}
 
 	public static FhirBody readFhirBody(InputStream is)
-			throws InvalidFhirRequestException {
+			throws InvalidFhirRequestException, IOException {
+
+		if (is.available() <= 0) {
+			return null;
+		}
 
 		JsonParser parser = new JsonParser();
 		try {
@@ -92,6 +112,34 @@ public class OinkHttpConverter {
 					"Could not read Fhir Body. Details: " + e.getMessage());
 		}
 
+	}
+
+	public String buildHttpRequest(@Body OINKRequestMessage message,
+			Exchange exchange) throws InvalidFhirRequestException {
+		
+		Map<String, Object> headers = exchange.getIn().getHeaders();
+		headers.put(Exchange.HTTP_PATH, message.getResourcePath());
+		headers.put(Exchange.HTTP_QUERY, message.getParameters());
+		headers.put(Exchange.HTTP_CHARACTER_ENCODING, "UTF-8");
+		try {
+			FhirBody body = message.getBody();
+			if (body != null) {
+				ByteArrayOutputStream os = new ByteArrayOutputStream();
+				JsonComposer composer = new JsonComposer();
+				if (body.isResource()) {
+					composer.compose(os, body.getResource(), false);
+				} else {
+					composer.compose(os, body.getBundle(), false);
+				}
+				headers.put(Exchange.CONTENT_TYPE, "application/json+fhir; charset=UTF-8");
+				headers.put(Exchange.CHARSET_NAME, "UTF-8");
+				String bodyStr = os.toString("UTF-8");
+				return bodyStr;
+			}
+		} catch (Exception e) {
+			throw new InvalidFhirRequestException(e.getMessage());
+		}
+		return null;
 	}
 
 	public String buildHttpResponse(@Body OINKResponseMessage message,
@@ -115,7 +163,7 @@ public class OinkHttpConverter {
 		} catch (Exception e) {
 			throw new InvalidFhirResponseException(e.getMessage());
 		}
-		return null;
+		return "";
 	}
 
 }

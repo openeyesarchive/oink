@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<artifactId>oink-examples</artifactId>
+		<groupId>uk.org.openeyes.oink</groupId>
+		<version>0.2-SNAPSHOT</version>
+	</parent>
+
+	<artifactId>oink-example-proxy</artifactId>
+	<packaging>bundle</packaging>
+
+	<name>OINK :: Examples :: Proxy</name>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+  </properties>
+
+  <dependencies>
+	<dependency>
+		<groupId>uk.org.openeyes.oink</groupId>
+		<artifactId>oink-core</artifactId>
+		<version>${project.version}</version>
+		<type>bundle</type>
+	</dependency>
+  
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-spring</artifactId>
+    </dependency>
+ 	<dependency>
+		<groupId>org.apache.camel</groupId>
+		<artifactId>camel-rabbitmq</artifactId>
+	</dependency>   
+	<dependency>
+	    <groupId>org.apache.camel</groupId>
+	    <artifactId>camel-http4</artifactId>
+	</dependency>	
+
+    <!-- logging -->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>1.7.6</version>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <version>1.7.6</version>
+    </dependency>
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <version>1.2.17</version>
+    </dependency>
+
+    <!-- testing -->
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-test-spring</artifactId>
+      <scope>test</scope>
+    </dependency>
+	<dependency>
+		<groupId>org.springframework</groupId>
+		<artifactId>spring-test</artifactId>
+		<scope>test</scope>
+	</dependency>
+	<dependency>
+		<groupId>org.eclipse.jetty</groupId>
+		<artifactId>jetty-server</artifactId>
+		<version>9.1.2.v20140210</version>
+		<scope>test</scope>
+	</dependency>
+	<dependency>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-jetty</artifactId>
+		<version>1.0.0.RELEASE</version>
+	</dependency>
+	<dependency>
+		<groupId>org.javassist</groupId>
+		<artifactId>javassist</artifactId>
+		<version>3.18.1-GA</version>
+	</dependency>
+  </dependencies>
+
+  <build>
+    <defaultGoal>install</defaultGoal>
+
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-resources-plugin</artifactId>
+        <version>2.6</version>
+        <configuration>
+          <encoding>UTF-8</encoding>
+        </configuration>
+      </plugin>
+
+      <!-- allows the route to be ran via 'mvn camel:run' -->
+      <plugin>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-maven-plugin</artifactId>
+        <version>${camel.version}</version>
+        <configuration>
+			<fileApplicationContextUri>src/main/resources/spring-plain/camel-non-osgi-context.xml</fileApplicationContextUri>
+		</configuration>
+      </plugin>
+
+      <!-- to generate the MANIFEST-FILE of the bundle -->
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <version>2.3.7</version>
+        <extensions>true</extensions>
+        <configuration>
+          <instructions>
+            <Bundle-SymbolicName>oink-example-proxy</Bundle-SymbolicName>
+            <Private-Package></Private-Package>
+            <Import-Package>*</Import-Package>
+          </instructions>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+  <description>Example Proxy routing</description>
+</project>

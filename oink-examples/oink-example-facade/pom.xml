@@ -15,7 +15,7 @@
 	<packaging>bundle</packaging>
 	<version>0.2-SNAPSHOT</version>
 
-	<name>OINK Facade Example</name>
+	<name>OINK :: Examples :: Facade</name>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -165,7 +165,7 @@
 				<version>${camel.version}</version>
 				<configuration>
 					<fileApplicationContextUri>
-						src/main/resources/META-INF/spring/camel-non-osgi-context.xml
+						src/main/resources/META-INF/spring-plain/camel-non-osgi-context.xml
 					</fileApplicationContextUri>
 				</configuration>
 			</plugin>
