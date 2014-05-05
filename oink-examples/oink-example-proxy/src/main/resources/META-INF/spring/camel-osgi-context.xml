@@ -16,7 +16,7 @@
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
 	<osgix:cm-properties id="osgiProps"
-		persistent-id="uk.org.openeyes.oink.facade" />
+		persistent-id="uk.org.openeyes.oink.proxy" />
 
 	<bean id="bridgePropertyPlaceholder"
 		class="org.apache.camel.spring.spi.BridgePropertyPlaceholderConfigurer">

@@ -132,4 +132,5 @@
   </build>
 
   <description>Example Proxy routing</description>
+  <groupId>uk.org.openeyes.oink.examples</groupId>
 </project>
