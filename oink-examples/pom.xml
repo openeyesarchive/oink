@@ -13,6 +13,7 @@
   <name>OINK Examples</name>
   <modules>
     <module>oink-example-facade</module>
+    <module>oink-example-hl7v2</module>
   </modules>
   <description>Example deployable OINK applications demonstrating usage of OINK components.</description>
 </project>
