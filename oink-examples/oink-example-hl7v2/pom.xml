@@ -98,7 +98,7 @@
             <groupId>ca.uhn.hapi</groupId>
             <artifactId>hapi-osgi-base</artifactId>
             <version>${hapi.version}</version>
-            <scope>bundle</scope>
+            <type>bundle</type>
         </dependency>       
 
 		<!-- Logging -->
@@ -126,6 +126,12 @@
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-test</artifactId>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.kubek2k</groupId>
+			<artifactId>springockito</artifactId>
+			<scope>test</scope>
+			<version>1.0.10-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 

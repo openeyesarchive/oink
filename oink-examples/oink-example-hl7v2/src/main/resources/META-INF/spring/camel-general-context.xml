@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ctx="http://www.springframework.org/schema/context"
+	xmlns:oink="http://www.openeyes.org.uk/schema/oink" xmlns:camel="http://camel.apache.org/schema/spring"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd  
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.openeyes.org.uk/schema/oink http://www.openeyes.org.uk/schema/oink/oink-1.0.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+	<bean id="hl7codec" class="org.apache.camel.component.hl7.HL7MLLPCodec">
+		<property name="charset" value="UTF-8" />
+		<property name="validate" value="false" />
+	</bean>
+
+	<bean id="ack" class="org.apache.camel.component.hl7.AckExpression" />
+	<bean id="ackRejected" class="org.apache.camel.component.hl7.AckExpression">
+		<constructor-arg>
+			<util:constant static-field="org.apache.camel.component.hl7.AckCode.AR" />
+		</constructor-arg>
+	</bean>
+
+	<bean id="a28Processor" class="uk.org.openeyes.oink.hl7v2.A28Processor">
+		<property name="xsltPath" value="/uk/org/openeyes/oink/hl7v2/a01.xsl" />
+	</bean>
+
+	<bean id="a31Processor" class="uk.org.openeyes.oink.hl7v2.A31Processor">
+		<property name="xsltPath" value="/uk/org/openeyes/oink/hl7v2/a01.xsl" />
+	</bean>
+
+	<bean id="a40Processor" class="uk.org.openeyes.oink.hl7v2.A40Processor">
+		<property name="xsltPath" value="/uk/org/openeyes/oink/hl7v2/a01.xsl" />
+	</bean>
+
+	<bean id="invalidMessageType"
+		class="uk.org.openeyes.oink.hl7v2.UnsupportedMessageTypeException" />
+
+	<bean id="hl7dataformat" class="org.apache.camel.component.hl7.HL7DataFormat">
+		<property name="validate" value="false" />
+	</bean>
+
+	<camelContext xmlns="http://camel.apache.org/schema/spring">
+
+		<route id="hl7-consumer">
+			<from
+				uri="mina2:tcp://{{hl7v2.host}}:{{hl7v2.port}}?sync=false&amp;codec=#hl7codec" />
+			<unmarshal ref="hl7dataformat" />
+			<onException>
+				<exception>java.lang.Exception</exception>
+				<handled>
+					<constant>true</constant>
+				</handled>
+				<transform>
+					<ref>ack</ref> <!-- auto-generates negative ack because of exception in Exchange -->
+				</transform>
+			</onException>
+			<setProperty propertyName="originalMessage">
+				<simple>${body}</simple>
+			</setProperty>
+			<choice>
+				<when>
+					<simple>${header.CamelHL7TriggerEvent} == 'A28'</simple>
+					<bean ref="a28Processor" />
+				</when>
+				<when>
+					<simple>${header.CamelHL7TriggerEvent} == 'A31'</simple>
+					<bean ref="a31Processor" />
+				</when>
+				<when>
+					<simple>${header.CamelHL7TriggerEvent} == 'A40'</simple>
+					<bean ref="a40Processor" />
+				</when>
+				<otherwise>
+					<transform>
+						<ref>ackRejected</ref>
+					</transform>
+					<stop />
+				</otherwise>
+			</choice>
+			<setHeader headerName="rabbitmq.ROUTING_KEY">
+				<constant>{{rabbit.routingKey}}</constant>
+			</setHeader>
+			<to
+				uri="rabbitmq://{{rabbit.host}}:{{rabbit.port}}/{{rabbit.defaultExchange}}?vhost={{rabbit.vhost}}&amp;username={{rabbit.username}}&amp;password={{rabbit.password}}" />
+			<setBody>
+				<simple>${property.originalMessage}</simple>
+			</setBody>
+			<transform>
+				<ref>ack</ref>
+			</transform>
+		</route>
+		
+	</camelContext>
+
+</beans>

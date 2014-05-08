@@ -114,4 +114,10 @@ public class OINKRequestMessage extends OINKMessage implements Serializable {
 		}
 	}
 
+	@Override
+	public String toString() {
+		return "OINKRequestMessage [resourcePath=" + resourcePath + ", method="
+				+ method + ", query=" + query + ", body=" + body + "]";
+	}
+
 }
