@@ -5,10 +5,15 @@ import static org.junit.Assert.assertNotNull;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
+import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.io.IOUtils;
+import org.hamcrest.Factory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import com.rabbitmq.client.AMQP.BasicProperties;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
@@ -20,10 +25,14 @@ import ca.uhn.hl7v2.DefaultHapiContext;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.HapiContext;
 import ca.uhn.hl7v2.Version;
+import ca.uhn.hl7v2.app.HL7Service;
 import ca.uhn.hl7v2.app.Initiator;
 import ca.uhn.hl7v2.llp.LLPException;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.parser.Parser;
+import ca.uhn.hl7v2.protocol.ReceivingApplication;
+import ca.uhn.hl7v2.protocol.ReceivingApplicationException;
+import ca.uhn.hl7v2.protocol.ReceivingApplicationExceptionHandler;
 import ca.uhn.hl7v2.validation.builder.ValidationRuleBuilder;
 import ca.uhn.hl7v2.validation.builder.support.DefaultValidationWithoutTNBuilder;
 import ca.uhn.hl7v2.validation.builder.support.NoValidationBuilder;
@@ -31,6 +40,8 @@ import ca.uhn.hl7v2.validation.impl.DefaultValidationWithoutTN;
 import ca.uhn.hl7v2.validation.impl.NoValidation;
 
 public abstract class Hl7TestSupport {
+	
+	private static final Logger log = LoggerFactory.getLogger(Hl7TestSupport.class);
 
 	private Properties properties;
 
@@ -98,6 +109,7 @@ public abstract class Hl7TestSupport {
 	public byte[] receiveRabbitMessage(Channel channel, String queueName,
 			int timeout) throws IOException, ShutdownSignalException,
 			ConsumerCancelledException, InterruptedException {
+		
 		// Prepare RabbitQueue
 
 		QueueingConsumer consumer = new QueueingConsumer(channel);
@@ -110,5 +122,216 @@ public abstract class Hl7TestSupport {
 			return null;
 		}
 	}
+	
+	public static class HL7Client {
+		
+		public static Message send(Message message, String host, int port) throws HL7Exception, LLPException, IOException {
+			HapiContext context = new DefaultHapiContext();
+			ca.uhn.hl7v2.app.Connection hl7v2Conn = context.newClient(host, port,
+					false);
+			Initiator initiator = hl7v2Conn.getInitiator();
+			Message response = initiator.sendAndReceive(message);
+			hl7v2Conn.close();
+			return response;
+		}
+		
+	}
 
+	public class HL7Server {
+
+		HapiContext context;
+		HL7Service server;
+
+		Message receivedMessage;
+		Message returnedMessage;
+
+		public HL7Server(int port, boolean useTls) {
+			context = new DefaultHapiContext();
+			context.setValidationContext(new NoValidation());
+			server = context.newServer(port, useTls);
+		}
+
+		public void setMessageHandler(String messageType, String triggerEvent,
+				ReceivingApplication handler) {
+			ReceivingApplicationDecorator decorator = new ReceivingApplicationDecorator(
+					handler);
+			server.registerApplication(messageType, triggerEvent, decorator);
+		}
+
+		public void setExceptionHandler(
+				ReceivingApplicationExceptionHandler exHandler) {
+			server.setExceptionHandler(exHandler);
+		}
+
+		public void start() throws InterruptedException {
+			server.startAndWait();
+		}
+
+		public void stop() {
+			server.stopAndWait();
+		}
+
+		public final Message getReceivedMessage() {
+			return receivedMessage;
+		}
+
+		public final Message getReturnedMessage() {
+			return returnedMessage;
+		}
+
+		private class ReceivingApplicationDecorator implements
+				ReceivingApplication {
+
+			ReceivingApplication child;
+
+			public ReceivingApplicationDecorator(ReceivingApplication child) {
+				this.child = child;
+			}
+
+			@Override
+			public Message processMessage(Message theMessage,
+					Map<String, Object> theMetadata)
+					throws ReceivingApplicationException, HL7Exception {
+				HL7Server.this.setReceivedMessage(theMessage);
+				Message response = child
+						.processMessage(theMessage, theMetadata);
+				HL7Server.this.setReturnedMessage(response);
+				return response;
+			}
+
+			@Override
+			public boolean canProcess(Message theMessage) {
+				return child.canProcess(theMessage);
+			}
+
+		}
+
+		public final void setReceivedMessage(Message receivedMessage) {
+			this.receivedMessage = receivedMessage;
+		}
+
+		public final void setReturnedMessage(Message returnedMessage) {
+			this.returnedMessage = returnedMessage;
+		}
+
+	}
+
+	public class RabbitClient {
+
+		ConnectionFactory factory;
+
+		public RabbitClient(String host, int port, String virtualHost,
+				String username, String password) {
+			factory = new ConnectionFactory();
+			factory.setUsername(username);
+			factory.setPassword(password);
+			factory.setHost(host);
+			factory.setPort(port);
+			factory.setVirtualHost(virtualHost);
+		}
+
+		public byte[] sendAndRecieve(byte[] message, String routingKey,
+				String exchange) throws Exception {
+			Connection connection = factory.newConnection();
+			Channel channel = connection.createChannel();
+			String replyQueueName = channel.queueDeclare().getQueue();
+			QueueingConsumer consumer = new QueueingConsumer(channel);
+			channel.basicConsume(replyQueueName, true, consumer);
+			String corrId = java.util.UUID.randomUUID().toString();
+			BasicProperties props = new BasicProperties.Builder()
+					.correlationId(corrId).replyTo(replyQueueName).build();
+
+			channel.basicPublish(exchange, routingKey, props, message);
+			QueueingConsumer.Delivery delivery = consumer.nextDelivery(1000);
+			connection.close();
+			if (delivery == null
+					|| !delivery.getProperties().getCorrelationId()
+							.equals(corrId)) {
+				return null;
+			} else {
+				byte[] response = delivery.getBody();
+				return response;
+
+			}
+		}
+
+	}
+
+	public class RabbitServer implements Runnable {
+		
+		Thread t;
+
+		ConnectionFactory factory;
+
+		String exchange;
+		String routingKey;
+
+		byte[] receivedMessage;
+		
+		boolean stop;
+
+		public RabbitServer(String host, int port, String virtualHost,
+				String username, String password) {
+			factory = new ConnectionFactory();
+			factory.setUsername(username);
+			factory.setPassword(password);
+			factory.setHost(host);
+			factory.setPort(port);
+			factory.setVirtualHost(virtualHost);
+		}
+
+		public void setConsumingDetails(String exchange, String routingKey) {
+			this.exchange = exchange;
+			this.routingKey = routingKey;
+		}
+
+		public byte[] getReceivedMessage() {
+			return receivedMessage;
+		}
+		
+		public void start() {
+			t = new Thread(this);
+			t.start();
+		}
+
+		@Override
+		public void run() {
+			try {
+				log.info("RabbitServer started");
+
+				Connection connection = factory.newConnection();
+				Channel channel = connection.createChannel();
+				channel.exchangeDeclare(exchange, "direct",true,true,null);
+				String queueName = channel.queueDeclare().getQueue();
+				channel.queueBind(queueName, exchange, routingKey);
+				QueueingConsumer consumer = new QueueingConsumer(channel);
+				channel.basicConsume(queueName, true, consumer);
+
+				while (!stop) {
+					// Wait for RabbitQueue delivery
+					QueueingConsumer.Delivery delivery = consumer.nextDelivery(1000);
+					if (delivery != null) {
+						log.info("Message received");
+						receivedMessage = delivery.getBody();
+						stop = true;
+					}
+				}
+				
+				if (receivedMessage == null) {
+					log.warn("RabbitServer stopping before any message was received");
+				}
+
+			} catch (Exception e) {
+				log.error("RabbitServer threw an exception:"+e);
+				e.printStackTrace();
+			}
+
+		}
+		
+		public void stop() throws InterruptedException {
+			this.stop = true;
+			t.join();
+		}
+
+	}
 }

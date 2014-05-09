@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ADT_A05 xmlns="urn:hl7-org:v2xml">
+    <MSH>
+        <MSH.1>|</MSH.1>
+        <MSH.2>^~\&amp;</MSH.2>
+        <MSH.3>
+            <HD.1>iSOFT IE</HD.1>
+        </MSH.3>
+        <MSH.4>
+            <HD.1>iSOFT IE</HD.1>
+        </MSH.4>
+        <MSH.5>
+            <HD.1>SDH TIE</HD.1>
+        </MSH.5>
+        <MSH.6>
+            <HD.1>SDH TIE</HD.1>
+        </MSH.6>
+        <MSH.7>
+            <TS.1>20180115142528</TS.1>
+        </MSH.7>
+        <MSH.9>
+            <MSG.1>ADT</MSG.1>
+            <MSG.2>A31</MSG.2>
+        </MSH.9>
+        <MSH.10>132485278</MSH.10>
+        <MSH.11>
+            <PT.1>P</PT.1>
+        </MSH.11>
+        <MSH.12>
+            <VID.1>2.4</VID.1>
+        </MSH.12>
+        <MSH.15>AL</MSH.15>
+        <MSH.16>AL</MSH.16>
+    </MSH>
+    <EVN>
+        <EVN.1>A31</EVN.1>
+        <EVN.2>
+            <TS.1>20180115142528</TS.1>
+        </EVN.2>
+    </EVN>
+    <PID>
+        <PID.1>1</PID.1>
+        <PID.2>
+            <CX.1>4148734654</CX.1>
+            <CX.5>NHS</CX.5>
+        </PID.2>
+        <PID.3>
+            <CX.1>1(408)-886-66731</CX.1>
+            <CX.4>
+                <HD.1>RNZ02</HD.1>
+            </CX.4>
+            <CX.5>MR</CX.5>
+        </PID.3>
+        <PID.3>
+            <CX.1>100001</CX.1>
+            <CX.5>PAS</CX.5>
+        </PID.3>
+        <PID.3>
+            <CX.1>223821</CX.1>
+            <CX.5>RAD</CX.5>
+        </PID.3>
+        <PID.3>
+            <CX.1>220134MROBEMORR</CX.1>
+            <CX.5>COMCA</CX.5>
+        </PID.3>
+        <PID.3>
+            <CX.1>4148734654</CX.1>
+            <CX.5>NHS</CX.5>
+        </PID.3>
+        <PID.3>
+            <CX.1>GEN 16496</CX.1>
+            <CX.5>PICK</CX.5>
+        </PID.3>
+        <PID.5>
+            <XPN.1>
+                <FN.1>PIKES</FN.1>
+            </XPN.1>
+            <XPN.2>RICHIE</XPN.2>
+            <XPN.5>MR</XPN.5>
+        </PID.5>
+        <PID.7>
+            <TS.1>19380527</TS.1>
+        </PID.7>
+        <PID.8>M</PID.8>
+        <PID.11>
+            <XAD.1>
+                <SAD.1>9099 34TH AVE</SAD.1>
+            </XAD.1>
+            <XAD.2>Pound Hill Landford</XAD.2>
+            <XAD.3>LAURIER</XAD.3>
+            <XAD.5>SP5 2AA</XAD.5>
+            <XAD.6>USA</XAD.6>
+            <XAD.7>HOME</XAD.7>
+        </PID.11>
+        <PID.13>
+            <XTN.1>(408)-315-8981</XTN.1>
+        </PID.13>
+        <PID.14>
+            <XTN.1>(408)-886-6673</XTN.1>
+        </PID.14>
+        <PID.15>
+            <CE.1>NSP</CE.1>
+        </PID.15>
+        <PID.16>
+            <CE.1>M</CE.1>
+        </PID.16>
+        <PID.24>NSP</PID.24>
+        <PID.30>N</PID.30>
+        <PID.32>01</PID.32>
+    </PID>
+    <PD1>
+        <PD1.1>1</PD1.1>
+        <PD1.3>
+            <XON.1>The Surgery,Common Road,Whiteparish,Salisbury,Wiltshire,SP5 2SU</XON.1>
+            <XON.2>GPPRC</XON.2>
+            <XON.3>J83004</XON.3>
+            <XON.4>5QK00</XON.4>
+            <XON.5>12979</XON.5>
+        </PD1.3>
+        <PD1.4>
+            <XCN.1>G8710776</XCN.1>
+            <XCN.2>
+                <FN.1>Gotham</FN.1>
+            </XCN.2>
+            <XCN.3>C R</XCN.3>
+            <XCN.6>DR</XCN.6>
+            <XCN.7>X</XCN.7>
+        </PD1.4>
+    </PD1>
+    <NK1>
+        <NK1.1>1</NK1.1>
+        <NK1.2>
+            <XPN.1>
+                <FN.1>EWELL</FN.1>
+            </XPN.1>
+            <XPN.2>JOAQUIN</XPN.2>
+            <XPN.5>MRS</XPN.5>
+        </NK1.2>
+        <NK1.3>
+            <CE.1>WIF</CE.1>
+            <CE.2>Wife</CE.2>
+        </NK1.3>
+        <NK1.4>
+            <XAD.1>
+                <SAD.1>7333 ASHGROVE WAY</SAD.1>
+            </XAD.1>
+            <XAD.2>Pound Hill Landford</XAD.2>
+            <XAD.3>LACEY</XAD.3>
+            <XAD.5>SP5 2AA</XAD.5>
+            <XAD.6>USA</XAD.6>
+            <XAD.7>HOME</XAD.7>
+        </NK1.4>
+        <NK1.7>
+            <CE.1>NOK</CE.1>
+            <CE.2>Next of Kin</CE.2>
+        </NK1.7>
+        <NK1.8>20010129</NK1.8>
+        <NK1.15>F</NK1.15>
+    </NK1>
+    <PV1>
+        <PV1.2>R</PV1.2>
+        <PV1.8>
+            <XCN.1>G8710776</XCN.1>
+        </PV1.8>
+    </PV1>
+</ADT_A05>

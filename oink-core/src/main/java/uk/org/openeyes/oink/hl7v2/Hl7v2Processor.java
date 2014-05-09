@@ -53,6 +53,7 @@ public abstract class Hl7v2Processor {
 	}
 
 	public OINKRequestMessage process(@Body Message message) throws Exception {
+		log.debug("Processing a message");
 
 		// Validate message
 		hl7v2Validator.validate(message);
@@ -71,6 +72,8 @@ public abstract class Hl7v2Processor {
 		Resource r = bundle.getEntryList().get(0).getResource();
 
 		OINKRequestMessage outMessage = wrapResource(r);
+		
+		log.debug("Processed a message");
 		return outMessage;
 	}
 	

@@ -8,6 +8,7 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactoryConfigurationError;
 
 import org.apache.commons.io.IOUtils;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -15,11 +16,12 @@ import static org.junit.Assert.*;
 public class TestXmlTransformer {
 	
 	
+	@Ignore
 	@Test
 	public void testSimpleTransform() throws IOException, TransformerFactoryConfigurationError, TransformerException {
 
-		String inputXml = getResourceAsString("/hl7v2/A01-.xml");
-		String xsl = getResourceAsString("/uk/org/openeyes/oink/hl7v2/a01.xsl");
+		String inputXml = getResourceAsString("/hl7v2/A28-3.xml");
+		String xsl = getResourceAsString("/uk/org/openeyes/oink/hl7v2/A28.xsl");
 		
 		XmlTransformer transformer = new XmlTransformer();
 		String result = transformer.transform(inputXml,xsl);

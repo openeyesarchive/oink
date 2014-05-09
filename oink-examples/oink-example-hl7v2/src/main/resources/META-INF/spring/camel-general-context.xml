@@ -21,21 +21,25 @@
 			<util:constant static-field="org.apache.camel.component.hl7.AckCode.AR" />
 		</constructor-arg>
 	</bean>
+	<bean id="ackError" class="org.apache.camel.component.hl7.AckExpression">
+		<constructor-arg>
+			<util:constant static-field="org.apache.camel.component.hl7.AckCode.AE" />
+		</constructor-arg>
+	</bean>	
 
 	<bean id="a28Processor" class="uk.org.openeyes.oink.hl7v2.A28Processor">
-		<property name="xsltPath" value="/uk/org/openeyes/oink/hl7v2/a01.xsl" />
+		<property name="xsltPath" value="/uk/org/openeyes/oink/hl7v2/A28.xsl" />
 	</bean>
 
 	<bean id="a31Processor" class="uk.org.openeyes.oink.hl7v2.A31Processor">
-		<property name="xsltPath" value="/uk/org/openeyes/oink/hl7v2/a01.xsl" />
+		<property name="xsltPath" value="/uk/org/openeyes/oink/hl7v2/A28.xsl" />
 	</bean>
 
 	<bean id="a40Processor" class="uk.org.openeyes.oink.hl7v2.A40Processor">
-		<property name="xsltPath" value="/uk/org/openeyes/oink/hl7v2/a01.xsl" />
+		<property name="xsltPath" value="/uk/org/openeyes/oink/hl7v2/A28.xsl" />
 	</bean>
 
-	<bean id="invalidMessageType"
-		class="uk.org.openeyes.oink.hl7v2.UnsupportedMessageTypeException" />
+	<bean id="a19Processor" class="uk.org.openeyes.oink.hl7v2.A19Builder"/>
 
 	<bean id="hl7dataformat" class="org.apache.camel.component.hl7.HL7DataFormat">
 		<property name="validate" value="false" />
@@ -52,8 +56,9 @@
 				<handled>
 					<constant>true</constant>
 				</handled>
+				<to uri="log:GeneralError?level=ERROR&amp;showAll=true&amp;multiline=true" />
 				<transform>
-					<ref>ack</ref> <!-- auto-generates negative ack because of exception in Exchange -->
+					<ref>ackError</ref> <!-- auto-generates negative ack because of exception in Exchange -->
 				</transform>
 			</onException>
 			<setProperty propertyName="originalMessage">
@@ -74,22 +79,33 @@
 				</when>
 				<otherwise>
 					<transform>
+					
 						<ref>ackRejected</ref>
 					</transform>
 					<stop />
 				</otherwise>
 			</choice>
 			<setHeader headerName="rabbitmq.ROUTING_KEY">
-				<constant>{{rabbit.routingKey}}</constant>
+				<constant>{{rabbit.outboundRoutingKey}}</constant>
 			</setHeader>
-			<to
-				uri="rabbitmq://{{rabbit.host}}:{{rabbit.port}}/{{rabbit.defaultExchange}}?vhost={{rabbit.vhost}}&amp;username={{rabbit.username}}&amp;password={{rabbit.password}}" />
+			<to uri="rabbitmq://{{rabbit.host}}:{{rabbit.port}}/{{rabbit.defaultExchange}}?vhost={{rabbit.vhost}}&amp;username={{rabbit.username}}&amp;password={{rabbit.password}}" />
 			<setBody>
 				<simple>${property.originalMessage}</simple>
 			</setBody>
 			<transform>
 				<ref>ack</ref>
 			</transform>
+		</route>
+		
+ 		<route id="rabbit-consumer">
+			<from uri="rabbitmq://{{rabbit.host}}:{{rabbit.port}}/{{rabbit.defaultExchange}}?vhost={{rabbit.vhost}}&amp;username={{rabbit.username}}&amp;password={{rabbit.password}}&amp;routingKey={{rabbit.inboundRoutingKey}}"/>
+			<bean ref="a19Processor" method="buildQuery"/>
+			<to uri="mina2:tcp://{{remote.host}}:{{remote.port}}?sync=false&amp;codec=#hl7codec"/>
+			<bean ref="a19Processor" method="processResponse"/>
+			<setHeader headerName="rabbitmq.ROUTING_KEY">
+				<constant>${header.rabbitmq.REPLY_TO}</constant>
+			</setHeader>			
+			<to uri="rabbitmq://{{rabbit.host}}:{{rabbit.port}}/{{rabbit.defaultExchange}}?vhost={{rabbit.vhost}}&amp;username={{rabbit.username}}&amp;password={{rabbit.password}}"/>
 		</route>
 		
 	</camelContext>
