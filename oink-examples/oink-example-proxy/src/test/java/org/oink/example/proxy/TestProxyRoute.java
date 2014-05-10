@@ -5,8 +5,6 @@ import java.io.InputStream;
 import java.io.StringWriter;
 import java.util.Properties;
 
-import javassist.tools.framedump;
-
 import org.apache.camel.CamelContext;
 import org.apache.commons.io.IOUtils;
 import org.eclipse.jetty.server.Server;

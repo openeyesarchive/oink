@@ -33,7 +33,7 @@
 			<version>${project.version}</version>
 			<type>bundle</type>
 		</dependency>
-	
+
 	</dependencies>
 
 	<build>
