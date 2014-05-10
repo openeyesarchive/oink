@@ -36,10 +36,10 @@ import org.springframework.osgi.context.event.OsgiBundleApplicationContextListen
 import org.springframework.osgi.context.event.OsgiBundleContextFailedEvent;
 
 @RunWith(PaxExam.class)
-public class OinkProxyTest {
+public class OinkFacadeIT {
 
 	private static final Logger logger = LoggerFactory
-			.getLogger(OinkProxyTest.class);
+			.getLogger(OinkFacadeIT.class);
 
 	@Inject
 	protected BundleContext bundleContext;
@@ -51,19 +51,19 @@ public class OinkProxyTest {
 	private FeaturesService featuresService;
 	
 	@Test
-	public void checkProxyHasASingleConfigPidAssociatedInTheFeaturesRepo() throws Exception {
-		Feature feature = featuresService.getFeature("oink-example-proxy");
+	public void checkFacadeHasASingleConfigPidAssociatedInTheFeaturesRepo() throws Exception {
+		Feature feature = featuresService.getFeature("oink-example-facade");
 		Map<String, Map<String,String>> configurations = feature.getConfigurations();
 		assertNotNull(configurations);
 		assertEquals(1, configurations.size());
-		assertTrue(configurations.containsKey("uk.org.openeyes.oink.proxy"));
+		assertTrue(configurations.containsKey("uk.org.openeyes.oink.facade"));
 	}
 	
 	@Test
-	public void checkProxyContextFailsWithoutCfg() throws Exception {
+	public void checkFacadeContextFailsWithoutCfg() throws Exception {
 		
 		// Make sure facade-feature is installed
-		Feature feature = featuresService.getFeature("oink-example-proxy");
+		Feature feature = featuresService.getFeature("oink-example-facade");
 		assertFalse(featuresService.isInstalled(feature));
 		
 		// Prepare listener
@@ -71,33 +71,33 @@ public class OinkProxyTest {
 		ServiceRegistration serviceRegistration = bundleContext.registerService(OsgiBundleApplicationContextListener.class.getName(), listener, null);
 		
 		// Wait for feature to install
-		featuresService.installFeature("oink-example-proxy");
+		featuresService.installFeature("oink-example-facade");
 		Thread.sleep(5000);
 		assertTrue(featuresService.isInstalled(feature));
 
 		serviceRegistration.unregister();
-		featuresService.uninstallFeature("oink-example-proxy");
+		featuresService.uninstallFeature("oink-example-facade");
 		
 		assertTrue(listener.getContextFailed());
 	}
 	
 	@Test
-	public void checkProxyContextDoesntFailWithCfg() throws Exception {
+	public void checkFacadeContextDoesntFailWithCfg() throws Exception {
 		
 		// Make sure facade-feature is installed
-		Feature feature = featuresService.getFeature("oink-example-proxy");
+		Feature feature = featuresService.getFeature("oink-example-facade");
 		assertFalse(featuresService.isInstalled(feature));
 		
 		// Load cfg
 		Properties properties = new Properties();
-		File f = new File("../../../src/test/resources/proxy.properties");
+		File f = new File("../../../src/test/resources/facade.properties");
 		assertTrue(f.exists());
 		FileInputStream fileIo = new FileInputStream(f);
 		properties.load(fileIo);
 		fileIo.close();
 
 		// Place cfg
-		org.osgi.service.cm.Configuration c = configurationAdmin.getConfiguration("uk.org.openeyes.oink.proxy");
+		org.osgi.service.cm.Configuration c = configurationAdmin.getConfiguration("uk.org.openeyes.oink.facade");
 		assertNull(c.getProperties());
 		c.update(properties);
 		
@@ -106,13 +106,13 @@ public class OinkProxyTest {
 		ServiceRegistration serviceRegistration = bundleContext.registerService(OsgiBundleApplicationContextListener.class.getName(), listener, null);
 		
 		// Wait for feature to install
-		featuresService.installFeature("oink-example-proxy");
+		featuresService.installFeature("oink-example-facade");
 		Thread.sleep(5000);
 		assertTrue(featuresService.isInstalled(feature));
 
 		// Uninstall application, config and listener
 		serviceRegistration.unregister();
-		featuresService.uninstallFeature("oink-example-proxy");
+		featuresService.uninstallFeature("oink-example-facade");
 		c.delete();
 		
 		assertFalse(listener.getContextFailed());
@@ -135,6 +135,26 @@ public class OinkProxyTest {
 		}
 		
 	}
+	
+	@Ignore
+	@Test
+	public void checkFeatureIsNotInstalledByDefault() throws Exception {
+		Feature feature = featuresService.getFeature("oink-example-facade");
+		assertFalse(featuresService.isInstalled(feature));
+	}
+	
+//	@Test
+//	public void testNoErrorsInDiag() throws Exception {
+//		ByteArrayOutputStream outOs = new ByteArrayOutputStream();
+//		PrintStream outPs = new PrintStream(outOs);
+//		ByteArrayOutputStream errOs = new ByteArrayOutputStream();
+//		PrintStream errPs = new PrintStream(errOs);
+//		CommandSession cs = commandProcessor.createSession(System.in, outPs, errPs);
+//		cs.execute("feature:list");
+//		cs.close();
+//		assertTrue(outOs.toString().isEmpty());
+//		assertTrue(errOs.toString().isEmpty());		
+//	}
 	
 	@ProbeBuilder
 	public TestProbeBuilder probeConfiguration(TestProbeBuilder probe) {

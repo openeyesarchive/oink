@@ -34,10 +34,10 @@ import org.slf4j.LoggerFactory;
 
 @RunWith(PaxExam.class)
 @ExamReactorStrategy(PerClass.class)
-public class OinkCommandTest {
+public class OinkCommandIT {
 
 	private static final Logger logger = LoggerFactory
-			.getLogger(OinkCommandTest.class);
+			.getLogger(OinkCommandIT.class);
 
 	@Inject
 	protected BundleContext bundleContext;
