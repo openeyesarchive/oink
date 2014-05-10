@@ -1,1 +1,2 @@
 uk.org.openeyes.oink.messaging.OinkMessageConverter
+uk.org.openeyes.oink.messaging.FhirResourceConverter

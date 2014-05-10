@@ -15,7 +15,7 @@
 	<packaging>bundle</packaging>
 	<version>0.2-SNAPSHOT</version>
 
-	<name>OINK Facade Example</name>
+	<name>OINK :: Examples :: Facade</name>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

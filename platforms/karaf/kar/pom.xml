@@ -21,6 +21,19 @@
 			<version>${project.version}</version>
 			<type>bundle</type>
 		</dependency>
+		<dependency>
+			<groupId>uk.org.openeyes.oink.examples</groupId>
+			<artifactId>oink-example-facade</artifactId>
+			<version>${project.version}</version>
+			<type>bundle</type>
+		</dependency>
+		<dependency>
+			<groupId>uk.org.openeyes.oink.examples</groupId>
+			<artifactId>oink-example-proxy</artifactId>
+			<version>${project.version}</version>
+			<type>bundle</type>
+		</dependency>
+	
 	</dependencies>
 
 	<build>
