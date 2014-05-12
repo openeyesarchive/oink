@@ -20,7 +20,7 @@ import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.parser.Parser;
 import ca.uhn.hl7v2.validation.impl.NoValidation;
 
-public class TestA28Processor {
+public class TestA28Processor extends Hl7TestSupport {
 	
 	private A28Processor processor;
 	
@@ -32,7 +32,7 @@ public class TestA28Processor {
 	
 	@Test
 	public void testProcessorHandlesValidA28Message() throws Exception {
-		Message a28message = buildMessageFromResource("/hl7v2/A28-1.txt");
+		Message a28message = loadMessage("/hl7v2/A28-1.txt");
 		OINKRequestMessage message = processor.process(a28message);
 		assertEquals(HttpMethod.POST, message.getMethod());
 		assertEquals("/Patient", message.getResourcePath());
@@ -40,15 +40,6 @@ public class TestA28Processor {
 		
 	}
 	
-	
-	public static Message buildMessageFromResource(String pathToFile) throws IOException, HL7Exception {
-		String message = loadResourceAsString(pathToFile);
-		HapiContext hapi = new DefaultHapiContext();
-		hapi.setValidationContext(new NoValidation());
-		Parser p = hapi.getGenericParser();
-		Message m = p.parse(message);
-		return m;
-	}
 	
 	public static String loadResourceAsString(String resourcePath) throws IOException {
 		InputStream is = TestA28Processor.class.getResourceAsStream(resourcePath);

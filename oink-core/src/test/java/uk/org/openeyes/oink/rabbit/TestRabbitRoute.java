@@ -1,3 +1,4 @@
+package uk.org.openeyes.oink.rabbit;
 import static org.junit.Assert.*;
 
 import org.junit.AfterClass;
