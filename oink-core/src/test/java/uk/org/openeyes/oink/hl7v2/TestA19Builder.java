@@ -31,7 +31,7 @@ public class TestA19Builder extends Hl7TestSupport {
 		Message generatedMessage = builder.buildQuery(req);
 
 		// Load existing Hl7v2 message
-		Message existingMessage = loadMessage("/hl7v2/QRYA19-1.txt");
+		Message existingMessage = loadMessage("/hl7v2/QRYA19-nhsnumber-1.txt");
 		// Update timestapms and ids in sample message
 		Terser existingTerser = new Terser(existingMessage);
 		Terser generatedTerser = new Terser(generatedMessage);

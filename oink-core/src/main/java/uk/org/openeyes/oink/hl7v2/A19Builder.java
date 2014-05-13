@@ -64,6 +64,7 @@ public class A19Builder {
 			XCN who0 = qrd.getWhoSubjectFilter(0);
 			who0.getIDNumber().setValue(nhsNumber);
 			who0.getAssigningAuthority().getUniversalID().setValue("NHS");
+			who0.getIdentifierTypeCode().setValue("MR");
 		} else if (isSearchByFamilyName(request)) {
 			log.info("Building an A19 with search by family name");
 			String familyName = getQueryParameterValue(request, "family");
