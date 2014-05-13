@@ -9,7 +9,7 @@
 
 	<bean id="bridgePropertyPlaceholder"
 		class="org.apache.camel.spring.spi.BridgePropertyPlaceholderConfigurer">
-		<property name="location" value="classpath:facade-test.properties" />
+		<property name="location" value="${integrationTestProperties}" />
 	</bean>
 
 	<import resource="classpath:spring-plain/camel-non-osgi-context.xml" />

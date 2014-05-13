@@ -45,7 +45,7 @@ import com.rabbitmq.client.ShutdownSignalException;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:camel-context-test.xml" })
-public class TestFacadeRoute {
+public class ITFacadeRoute {
 
 	private static Properties testProperties;
 
@@ -62,7 +62,7 @@ public class TestFacadeRoute {
 	public static void setUp() throws IOException {
 		// Load properties
 		testProperties = new Properties();
-		InputStream is = TestFacadeRoute.class
+		InputStream is = ITFacadeRoute.class
 				.getResourceAsStream("/facade-test.properties");
 		testProperties.load(is);
 
@@ -297,7 +297,7 @@ public class TestFacadeRoute {
 	}
 	
 	private static FhirBody buildFhirBodyFromResource(String resourcePath) throws Exception {
-		InputStream is = TestFacadeRoute.class.getResourceAsStream(resourcePath);
+		InputStream is = ITFacadeRoute.class.getResourceAsStream(resourcePath);
 		FhirBody body = null;
 		JsonParser parser = new JsonParser();
 		ResourceOrFeed res = parser.parseGeneral(is);

@@ -35,7 +35,7 @@ import com.rabbitmq.client.QueueingConsumer;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:camel-context-test.xml" })
-public class TestProxyRoute {
+public class ITProxyRoute {
 
 	private static Properties testProperties;
 	private static ConnectionFactory factory;
@@ -49,7 +49,7 @@ public class TestProxyRoute {
 	public static void setUp() throws IOException {
 		// Load properties
 		testProperties = new Properties();
-		InputStream is = TestProxyRoute.class
+		InputStream is = ITProxyRoute.class
 				.getResourceAsStream("/proxy-test.properties");
 		testProperties.load(is);
 
@@ -75,7 +75,7 @@ public class TestProxyRoute {
 	public void testGetRequestGetsProxied() throws Exception {
 		
 		// Mock endpoint server
-		InputStream is = TestProxyRoute.class.getResourceAsStream("/patient.json");
+		InputStream is = ITProxyRoute.class.getResourceAsStream("/patient.json");
 		StringWriter writer = new StringWriter();
 		IOUtils.copy(is, writer);
 		String jsonPatient = writer.toString();
@@ -175,7 +175,7 @@ public class TestProxyRoute {
 		// Assert mocked server receives request intact
 		String requestBodyReceivedByServer = server.getRequestBody();
 		StringWriter writer = new StringWriter();
-		IOUtils.copy(TestProxyRoute.class.getResourceAsStream("/patient.json"), writer);
+		IOUtils.copy(ITProxyRoute.class.getResourceAsStream("/patient.json"), writer);
 		String expectedBodyReceivedByServer = writer.toString();
 		assertEquals(expectedBodyReceivedByServer, requestBodyReceivedByServer);
 
@@ -194,7 +194,7 @@ public class TestProxyRoute {
 
 	
 	private static FhirBody buildFhirBodyFromResource(String resourcePath) throws Exception {
-		InputStream is = TestProxyRoute.class.getResourceAsStream(resourcePath);
+		InputStream is = ITProxyRoute.class.getResourceAsStream(resourcePath);
 		FhirBody body = null;
 		JsonParser parser = new JsonParser();
 		ResourceOrFeed res = parser.parseGeneral(is);

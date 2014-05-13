@@ -31,3 +31,4 @@ file ${karaf.Basedir}/etc/uk.org.openeyes.oink.facade.cfg then from the shell:
 
 	feature:addurl mvn:uk.org.openeyes.oink/oink-features/<camel version>/xml/features
 	feature:install camel-adapter-facade
+	
