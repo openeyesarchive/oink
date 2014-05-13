@@ -2,30 +2,22 @@ package uk.org.openeyes.oink.hl7v2;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
 import java.io.StringWriter;
 
 import org.apache.commons.io.IOUtils;
-import org.custommonkey.xmlunit.DetailedDiff;
-import org.custommonkey.xmlunit.Diff;
-import org.custommonkey.xmlunit.Difference;
-import org.custommonkey.xmlunit.DifferenceConstants;
-import org.custommonkey.xmlunit.DifferenceListener;
 import org.custommonkey.xmlunit.XMLAssert;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
-import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Message;
-import ca.uhn.hl7v2.model.v24.datatype.FN;
-import ca.uhn.hl7v2.model.v24.datatype.XPN;
 import ca.uhn.hl7v2.model.v24.message.ADT_A01;
-import ca.uhn.hl7v2.model.v24.segment.PID;
-import ca.uhn.hl7v2.util.XMLUtils;
 
-public class TestMessageXMLConverter {
+public class TestMessageXMLConverter extends Hl7TestSupport {
 
 	@Test
 	public void testCanDecodeSampleA01MessageFromXml() throws IOException, HL7Exception {
@@ -36,8 +28,15 @@ public class TestMessageXMLConverter {
 	}
 	
 	@Test
-	public void testWhatPIDShouldContain() {
-
+	@Ignore
+	public void convertPipeToXml() throws HL7Exception, IOException {
+		String message = "ADR-A19";
+		Message msg = loadMessage("/hl7v2/"+message+".txt");
+		MessageConverter conv = new MessageConverter();
+		String xml = conv.toXml(msg);
+		PrintWriter out = new PrintWriter("/Users/Oli/"+message+".xml");
+		out.print(xml);
+		out.close();
 	}
 	
 	@Test

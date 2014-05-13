@@ -3,6 +3,8 @@ package uk.org.openeyes.oink.hl7v2;
 import static org.junit.Assert.*;
 
 import java.io.IOException;
+
+import org.junit.Ignore;
 import org.junit.Test;
 
 import uk.org.openeyes.oink.domain.HttpMethod;
@@ -10,12 +12,17 @@ import uk.org.openeyes.oink.domain.OINKRequestMessage;
 import uk.org.openeyes.oink.exception.OinkException;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Message;
+import ca.uhn.hl7v2.model.v24.group.ADR_A19_QUERY_RESPONSE;
+import ca.uhn.hl7v2.model.v24.message.ADR_A19;
+import ca.uhn.hl7v2.model.v24.message.QRY_A19;
+import ca.uhn.hl7v2.model.v24.segment.MSA;
+import ca.uhn.hl7v2.model.v24.segment.PID;
 import ca.uhn.hl7v2.util.Terser;
 
 public class TestA19Builder extends Hl7TestSupport {
 
 	@Test
-	public void testGeneratesQryMessageOk() throws HL7Exception, IOException,
+	public void testBuildsSearchByNHSNumberQueryOk() throws HL7Exception, IOException,
 			OinkException {
 
 		// Build incoming request
@@ -32,7 +39,7 @@ public class TestA19Builder extends Hl7TestSupport {
 
 		// Load existing Hl7v2 message
 		Message existingMessage = loadMessage("/hl7v2/QRYA19-nhsnumber-1.txt");
-		// Update timestapms and ids in sample message
+		// Update timestamps and ids in sample message
 		Terser existingTerser = new Terser(existingMessage);
 		Terser generatedTerser = new Terser(generatedMessage);
 		existingTerser.set("/MSH-10", generatedTerser.get("/MSH-10"));
@@ -42,6 +49,12 @@ public class TestA19Builder extends Hl7TestSupport {
 
 		// Ensure match
 		assertEquals(existingMessage.toString(), generatedMessage.toString());
+	}
+	
+	@Ignore
+	@Test
+	public void buildA19Response() throws HL7Exception, IOException {
+
 	}
 	
 	@Test
