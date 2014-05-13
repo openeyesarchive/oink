@@ -23,6 +23,7 @@
 
 	<groupId>uk.org.openeyes.oink.karaf</groupId>
 	<artifactId>oink-features</artifactId>
+	<packaging>feature</packaging>
 
 	<name>Oink :: Platforms :: Apache Karaf :: Features Repository</name>
 
@@ -31,21 +32,12 @@
 			<plugin>
 				<groupId>org.apache.karaf.tooling</groupId>
 				<artifactId>karaf-maven-plugin</artifactId>
-				<version>3.0.1</version>
+				<version>${karaf.version}</version>
 				<extensions>true</extensions>
-				<executions>
-					<execution>
-						<id>generate-features-file</id>
-						<phase>package</phase>
-						<goals>
-							<goal>features-generate-descriptor</goal>
-						</goals>
-						<configuration>
-							<aggregateFeatures>false</aggregateFeatures>
-							<checkDependencyChange>false</checkDependencyChange>
-						</configuration>
-					</execution>
-				</executions>
+				<configuration>
+					<aggregateFeatures>true</aggregateFeatures>
+					<checkDependencyChange>false</checkDependencyChange>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>

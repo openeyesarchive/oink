@@ -5,15 +5,16 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<artifactId>oink-examples</artifactId>
+		<artifactId>oink-adapters</artifactId>
 		<groupId>uk.org.openeyes.oink</groupId>
 		<version>0.2-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>oink-example-proxy</artifactId>
+  <groupId>uk.org.openeyes.oink.adapters</groupId>  
+	<artifactId>oink-adapter-proxy</artifactId>
 	<packaging>bundle</packaging>
 
-	<name>OINK :: Examples :: Proxy</name>
+	<name>OINK :: Adapters :: Proxy</name>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -112,7 +113,7 @@
         <extensions>true</extensions>
         <configuration>
           <instructions>
-            <Bundle-SymbolicName>oink-example-proxy</Bundle-SymbolicName>
+            <Bundle-SymbolicName>oink-adapter-proxy</Bundle-SymbolicName>
             <Private-Package></Private-Package>
             <Import-Package>*</Import-Package>
           </instructions>
@@ -122,5 +123,4 @@
   </build>
 
   <description>Example Proxy routing</description>
-  <groupId>uk.org.openeyes.oink.examples</groupId>
 </project>

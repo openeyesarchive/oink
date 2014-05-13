@@ -5,17 +5,17 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<artifactId>oink-examples</artifactId>
+		<artifactId>oink-adapters</artifactId>
 		<groupId>uk.org.openeyes.oink</groupId>
 		<version>0.2-SNAPSHOT</version>
 	</parent>
 
-	<groupId>uk.org.openeyes.oink.examples</groupId>
-	<artifactId>oink-example-facade</artifactId>
+	<groupId>uk.org.openeyes.oink.adapters</groupId>
+	<artifactId>oink-adapter-facade</artifactId>
 	<packaging>bundle</packaging>
 	<version>0.2-SNAPSHOT</version>
 
-	<name>OINK :: Examples :: Facade</name>
+	<name>OINK :: Adapters :: Facade</name>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -164,7 +164,7 @@
 				<extensions>true</extensions>
 				<configuration>
 					<instructions>
-						<Bundle-SymbolicName>oink-example-facade</Bundle-SymbolicName>
+						<Bundle-SymbolicName>oink-adapter-facade</Bundle-SymbolicName>
 						<Private-Package></Private-Package>
 						<Import-Package>*,org.springframework.security.provisioning,org.apache.camel.component.spring.security</Import-Package>
 					</instructions>

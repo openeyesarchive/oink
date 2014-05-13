@@ -7,13 +7,13 @@
         <version>0.2-SNAPSHOT</version>
     </parent>
   <groupId>uk.org.openeyes.oink</groupId>
-  <artifactId>oink-examples</artifactId>
+  <artifactId>oink-adapters</artifactId>
   <version>0.2-SNAPSHOT</version>
   <packaging>pom</packaging>
-  <name>OINK Examples</name>
+  <name>OINK :: Adapters</name>
   <modules>
-    <module>oink-example-facade</module>
-    <module>oink-example-proxy</module>
+    <module>oink-adapter-facade</module>
+    <module>oink-adapter-proxy</module>
   </modules>
-  <description>Example deployable OINK applications demonstrating usage of OINK components.</description>
+  <description>Standard deployable OINK adapters demonstrating usage of OINK components.</description>
 </project>

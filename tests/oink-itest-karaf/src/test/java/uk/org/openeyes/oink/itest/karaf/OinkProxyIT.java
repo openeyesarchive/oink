@@ -52,7 +52,7 @@ public class OinkProxyIT {
 	
 	@Test
 	public void checkProxyHasASingleConfigPidAssociatedInTheFeaturesRepo() throws Exception {
-		Feature feature = featuresService.getFeature("oink-example-proxy");
+		Feature feature = featuresService.getFeature("oink-adapter-proxy");
 		Map<String, Map<String,String>> configurations = feature.getConfigurations();
 		assertNotNull(configurations);
 		assertEquals(1, configurations.size());
@@ -63,7 +63,7 @@ public class OinkProxyIT {
 	public void checkProxyContextFailsWithoutCfg() throws Exception {
 		
 		// Make sure facade-feature is installed
-		Feature feature = featuresService.getFeature("oink-example-proxy");
+		Feature feature = featuresService.getFeature("oink-adapter-proxy");
 		assertFalse(featuresService.isInstalled(feature));
 		
 		// Prepare listener
@@ -71,12 +71,12 @@ public class OinkProxyIT {
 		ServiceRegistration serviceRegistration = bundleContext.registerService(OsgiBundleApplicationContextListener.class.getName(), listener, null);
 		
 		// Wait for feature to install
-		featuresService.installFeature("oink-example-proxy");
+		featuresService.installFeature("oink-adapter-proxy");
 		Thread.sleep(5000);
 		assertTrue(featuresService.isInstalled(feature));
 
 		serviceRegistration.unregister();
-		featuresService.uninstallFeature("oink-example-proxy");
+		featuresService.uninstallFeature("oink-adapter-proxy");
 		
 		assertTrue(listener.getContextFailed());
 	}
@@ -85,7 +85,7 @@ public class OinkProxyIT {
 	public void checkProxyContextDoesntFailWithCfg() throws Exception {
 		
 		// Make sure facade-feature is installed
-		Feature feature = featuresService.getFeature("oink-example-proxy");
+		Feature feature = featuresService.getFeature("oink-adapter-proxy");
 		assertFalse(featuresService.isInstalled(feature));
 		
 		// Load cfg
@@ -106,13 +106,13 @@ public class OinkProxyIT {
 		ServiceRegistration serviceRegistration = bundleContext.registerService(OsgiBundleApplicationContextListener.class.getName(), listener, null);
 		
 		// Wait for feature to install
-		featuresService.installFeature("oink-example-proxy");
+		featuresService.installFeature("oink-adapter-proxy");
 		Thread.sleep(5000);
 		assertTrue(featuresService.isInstalled(feature));
 
 		// Uninstall application, config and listener
 		serviceRegistration.unregister();
-		featuresService.uninstallFeature("oink-example-proxy");
+		featuresService.uninstallFeature("oink-adapter-proxy");
 		c.delete();
 		
 		assertFalse(listener.getContextFailed());

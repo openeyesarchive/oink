@@ -46,7 +46,7 @@
 		<bundle>mvn:uk.org.openeyes.oink/oink-core/${project.version}</bundle>
 	</feature>
 
-	<feature name='oink-example-facade' version='${project.version}'
+	<feature name='oink-adapter-facade' version='${project.version}'
 		resolver='(obr)' start-level="60">
 		<config name="uk.org.openeyes.oink.facade"/>
 		<feature version='${project.version}'>oink-core</feature>
@@ -56,10 +56,10 @@
 		<feature version='${camel.version}'>camel-rabbitmq</feature>
 		<feature version='${camel.version}'>camel-http4</feature>
 		<feature version='${camel.version}'>camel-spring-security</feature>
-		<bundle>mvn:uk.org.openeyes.oink.examples/oink-example-facade/${project.version}</bundle>
+		<bundle>mvn:uk.org.openeyes.oink.adapters/oink-adapter-facade/${project.version}</bundle>
 	</feature>
 	
-	<feature name='oink-example-proxy' version='${project.version}'
+	<feature name='oink-adapter-proxy' version='${project.version}'
 		resolver='(obr)' start-level="60">
 		<config name="uk.org.openeyes.oink.proxy"/>
 		<feature version='${project.version}'>oink-core</feature>
@@ -67,7 +67,7 @@
 		<feature version='${camel.version}'>camel-spring</feature>
 		<feature version='${camel.version}'>camel-rabbitmq</feature>
 		<feature version='${camel.version}'>camel-http4</feature>
-		<bundle>mvn:uk.org.openeyes.oink.examples/oink-example-proxy/${project.version}</bundle>
+		<bundle>mvn:uk.org.openeyes.oink.adapters/oink-adapter-proxy/${project.version}</bundle>
 	</feature>	
 
 </features>

@@ -21,7 +21,7 @@ mkdir build/archive
 echo "README HERE" > build/archive/README
 
 # Build a dummy cfg for facade example
-cp build/source/oink-examples/oink-example-facade/src/main/resources/facade.properties build/archive/uk.org.openeyes.oink.facade.cfg
+cp build/source/adapters/oink-adapter-facade/src/main/resources/facade.properties build/archive/uk.org.openeyes.oink.facade.cfg
 
 # Copy KAR
 cp build/source/platforms/karaf/kar/target/kar-$VERSION.kar build/archive/kar-$VERSION.kar

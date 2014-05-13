@@ -24,7 +24,7 @@
 	<modules>
 		<module>oink-core</module>
 		<module>oink-domain</module>
-		<module>oink-examples</module>
+		<module>adapters</module>
     <module>platforms</module>
     <module>tests</module>
   </modules>

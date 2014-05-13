@@ -52,7 +52,7 @@ public class OinkFacadeIT {
 	
 	@Test
 	public void checkFacadeHasASingleConfigPidAssociatedInTheFeaturesRepo() throws Exception {
-		Feature feature = featuresService.getFeature("oink-example-facade");
+		Feature feature = featuresService.getFeature("oink-adapter-facade");
 		Map<String, Map<String,String>> configurations = feature.getConfigurations();
 		assertNotNull(configurations);
 		assertEquals(1, configurations.size());
@@ -63,7 +63,7 @@ public class OinkFacadeIT {
 	public void checkFacadeContextFailsWithoutCfg() throws Exception {
 		
 		// Make sure facade-feature is installed
-		Feature feature = featuresService.getFeature("oink-example-facade");
+		Feature feature = featuresService.getFeature("oink-adapter-facade");
 		assertFalse(featuresService.isInstalled(feature));
 		
 		// Prepare listener
@@ -71,12 +71,12 @@ public class OinkFacadeIT {
 		ServiceRegistration serviceRegistration = bundleContext.registerService(OsgiBundleApplicationContextListener.class.getName(), listener, null);
 		
 		// Wait for feature to install
-		featuresService.installFeature("oink-example-facade");
+		featuresService.installFeature("oink-adapter-facade");
 		Thread.sleep(5000);
 		assertTrue(featuresService.isInstalled(feature));
 
 		serviceRegistration.unregister();
-		featuresService.uninstallFeature("oink-example-facade");
+		featuresService.uninstallFeature("oink-adapter-facade");
 		
 		assertTrue(listener.getContextFailed());
 	}
@@ -85,7 +85,7 @@ public class OinkFacadeIT {
 	public void checkFacadeContextDoesntFailWithCfg() throws Exception {
 		
 		// Make sure facade-feature is installed
-		Feature feature = featuresService.getFeature("oink-example-facade");
+		Feature feature = featuresService.getFeature("oink-adapter-facade");
 		assertFalse(featuresService.isInstalled(feature));
 		
 		// Load cfg
@@ -106,13 +106,13 @@ public class OinkFacadeIT {
 		ServiceRegistration serviceRegistration = bundleContext.registerService(OsgiBundleApplicationContextListener.class.getName(), listener, null);
 		
 		// Wait for feature to install
-		featuresService.installFeature("oink-example-facade");
+		featuresService.installFeature("oink-adapter-facade");
 		Thread.sleep(5000);
 		assertTrue(featuresService.isInstalled(feature));
 
 		// Uninstall application, config and listener
 		serviceRegistration.unregister();
-		featuresService.uninstallFeature("oink-example-facade");
+		featuresService.uninstallFeature("oink-adapter-facade");
 		c.delete();
 		
 		assertFalse(listener.getContextFailed());
@@ -139,7 +139,7 @@ public class OinkFacadeIT {
 	@Ignore
 	@Test
 	public void checkFeatureIsNotInstalledByDefault() throws Exception {
-		Feature feature = featuresService.getFeature("oink-example-facade");
+		Feature feature = featuresService.getFeature("oink-adapter-facade");
 		assertFalse(featuresService.isInstalled(feature));
 	}
 	

@@ -27,10 +27,10 @@ You will need to compile and install this example first:
 If using the OINK custom Apache Karaf you can enable this example from the shell
 
 	feature:repo-refresh
-	oink:enable oink-example-proxy <configuration file path>
+	oink:enable oink-adapter-proxy <configuration file path>
 
-If using standard Apache Karaf you can install this example by setting config 
+If using standard Apache Karaf you can install this adapter by setting config 
 file ${karaf.Basedir}/etc/uk.org.openeyes.oink.proxy.cfg then from the shell:
 
 	feature:addurl mvn:uk.org.openeyes.oink/oink-features/<camel version>/xml/features
-	feature:install camel-example-proxy
+	feature:install camel-adapter-proxy

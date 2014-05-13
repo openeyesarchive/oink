@@ -11,7 +11,6 @@
 
 	<artifactId>oink-itest-karaf</artifactId>
 	<name>Oink :: Integration Tests :: Karaf</name>
-	<url>http://maven.apache.org</url>
 	<description>Performs Karaf compliance integration tests</description>
 	<packaging>jar</packaging>
 
@@ -76,8 +75,8 @@
 		</dependency>
 
 		<dependency>
-			<groupId>uk.org.openeyes.oink.examples</groupId>
-			<artifactId>oink-example-facade</artifactId>
+			<groupId>uk.org.openeyes.oink.adapters</groupId>
+			<artifactId>oink-adapter-facade</artifactId>
 			<version>0.2-SNAPSHOT</version>
 			<type>bundle</type>
 			<scope>test</scope>
