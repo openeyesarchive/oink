@@ -75,16 +75,31 @@
 		</dependency>
 
 		<dependency>
+			<groupId>uk.org.openeyes.oink.karaf</groupId>
+			<artifactId>distro</artifactId>
+			<version>${project.version}</version>
+			<type>tar.gz</type>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
 			<groupId>uk.org.openeyes.oink.adapters</groupId>
 			<artifactId>oink-adapter-facade</artifactId>
-			<version>0.2-SNAPSHOT</version>
+			<version>${project.version}</version>
 			<type>bundle</type>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>uk.org.openeyes.oink.karaf</groupId>
+			<artifactId>oink-features</artifactId>
+			<version>${project.version}</version>
+			<type>xml</type>
+			<classifier>features</classifier>
+			<scope>test</scope>
+		</dependency>		
+		<dependency>
+			<groupId>uk.org.openeyes.oink.karaf</groupId>
 			<artifactId>shell-commands</artifactId>
-			<version>0.2-SNAPSHOT</version>
+			<version>${project.version}</version>
 			<type>bundle</type>
 			<scope>test</scope>
 		</dependency>
@@ -128,6 +143,20 @@
 						<goals>
 							<goal>integration-test</goal>
 							<goal>verify</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- generate dependencies versions -->
+			<plugin>
+				<groupId>org.apache.servicemix.tooling</groupId>
+				<artifactId>depends-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>generate-depends-file</id>
+						<goals>
+							<goal>generate-depends-file</goal>
 						</goals>
 					</execution>
 				</executions>

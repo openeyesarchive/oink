@@ -8,7 +8,6 @@
     </parent>
   <groupId>uk.org.openeyes.oink</groupId>
   <artifactId>oink-adapters</artifactId>
-  <version>0.2-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>OINK :: Adapters</name>
   <modules>

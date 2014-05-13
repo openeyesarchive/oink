@@ -20,7 +20,7 @@
 		<dependency>
 			<groupId>uk.org.openeyes.oink</groupId>
 			<artifactId>oink-domain</artifactId>
-			<version>0.2-SNAPSHOT</version>
+			<version>${project.version}</version>
 		</dependency>
 
 		<!-- Camel -->

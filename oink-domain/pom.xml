@@ -8,7 +8,6 @@
 		<version>0.2-SNAPSHOT</version>
 	</parent>
 	<artifactId>oink-domain</artifactId>
-	<version>0.2-SNAPSHOT</version>
 	<name>OINK Domain</name>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

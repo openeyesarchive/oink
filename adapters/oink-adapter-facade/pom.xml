@@ -13,7 +13,6 @@
 	<groupId>uk.org.openeyes.oink.adapters</groupId>
 	<artifactId>oink-adapter-facade</artifactId>
 	<packaging>bundle</packaging>
-	<version>0.2-SNAPSHOT</version>
 
 	<name>OINK :: Adapters :: Facade</name>
 
@@ -29,7 +28,7 @@
 		<dependency>
 			<groupId>uk.org.openeyes.oink</groupId>
 			<artifactId>oink-core</artifactId>
-			<version>0.2-SNAPSHOT</version>
+			<version>${project.version}</version>
 			<type>bundle</type>
 			<exclusions>
 				<exclusion>

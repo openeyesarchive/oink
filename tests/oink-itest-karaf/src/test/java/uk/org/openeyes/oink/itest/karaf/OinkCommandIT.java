@@ -3,6 +3,7 @@ package uk.org.openeyes.oink.itest.karaf;
 import static org.junit.Assert.*;
 import static org.ops4j.pax.exam.CoreOptions.*;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.*;
+import static org.ops4j.pax.exam.MavenUtils.asInProject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -99,11 +100,11 @@ public class OinkCommandIT {
 	public Option[] config() {
 		MavenArtifactUrlReference karafUrl = maven()
 				.groupId("uk.org.openeyes.oink.karaf").artifactId("distro")
-				.version("0.2-SNAPSHOT").type("tar.gz");
+				.version(asInProject()).type("tar.gz");
 
 		MavenUrlReference oinkFeaturesRepo = maven()
 				.groupId("uk.org.openeyes.oink.karaf")
-				.artifactId("oink-features").version("0.2-SNAPSHOT")
+				.artifactId("oink-features").version(asInProject())
 				.type("xml").classifier("features");
 
 		return new Option[] {
