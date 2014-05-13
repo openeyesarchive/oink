@@ -20,6 +20,7 @@
 		<paxlogging.version>1.7.2</paxlogging.version>
 		<org.slf4j.version>1.7.5</org.slf4j.version>
 		<maven-bundle-plugin.version>2.4.0</maven-bundle-plugin.version>
+		<maven-release-plugin.version>2.5</maven-release-plugin.version>
 	</properties>
 	<modules>
 		<module>oink-core</module>
@@ -127,7 +128,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-release-plugin</artifactId>
-					<version>${maven.release.version}</version>
+					<version>${maven-release-plugin.version}</version>
 					<configuration>
 						<autoVersionSubmodules>true</autoVersionSubmodules>
 					</configuration>
