@@ -1,3 +1,14 @@
+OINK Interoperability Toolkit 0.3
+=================================
+
+Known Issues
+------------
+
+* Has a SNAPSHOT dependency on FHIR Implementation.
+* OINK Kar does not contain Camel dependencies.
+* OINK Custom Distribution cannot install oink adapters when offline and no maven local repository is present.
+
+
 OINK Interoperability Toolkit 0.2
 =================================
 
