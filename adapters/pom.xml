@@ -4,7 +4,7 @@
   <parent>
         <artifactId>oink</artifactId>
         <groupId>uk.org.openeyes.oink</groupId>
-        <version>0.2-SNAPSHOT</version>
+        <version>0.2</version>
     </parent>
   <groupId>uk.org.openeyes.oink</groupId>
   <artifactId>oink-adapters</artifactId>

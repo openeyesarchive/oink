@@ -23,7 +23,7 @@
     <parent>
         <artifactId>karaf</artifactId>
         <groupId>uk.org.openeyes.oink</groupId>
-        <version>0.2-SNAPSHOT</version>
+        <version>0.2</version>
     </parent>
 
     <artifactId>shell-commands</artifactId>
