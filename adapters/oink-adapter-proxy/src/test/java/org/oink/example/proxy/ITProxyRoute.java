@@ -7,13 +7,10 @@ import java.util.Properties;
 
 import org.apache.camel.CamelContext;
 import org.apache.commons.io.IOUtils;
-import org.eclipse.jetty.server.Server;
-
 import static org.junit.Assert.*;
 
 import org.hl7.fhir.instance.formats.JsonParser;
 import org.hl7.fhir.instance.formats.ParserBase.ResourceOrFeed;
-import org.hl7.fhir.instance.model.Resource;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;

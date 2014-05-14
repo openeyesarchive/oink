@@ -1,7 +1,6 @@
 package uk.org.openeyes.oink.common;
 
 import uk.org.openeyes.oink.domain.HttpMethod;
-import uk.org.openeyes.oink.rabbit.RabbitRoute;
 
 public class HttpMapperEntry<T> {
 	

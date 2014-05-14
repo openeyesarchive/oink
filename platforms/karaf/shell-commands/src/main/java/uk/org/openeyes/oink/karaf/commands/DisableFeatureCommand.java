@@ -1,12 +1,6 @@
 package uk.org.openeyes.oink.karaf.commands;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.nio.file.Files;
-
-import javax.inject.Inject;
-
-import org.apache.karaf.features.ConfigFileInfo;
 import org.apache.karaf.features.Feature;
 import org.apache.karaf.features.FeaturesService;
 import org.apache.karaf.shell.commands.Argument;

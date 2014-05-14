@@ -2,16 +2,11 @@ package uk.org.openeyes.oink.security;
 
 import static org.junit.Assert.*;
 
-import java.security.Principal;
-
 import javax.security.auth.Subject;
-
-import junit.framework.Assert;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 
 public class TestSimpleIdentityService {

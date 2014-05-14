@@ -8,8 +8,6 @@ import org.hl7.fhir.instance.formats.JsonComposer;
 import org.hl7.fhir.instance.formats.JsonParser;
 import org.hl7.fhir.instance.model.Resource;
 
-import uk.org.openeyes.oink.domain.FhirBody;
-
 @Converter
 public class FhirResourceConverter {
 

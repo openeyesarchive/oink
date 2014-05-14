@@ -4,11 +4,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 
-import javax.security.auth.Subject;
-
 import org.apache.camel.Body;
 import org.apache.camel.Exchange;
-import org.apache.camel.Header;
 import org.apache.camel.Headers;
 import org.apache.camel.OutHeaders;
 import org.apache.commons.io.output.ByteArrayOutputStream;
