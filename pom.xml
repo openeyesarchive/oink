@@ -132,6 +132,8 @@
 					<configuration>
 						<autoVersionSubmodules>true</autoVersionSubmodules>
 						<allowTimestampedSnapshots>true</allowTimestampedSnapshots>
+						<!-- cannot be clean verify because our ITs wouldnt find our custom distro -->
+						<preparationGoals>clean install</preparationGoals>
 					</configuration>
 				</plugin>
 			</plugins>
