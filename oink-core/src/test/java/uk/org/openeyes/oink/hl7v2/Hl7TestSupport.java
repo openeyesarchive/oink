@@ -27,5 +27,12 @@ public class Hl7TestSupport {
 		Message adt = p.parse(message);
 		return adt;
 	}
+	
+	public static String loadResourceAsString(String resourcePath) throws IOException {
+		InputStream is = Hl7TestSupport.class.getResourceAsStream(resourcePath);
+		StringWriter writer = new StringWriter();
+		IOUtils.copy(is, writer, "UTF-8");
+		return writer.toString();
+	}
 
 }

@@ -81,6 +81,16 @@ public class OinkMessageConverter {
 	public String toJsonString(OINKRequestMessage message) {
 		return gson.toJson(message);
 	}
+	
+	@Converter
+	public OINKRequestMessage fromJsonString(String s) {
+		return requestMessageFromJsonString(s);
+	}
+	
+	@Converter
+	public OINKResponseMessage responseFromJsonString(String s) {
+		return responseMessageFromJsonString(s);
+	}
 
 	@Converter
 	public OINKRequestMessage requestMessageFromJsonString(String message) {

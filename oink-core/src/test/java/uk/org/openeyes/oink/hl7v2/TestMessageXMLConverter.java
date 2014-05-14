@@ -50,11 +50,4 @@ public class TestMessageXMLConverter extends Hl7TestSupport {
 		XMLAssert.assertXMLEqual(expectedXml, gotXml);		
 	}
 	
-	public String loadResourceAsString(String resourcePath) throws IOException {
-		InputStream is = this.getClass().getResourceAsStream(resourcePath);
-		StringWriter writer = new StringWriter();
-		IOUtils.copy(is, writer);
-		return writer.toString();
-	}
-	
 }
