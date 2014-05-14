@@ -16,7 +16,7 @@
 		<commonsio.version>2.4</commonsio.version>
 		<osgi.version>4.0.0</osgi.version>
 		<slf4j.version>1.7.7</slf4j.version>
-		<fhir.version>r2324-SNAPSHOT</fhir.version>
+		<fhir.version>2382-SNAPSHOT</fhir.version>
 		<paxlogging.version>1.7.2</paxlogging.version>
 		<org.slf4j.version>1.7.5</org.slf4j.version>
 		<maven-bundle-plugin.version>2.4.0</maven-bundle-plugin.version>
@@ -40,7 +40,7 @@
 			<!-- FHIR (OSGi-proof) -->
 			<dependency>
 				<groupId>me.fhir</groupId>
-				<artifactId>fhir-0.12</artifactId>
+				<artifactId>fhir-0.81</artifactId>
 				<version>${fhir.version}</version>
 				<exclusions>
 					<exclusion>
