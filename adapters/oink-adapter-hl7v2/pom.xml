@@ -5,17 +5,16 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<artifactId>oink-examples</artifactId>
+		<artifactId>oink-adapters</artifactId>
 		<groupId>uk.org.openeyes.oink</groupId>
-		<version>0.2-SNAPSHOT</version>
+		<version>0.3-SNAPSHOT</version>
 	</parent>
 
-	<groupId>uk.org.openeyes.oink.examples</groupId>
-	<artifactId>oink-example-hl7v2</artifactId>
+	<groupId>uk.org.openeyes.oink.adapters</groupId>
+	<artifactId>oink-adapter-hl7v2</artifactId>
 	<packaging>bundle</packaging>
-	<version>0.2-SNAPSHOT</version>
 
-	<name>OINK Hl7v2 Adapter Example</name>
+	<name>OINK :: Adapters :: Hl7v2</name>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -29,7 +28,7 @@
 		<dependency>
 			<groupId>uk.org.openeyes.oink</groupId>
 			<artifactId>oink-core</artifactId>
-			<version>0.2-SNAPSHOT</version>
+			<version>${project.version}</version>
 			<type>bundle</type>
 			<exclusions>
 				<exclusion>
@@ -171,7 +170,7 @@
 				<extensions>true</extensions>
 				<configuration>
 					<instructions>
-						<Bundle-SymbolicName>oink-example-hl7v2</Bundle-SymbolicName>
+						<Bundle-SymbolicName>oink-adapter-hl7v2</Bundle-SymbolicName>
 						<Private-Package></Private-Package>
 						<Import-Package>*</Import-Package>
 					</instructions>
