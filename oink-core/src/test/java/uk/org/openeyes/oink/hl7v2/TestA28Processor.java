@@ -32,6 +32,7 @@ import org.hl7.fhir.instance.model.String_;
 import org.hl7.fhir.instance.model.Address.AddressUse;
 import org.hl7.fhir.instance.model.Contact.ContactSystem;
 import org.hl7.fhir.instance.model.Contact.ContactUse;
+import org.hl7.fhir.instance.model.Patient.ContactComponent;
 import org.hl7.fhir.instance.model.Type;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -55,7 +56,7 @@ public class TestA28Processor extends Hl7TestSupport {
 	@Before
 	public void before() throws IOException {
 		processor = new A28Processor();
-		processor.setXsltPath("/uk/org/openeyes/oink/hl7v2/a28.xsl");
+		processor.setXsltPath("/uk/org/openeyes/oink/hl7v2/a28ANDa31.xsl");
 	}
 	
 	/**
@@ -64,7 +65,7 @@ public class TestA28Processor extends Hl7TestSupport {
 	 */
 	@Ignore
 	@Test
-	public void buildExampleA28FhirBody() throws Exception {
+	public void buildExampleA281FhirBody() throws Exception {
 		Patient patient = new Patient();
 		List<Identifier> identifiers = patient.getIdentifier();
 		// PID.3
@@ -151,17 +152,7 @@ public class TestA28Processor extends Hl7TestSupport {
 	
 	@Test
 	public void testProcessorHandlesValidA28Message() throws Exception {
-		Message a28message = loadMessage("/hl7v2/A28-1.txt");
-		OINKRequestMessage message = processor.process(a28message);
-		assertEquals(HttpMethod.POST, message.getMethod());
-		assertEquals("/Patient", message.getResourcePath());
-		
-		
-		OinkMessageConverter conv = new OinkMessageConverter();
-		String generatedJson = conv.toJsonString(message);
-		String expectedJson = loadResourceAsString("/oinkrequestmessages/A28-1.json");
-		assertEquals(expectedJson, generatedJson);
-		
+		testProcessorProducesExpectedOutput(processor, "/hl7v2/A28-1.txt", "/oinkrequestmessages/A28-1.json");		
 	}
 
 }
