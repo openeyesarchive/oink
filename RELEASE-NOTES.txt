@@ -1,0 +1,21 @@
+OINK Interoperability Toolkit 0.3
+=================================
+
+Known Issues
+------------
+
+* Has a SNAPSHOT dependency on FHIR Implementation.
+* OINK Kar does not contain Camel dependencies.
+* OINK Custom Distribution cannot install oink adapters when offline and no maven local repository is present.
+
+
+OINK Interoperability Toolkit 0.2
+=================================
+
+This is a major update for OINK that rewrites the project as OSGI-compatible Camel Routes. This update contains many bug fixes, dependency updates and improvements.
+
+Known Issues
+------------
+
+* OINK Kar does not contain Camel dependencies.
+* OINK Custom Distribution cannot install oink adapters when offline and no maven local repository is present.

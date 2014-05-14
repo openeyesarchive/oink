@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<artifactId>karaf</artifactId>
 		<groupId>uk.org.openeyes.oink</groupId>
-		<version>0.2-SNAPSHOT</version>
+		<version>0.3-SNAPSHOT</version>
 	</parent>
 
 	<groupId>uk.org.openeyes.oink.karaf</groupId>
@@ -17,59 +16,28 @@
 	<dependencies>
 		<dependency>
 			<groupId>uk.org.openeyes.oink.karaf</groupId>
+			<artifactId>oink-features</artifactId>
+			<classifier>features</classifier>
+			<version>${project.version}</version>
+			<type>xml</type>
+		</dependency>
+		<dependency>
+			<groupId>uk.org.openeyes.oink.karaf</groupId>
 			<artifactId>shell-commands</artifactId>
 			<version>${project.version}</version>
-			<type>bundle</type>
-		</dependency>
+		</dependency>		
 	</dependencies>
 
 	<build>
 		<plugins>
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-dependency-plugin</artifactId>
-				<version>2.8</version>
-				<executions>
-					<execution>
-						<id>copy</id>
-						<phase>package</phase>
-						<goals>
-							<goal>copy</goal>
-						</goals>
-						<configuration>
-							<artifactItems>
-								<artifactItem>
-									<groupId>uk.org.openeyes.oink.karaf</groupId>
-									<artifactId>oink-features</artifactId>
-									<version>${project.version}</version>
-									<type>xml</type>
-									<classifier>features</classifier>
-									<overWrite>true</overWrite>
-									<outputDirectory>${project.build.directory}/feature</outputDirectory>
-									<destFileName>feature.xml</destFileName>
-								</artifactItem>
-							</artifactItems>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-
-			<plugin>
 				<groupId>org.apache.karaf.tooling</groupId>
 				<artifactId>karaf-maven-plugin</artifactId>
-				<version>3.0.1</version>
+				<version>${karaf.version}</version>
 				<extensions>true</extensions>
-				<executions>
-					<execution>
-						<id>features-create-kar</id>
-						<goals>
-							<goal>features-create-kar</goal>
-						</goals>
-						<configuration>
-							<aggregateFeatures>true</aggregateFeatures>
-						</configuration>
-					</execution>
-				</executions>
+				<configuration>
+					<aggregateFeatures>true</aggregateFeatures>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>

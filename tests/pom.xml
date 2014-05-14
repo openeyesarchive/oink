@@ -4,11 +4,11 @@
   <parent>
         <artifactId>oink</artifactId>
         <groupId>uk.org.openeyes.oink</groupId>
-        <version>0.2-SNAPSHOT</version>
+        <version>0.3-SNAPSHOT</version>
     </parent>
   <groupId>uk.org.openeyes.oink</groupId>
   <artifactId>tests</artifactId>
-  <version>0.2-SNAPSHOT</version>
+  <version>0.3-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>Oink :: Integration Tests</name>
   <description>Integration tests for OINK and the custom Apache Karaf distribution porvided by OINK.</description>

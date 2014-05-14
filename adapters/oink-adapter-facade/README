@@ -1,0 +1,34 @@
+Facade Adapter
+===================
+
+A route serving as an OINK Facade. It can be run using Maven.
+
+Running outside OSGi container
+================================
+
+To run the adapter using Maven type
+
+	mvn:camel:run
+	
+Note that method uses the settings found in facade.properties in src/main/resources
+	
+To stop the adapter hit ctrl+c
+
+Running inside OSGi container
+=============================
+
+You will need to compile and install this adapter first:
+ 	
+ 	mvn compile install
+
+If using the OINK custom Apache Karaf you can enable this adapter from the shell
+
+	feature:repo-refresh
+	oink:enable oink-adapter-facade <configuration file path>
+
+If using standard Apache Karaf you can install this adapter by setting config 
+file ${karaf.Basedir}/etc/uk.org.openeyes.oink.facade.cfg then from the shell:
+
+	feature:addurl mvn:uk.org.openeyes.oink/oink-features/<camel version>/xml/features
+	feature:install camel-adapter-facade
+	

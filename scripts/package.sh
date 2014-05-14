@@ -1,3 +1,19 @@
+#*******************************************************************************
+# OINK - Copyright (c) 2014 OpenEyes Foundation
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#*******************************************************************************
 #!/bin/bash 
 
 # This unix script checks out OINK, builds it, and produces a tar.gz containing three files for deployment; the application, the config and a README
@@ -21,7 +37,7 @@ mkdir build/archive
 echo "README HERE" > build/archive/README
 
 # Build a dummy cfg for facade example
-cp build/source/oink-examples/oink-example-facade/src/main/resources/facade.properties build/archive/uk.org.openeyes.oink.facade.cfg
+cp build/source/adapters/oink-adapter-facade/src/main/resources/facade.properties build/archive/uk.org.openeyes.oink.facade.cfg
 
 # Copy KAR
 cp build/source/platforms/karaf/kar/target/kar-$VERSION.kar build/archive/kar-$VERSION.kar

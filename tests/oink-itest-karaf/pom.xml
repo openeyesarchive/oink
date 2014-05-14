@@ -1,17 +1,14 @@
 <?xml version="1.0"?>
-<project
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
-	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>uk.org.openeyes.oink</groupId>
 		<artifactId>tests</artifactId>
-		<version>0.2-SNAPSHOT</version>
+		<version>0.3-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>oink-itest-karaf</artifactId>
 	<name>Oink :: Integration Tests :: Karaf</name>
-	<url>http://maven.apache.org</url>
 	<description>Performs Karaf compliance integration tests</description>
 	<packaging>jar</packaging>
 
@@ -25,13 +22,13 @@
 		<dependency>
 			<groupId>org.ops4j.pax.exam</groupId>
 			<artifactId>pax-exam-container-karaf</artifactId>
-			<version>3.4.0</version>
+			<version>3.5.0</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.ops4j.pax.exam</groupId>
 			<artifactId>pax-exam-junit4</artifactId>
-			<version>3.4.0</version>
+			<version>3.5.0</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -46,13 +43,13 @@
 			<version>1.3.2</version>
 			<scope>test</scope>
 		</dependency>
-		
-        <dependency>
-            <groupId>javax.inject</groupId>
-            <artifactId>javax.inject</artifactId>
-            <version>1</version>
-            <scope>test</scope>
-        </dependency>		
+
+		<dependency>
+			<groupId>javax.inject</groupId>
+			<artifactId>javax.inject</artifactId>
+			<version>1</version>
+			<scope>test</scope>
+		</dependency>
 
 		<dependency>
 			<groupId>org.apache.felix</groupId>
@@ -69,19 +66,41 @@
 		</dependency>
 
 		<dependency>
-			<groupId>uk.org.openeyes.oink.examples</groupId>
-			<artifactId>oink-example-facade</artifactId>
-			<version>0.2-SNAPSHOT</version>
+			<groupId>org.springframework.osgi</groupId>
+			<artifactId>spring-osgi-core</artifactId>
+			<version>1.2.1</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>uk.org.openeyes.oink.karaf</groupId>
+			<artifactId>distro</artifactId>
+			<version>${project.version}</version>
+			<type>tar.gz</type>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>uk.org.openeyes.oink.adapters</groupId>
+			<artifactId>oink-adapter-facade</artifactId>
+			<version>${project.version}</version>
 			<type>bundle</type>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>uk.org.openeyes.oink.karaf</groupId>
-			<artifactId>shell-commands</artifactId>
-			<version>0.2-SNAPSHOT</version>
-			<type>bundle</type>
+			<artifactId>oink-features</artifactId>
+			<version>${project.version}</version>
+			<type>xml</type>
+			<classifier>features</classifier>
 			<scope>test</scope>
 		</dependency>		
+		<dependency>
+			<groupId>uk.org.openeyes.oink.karaf</groupId>
+			<artifactId>shell-commands</artifactId>
+			<version>${project.version}</version>
+			<type>bundle</type>
+			<scope>test</scope>
+		</dependency>
 
 
 		<!-- test and logging -->
@@ -110,5 +129,37 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-failsafe-plugin</artifactId>
+				<version>2.17</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>integration-test</goal>
+							<goal>verify</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- generate dependencies versions -->
+			<plugin>
+				<groupId>org.apache.servicemix.tooling</groupId>
+				<artifactId>depends-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>generate-depends-file</id>
+						<goals>
+							<goal>generate-depends-file</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
 
 </project>

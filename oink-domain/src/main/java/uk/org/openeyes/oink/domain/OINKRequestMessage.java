@@ -17,8 +17,6 @@
 package uk.org.openeyes.oink.domain;
 
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * This message encapsulates a request for a resource (FHIR REST style)

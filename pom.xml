@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>uk.org.openeyes.oink</groupId>
 	<artifactId>oink</artifactId>
-	<version>0.2-SNAPSHOT</version>
+	<version>0.3-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>OINK Parent</name>
 	<description>The OINK Project</description>
@@ -16,15 +16,16 @@
 		<commonsio.version>2.4</commonsio.version>
 		<osgi.version>4.0.0</osgi.version>
 		<slf4j.version>1.7.7</slf4j.version>
-		<fhir.version>r2324-SNAPSHOT</fhir.version>
+		<fhir.version>2382-SNAPSHOT</fhir.version>
 		<paxlogging.version>1.7.2</paxlogging.version>
 		<org.slf4j.version>1.7.5</org.slf4j.version>
 		<maven-bundle-plugin.version>2.4.0</maven-bundle-plugin.version>
+		<maven-release-plugin.version>2.5</maven-release-plugin.version>
 	</properties>
 	<modules>
 		<module>oink-core</module>
 		<module>oink-domain</module>
-		<module>oink-examples</module>
+		<module>adapters</module>
     <module>platforms</module>
     <module>tests</module>
   </modules>
@@ -39,7 +40,7 @@
 			<!-- FHIR (OSGi-proof) -->
 			<dependency>
 				<groupId>me.fhir</groupId>
-				<artifactId>fhir-0.12</artifactId>
+				<artifactId>fhir-0.81</artifactId>
 				<version>${fhir.version}</version>
 				<exclusions>
 					<exclusion>
@@ -127,17 +128,13 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-release-plugin</artifactId>
-					<version>${maven.release.version}</version>
+					<version>${maven-release-plugin.version}</version>
 					<configuration>
 						<autoVersionSubmodules>true</autoVersionSubmodules>
+						<allowTimestampedSnapshots>true</allowTimestampedSnapshots>
+						<!-- cannot be clean verify because our ITs wouldnt find our custom distro -->
+						<preparationGoals>clean install</preparationGoals>
 					</configuration>
-					<dependencies>
-						<dependency>
-							<groupId>org.apache.maven.scm</groupId>
-							<artifactId>maven-scm-provider-gitexe</artifactId>
-							<version>1.8.1</version>
-						</dependency>
-					</dependencies>
 				</plugin>
 			</plugins>
 		</pluginManagement>
