@@ -20,7 +20,7 @@ import ca.uhn.hl7v2.model.Message;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration()
-public class TestHl7v2ToRabbitRoute extends Hl7TestSupport {
+public class ITHl7v2ToRabbitRoute extends Hl7TestSupport {
 	
 	@Autowired
 	CamelContext ctx;

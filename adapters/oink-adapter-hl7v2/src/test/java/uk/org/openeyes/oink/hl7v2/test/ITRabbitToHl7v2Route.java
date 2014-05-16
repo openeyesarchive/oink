@@ -29,7 +29,7 @@ import uk.org.openeyes.oink.domain.OINKResponseMessage;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration()
-public class TestRabbitToHl7v2Route extends Hl7TestSupport {
+public class ITRabbitToHl7v2Route extends Hl7TestSupport {
 
 	@Autowired
 	CamelContext ctx;
