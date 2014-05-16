@@ -112,8 +112,8 @@ public class ITHl7v2ToRabbitRouteWithoutProcessors extends Hl7TestSupport {
 
 		// Check mocks
 		verify(a01Processor, never()).process(any(Message.class));
-		verify(a05Processor, never()).process(any(Message.class));
-		verify(a28Processor).process(any(Message.class));
+		verify(a05Processor).process(any(Message.class));
+		verify(a28Processor, never()).process(any(Message.class));
 		verify(a31Processor, never()).process(any(Message.class));
 		verify(a40Processor, never()).process(any(Message.class));
 		
