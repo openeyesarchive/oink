@@ -5,16 +5,12 @@ import java.io.InputStream;
 import java.io.StringWriter;
 
 import org.apache.camel.Body;
-import org.apache.camel.model.dataformat.HL7DataFormat;
 import org.apache.commons.io.IOUtils;
 import org.hl7.fhir.instance.model.AtomFeed;
-import org.hl7.fhir.instance.model.Patient;
 import org.hl7.fhir.instance.model.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import uk.org.openeyes.oink.domain.FhirBody;
-import uk.org.openeyes.oink.domain.HttpMethod;
 import uk.org.openeyes.oink.domain.OINKRequestMessage;
 import uk.org.openeyes.oink.fhir.FhirConverter;
 import uk.org.openeyes.oink.xml.XmlTransformer;

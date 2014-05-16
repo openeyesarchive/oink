@@ -12,11 +12,6 @@ import uk.org.openeyes.oink.domain.OINKRequestMessage;
 import uk.org.openeyes.oink.exception.OinkException;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Message;
-import ca.uhn.hl7v2.model.v24.group.ADR_A19_QUERY_RESPONSE;
-import ca.uhn.hl7v2.model.v24.message.ADR_A19;
-import ca.uhn.hl7v2.model.v24.message.QRY_A19;
-import ca.uhn.hl7v2.model.v24.segment.MSA;
-import ca.uhn.hl7v2.model.v24.segment.PID;
 import ca.uhn.hl7v2.util.Terser;
 
 public class TestA19Builder extends Hl7TestSupport {

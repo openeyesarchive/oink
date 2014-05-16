@@ -1,6 +1,5 @@
 package uk.org.openeyes.oink.hl7v2.test;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.io.IOException;
@@ -10,7 +9,6 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.io.IOUtils;
-import org.hamcrest.Factory;
 import org.json.JSONException;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.slf4j.Logger;
@@ -30,7 +28,6 @@ import com.rabbitmq.client.ShutdownSignalException;
 import ca.uhn.hl7v2.DefaultHapiContext;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.HapiContext;
-import ca.uhn.hl7v2.Version;
 import ca.uhn.hl7v2.app.HL7Service;
 import ca.uhn.hl7v2.app.Initiator;
 import ca.uhn.hl7v2.llp.LLPException;
@@ -39,10 +36,6 @@ import ca.uhn.hl7v2.parser.Parser;
 import ca.uhn.hl7v2.protocol.ReceivingApplication;
 import ca.uhn.hl7v2.protocol.ReceivingApplicationException;
 import ca.uhn.hl7v2.protocol.ReceivingApplicationExceptionHandler;
-import ca.uhn.hl7v2.validation.builder.ValidationRuleBuilder;
-import ca.uhn.hl7v2.validation.builder.support.DefaultValidationWithoutTNBuilder;
-import ca.uhn.hl7v2.validation.builder.support.NoValidationBuilder;
-import ca.uhn.hl7v2.validation.impl.DefaultValidationWithoutTN;
 import ca.uhn.hl7v2.validation.impl.NoValidation;
 
 public abstract class Hl7TestSupport {

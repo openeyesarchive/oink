@@ -1,9 +1,7 @@
 package uk.org.openeyes.oink.hl7v2;
 
 import java.io.IOException;
-import java.math.BigInteger;
 import java.nio.charset.Charset;
-import java.security.SecureRandom;
 import java.util.GregorianCalendar;
 import java.util.List;
 
@@ -16,10 +14,7 @@ import uk.org.openeyes.oink.common.RandomStringGenerator;
 import uk.org.openeyes.oink.domain.OINKRequestMessage;
 import uk.org.openeyes.oink.domain.OINKResponseMessage;
 import uk.org.openeyes.oink.exception.OinkException;
-import uk.org.openeyes.oink.messaging.OinkMessageConverter;
-import ca.uhn.hl7v2.DefaultHapiContext;
 import ca.uhn.hl7v2.HL7Exception;
-import ca.uhn.hl7v2.HapiContext;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.v24.datatype.TS;
 import ca.uhn.hl7v2.model.v24.datatype.XCN;

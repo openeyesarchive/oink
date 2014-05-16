@@ -1,14 +1,11 @@
 package uk.org.openeyes.oink.hl7v2.test;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 import org.junit.Test;
 
 import ca.uhn.hl7v2.HL7Exception;
-import ca.uhn.hl7v2.model.primitive.CommonTS;
 import ca.uhn.hl7v2.model.v24.datatype.TS;
 import ca.uhn.hl7v2.model.v24.datatype.XCN;
 import ca.uhn.hl7v2.model.v24.message.QRY_A19;

@@ -26,7 +26,6 @@ import org.junit.Test;
 import uk.org.openeyes.oink.domain.FhirBody;
 import uk.org.openeyes.oink.domain.HttpMethod;
 import uk.org.openeyes.oink.domain.OINKRequestMessage;
-import uk.org.openeyes.oink.hl7v2.Hl7TestSupport.NestedResourceIdGenerator;
 import uk.org.openeyes.oink.messaging.OinkMessageConverter;
 
 public class TestA05Processor extends Hl7TestSupport {

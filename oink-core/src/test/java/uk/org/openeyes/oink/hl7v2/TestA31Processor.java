@@ -1,40 +1,24 @@
 package uk.org.openeyes.oink.hl7v2;
 
-import static org.junit.Assert.*;
-
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.ParseException;
-import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.io.IOUtils;
-import org.hl7.fhir.instance.formats.JsonComposer;
 import org.hl7.fhir.instance.model.Address;
 import org.hl7.fhir.instance.model.Boolean;
 import org.hl7.fhir.instance.model.CodeableConcept;
-import org.hl7.fhir.instance.model.Contact;
 import org.hl7.fhir.instance.model.DateAndTime;
-import org.hl7.fhir.instance.model.DateTime;
 import org.hl7.fhir.instance.model.HumanName;
-import org.hl7.fhir.instance.model.Identifier;
 import org.hl7.fhir.instance.model.Organization;
 import org.hl7.fhir.instance.model.Patient;
 import org.hl7.fhir.instance.model.Practitioner;
 import org.hl7.fhir.instance.model.Resource;
 import org.hl7.fhir.instance.model.ResourceReference;
-import org.hl7.fhir.instance.model.String_;
 import org.hl7.fhir.instance.model.Address.AddressUse;
-import org.hl7.fhir.instance.model.Contact.ContactSystem;
 import org.hl7.fhir.instance.model.Contact.ContactUse;
 import org.hl7.fhir.instance.model.Patient.ContactComponent;
-import org.hl7.fhir.instance.model.Type;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -42,14 +26,7 @@ import org.junit.Test;
 import uk.org.openeyes.oink.domain.FhirBody;
 import uk.org.openeyes.oink.domain.HttpMethod;
 import uk.org.openeyes.oink.domain.OINKRequestMessage;
-import uk.org.openeyes.oink.hl7v2.Hl7TestSupport.NestedResourceIdGenerator;
 import uk.org.openeyes.oink.messaging.OinkMessageConverter;
-import ca.uhn.hl7v2.DefaultHapiContext;
-import ca.uhn.hl7v2.HL7Exception;
-import ca.uhn.hl7v2.HapiContext;
-import ca.uhn.hl7v2.model.Message;
-import ca.uhn.hl7v2.parser.Parser;
-import ca.uhn.hl7v2.validation.impl.NoValidation;
 
 public class TestA31Processor extends Hl7TestSupport {
 	

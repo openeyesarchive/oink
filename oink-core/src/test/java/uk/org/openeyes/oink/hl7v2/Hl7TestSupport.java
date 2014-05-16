@@ -1,7 +1,5 @@
 package uk.org.openeyes.oink.hl7v2;
 
-import static org.junit.Assert.assertEquals;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
