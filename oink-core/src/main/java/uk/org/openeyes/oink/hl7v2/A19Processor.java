@@ -21,9 +21,9 @@ import ca.uhn.hl7v2.model.v24.datatype.XCN;
 import ca.uhn.hl7v2.model.v24.message.QRY_A19;
 import ca.uhn.hl7v2.model.v24.segment.QRD;
 
-public class A19Builder {
+public class A19Processor {
 
-	private final static Logger log = LoggerFactory.getLogger(A19Builder.class);
+	private final static Logger log = LoggerFactory.getLogger(A19Processor.class);
 	
 	private RandomStringGenerator queryIdGenerator = new RandomStringGenerator(8);
 

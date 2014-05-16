@@ -29,7 +29,7 @@ public class TestA19Builder extends Hl7TestSupport {
 		req.setParameters("foo=bar&identifier=NHS|1234567890&foo2=bar2");
 
 		// Build Hl7v2 query
-		A19Builder builder = new A19Builder();
+		A19Processor builder = new A19Processor();
 		Message generatedMessage = builder.buildQuery(req);
 
 		// Load existing Hl7v2 message
@@ -65,7 +65,7 @@ public class TestA19Builder extends Hl7TestSupport {
 		req.setParameters("foo=bar&family=WILKIE&foo2=bar2");
 
 		// Build Hl7v2 query
-		A19Builder builder = new A19Builder();
+		A19Processor builder = new A19Processor();
 		Message generatedMessage = builder.buildQuery(req);
 
 		// Load existing Hl7v2 message

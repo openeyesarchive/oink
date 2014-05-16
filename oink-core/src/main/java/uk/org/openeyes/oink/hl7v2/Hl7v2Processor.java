@@ -11,6 +11,7 @@ import org.hl7.fhir.instance.model.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import uk.org.openeyes.oink.domain.FhirBody;
 import uk.org.openeyes.oink.domain.OINKRequestMessage;
 import uk.org.openeyes.oink.fhir.FhirConverter;
 import uk.org.openeyes.oink.xml.XmlTransformer;
@@ -62,17 +63,23 @@ public abstract class Hl7v2Processor {
 
 		// Convert to FHIR Resource
 		AtomFeed bundle = fhirConverter.fromXmlToBundle(fhirXml);
-		if (bundle.getEntryList().size() > 1) {
-			log.warn("The bundle produced by HL7 to FHIR XSL transform contains more than one entry");
-		}
-		Resource r = bundle.getEntryList().get(0).getResource();
+		
+		// Build FhirBody
+		FhirBody body = convertToFhirBody(bundle);
+		
 
-		OINKRequestMessage outMessage = wrapResource(r);
+		OINKRequestMessage outMessage = new OINKRequestMessage();
+		outMessage.setBody(body);
+		
+		setRestHeaders(outMessage);
 		
 		log.debug("Processed a message");
 		return outMessage;
 	}
 	
-	public abstract OINKRequestMessage wrapResource(Resource r);
+	
+	public abstract FhirBody convertToFhirBody(AtomFeed f);
+	
+	public abstract void setRestHeaders(OINKRequestMessage r);
 
 }
