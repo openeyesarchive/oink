@@ -65,7 +65,7 @@ public abstract class Hl7v2Processor {
 		AtomFeed bundle = fhirConverter.fromXmlToBundle(fhirXml);
 		
 		// Build FhirBody
-		FhirBody body = convertToFhirBody(bundle);
+		FhirBody body = buildFhirBody(bundle);
 		
 
 		OINKRequestMessage outMessage = new OINKRequestMessage();
@@ -78,7 +78,7 @@ public abstract class Hl7v2Processor {
 	}
 	
 	
-	public abstract FhirBody convertToFhirBody(AtomFeed f);
+	public abstract FhirBody buildFhirBody(AtomFeed f);
 	
 	public abstract void setRestHeaders(OINKRequestMessage r);
 

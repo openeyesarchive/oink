@@ -7,10 +7,12 @@ import java.util.List;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
+import org.hl7.fhir.instance.model.AtomFeed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import uk.org.openeyes.oink.common.RandomStringGenerator;
+import uk.org.openeyes.oink.domain.FhirBody;
 import uk.org.openeyes.oink.domain.OINKRequestMessage;
 import uk.org.openeyes.oink.domain.OINKResponseMessage;
 import uk.org.openeyes.oink.exception.OinkException;
@@ -21,7 +23,7 @@ import ca.uhn.hl7v2.model.v24.datatype.XCN;
 import ca.uhn.hl7v2.model.v24.message.QRY_A19;
 import ca.uhn.hl7v2.model.v24.segment.QRD;
 
-public class A19Processor {
+public class A19Processor extends Hl7v2Processor {
 
 	private final static Logger log = LoggerFactory.getLogger(A19Processor.class);
 	
@@ -119,6 +121,16 @@ public class A19Processor {
 
 	public OINKResponseMessage processResponse(Message message) {
 		return null;
+	}
+
+	@Override
+	public FhirBody buildFhirBody(AtomFeed f) {
+		return new FhirBody(f);
+	}
+
+	@Override
+	public void setRestHeaders(OINKRequestMessage r) {
+		// Do nothing?
 	}
 
 }

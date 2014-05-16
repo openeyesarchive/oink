@@ -14,7 +14,7 @@ public class A31Processor extends Hl7v2Processor {
 	private Logger log = LoggerFactory.getLogger(A31Processor.class);
 
 	@Override
-	public FhirBody convertToFhirBody(AtomFeed f) {
+	public FhirBody buildFhirBody(AtomFeed f) {
 		if (f.getEntryList().size() > 1) {
 			log.warn("The bundle produced by HL7 to FHIR XSL transform contains more than one entry");
 		}
