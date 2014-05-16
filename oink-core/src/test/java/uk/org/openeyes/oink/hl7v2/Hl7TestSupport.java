@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.io.StringWriter;
 
 import org.apache.commons.io.IOUtils;
+import org.skyscreamer.jsonassert.JSONAssert;
 
 import uk.org.openeyes.oink.domain.OINKRequestMessage;
 import uk.org.openeyes.oink.messaging.OinkMessageConverter;
@@ -38,7 +39,8 @@ public class Hl7TestSupport {
 		OinkMessageConverter conv = new OinkMessageConverter();
 		String generatedJson = conv.toJsonString(message);
 		String expectedJson = loadResourceAsString(expectedPath);
-		assertEquals(expectedJson, generatedJson);
+		JSONAssert.assertEquals(expectedJson,generatedJson, false);
+
 	}
 	
 	public static String loadResourceAsString(String resourcePath) throws IOException {

@@ -81,8 +81,8 @@
 			<version>${camel.version}</version>
 		</dependency>
 		<dependency>
-    		<groupId>org.apache.camel</groupId>
-    		<artifactId>camel-mina2</artifactId>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-mina2</artifactId>
 			<version>${camel.version}</version>
 		</dependency>
 
@@ -91,28 +91,28 @@
 			<artifactId>camel-test-spring</artifactId>
 			<scope>test</scope>
 		</dependency>
-		
+
 		<!-- Hapi HL7v2 parser for Java -->
-  		<dependency>
-            <groupId>ca.uhn.hapi</groupId>
-            <artifactId>hapi-osgi-base</artifactId>
-            <version>${hapi.version}</version>
-            <type>bundle</type>
-        </dependency>       
+		<dependency>
+			<groupId>ca.uhn.hapi</groupId>
+			<artifactId>hapi-osgi-base</artifactId>
+			<version>${hapi.version}</version>
+			<type>bundle</type>
+		</dependency>
 
 		<!-- Logging -->
 		<!-- NB. Use Pax-Logging Bundle in OSGi instead -->
- 		<dependency>
+		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
 			<version>${slf4j.version}</version>
 		</dependency>
- 		<dependency>
+		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
 			<version>${slf4j.version}</version>
 		</dependency>
- 		<dependency>
+		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>jcl-over-slf4j</artifactId>
 			<version>${slf4j.version}</version>
@@ -134,6 +134,12 @@
 			<artifactId>springockito</artifactId>
 			<scope>test</scope>
 			<version>1.0.10-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>org.skyscreamer</groupId>
+			<artifactId>jsonassert</artifactId>
+			<version>1.2.3</version>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 
@@ -174,7 +180,7 @@
 						<Private-Package></Private-Package>
 						<Import-Package>*</Import-Package>
 					</instructions>
-					
+
 				</configuration>
 			</plugin>
 

@@ -1,29 +1,20 @@
 package uk.org.openeyes.oink.hl7v2.test;
 
-import static org.junit.Assert.*;
-
 import java.io.IOException;
 
-import org.apache.camel.CamelContext;
+import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import uk.org.openeyes.oink.domain.HttpMethod;
-import uk.org.openeyes.oink.domain.OINKRequestMessage;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.llp.LLPException;
-import ca.uhn.hl7v2.model.Message;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration()
 public class ITHl7v2ToRabbitRoute extends Hl7TestSupport {
-	
-	@Autowired
-	CamelContext ctx;
 	
 	@Before
 	public void setUp() throws IOException {
@@ -31,38 +22,28 @@ public class ITHl7v2ToRabbitRoute extends Hl7TestSupport {
 	}
 	
 	@Test
-	public void testIncomingA28IsProcessedAndRouted() throws HL7Exception, IOException, LLPException, InterruptedException {
-		
-		// Choose a message to send
-		Message m = loadMessage("/samples/A28-1.txt");
-		
-		// Prepare RabbitServer
-		RabbitServer server = new RabbitServer(getProperty("rabbit.host"),
-				Integer.parseInt(getProperty("rabbit.port")),
-				getProperty("rabbit.vhost"), getProperty("rabbit.username"),
-				getProperty("rabbit.password"));
-		server.setConsumingDetails(getProperty("rabbit.defaultExchange"), getProperty("rabbit.outboundRoutingKey"));
-		server.start();
-		
-		// Send HL7v2 message
-		String host = getProperty("hl7v2.host");
-		int port = Integer.parseInt(getProperty("hl7v2.port"));
-		Message responseMessage = HL7Client.send(m, host, port);
-		
-		Thread.sleep(1000);
-		
-		// Check received Rabbit message
-		byte[] receivedMessage = server.getReceivedMessage();
-		server.stop();
-		
-		assertNotNull(receivedMessage);
-		
-		OINKRequestMessage request = ctx.getTypeConverter().convertTo(OINKRequestMessage.class, receivedMessage);
-		
-		assertEquals("/Patient",request.getResourcePath());
-		assertEquals(HttpMethod.POST, request.getMethod());
-		
-		fail("Final assertion not yet implmented");
+	public void testIncomingA28IsProcessedAndRouted() throws HL7Exception, IOException, LLPException, InterruptedException, JSONException {
+		testIncomingMessageIsProcessedAndRouted("/hl7v2/A28-1.txt", "/oinkrequestmessages/A28-1.json");
+	}
+	
+	@Test
+	public void testIncomingA01IsProcessedAndRouted() throws HL7Exception, IOException, LLPException, InterruptedException, JSONException {
+		testIncomingMessageIsProcessedAndRouted("/hl7v2/A01.txt", "/oinkrequestmessages/A01.json");
+	}
+
+	@Test
+	public void testIncomingA05IsProcessedAndRouted() throws HL7Exception, IOException, LLPException, InterruptedException, JSONException {
+		testIncomingMessageIsProcessedAndRouted("/hl7v2/A05.txt", "/oinkrequestmessages/A05.json");
+	}
+
+	@Test
+	public void testIncomingA31IsProcessedAndRouted() throws HL7Exception, IOException, LLPException, InterruptedException, JSONException {
+		testIncomingMessageIsProcessedAndRouted("/hl7v2/A31-2.txt", "/oinkrequestmessages/A31-2.json");
+	}
+	
+	@Test
+	public void testIncomingA40IsProcessedAndRouted() throws HL7Exception, IOException, LLPException, InterruptedException, JSONException {
+		testIncomingMessageIsProcessedAndRouted("/hl7v2/A40-1.txt", "/oinkrequestmessages/A40-1.json");
 	}
 
 }
