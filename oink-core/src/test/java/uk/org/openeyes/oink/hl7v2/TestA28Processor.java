@@ -26,6 +26,7 @@ import org.hl7.fhir.instance.model.HumanName;
 import org.hl7.fhir.instance.model.Identifier;
 import org.hl7.fhir.instance.model.Organization;
 import org.hl7.fhir.instance.model.Patient;
+import org.hl7.fhir.instance.model.Practitioner;
 import org.hl7.fhir.instance.model.Resource;
 import org.hl7.fhir.instance.model.ResourceReference;
 import org.hl7.fhir.instance.model.String_;
@@ -41,6 +42,7 @@ import org.junit.Test;
 import uk.org.openeyes.oink.domain.FhirBody;
 import uk.org.openeyes.oink.domain.HttpMethod;
 import uk.org.openeyes.oink.domain.OINKRequestMessage;
+import uk.org.openeyes.oink.hl7v2.Hl7TestSupport.NestedResourceIdGenerator;
 import uk.org.openeyes.oink.messaging.OinkMessageConverter;
 import ca.uhn.hl7v2.DefaultHapiContext;
 import ca.uhn.hl7v2.HL7Exception;
@@ -66,8 +68,8 @@ public class TestA28Processor extends Hl7TestSupport {
 	@Ignore
 	@Test
 	public void buildExampleA281FhirBody() throws Exception {
-		Patient patient = new Patient();
-		List<Identifier> identifiers = patient.getIdentifier();
+		Patient p = new Patient();
+		List<Identifier> identifiers = p.getIdentifier();
 		// PID.3
 		Identifier id1 = new Identifier();
 		
@@ -93,21 +95,21 @@ public class TestA28Processor extends Hl7TestSupport {
 		identifiers.add(id2);
 		
 		// PID.5
-		HumanName name = patient.addName();
+		HumanName name = p.addName();
 		name.addFamily().setValue("DEMIRJIAN");
 		name.addGiven().setValue("ELEANORA");
 		name.addPrefix().setValue("MRS");
 		
 		// PID.7
-		patient.setBirthDateSimple(new DateAndTime("1955-02-16"));
+		p.setBirthDateSimple(new DateAndTime("1955-02-16"));
 		
 		// PID.8
 		CodeableConcept conc = new CodeableConcept();
 		conc.addCoding().setCodeSimple("F").setSystemSimple("http://hl7.org/fhir/v3/AdministrativeGender").setDisplaySimple("Female");
-		patient.setGender(conc);
+		p.setGender(conc);
 		
 		// PID.11
-		Address address = patient.addAddress();
+		Address address = p.addAddress();
 		address.addLineSimple("6579 21ST AVE");
 		address.addLineSimple("Long Street");
 		address.setCitySimple("WALNUT CREEK");
@@ -117,31 +119,37 @@ public class TestA28Processor extends Hl7TestSupport {
 		address.setUseSimple(AddressUse.home);
 		
 		// PID.13
-		Contact contact = patient.addTelecom();
+		Contact contact = p.addTelecom();
 		contact.setSystemSimple(ContactSystem.phone);
 		contact.setValueSimple("(408)-960-2444");
 		
 		// PID.15
-		patient.addCommunication().setTextSimple("NSP");
+		p.addCommunication().setTextSimple("NSP");
 		
 		// PID.30
 		Boolean isDeceased = new Boolean();
 		isDeceased.setValue(false);
-		patient.setDeceased(isDeceased);
+		p.setDeceased(isDeceased);
 		
-		// PD1.3
-//		Organization organization = new Organization();
-//		Identifier orgId = organization.addIdentifier();
-//		orgId.setValueSimple("Y90001").setLabelSimple("Y90001").setSystemSimple("GPPRC");
-//		ResourceReference ref = new ResourceReference();
+		NestedResourceIdGenerator idGenerator = new NestedResourceIdGenerator();
+		
+		// PD1-3 to managingOrganization??
+		List<Resource> containedResources = p.getContained();
 
-		// PD1.4
-//		JsonComposer comp = new JsonComposer();
-//		File file = new File("/Users/Oli/out.json");
-//		FileOutputStream fop = new FileOutputStream(file);
-//		comp.compose(fop, patient, true);
-//		fop.close();
-		FhirBody body = new FhirBody(patient);
+		
+		// PD1-4
+		Practitioner pract = new Practitioner();
+		pract.addIdentifier().setValueSimple("G9999998");
+		HumanName practName = new HumanName();
+		practName.addFamilySimple("Unknown");
+		practName.addPrefixSimple("DR");
+		pract.setName(practName);
+		String practXmlId = idGenerator.getNext();
+		pract.setXmlId(practXmlId);
+		containedResources.add(pract);
+		p.addCareProvider().setReferenceSimple(practXmlId);
+		
+		FhirBody body = new FhirBody(p);
 		OINKRequestMessage req = new OINKRequestMessage(null, null, "/Patient", HttpMethod.POST, null, body);
 		
 		OinkMessageConverter conv = new OinkMessageConverter();

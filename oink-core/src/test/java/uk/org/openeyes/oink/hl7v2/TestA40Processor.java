@@ -4,13 +4,18 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.ParseException;
+import java.util.List;
 
 import org.hl7.fhir.instance.model.Address;
 import org.hl7.fhir.instance.model.Boolean;
 import org.hl7.fhir.instance.model.CodeableConcept;
 import org.hl7.fhir.instance.model.DateAndTime;
 import org.hl7.fhir.instance.model.HumanName;
+import org.hl7.fhir.instance.model.Organization;
 import org.hl7.fhir.instance.model.Patient;
+import org.hl7.fhir.instance.model.Practitioner;
+import org.hl7.fhir.instance.model.Resource;
+import org.hl7.fhir.instance.model.ResourceReference;
 import org.hl7.fhir.instance.model.Address.AddressUse;
 import org.hl7.fhir.instance.model.Contact.ContactUse;
 import org.hl7.fhir.instance.model.Patient.ContactComponent;
@@ -21,6 +26,7 @@ import org.junit.Test;
 import uk.org.openeyes.oink.domain.FhirBody;
 import uk.org.openeyes.oink.domain.HttpMethod;
 import uk.org.openeyes.oink.domain.OINKRequestMessage;
+import uk.org.openeyes.oink.hl7v2.Hl7TestSupport.NestedResourceIdGenerator;
 import uk.org.openeyes.oink.messaging.OinkMessageConverter;
 
 public class TestA40Processor extends Hl7TestSupport {

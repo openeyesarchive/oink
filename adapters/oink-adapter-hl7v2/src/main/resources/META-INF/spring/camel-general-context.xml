@@ -26,8 +26,12 @@
 			<util:constant static-field="org.apache.camel.component.hl7.AckCode.AE" />
 		</constructor-arg>
 	</bean>	
+	
+	<bean id="a01Processor" class="uk.org.openeyes.oink.hl7v2.A01Processor">
+		<property name="xsltPath" value="/uk/org/openeyes/oink/hl7v2/A28.xsl" />
+	</bean>	
 
-	<bean id="a28Processor" class="uk.org.openeyes.oink.hl7v2.A28Processor">
+	<bean id="a05Processor" class="uk.org.openeyes.oink.hl7v2.A05Processor">
 		<property name="xsltPath" value="/uk/org/openeyes/oink/hl7v2/A28.xsl" />
 	</bean>
 
@@ -65,6 +69,14 @@
 				<simple>${body}</simple>
 			</setProperty>
 			<choice>
+				<when>
+					<simple>${header.CamelHL7TriggerEvent} == 'A01'</simple>
+					<bean ref="a01Processor" />
+				</when>			
+				<when>
+					<simple>${header.CamelHL7TriggerEvent} == 'A05'</simple>
+					<bean ref="a05Processor" />
+				</when>				
 				<when>
 					<simple>${header.CamelHL7TriggerEvent} == 'A28'</simple>
 					<bean ref="a28Processor" />

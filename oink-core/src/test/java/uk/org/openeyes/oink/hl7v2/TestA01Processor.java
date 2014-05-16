@@ -4,16 +4,21 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.ParseException;
+import java.util.List;
 
 import org.hl7.fhir.instance.model.Address;
 import org.hl7.fhir.instance.model.Boolean;
 import org.hl7.fhir.instance.model.CodeableConcept;
 import org.hl7.fhir.instance.model.DateAndTime;
 import org.hl7.fhir.instance.model.HumanName;
+import org.hl7.fhir.instance.model.Organization;
 import org.hl7.fhir.instance.model.Patient;
+import org.hl7.fhir.instance.model.Practitioner;
 import org.hl7.fhir.instance.model.Address.AddressUse;
 import org.hl7.fhir.instance.model.Contact.ContactUse;
 import org.hl7.fhir.instance.model.Patient.ContactComponent;
+import org.hl7.fhir.instance.model.Resource;
+import org.hl7.fhir.instance.model.ResourceReference;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -41,6 +46,7 @@ public class TestA01Processor extends Hl7TestSupport {
 	@Ignore
 	@Test
 	public void buildTestA01FhirBody() throws ParseException, IOException {
+		
 		Patient p = new Patient();
 		p.addIdentifier().setValueSimple("7111111").setSystemSimple("MR");
 		p.addIdentifier().setValueSimple("7111111").setSystemSimple("PAS");
@@ -82,7 +88,7 @@ public class TestA01Processor extends Hl7TestSupport {
 		isDeceased.setValue(false);
 		p.setDeceased(isDeceased);
 		
-		// Set next of kin information
+		// NK1 
 		ContactComponent c = p.addContact();
 		HumanName husbandName = new HumanName();
 		husbandName.addFamilySimple("Super");
@@ -102,6 +108,32 @@ public class TestA01Processor extends Hl7TestSupport {
 		CodeableConcept husbandCocn = new CodeableConcept();
 		husbandCocn.addCoding().setCodeSimple("M").setSystemSimple("http://hl7.org/fhir/v3/AdministrativeGender").setDisplaySimple("Male");
 		c.setGender(husbandCocn);
+		
+		NestedResourceIdGenerator idGenerator = new NestedResourceIdGenerator();
+		
+		// PD1-3 to managingOrganization
+		List<Resource> containedResources = p.getContained();
+		Organization org = new Organization();
+		org.setNameSimple("Test Medical Ctr,Test Road,Testbury,Testshire,SP0 0WN");
+		String xmlId = idGenerator.getNext();
+		org.setXmlId(xmlId);
+		containedResources.add(org);
+		ResourceReference ref = new ResourceReference();
+		ref.setReferenceSimple(xmlId);
+		p.setManagingOrganization(ref);
+		
+		// PD1-4
+		Practitioner pract = new Practitioner();
+		pract.addIdentifier().setValueSimple("G1701835");
+		HumanName practName = new HumanName();
+		practName.addFamilySimple("Test");
+		practName.addGivenSimple("T");
+		practName.addPrefixSimple("DR");
+		pract.setName(practName);
+		String practXmlId = idGenerator.getNext();
+		pract.setXmlId(practXmlId);
+		containedResources.add(pract);
+		p.addCareProvider().setReferenceSimple(practXmlId);
 		
 		FhirBody body = new FhirBody(p);
 		OINKRequestMessage req = new OINKRequestMessage(null, null, "/Patient", HttpMethod.POST, null, body);

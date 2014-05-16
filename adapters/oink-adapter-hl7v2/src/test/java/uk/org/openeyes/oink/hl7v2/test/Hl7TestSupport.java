@@ -68,6 +68,13 @@ public abstract class Hl7TestSupport {
 	protected String getProperty(String key) {
 		return properties.getProperty(key);
 	}
+	
+	public static String loadResourceAsString(String resourcePath) throws IOException {
+		InputStream is = Hl7TestSupport.class.getResourceAsStream(resourcePath);
+		StringWriter writer = new StringWriter();
+		IOUtils.copy(is, writer, "UTF-8");
+		return writer.toString();
+	}
 
 	protected Message sendHl7Message(Message adt, String host, int port)
 			throws NumberFormatException, HL7Exception, LLPException,

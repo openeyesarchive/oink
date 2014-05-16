@@ -19,6 +19,8 @@ import com.rabbitmq.client.ConnectionFactory;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.v24.message.ACK;
 import uk.org.openeyes.oink.domain.OINKRequestMessage;
+import uk.org.openeyes.oink.hl7v2.A01Processor;
+import uk.org.openeyes.oink.hl7v2.A05Processor;
 import uk.org.openeyes.oink.hl7v2.A28Processor;
 import uk.org.openeyes.oink.hl7v2.A31Processor;
 import uk.org.openeyes.oink.hl7v2.A40Processor;
@@ -43,6 +45,12 @@ import uk.org.openeyes.oink.messaging.OinkMessageConverter;
 public class TestHl7v2ToRabbitRouteWithoutProcessors extends Hl7TestSupport {
 
 	@Autowired
+	A01Processor a01Processor;
+	
+	@Autowired
+	A05Processor a05Processor;
+	
+	@Autowired
 	A28Processor a28Processor;
 
 	@Autowired
@@ -61,60 +69,130 @@ public class TestHl7v2ToRabbitRouteWithoutProcessors extends Hl7TestSupport {
 				getProperty("rabbit.username"), getProperty("rabbit.password"),
 				getProperty("rabbit.vhost"));
 	}
+	
+	@Test
+	@DirtiesContext
+	public void testA01MessageRoutesOntoRabbit() throws Exception {
+
+		// Choose a message to send
+		Message m = loadMessage("/hl7v2/A01.txt");
+
+		// Prepare mocks
+		String oinkJson = loadResourceAsString("/oinkrequestmessages/A01.json");
+		OinkMessageConverter conv = new OinkMessageConverter();
+		OINKRequestMessage mockRequest = conv.fromJsonString(oinkJson);
+		when(a01Processor.process(any(Message.class))).thenReturn(mockRequest);
+
+		OINKRequestMessage req = testGivenMessageRoutesOntoRabbit(m, mockRequest);
+
+		// Check mocks
+		verify(a01Processor).process(any(Message.class));
+		verify(a05Processor, never()).process(any(Message.class));
+		verify(a28Processor, never()).process(any(Message.class));
+		verify(a31Processor, never()).process(any(Message.class));
+		verify(a40Processor, never()).process(any(Message.class));
+		
+		assertEquals(conv.toJsonString(mockRequest), conv.toJsonString(req));
+	}
+	
+	@Test
+	@DirtiesContext
+	public void testA05MessageRoutesOntoRabbit() throws Exception {
+
+		// Choose a message to send
+		Message m = loadMessage("/hl7v2/A05.txt");
+
+		// Prepare mocks
+		String oinkJson = loadResourceAsString("/oinkrequestmessages/A05.json");
+		OinkMessageConverter conv = new OinkMessageConverter();
+		OINKRequestMessage mockRequest = conv.fromJsonString(oinkJson);
+		when(a05Processor.process(any(Message.class))).thenReturn(mockRequest);
+
+		OINKRequestMessage req = testGivenMessageRoutesOntoRabbit(m, mockRequest);
+
+		// Check mocks
+		verify(a01Processor, never()).process(any(Message.class));
+		verify(a05Processor, never()).process(any(Message.class));
+		verify(a28Processor).process(any(Message.class));
+		verify(a31Processor, never()).process(any(Message.class));
+		verify(a40Processor, never()).process(any(Message.class));
+		
+		assertEquals(conv.toJsonString(mockRequest), conv.toJsonString(req));
+	}	
 
 	@Test
 	@DirtiesContext
 	public void testA28MessageRoutesOntoRabbit() throws Exception {
 
 		// Choose a message to send
-		Message m = loadMessage("/samples/A28-1.txt");
+		Message m = loadMessage("/hl7v2/A28-1.txt");
 
 		// Prepare mocks
-		OINKRequestMessage mockRequest = new OINKRequestMessage();
+		String oinkJson = loadResourceAsString("/oinkrequestmessages/A28-1.json");
+		OinkMessageConverter conv = new OinkMessageConverter();
+		OINKRequestMessage mockRequest = conv.fromJsonString(oinkJson);
 		when(a28Processor.process(any(Message.class))).thenReturn(mockRequest);
 
 		OINKRequestMessage req = testGivenMessageRoutesOntoRabbit(m, mockRequest);
 
 		// Check mocks
+		verify(a01Processor, never()).process(any(Message.class));
+		verify(a05Processor, never()).process(any(Message.class));
 		verify(a28Processor).process(any(Message.class));
 		verify(a31Processor, never()).process(any(Message.class));
 		verify(a40Processor, never()).process(any(Message.class));
+		
+		assertEquals(conv.toJsonString(mockRequest), conv.toJsonString(req));
 	}
 	
 	@Test
 	@DirtiesContext
 	public void testA31MessageRoutesOntoRabbit() throws Exception {
+
 		// Choose a message to send
-		Message m = loadMessage("/samples/A31-1.txt");
+		Message m = loadMessage("/hl7v2/A31-2.txt");
 
 		// Prepare mocks
-		OINKRequestMessage mockRequest = new OINKRequestMessage();
+		String oinkJson = loadResourceAsString("/oinkrequestmessages/A31-2.json");
+		OinkMessageConverter conv = new OinkMessageConverter();
+		OINKRequestMessage mockRequest = conv.fromJsonString(oinkJson);
 		when(a31Processor.process(any(Message.class))).thenReturn(mockRequest);
 
 		OINKRequestMessage req = testGivenMessageRoutesOntoRabbit(m, mockRequest);
 
 		// Check mocks
-		verify(a31Processor).process(any(Message.class));
+		verify(a01Processor, never()).process(any(Message.class));
+		verify(a05Processor, never()).process(any(Message.class));
 		verify(a28Processor, never()).process(any(Message.class));
+		verify(a31Processor).process(any(Message.class));
 		verify(a40Processor, never()).process(any(Message.class));
+		
+		assertEquals(conv.toJsonString(mockRequest), conv.toJsonString(req));
 	}
 	
 	@Test
 	@DirtiesContext
 	public void testA40MessageRoutesOntoRabbit() throws Exception {
+
 		// Choose a message to send
-		Message m = loadMessage("/samples/A40-1.txt");
+		Message m = loadMessage("/hl7v2/A40-1.txt");
 
 		// Prepare mocks
-		OINKRequestMessage mockRequest = new OINKRequestMessage();
+		String oinkJson = loadResourceAsString("/oinkrequestmessages/A40-1.json");
+		OinkMessageConverter conv = new OinkMessageConverter();
+		OINKRequestMessage mockRequest = conv.fromJsonString(oinkJson);
 		when(a40Processor.process(any(Message.class))).thenReturn(mockRequest);
 
 		OINKRequestMessage req = testGivenMessageRoutesOntoRabbit(m, mockRequest);
 
 		// Check mocks
-		verify(a40Processor).process(any(Message.class));
+		verify(a01Processor, never()).process(any(Message.class));
+		verify(a05Processor, never()).process(any(Message.class));
 		verify(a28Processor, never()).process(any(Message.class));
 		verify(a31Processor, never()).process(any(Message.class));
+		verify(a40Processor).process(any(Message.class));
+		
+		assertEquals(conv.toJsonString(mockRequest), conv.toJsonString(req));
 	}
 	
 	private OINKRequestMessage testGivenMessageRoutesOntoRabbit(Message m, OINKRequestMessage r) throws Exception {
@@ -122,7 +200,7 @@ public class TestHl7v2ToRabbitRouteWithoutProcessors extends Hl7TestSupport {
 		Channel c = getChannel(rabbitFactory);
 		String queueName = setupRabbitQueue(c,
 				getProperty("rabbit.defaultExchange"),
-				getProperty("rabbit.routingKey"));
+				getProperty("rabbit.outboundRoutingKey"));
 		
 		// Send message
 		String host = getProperty("hl7v2.host");

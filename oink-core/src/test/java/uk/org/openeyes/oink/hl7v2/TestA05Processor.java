@@ -4,13 +4,18 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.ParseException;
+import java.util.List;
 
 import org.hl7.fhir.instance.model.Address;
 import org.hl7.fhir.instance.model.Boolean;
 import org.hl7.fhir.instance.model.CodeableConcept;
 import org.hl7.fhir.instance.model.DateAndTime;
 import org.hl7.fhir.instance.model.HumanName;
+import org.hl7.fhir.instance.model.Organization;
 import org.hl7.fhir.instance.model.Patient;
+import org.hl7.fhir.instance.model.Practitioner;
+import org.hl7.fhir.instance.model.Resource;
+import org.hl7.fhir.instance.model.ResourceReference;
 import org.hl7.fhir.instance.model.Address.AddressUse;
 import org.hl7.fhir.instance.model.Contact.ContactUse;
 import org.hl7.fhir.instance.model.Patient.ContactComponent;
@@ -21,6 +26,7 @@ import org.junit.Test;
 import uk.org.openeyes.oink.domain.FhirBody;
 import uk.org.openeyes.oink.domain.HttpMethod;
 import uk.org.openeyes.oink.domain.OINKRequestMessage;
+import uk.org.openeyes.oink.hl7v2.Hl7TestSupport.NestedResourceIdGenerator;
 import uk.org.openeyes.oink.messaging.OinkMessageConverter;
 
 public class TestA05Processor extends Hl7TestSupport {
@@ -124,6 +130,33 @@ public class TestA05Processor extends Hl7TestSupport {
 		CodeableConcept c2Codable = new CodeableConcept();
 		c2Codable.addCoding().setCodeSimple("F").setSystemSimple("http://hl7.org/fhir/v3/AdministrativeGender");
 		c2.setGender(c2Codable);
+		
+		NestedResourceIdGenerator idGenerator = new NestedResourceIdGenerator();
+		
+		// PD1-3 to managingOrganization
+		List<Resource> containedResources = p.getContained();
+		Organization org = new Organization();
+		org.setNameSimple("999 Test Street, Testbury, Testshire,SP0 0BW");
+		String xmlId = idGenerator.getNext();
+		org.setXmlId(xmlId);
+		containedResources.add(org);
+		ResourceReference ref = new ResourceReference();
+		ref.setReferenceSimple(xmlId);
+		p.setManagingOrganization(ref);
+		
+		// PD1-4
+		Practitioner pract = new Practitioner();
+		pract.addIdentifier().setValueSimple("G999999");
+		HumanName practName = new HumanName();
+		practName.addFamilySimple("Tester");
+		practName.addGivenSimple("N T");
+		practName.addPrefixSimple("DR");
+		pract.setName(practName);
+		String practXmlId = idGenerator.getNext();
+		pract.setXmlId(practXmlId);
+		containedResources.add(pract);
+		p.addCareProvider().setReferenceSimple(practXmlId);
+		
 		
 		FhirBody body = new FhirBody(p);
 		OINKRequestMessage req = new OINKRequestMessage(null, null, "/Patient", HttpMethod.POST, null, body);

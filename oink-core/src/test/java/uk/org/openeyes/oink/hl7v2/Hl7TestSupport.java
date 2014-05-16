@@ -47,5 +47,19 @@ public class Hl7TestSupport {
 		IOUtils.copy(is, writer, "UTF-8");
 		return writer.toString();
 	}
+	
+	protected class NestedResourceIdGenerator {
+		
+		private int count = 1;
+		
+		private String prefix = "id";
+		
+		public String getNext() {
+			String s = prefix + count;
+			count++;
+			return s;
+		}
+		
+	}
 
 }
