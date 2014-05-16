@@ -226,10 +226,10 @@ public class ITHl7v2ToRabbitRouteWithoutProcessors extends Hl7TestSupport {
 		Channel c = getChannel(rabbitFactory);
 		String queueName = setupRabbitQueue(c,
 				getProperty("rabbit.defaultExchange"),
-				getProperty("rabbit.routingKey"));
+				getProperty("rabbit.outboundRoutingKey"));
 
 		// Choose a message to send
-		Message m = loadMessage("/samples/A04-1.txt");
+		Message m = loadMessage("/hl7v2/A04.txt");
 		
 		// Send message
 		String host = getProperty("hl7v2.host");
@@ -246,6 +246,8 @@ public class ITHl7v2ToRabbitRouteWithoutProcessors extends Hl7TestSupport {
 		c.close();
 
 		// Check mocks
+		verify(a01Processor, never()).process(any(Message.class));
+		verify(a05Processor, never()).process(any(Message.class));
 		verify(a28Processor, never()).process(any(Message.class));
 		verify(a31Processor, never()).process(any(Message.class));
 		verify(a40Processor, never()).process(any(Message.class));
