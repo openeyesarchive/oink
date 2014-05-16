@@ -55,13 +55,13 @@ public class A19Processor extends Hl7v2Processor {
 		qrd.getQuantityLimitedRequest().getUnits().getIdentifier()
 				.setValue("RD");
 		// !! Set who subject filter
-		if (isSearchByNHSNumber(request)) {
-			log.info("Building an A19 with search by NHS number");
-			String nhsNumber = extractNHSNumber(request);
+		if (isSearchByIdentifierNumber(request)) {
+			log.info("Building an A19 with search by identifier");
+			String system = extractSystem(request);
+			String value = extractIdentifierValue(request);
 			XCN who0 = qrd.getWhoSubjectFilter(0);
-			who0.getIDNumber().setValue(nhsNumber);
-			who0.getAssigningAuthority().getUniversalID().setValue("NHS");
-			who0.getIdentifierTypeCode().setValue("MR");
+			who0.getIDNumber().setValue(value);
+			who0.getIdentifierTypeCode().setValue(system);
 		} else if (isSearchByFamilyName(request)) {
 			log.info("Building an A19 with search by family name");
 			String familyName = getQueryParameterValue(request, "family");
@@ -92,6 +92,39 @@ public class A19Processor extends Hl7v2Processor {
 		return null;
 	}
 
+	private boolean isSearchByIdentifierNumber(OINKRequestMessage request) {
+		String idvalue = getQueryParameterValue(request, "identifier");
+		return idvalue != null;
+	}
+	
+	private String extractIdentifierValue(OINKRequestMessage request) {
+		String value = getQueryParameterValue(request, "identifier");
+		if (value == null) {
+			return null;
+		}
+		String[] split = value.split("\\|");
+		if (split.length == 2) {
+			String system = split[1];
+			return system;
+		}
+		return null;
+		
+	}		
+	
+	private String extractSystem(OINKRequestMessage request) {
+		String value = getQueryParameterValue(request, "identifier");
+		if (value == null) {
+			return null;
+		}
+		String[] split = value.split("\\|");
+		if (split.length == 2) {
+			String system = split[0];
+			return system;
+		}
+		return null;
+		
+	}	
+	
 	private boolean isSearchByNHSNumber(OINKRequestMessage request) {
 		String idvalue = getQueryParameterValue(request, "identifier");
 		if (idvalue != null) {
