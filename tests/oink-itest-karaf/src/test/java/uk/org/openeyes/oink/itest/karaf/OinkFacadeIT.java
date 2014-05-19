@@ -16,24 +16,16 @@
  *******************************************************************************/
 package uk.org.openeyes.oink.itest.karaf;
 
-import static org.junit.Assert.*;
 import static org.ops4j.pax.exam.CoreOptions.*;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.*;
 import static org.ops4j.pax.exam.MavenUtils.asInProject;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.util.Map;
-import java.util.Properties;
-
 import javax.inject.Inject;
 
 import org.ops4j.pax.exam.karaf.options.LogLevelOption.LogLevel;
 import org.ops4j.pax.exam.options.MavenArtifactUrlReference;
 import org.ops4j.pax.exam.options.MavenUrlReference;
-import org.apache.karaf.features.Feature;
-import org.apache.karaf.features.FeaturesService;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Option;
@@ -43,134 +35,36 @@ import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.PaxExam;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
-import org.osgi.framework.ServiceRegistration;
-import org.osgi.service.cm.ConfigurationAdmin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.osgi.context.event.OsgiBundleApplicationContextEvent;
-import org.springframework.osgi.context.event.OsgiBundleApplicationContextListener;
-import org.springframework.osgi.context.event.OsgiBundleContextFailedEvent;
 
+/**
+ * 
+ * @author Oliver Wilkie
+ */
 @RunWith(PaxExam.class)
-public class OinkFacadeIT {
+public class OinkFacadeIT extends OinkKarafITSupport{
 
 	private static final Logger logger = LoggerFactory
 			.getLogger(OinkFacadeIT.class);
 
 	@Inject
 	protected BundleContext bundleContext;
-
-	@Inject
-	private ConfigurationAdmin configurationAdmin;
-	
-	@Inject
-	private FeaturesService featuresService;
 	
 	@Test
 	public void checkFacadeHasASingleConfigPidAssociatedInTheFeaturesRepo() throws Exception {
-		Feature feature = featuresService.getFeature("oink-adapter-facade");
-		Map<String, Map<String,String>> configurations = feature.getConfigurations();
-		assertNotNull(configurations);
-		assertEquals(1, configurations.size());
-		assertTrue(configurations.containsKey("uk.org.openeyes.oink.facade"));
+		checkAdapterHasASingleConfigPidAssociatedInTheFeaturesRepo("facade");
 	}
 	
 	@Test
 	public void checkFacadeContextFailsWithoutCfg() throws Exception {
-		
-		// Make sure facade-feature is installed
-		Feature feature = featuresService.getFeature("oink-adapter-facade");
-		assertFalse(featuresService.isInstalled(feature));
-		
-		// Prepare listener
-		ContextListener listener = new ContextListener();
-		ServiceRegistration serviceRegistration = bundleContext.registerService(OsgiBundleApplicationContextListener.class.getName(), listener, null);
-		
-		// Wait for feature to install
-		featuresService.installFeature("oink-adapter-facade");
-		Thread.sleep(5000);
-		assertTrue(featuresService.isInstalled(feature));
-
-		serviceRegistration.unregister();
-		featuresService.uninstallFeature("oink-adapter-facade");
-		
-		assertTrue(listener.getContextFailed());
+		checkAdapterContextFailsWithoutCfg("facade");
 	}
 	
 	@Test
 	public void checkFacadeContextDoesntFailWithCfg() throws Exception {
-		
-		// Make sure facade-feature is installed
-		Feature feature = featuresService.getFeature("oink-adapter-facade");
-		assertFalse(featuresService.isInstalled(feature));
-		
-		// Load cfg
-		Properties properties = new Properties();
-		File f = new File("../../../src/test/resources/facade.properties");
-		assertTrue(f.exists());
-		FileInputStream fileIo = new FileInputStream(f);
-		properties.load(fileIo);
-		fileIo.close();
-
-		// Place cfg
-		org.osgi.service.cm.Configuration c = configurationAdmin.getConfiguration("uk.org.openeyes.oink.facade");
-		assertNull("Existing configuration found",c.getProperties());
-		c.update(properties);
-		
-		// Prepare listener
-		ContextListener listener = new ContextListener();
-		ServiceRegistration serviceRegistration = bundleContext.registerService(OsgiBundleApplicationContextListener.class.getName(), listener, null);
-		
-		// Wait for feature to install
-		featuresService.installFeature("oink-adapter-facade");
-		Thread.sleep(5000);
-		assertTrue("Facade adapter could not be installed",featuresService.isInstalled(feature));
-
-		// Uninstall application, config and listener
-		serviceRegistration.unregister();
-		featuresService.uninstallFeature("oink-adapter-facade");
-		c.delete();
-		
-		assertFalse("Context failed to start",listener.getContextFailed());
+		checkAdapterContextDoesntFailWithCfg("facade");
 	}	
-	
-	private class ContextListener implements OsgiBundleApplicationContextListener {
-
-		boolean contextFailed = false;
-		
-		@Override
-		public void onOsgiApplicationEvent(
-				OsgiBundleApplicationContextEvent event) {
-			if (event instanceof OsgiBundleContextFailedEvent) {
-				contextFailed = true;
-			}
-		}
-		
-		public boolean getContextFailed() {
-			return contextFailed;
-		}
-		
-	}
-	
-	@Ignore
-	@Test
-	public void checkFeatureIsNotInstalledByDefault() throws Exception {
-		Feature feature = featuresService.getFeature("oink-adapter-facade");
-		assertFalse(featuresService.isInstalled(feature));
-	}
-	
-//	@Test
-//	public void testNoErrorsInDiag() throws Exception {
-//		ByteArrayOutputStream outOs = new ByteArrayOutputStream();
-//		PrintStream outPs = new PrintStream(outOs);
-//		ByteArrayOutputStream errOs = new ByteArrayOutputStream();
-//		PrintStream errPs = new PrintStream(errOs);
-//		CommandSession cs = commandProcessor.createSession(System.in, outPs, errPs);
-//		cs.execute("feature:list");
-//		cs.close();
-//		assertTrue(outOs.toString().isEmpty());
-//		assertTrue(errOs.toString().isEmpty());		
-//	}
 	
 	@ProbeBuilder
 	public TestProbeBuilder probeConfiguration(TestProbeBuilder probe) {
