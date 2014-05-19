@@ -21,6 +21,7 @@
 		<org.slf4j.version>1.7.5</org.slf4j.version>
 		<maven-bundle-plugin.version>2.4.0</maven-bundle-plugin.version>
 		<maven-release-plugin.version>2.5</maven-release-plugin.version>
+		<log4j.version>1.2.17</log4j.version>
 	</properties>
 	<modules>
 		<module>oink-core</module>

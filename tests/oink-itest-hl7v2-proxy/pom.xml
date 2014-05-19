@@ -10,7 +10,6 @@
 	</parent>
 	<groupId>uk.org.openeyes.oink</groupId>
 	<artifactId>oink-itest-hl7v2-proxy</artifactId>
-	<version>0.3-SNAPSHOT</version>
 	<name>Oink :: Integration Tests :: Hl7v2 and Proxy</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -81,11 +80,25 @@
 		</dependency>
 		<dependency>
 			<groupId>uk.org.openeyes.oink.adapters</groupId>
-			<artifactId>oink-adapter-facade</artifactId>
+			<artifactId>oink-adapter-proxy</artifactId>
 			<version>${project.version}</version>
 			<type>bundle</type>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>uk.org.openeyes.oink.adapters</groupId>
+			<artifactId>oink-adapter-hl7v2</artifactId>
+			<version>${project.version}</version>
+			<type>bundle</type>
+			<scope>test</scope>
+		</dependency>		
+		<dependency>
+			<groupId>uk.org.openeyes.oink.adapters</groupId>
+			<artifactId>oink-adapter-hl7v2</artifactId>
+			<version>${project.version}</version>
+			<type>test-jar</type>
+			<scope>test</scope>
+		</dependency>		
 		<dependency>
 			<groupId>uk.org.openeyes.oink.karaf</groupId>
 			<artifactId>oink-features</artifactId>
@@ -126,8 +139,13 @@
 			<artifactId>log4j</artifactId>
 			<version>${log4j.version}</version>
 			<scope>test</scope>
-		</dependency>		
+		</dependency>
 
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>4.3.2</version>
+		</dependency>
   </dependencies>
   
 	<build>
@@ -160,6 +178,43 @@
 				</executions>
 			</plugin>
 		</plugins>
+		<pluginManagement>
+			<plugins>
+				<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>
+											org.apache.servicemix.tooling
+										</groupId>
+										<artifactId>
+											depends-maven-plugin
+										</artifactId>
+										<versionRange>
+											[1.2,)
+										</versionRange>
+										<goals>
+											<goal>
+												generate-depends-file
+											</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore></ignore>
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
 	</build>
   <description>Tests the behaviour of the HL7v2 and Proxy adapters when combined to process incoming HL7v2 messages</description>
 </project>

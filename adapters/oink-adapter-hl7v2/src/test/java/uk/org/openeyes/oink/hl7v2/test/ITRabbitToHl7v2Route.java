@@ -25,6 +25,7 @@ import ca.uhn.hl7v2.protocol.ReceivingApplicationException;
 import uk.org.openeyes.oink.domain.HttpMethod;
 import uk.org.openeyes.oink.domain.OINKRequestMessage;
 import uk.org.openeyes.oink.domain.OINKResponseMessage;
+import uk.org.openeyes.oink.hl7v2.test.support.Hl7Server;
 import uk.org.openeyes.oink.messaging.OinkMessageConverter;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -52,7 +53,7 @@ public class ITRabbitToHl7v2Route extends Hl7ITSupport {
 		requestMessage.setParameters("identifier=HISID|"+TEST_HISID_NUMBER);
 
 		// Init HL7v2
-		HL7Server server = new HL7Server(
+		Hl7Server server = new Hl7Server(
 				Integer.parseInt(getProperty("remote.port")), false);
 		ReceivingApplication application = new ReceivingApplication() {
 
