@@ -95,7 +95,7 @@ public class OinkKarafITSupport {
 		
 		// Wait for feature to install
 		featuresService.installFeature("oink-adapter-"+adapterSuffix);
-		Thread.sleep(5000);
+		Thread.sleep(10000);
 		assertTrue(adapterSuffix + " adapter could not be installed",featuresService.isInstalled(feature));
 
 		// Uninstall application, config and listener
