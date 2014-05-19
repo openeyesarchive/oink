@@ -24,6 +24,7 @@ mvn verify -Dfacade.test.properties=file:{pathToFacadePropertiesFile} -proxy.tes
 A 1.0 OINK release is not possible until all of its dependancies are also officially released. In the meantime you can build and run OINK in its current 0.x version.
 
 ### Current Dependancies
+- Java 7
 - [FHIR Java Implementation](http://www.hl7.org/implement/standards/fhir/downloads.html) - Latest snapshot manually installed to local Maven repo. Alternatively configure your local repo to scan the Sonatype Snapshots Repo
 
 ```
