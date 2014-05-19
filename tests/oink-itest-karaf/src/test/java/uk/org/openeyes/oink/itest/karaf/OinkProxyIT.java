@@ -99,7 +99,6 @@ public class OinkProxyIT {
 	@Test
 	public void checkProxyContextDoesntFailWithCfg() throws Exception {
 		
-		// Make sure facade-feature is installed
 		Feature feature = featuresService.getFeature("oink-adapter-proxy");
 		assertFalse(featuresService.isInstalled(feature));
 		

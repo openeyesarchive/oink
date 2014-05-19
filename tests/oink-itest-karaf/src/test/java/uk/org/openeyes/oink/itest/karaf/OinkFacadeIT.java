@@ -114,7 +114,7 @@ public class OinkFacadeIT {
 
 		// Place cfg
 		org.osgi.service.cm.Configuration c = configurationAdmin.getConfiguration("uk.org.openeyes.oink.facade");
-		assertNull(c.getProperties());
+		assertNull("Existing configuration found",c.getProperties());
 		c.update(properties);
 		
 		// Prepare listener
@@ -124,14 +124,14 @@ public class OinkFacadeIT {
 		// Wait for feature to install
 		featuresService.installFeature("oink-adapter-facade");
 		Thread.sleep(5000);
-		assertTrue(featuresService.isInstalled(feature));
+		assertTrue("Facade adapter could not be installed",featuresService.isInstalled(feature));
 
 		// Uninstall application, config and listener
 		serviceRegistration.unregister();
 		featuresService.uninstallFeature("oink-adapter-facade");
 		c.delete();
 		
-		assertFalse(listener.getContextFailed());
+		assertFalse("Context failed to start",listener.getContextFailed());
 	}	
 	
 	private class ContextListener implements OsgiBundleApplicationContextListener {
