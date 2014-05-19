@@ -16,23 +16,16 @@
  *******************************************************************************/
 package uk.org.openeyes.oink.itest.karaf;
 
-import static org.junit.Assert.*;
 import static org.ops4j.pax.exam.CoreOptions.*;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.*;
 import static org.ops4j.pax.exam.MavenUtils.asInProject;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.util.Map;
-import java.util.Properties;
-
 import javax.inject.Inject;
 
 import org.ops4j.pax.exam.karaf.options.LogLevelOption.LogLevel;
 import org.ops4j.pax.exam.options.MavenArtifactUrlReference;
 import org.ops4j.pax.exam.options.MavenUrlReference;
-import org.apache.karaf.features.Feature;
-import org.apache.karaf.features.FeaturesService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Option;
@@ -42,115 +35,33 @@ import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.PaxExam;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
-import org.osgi.framework.ServiceRegistration;
-import org.osgi.service.cm.ConfigurationAdmin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.osgi.context.event.OsgiBundleApplicationContextEvent;
-import org.springframework.osgi.context.event.OsgiBundleApplicationContextListener;
-import org.springframework.osgi.context.event.OsgiBundleContextFailedEvent;
 
 @RunWith(PaxExam.class)
-public class OinkProxyIT {
+public class OinkProxyIT extends OinkKarafITSupport {
 
 	private static final Logger logger = LoggerFactory
 			.getLogger(OinkProxyIT.class);
 
 	@Inject
 	protected BundleContext bundleContext;
-
-	@Inject
-	private ConfigurationAdmin configurationAdmin;
-	
-	@Inject
-	private FeaturesService featuresService;
 	
 	@Test
 	public void checkProxyHasASingleConfigPidAssociatedInTheFeaturesRepo() throws Exception {
-		Feature feature = featuresService.getFeature("oink-adapter-proxy");
-		Map<String, Map<String,String>> configurations = feature.getConfigurations();
-		assertNotNull(configurations);
-		assertEquals(1, configurations.size());
-		assertTrue(configurations.containsKey("uk.org.openeyes.oink.proxy"));
+		checkAdapterHasASingleConfigPidAssociatedInTheFeaturesRepo("proxy");
 	}
 	
 	@Test
 	public void checkProxyContextFailsWithoutCfg() throws Exception {
-		
-		// Make sure facade-feature is installed
-		Feature feature = featuresService.getFeature("oink-adapter-proxy");
-		assertFalse(featuresService.isInstalled(feature));
-		
-		// Prepare listener
-		ContextListener listener = new ContextListener();
-		ServiceRegistration serviceRegistration = bundleContext.registerService(OsgiBundleApplicationContextListener.class.getName(), listener, null);
-		
-		// Wait for feature to install
-		featuresService.installFeature("oink-adapter-proxy");
-		Thread.sleep(5000);
-		assertTrue(featuresService.isInstalled(feature));
-
-		serviceRegistration.unregister();
-		featuresService.uninstallFeature("oink-adapter-proxy");
-		
-		assertTrue(listener.getContextFailed());
+		checkAdapterContextFailsWithoutCfg("proxy");
 	}
 	
 	@Test
 	public void checkProxyContextDoesntFailWithCfg() throws Exception {
-		
-		// Make sure facade-feature is installed
-		Feature feature = featuresService.getFeature("oink-adapter-proxy");
-		assertFalse(featuresService.isInstalled(feature));
-		
-		// Load cfg
-		Properties properties = new Properties();
-		File f = new File("../../../src/test/resources/proxy.properties");
-		assertTrue(f.exists());
-		FileInputStream fileIo = new FileInputStream(f);
-		properties.load(fileIo);
-		fileIo.close();
-
-		// Place cfg
-		org.osgi.service.cm.Configuration c = configurationAdmin.getConfiguration("uk.org.openeyes.oink.proxy");
-		assertNull(c.getProperties());
-		c.update(properties);
-		
-		// Prepare listener
-		ContextListener listener = new ContextListener();
-		ServiceRegistration serviceRegistration = bundleContext.registerService(OsgiBundleApplicationContextListener.class.getName(), listener, null);
-		
-		// Wait for feature to install
-		featuresService.installFeature("oink-adapter-proxy");
-		Thread.sleep(5000);
-		assertTrue(featuresService.isInstalled(feature));
-
-		// Uninstall application, config and listener
-		serviceRegistration.unregister();
-		featuresService.uninstallFeature("oink-adapter-proxy");
-		c.delete();
-		
-		assertFalse(listener.getContextFailed());
+		checkAdapterContextDoesntFailWithCfg("proxy");
 	}	
-	
-	private class ContextListener implements OsgiBundleApplicationContextListener {
-
-		boolean contextFailed = false;
 		
-		@Override
-		public void onOsgiApplicationEvent(
-				OsgiBundleApplicationContextEvent event) {
-			if (event instanceof OsgiBundleContextFailedEvent) {
-				contextFailed = true;
-			}
-		}
-		
-		public boolean getContextFailed() {
-			return contextFailed;
-		}
-		
-	}
-	
 	@ProbeBuilder
 	public TestProbeBuilder probeConfiguration(TestProbeBuilder probe) {
 	    probe.setHeader(Constants.DYNAMICIMPORT_PACKAGE, "*,org.apache.felix.service.*,org.springframework.osgi.context.event.*;status=provisional");
