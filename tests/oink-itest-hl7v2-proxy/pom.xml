@@ -1,0 +1,165 @@
+<?xml version="1.0"?>
+<project
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>uk.org.openeyes.oink</groupId>
+		<artifactId>tests</artifactId>
+		<version>0.3-SNAPSHOT</version>
+	</parent>
+	<groupId>uk.org.openeyes.oink</groupId>
+	<artifactId>oink-itest-hl7v2-proxy</artifactId>
+	<version>0.3-SNAPSHOT</version>
+	<name>Oink :: Integration Tests :: Hl7v2 and Proxy</name>
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+  <dependencies>
+
+		<!-- Dependencies for pax exam karaf container -->
+		<dependency>
+			<groupId>org.ops4j.pax.exam</groupId>
+			<artifactId>pax-exam-container-karaf</artifactId>
+			<version>3.5.0</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.ops4j.pax.exam</groupId>
+			<artifactId>pax-exam-junit4</artifactId>
+			<version>3.5.0</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.ops4j.pax.runner</groupId>
+			<artifactId>pax-runner-no-jcl</artifactId>
+			<version>1.8.5</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.ops4j.pax.swissbox</groupId>
+			<artifactId>pax-swissbox-tinybundles</artifactId>
+			<version>1.3.2</version>
+			<scope>test</scope>
+		</dependency>
+		
+				<dependency>
+			<groupId>javax.inject</groupId>
+			<artifactId>javax.inject</artifactId>
+			<version>1</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.felix</groupId>
+			<artifactId>org.apache.felix.configadmin</artifactId>
+			<version>1.8.0</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.osgi</groupId>
+			<artifactId>org.osgi.core</artifactId>
+			<version>${osgi.version}</version>
+			<scope>test</scope>
+		</dependency>
+		
+		
+		<dependency>
+			<groupId>org.springframework.osgi</groupId>
+			<artifactId>spring-osgi-core</artifactId>
+			<version>1.2.1</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>uk.org.openeyes.oink.karaf</groupId>
+			<artifactId>distro</artifactId>
+			<version>${project.version}</version>
+			<type>tar.gz</type>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>uk.org.openeyes.oink.adapters</groupId>
+			<artifactId>oink-adapter-facade</artifactId>
+			<version>${project.version}</version>
+			<type>bundle</type>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>uk.org.openeyes.oink.karaf</groupId>
+			<artifactId>oink-features</artifactId>
+			<version>${project.version}</version>
+			<type>xml</type>
+			<classifier>features</classifier>
+			<scope>test</scope>
+		</dependency>		
+		<dependency>
+			<groupId>uk.org.openeyes.oink.karaf</groupId>
+			<artifactId>shell-commands</artifactId>
+			<version>${project.version}</version>
+			<type>bundle</type>
+			<scope>test</scope>
+		</dependency>
+		
+		<!-- test and logging -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>${junit.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.ops4j.pax.logging</groupId>
+			<artifactId>pax-logging-api</artifactId>
+			<version>1.7.2</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>${org.slf4j.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>${log4j.version}</version>
+			<scope>test</scope>
+		</dependency>		
+
+  </dependencies>
+  
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-failsafe-plugin</artifactId>
+				<version>2.17</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>integration-test</goal>
+							<goal>verify</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- generate dependencies versions -->
+			<plugin>
+				<groupId>org.apache.servicemix.tooling</groupId>
+				<artifactId>depends-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>generate-depends-file</id>
+						<goals>
+							<goal>generate-depends-file</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+  <description>Tests the behaviour of the HL7v2 and Proxy adapters when combined to process incoming HL7v2 messages</description>
+</project>

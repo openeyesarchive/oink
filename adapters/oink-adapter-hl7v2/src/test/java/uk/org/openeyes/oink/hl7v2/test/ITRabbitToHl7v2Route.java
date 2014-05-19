@@ -29,7 +29,7 @@ import uk.org.openeyes.oink.messaging.OinkMessageConverter;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration()
-public class ITRabbitToHl7v2Route extends Hl7TestSupport {
+public class ITRabbitToHl7v2Route extends Hl7ITSupport {
 
 	@Autowired
 	CamelContext ctx;

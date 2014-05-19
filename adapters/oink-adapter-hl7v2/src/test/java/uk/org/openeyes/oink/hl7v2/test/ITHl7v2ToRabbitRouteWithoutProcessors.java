@@ -42,7 +42,7 @@ import uk.org.openeyes.oink.messaging.OinkMessageConverter;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration()
-public class ITHl7v2ToRabbitRouteWithoutProcessors extends Hl7TestSupport {
+public class ITHl7v2ToRabbitRouteWithoutProcessors extends Hl7ITSupport {
 
 	@Autowired
 	A01Processor a01Processor;

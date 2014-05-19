@@ -38,9 +38,9 @@ import ca.uhn.hl7v2.protocol.ReceivingApplicationException;
 import ca.uhn.hl7v2.protocol.ReceivingApplicationExceptionHandler;
 import ca.uhn.hl7v2.validation.impl.NoValidation;
 
-public abstract class Hl7TestSupport {
+public abstract class Hl7ITSupport {
 	
-	private static final Logger log = LoggerFactory.getLogger(Hl7TestSupport.class);
+	private static final Logger log = LoggerFactory.getLogger(Hl7ITSupport.class);
 
 	private Properties properties;
 	
@@ -102,7 +102,7 @@ public abstract class Hl7TestSupport {
 	}
 	
 	public static String loadResourceAsString(String resourcePath) throws IOException {
-		InputStream is = Hl7TestSupport.class.getResourceAsStream(resourcePath);
+		InputStream is = Hl7ITSupport.class.getResourceAsStream(resourcePath);
 		StringWriter writer = new StringWriter();
 		IOUtils.copy(is, writer, "UTF-8");
 		return writer.toString();

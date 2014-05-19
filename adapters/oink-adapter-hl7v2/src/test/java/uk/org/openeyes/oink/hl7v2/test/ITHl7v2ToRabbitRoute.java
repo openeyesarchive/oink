@@ -14,7 +14,7 @@ import ca.uhn.hl7v2.llp.LLPException;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration()
-public class ITHl7v2ToRabbitRoute extends Hl7TestSupport {
+public class ITHl7v2ToRabbitRoute extends Hl7ITSupport {
 	
 	@Before
 	public void setUp() throws IOException {
