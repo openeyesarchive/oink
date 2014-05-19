@@ -36,6 +36,7 @@ import org.hl7.fhir.instance.model.Type;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.springframework.core.io.ClassPathResource;
 
 import uk.org.openeyes.oink.domain.FhirBody;
 import uk.org.openeyes.oink.domain.HttpMethod;
@@ -55,7 +56,8 @@ public class TestA28Processor extends Hl7TestSupport {
 	@Before
 	public void before() throws IOException {
 		processor = new A28Processor();
-		processor.setXsltPath("/uk/org/openeyes/oink/hl7v2/a28.xsl");
+		org.springframework.core.io.Resource r = new ClassPathResource("/uk/org/openeyes/oink/hl7v2/a28.xsl");
+		processor.setXsltPath(r);
 	}
 	
 	/**

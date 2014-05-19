@@ -69,5 +69,18 @@
 		<feature version='${camel.version}'>camel-http4</feature>
 		<bundle>mvn:uk.org.openeyes.oink.adapters/oink-adapter-proxy/${project.version}</bundle>
 	</feature>	
+	
+	<feature name='oink-adapter-hl7v2' version='${project.version}'
+		resolver='(obr)' start-level="60">
+		<config name="uk.org.openeyes.oink.hl7v2"/>
+		<feature version='${project.version}'>oink-core</feature>
+		<feature version='${camel.version}'>camel-core</feature>
+		<feature version='${camel.version}'>camel-spring</feature>
+		<feature version='${camel.version}'>camel-rabbitmq</feature>
+		<feature version='${camel.version}'>camel-hl7</feature>
+		<feature version='${camel.version}'>camel-mina2</feature>		
+		<bundle>mvn:ca.uhn.hapi/hapi-osgi-base/2.2</bundle>
+		<bundle>mvn:uk.org.openeyes.oink.adapters/oink-adapter-hl7v2/${project.version}</bundle>
+	</feature>		
 
 </features>

@@ -21,7 +21,7 @@ public class TestXmlTransformer {
 	public void testSimpleTransform() throws IOException, TransformerFactoryConfigurationError, TransformerException {
 
 		String inputXml = getResourceAsString("/hl7v2/A28-3.xml");
-		String xsl = getResourceAsString("/uk/org/openeyes/oink/hl7v2/A28.xsl");
+		InputStream xsl = TestXmlTransformer.class.getResourceAsStream("/uk/org/openeyes/oink/hl7v2/A28.xsl");
 		
 		XmlTransformer transformer = new XmlTransformer();
 		String result = transformer.transform(inputXml,xsl);

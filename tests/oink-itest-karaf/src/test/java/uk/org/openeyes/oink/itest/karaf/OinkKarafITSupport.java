@@ -79,7 +79,7 @@ public class OinkKarafITSupport {
 		// Load cfg
 		Properties properties = new Properties();
 		File f = new File("../../../src/test/resources/"+adapterSuffix+".properties");
-		assertTrue(f.exists());
+		assertTrue("No "+adapterSuffix+".properties file found in src/test/resources",f.exists());
 		FileInputStream fileIo = new FileInputStream(f);
 		properties.load(fileIo);
 		fileIo.close();

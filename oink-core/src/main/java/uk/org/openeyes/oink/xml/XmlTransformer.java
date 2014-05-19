@@ -19,9 +19,8 @@ import org.apache.commons.io.output.ByteArrayOutputStream;
 
 public class XmlTransformer {
 
-	public static String transform(String inputXml, String xsl) throws TransformerFactoryConfigurationError, TransformerException, UnsupportedEncodingException {
+	public static String transform(String inputXml, InputStream xslIs) throws TransformerFactoryConfigurationError, TransformerException, UnsupportedEncodingException {
 
-		InputStream xslIs = new ByteArrayInputStream(xsl.getBytes());
 		Source xslSource = new StreamSource(xslIs);
 
 		InputStream inputXmlIs = new ByteArrayInputStream(inputXml.getBytes());

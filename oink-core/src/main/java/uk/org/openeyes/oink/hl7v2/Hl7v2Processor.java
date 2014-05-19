@@ -12,6 +12,8 @@ import org.hl7.fhir.instance.model.Patient;
 import org.hl7.fhir.instance.model.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ResourceLoaderAware;
+import org.springframework.core.io.ResourceLoader;
 
 import uk.org.openeyes.oink.domain.FhirBody;
 import uk.org.openeyes.oink.domain.HttpMethod;
@@ -28,11 +30,13 @@ public abstract class Hl7v2Processor {
 	private static final Logger log = LoggerFactory
 			.getLogger(Hl7v2Processor.class);
 
-	private String xsltPath;
+	private org.springframework.core.io.Resource resource;
 	private MessageConverter hl7v2Converter;
 	private FhirConverter fhirConverter;
 	private ValidationContext hl7v2ValidationContext;
 	private MessageValidator hl7v2Validator;
+	
+	private ResourceLoader resourceLoader;
 
 	public Hl7v2Processor() {
 		hl7v2Converter = new MessageConverter();
@@ -41,15 +45,12 @@ public abstract class Hl7v2Processor {
 		hl7v2Validator = new MessageValidator(hl7v2ValidationContext, true);
 	}
 
-	public void setXsltPath(String path) throws IOException {
-		this.xsltPath = loadResourceAsString(path);
-	}
-
-	public static String loadResourceAsString(String path) throws IOException {
-		InputStream is = A28Processor.class.getResourceAsStream(path);
-		StringWriter writer = new StringWriter();
-		IOUtils.copy(is, writer);
-		return writer.toString();
+	public void setXsltPath(org.springframework.core.io.Resource xslFile) throws IOException {
+		if (!xslFile.exists()) {
+			log.error("Xsl not found");
+			throw new IllegalArgumentException("Resource not found "+xslFile.getDescription());
+		}
+		this.resource = xslFile;
 	}
 
 	public OINKRequestMessage process(@Body Message message) throws Exception {
@@ -62,7 +63,7 @@ public abstract class Hl7v2Processor {
 		String hl7Xml = hl7v2Converter.toXml(message);
 
 		// Map to FHIR XML
-		String fhirXml = XmlTransformer.transform(hl7Xml, xsltPath);
+		String fhirXml = XmlTransformer.transform(hl7Xml, resource.getInputStream());
 
 		// Convert to FHIR Resource
 		AtomFeed bundle = fhirConverter.fromXmlToBundle(fhirXml);

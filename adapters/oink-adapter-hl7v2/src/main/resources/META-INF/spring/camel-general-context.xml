@@ -28,15 +28,15 @@
 	</bean>	
 
 	<bean id="a28Processor" class="uk.org.openeyes.oink.hl7v2.A28Processor">
-		<property name="xsltPath" value="/uk/org/openeyes/oink/hl7v2/A28.xsl" />
+		<property name="xsltPath" value="osgibundle:/uk/org/openeyes/oink/adapter/hl7v2/a28.xsl" />
 	</bean>
 
 	<bean id="a31Processor" class="uk.org.openeyes.oink.hl7v2.A31Processor">
-		<property name="xsltPath" value="/uk/org/openeyes/oink/hl7v2/A28.xsl" />
+		<property name="xsltPath" value="osgibundle:/uk/org/openeyes/oink/adapter/hl7v2/a28.xsl" />
 	</bean>
 
 	<bean id="a40Processor" class="uk.org.openeyes.oink.hl7v2.A40Processor">
-		<property name="xsltPath" value="/uk/org/openeyes/oink/hl7v2/A28.xsl" />
+		<property name="xsltPath" value="osgibundle:/uk/org/openeyes/oink/adapter/hl7v2/a28.xsl" />
 	</bean>
 
 	<bean id="a19Processor" class="uk.org.openeyes.oink.hl7v2.A19Builder"/>

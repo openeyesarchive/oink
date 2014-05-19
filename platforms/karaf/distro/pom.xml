@@ -84,6 +84,7 @@
                         <feature>oink-domain</feature>
                         <feature>oink-adapter-facade</feature>
                         <feature>oink-adapter-proxy</feature>
+                        <feature>oink-adapter-hl7v2</feature>
                     </installedFeatures>
                     <bootFeatures>
                         <feature>standard</feature>

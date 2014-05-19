@@ -30,12 +30,6 @@
 			<artifactId>oink-core</artifactId>
 			<version>${project.version}</version>
 			<type>bundle</type>
-			<exclusions>
-				<exclusion>
-					<artifactId>commons-logging</artifactId>
-					<groupId>commons-logging</groupId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 
 		<!-- Spring -->
@@ -171,10 +165,9 @@
 				<configuration>
 					<instructions>
 						<Bundle-SymbolicName>oink-adapter-hl7v2</Bundle-SymbolicName>
-						<Private-Package></Private-Package>
+						<Private-Package/>
 						<Import-Package>*</Import-Package>
 					</instructions>
-					
 				</configuration>
 			</plugin>
 
