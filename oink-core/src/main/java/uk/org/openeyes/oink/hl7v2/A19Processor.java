@@ -1,34 +1,31 @@
 package uk.org.openeyes.oink.hl7v2;
 
 import java.io.IOException;
-import java.math.BigInteger;
 import java.nio.charset.Charset;
-import java.security.SecureRandom;
 import java.util.GregorianCalendar;
 import java.util.List;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
+import org.hl7.fhir.instance.model.AtomFeed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import uk.org.openeyes.oink.common.RandomStringGenerator;
+import uk.org.openeyes.oink.domain.FhirBody;
 import uk.org.openeyes.oink.domain.OINKRequestMessage;
 import uk.org.openeyes.oink.domain.OINKResponseMessage;
 import uk.org.openeyes.oink.exception.OinkException;
-import uk.org.openeyes.oink.messaging.OinkMessageConverter;
-import ca.uhn.hl7v2.DefaultHapiContext;
 import ca.uhn.hl7v2.HL7Exception;
-import ca.uhn.hl7v2.HapiContext;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.v24.datatype.TS;
 import ca.uhn.hl7v2.model.v24.datatype.XCN;
 import ca.uhn.hl7v2.model.v24.message.QRY_A19;
 import ca.uhn.hl7v2.model.v24.segment.QRD;
 
-public class A19Builder {
+public class A19Processor extends Hl7v2Processor {
 
-	private final static Logger log = LoggerFactory.getLogger(A19Builder.class);
+	private final static Logger log = LoggerFactory.getLogger(A19Processor.class);
 	
 	private RandomStringGenerator queryIdGenerator = new RandomStringGenerator(8);
 
@@ -58,13 +55,13 @@ public class A19Builder {
 		qrd.getQuantityLimitedRequest().getUnits().getIdentifier()
 				.setValue("RD");
 		// !! Set who subject filter
-		if (isSearchByNHSNumber(request)) {
-			log.info("Building an A19 with search by NHS number");
-			String nhsNumber = extractNHSNumber(request);
+		if (isSearchByIdentifierNumber(request)) {
+			log.info("Building an A19 with search by identifier");
+			String system = extractSystem(request);
+			String value = extractIdentifierValue(request);
 			XCN who0 = qrd.getWhoSubjectFilter(0);
-			who0.getIDNumber().setValue(nhsNumber);
-			who0.getAssigningAuthority().getUniversalID().setValue("NHS");
-			who0.getIdentifierTypeCode().setValue("MR");
+			who0.getIDNumber().setValue(value);
+			who0.getIdentifierTypeCode().setValue(system);
 		} else if (isSearchByFamilyName(request)) {
 			log.info("Building an A19 with search by family name");
 			String familyName = getQueryParameterValue(request, "family");
@@ -95,6 +92,39 @@ public class A19Builder {
 		return null;
 	}
 
+	private boolean isSearchByIdentifierNumber(OINKRequestMessage request) {
+		String idvalue = getQueryParameterValue(request, "identifier");
+		return idvalue != null;
+	}
+	
+	private String extractIdentifierValue(OINKRequestMessage request) {
+		String value = getQueryParameterValue(request, "identifier");
+		if (value == null) {
+			return null;
+		}
+		String[] split = value.split("\\|");
+		if (split.length == 2) {
+			String system = split[1];
+			return system;
+		}
+		return null;
+		
+	}		
+	
+	private String extractSystem(OINKRequestMessage request) {
+		String value = getQueryParameterValue(request, "identifier");
+		if (value == null) {
+			return null;
+		}
+		String[] split = value.split("\\|");
+		if (split.length == 2) {
+			String system = split[0];
+			return system;
+		}
+		return null;
+		
+	}	
+	
 	private boolean isSearchByNHSNumber(OINKRequestMessage request) {
 		String idvalue = getQueryParameterValue(request, "identifier");
 		if (idvalue != null) {
@@ -124,6 +154,16 @@ public class A19Builder {
 
 	public OINKResponseMessage processResponse(Message message) {
 		return null;
+	}
+
+	@Override
+	public FhirBody buildFhirBody(AtomFeed f) {
+		return new FhirBody(f);
+	}
+
+	@Override
+	public void setRestHeaders(OINKRequestMessage r) {
+		// Do nothing?
 	}
 
 }

@@ -26,7 +26,15 @@
 			<util:constant static-field="org.apache.camel.component.hl7.AckCode.AE" />
 		</constructor-arg>
 	</bean>	
+	
+	<bean id="a01Processor" class="uk.org.openeyes.oink.hl7v2.A01Processor">
+		<property name="xsltPath" value="osgibundle:/uk/org/openeyes/oink/adapter/hl7v2/a28.xsl" />
+	</bean>	
 
+	<bean id="a05Processor" class="uk.org.openeyes.oink.hl7v2.A05Processor">
+		<property name="xsltPath" value="osgibundle:/uk/org/openeyes/oink/adapter/hl7v2/a28.xsl" />
+	</bean>
+	
 	<bean id="a28Processor" class="uk.org.openeyes.oink.hl7v2.A28Processor">
 		<property name="xsltPath" value="osgibundle:/uk/org/openeyes/oink/adapter/hl7v2/a28.xsl" />
 	</bean>
@@ -39,7 +47,7 @@
 		<property name="xsltPath" value="osgibundle:/uk/org/openeyes/oink/adapter/hl7v2/a28.xsl" />
 	</bean>
 
-	<bean id="a19Processor" class="uk.org.openeyes.oink.hl7v2.A19Builder"/>
+	<bean id="a19Processor" class="uk.org.openeyes.oink.hl7v2.A19Processor"/>
 
 	<bean id="hl7dataformat" class="org.apache.camel.component.hl7.HL7DataFormat">
 		<property name="validate" value="false" />
@@ -65,6 +73,14 @@
 				<simple>${body}</simple>
 			</setProperty>
 			<choice>
+				<when>
+					<simple>${header.CamelHL7TriggerEvent} == 'A01'</simple>
+					<bean ref="a01Processor" />
+				</when>			
+				<when>
+					<simple>${header.CamelHL7TriggerEvent} == 'A05'</simple>
+					<bean ref="a05Processor" />
+				</when>				
 				<when>
 					<simple>${header.CamelHL7TriggerEvent} == 'A28'</simple>
 					<bean ref="a28Processor" />
@@ -101,7 +117,7 @@
 			<from uri="rabbitmq://{{rabbit.host}}:{{rabbit.port}}/{{rabbit.defaultExchange}}?vhost={{rabbit.vhost}}&amp;username={{rabbit.username}}&amp;password={{rabbit.password}}&amp;routingKey={{rabbit.inboundRoutingKey}}"/>
 			<bean ref="a19Processor" method="buildQuery"/>
 			<to uri="mina2:tcp://{{remote.host}}:{{remote.port}}?sync=false&amp;codec=#hl7codec"/>
-			<bean ref="a19Processor" method="processResponse"/>
+			<bean ref="a19Processor" method="process"/>
 			<setHeader headerName="rabbitmq.ROUTING_KEY">
 				<constant>${header.rabbitmq.REPLY_TO}</constant>
 			</setHeader>			

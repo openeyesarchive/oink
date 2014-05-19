@@ -5,10 +5,8 @@ import java.io.InputStream;
 import java.io.StringWriter;
 
 import org.apache.camel.Body;
-import org.apache.camel.model.dataformat.HL7DataFormat;
 import org.apache.commons.io.IOUtils;
 import org.hl7.fhir.instance.model.AtomFeed;
-import org.hl7.fhir.instance.model.Patient;
 import org.hl7.fhir.instance.model.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,7 +14,6 @@ import org.springframework.context.ResourceLoaderAware;
 import org.springframework.core.io.ResourceLoader;
 
 import uk.org.openeyes.oink.domain.FhirBody;
-import uk.org.openeyes.oink.domain.HttpMethod;
 import uk.org.openeyes.oink.domain.OINKRequestMessage;
 import uk.org.openeyes.oink.fhir.FhirConverter;
 import uk.org.openeyes.oink.xml.XmlTransformer;
@@ -67,17 +64,23 @@ public abstract class Hl7v2Processor {
 
 		// Convert to FHIR Resource
 		AtomFeed bundle = fhirConverter.fromXmlToBundle(fhirXml);
-		if (bundle.getEntryList().size() > 1) {
-			log.warn("The bundle produced by HL7 to FHIR XSL transform contains more than one entry");
-		}
-		Resource r = bundle.getEntryList().get(0).getResource();
+		
+		// Build FhirBody
+		FhirBody body = buildFhirBody(bundle);
+		
 
-		OINKRequestMessage outMessage = wrapResource(r);
+		OINKRequestMessage outMessage = new OINKRequestMessage();
+		outMessage.setBody(body);
+		
+		setRestHeaders(outMessage);
 		
 		log.debug("Processed a message");
 		return outMessage;
 	}
 	
-	public abstract OINKRequestMessage wrapResource(Resource r);
+	
+	public abstract FhirBody buildFhirBody(AtomFeed f);
+	
+	public abstract void setRestHeaders(OINKRequestMessage r);
 
 }

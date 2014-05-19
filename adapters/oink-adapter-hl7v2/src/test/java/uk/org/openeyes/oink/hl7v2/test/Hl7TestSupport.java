@@ -9,9 +9,13 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.io.IOUtils;
-import org.hamcrest.Factory;
+import org.json.JSONException;
+import org.skyscreamer.jsonassert.JSONAssert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import uk.org.openeyes.oink.domain.OINKRequestMessage;
+import uk.org.openeyes.oink.messaging.OinkMessageConverter;
 
 import com.rabbitmq.client.AMQP.BasicProperties;
 import com.rabbitmq.client.Channel;
@@ -24,7 +28,6 @@ import com.rabbitmq.client.ShutdownSignalException;
 import ca.uhn.hl7v2.DefaultHapiContext;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.HapiContext;
-import ca.uhn.hl7v2.Version;
 import ca.uhn.hl7v2.app.HL7Service;
 import ca.uhn.hl7v2.app.Initiator;
 import ca.uhn.hl7v2.llp.LLPException;
@@ -33,10 +36,6 @@ import ca.uhn.hl7v2.parser.Parser;
 import ca.uhn.hl7v2.protocol.ReceivingApplication;
 import ca.uhn.hl7v2.protocol.ReceivingApplicationException;
 import ca.uhn.hl7v2.protocol.ReceivingApplicationExceptionHandler;
-import ca.uhn.hl7v2.validation.builder.ValidationRuleBuilder;
-import ca.uhn.hl7v2.validation.builder.support.DefaultValidationWithoutTNBuilder;
-import ca.uhn.hl7v2.validation.builder.support.NoValidationBuilder;
-import ca.uhn.hl7v2.validation.impl.DefaultValidationWithoutTN;
 import ca.uhn.hl7v2.validation.impl.NoValidation;
 
 public abstract class Hl7TestSupport {
@@ -44,8 +43,41 @@ public abstract class Hl7TestSupport {
 	private static final Logger log = LoggerFactory.getLogger(Hl7TestSupport.class);
 
 	private Properties properties;
+	
+	public void testIncomingMessageIsProcessedAndRouted(String hl7msgPath, String oinkmsgPath) throws HL7Exception, IOException, LLPException, InterruptedException, JSONException {
+		// Choose a message to send
+		Message m = loadHl7Message(hl7msgPath);
+		
+		// Prepare RabbitServer
+		RabbitServer server = new RabbitServer(getProperty("rabbit.host"),
+				Integer.parseInt(getProperty("rabbit.port")),
+				getProperty("rabbit.vhost"), getProperty("rabbit.username"),
+				getProperty("rabbit.password"));
+		server.setConsumingDetails(getProperty("rabbit.defaultExchange"), getProperty("rabbit.outboundRoutingKey"));
+		server.start();
+		
+		// Send HL7v2 message
+		String host = getProperty("hl7v2.host");
+		int port = Integer.parseInt(getProperty("hl7v2.port"));
+		Message responseMessage = HL7Client.send(m, host, port);
+		
+		Thread.sleep(1000);
+		
+		// Check received Rabbit message
+		byte[] receivedMessage = server.getReceivedMessage();
+		server.stop();
+		
+		assertNotNull(receivedMessage);
+		
+		OinkMessageConverter conv = new OinkMessageConverter();
+		
+		OINKRequestMessage request = conv.fromByteArray(receivedMessage);		
+		String expectedJson = loadResourceAsString(oinkmsgPath);
+		String actualJson = conv.toJsonString(request);		
+		JSONAssert.assertEquals(expectedJson,actualJson, false);
+	}
 
-	protected Message loadMessage(String path) throws IOException, HL7Exception {
+	protected Message loadHl7Message(String path) throws IOException, HL7Exception {
 		InputStream is = getClass().getResourceAsStream(path);
 		StringWriter writer = new StringWriter();
 		IOUtils.copy(is, writer);
@@ -67,6 +99,13 @@ public abstract class Hl7TestSupport {
 
 	protected String getProperty(String key) {
 		return properties.getProperty(key);
+	}
+	
+	public static String loadResourceAsString(String resourcePath) throws IOException {
+		InputStream is = Hl7TestSupport.class.getResourceAsStream(resourcePath);
+		StringWriter writer = new StringWriter();
+		IOUtils.copy(is, writer, "UTF-8");
+		return writer.toString();
 	}
 
 	protected Message sendHl7Message(Message adt, String host, int port)
