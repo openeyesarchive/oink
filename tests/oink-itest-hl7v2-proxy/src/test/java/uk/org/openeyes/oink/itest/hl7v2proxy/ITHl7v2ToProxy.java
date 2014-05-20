@@ -21,7 +21,6 @@ import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
 import org.hl7.fhir.instance.formats.JsonParser;
 import org.hl7.fhir.instance.formats.Parser;
 import org.hl7.fhir.instance.model.AtomEntry;
@@ -29,6 +28,7 @@ import org.hl7.fhir.instance.model.AtomFeed;
 import org.hl7.fhir.instance.model.Identifier;
 import org.hl7.fhir.instance.model.Patient;
 import org.hl7.fhir.instance.model.Resource;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.Configuration;
@@ -44,6 +44,7 @@ import uk.org.openeyes.oink.hl7v2.test.support.Hl7Client;
 @RunWith(PaxExam.class)
 public class ITHl7v2ToProxy {
 
+	@Test
 	public void testA01CreatePatientLeadsToANewPatientInEndServer()
 			throws Exception {
 
@@ -70,7 +71,7 @@ public class ITHl7v2ToProxy {
 		}
 		assertNotNull(bundle);
 		
-		// Find patient
+		// Find patient in results
 		Patient patient = null;
 		String patientId = null;
 		List<AtomEntry<? extends Resource>> list = bundle.getEntryList();
@@ -86,7 +87,7 @@ public class ITHl7v2ToProxy {
 				}
 			}
 		}
-		assertNotNull(patient);
+		assertNotNull("Patient not found in results",patient);
 		
 		// Check details of Patient
 		fail("Not fully implemented");

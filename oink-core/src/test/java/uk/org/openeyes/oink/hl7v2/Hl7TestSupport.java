@@ -1,14 +1,11 @@
 package uk.org.openeyes.oink.hl7v2;
 
+import static org.junit.Assert.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
 
 import org.apache.commons.io.IOUtils;
-import org.skyscreamer.jsonassert.JSONAssert;
-
-import uk.org.openeyes.oink.domain.OINKRequestMessage;
-import uk.org.openeyes.oink.messaging.OinkMessageConverter;
 import ca.uhn.hl7v2.DefaultHapiContext;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.HapiContext;
@@ -28,16 +25,18 @@ public class Hl7TestSupport {
 		context.setValidationContext(new NoValidation());
 		Parser p = context.getGenericParser();
 		Message adt = p.parse(message);
+		context.close();
 		return adt;
 	}
 	
 	public static void testProcessorProducesExpectedOutput(Hl7v2Processor processor, String examplePath, String expectedPath) throws Exception {
-		Message hl7Message = loadMessage(examplePath);
-		OINKRequestMessage message = processor.process(hl7Message);		
-		OinkMessageConverter conv = new OinkMessageConverter();
-		String generatedJson = conv.toJsonString(message);
-		String expectedJson = loadResourceAsString(expectedPath);
-		JSONAssert.assertEquals(expectedJson,generatedJson, false);
+		fail("Needs rewriting");
+//		Message hl7Message = loadMessage(examplePath);
+//		OINKRequestMessage message = processor.process(hl7Message);		
+//		OinkMessageConverter conv = new OinkMessageConverter();
+//		String generatedJson = conv.toJsonString(message);
+//		String expectedJson = loadResourceAsString(expectedPath);
+//		JSONAssert.assertEquals(expectedJson,generatedJson, false);
 
 	}
 	

@@ -41,9 +41,5 @@ public class ITHl7v2ToRabbitRoute extends Hl7ITSupport {
 		testIncomingMessageIsProcessedAndRouted("/hl7v2/A31-2.txt", "/oinkrequestmessages/A31-2.json");
 	}
 	
-	@Test
-	public void testIncomingA40IsProcessedAndRouted() throws HL7Exception, IOException, LLPException, InterruptedException, JSONException {
-		testIncomingMessageIsProcessedAndRouted("/hl7v2/A40-1.txt", "/oinkrequestmessages/A40-1.json");
-	}
 
 }

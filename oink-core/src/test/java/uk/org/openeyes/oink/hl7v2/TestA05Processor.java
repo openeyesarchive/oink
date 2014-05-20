@@ -31,11 +31,11 @@ import uk.org.openeyes.oink.messaging.OinkMessageConverter;
 
 public class TestA05Processor extends Hl7TestSupport {
 	
-	private A05Processor processor;
+	private ADTProcessor processor;
 	
 	@Before
 	public void before() throws IOException {
-		processor = new A05Processor();
+		processor = new ADTProcessor();
 		org.springframework.core.io.Resource r = new ClassPathResource("/uk/org/openeyes/oink/hl7v2/a28.xsl");
 		processor.setXsltPath(r);	}
 	

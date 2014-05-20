@@ -5,6 +5,7 @@ import java.nio.charset.Charset;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+import org.apache.camel.Exchange;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.hl7.fhir.instance.model.AtomFeed;
@@ -12,7 +13,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import uk.org.openeyes.oink.common.RandomStringGenerator;
-import uk.org.openeyes.oink.domain.FhirBody;
 import uk.org.openeyes.oink.domain.OINKRequestMessage;
 import uk.org.openeyes.oink.domain.OINKResponseMessage;
 import uk.org.openeyes.oink.exception.OinkException;
@@ -157,13 +157,8 @@ public class A19Processor extends Hl7v2Processor {
 	}
 
 	@Override
-	public FhirBody buildFhirBody(AtomFeed f) {
-		return new FhirBody(f);
-	}
-
-	@Override
-	public void setRestHeaders(OINKRequestMessage r) {
-		// Do nothing?
+	public void sendMessagingFormatAsFHIRRestFormat(AtomFeed bundle, Exchange ex) {
+		// TODO Complete		
 	}
 
 }

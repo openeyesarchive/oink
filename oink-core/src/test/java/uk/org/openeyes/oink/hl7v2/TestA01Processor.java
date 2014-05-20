@@ -24,6 +24,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
 
+import ca.uhn.hl7v2.model.Message;
 import uk.org.openeyes.oink.domain.FhirBody;
 import uk.org.openeyes.oink.domain.HttpMethod;
 import uk.org.openeyes.oink.domain.OINKRequestMessage;
@@ -31,16 +32,19 @@ import uk.org.openeyes.oink.messaging.OinkMessageConverter;
 
 public class TestA01Processor extends Hl7TestSupport {
 	
-	private A01Processor processor;
+	private ADTProcessor processor;
 	
 	@Before
 	public void before() throws IOException {
-		processor = new A01Processor();
+		processor = new ADTProcessor();
 		org.springframework.core.io.Resource r = new ClassPathResource("/uk/org/openeyes/oink/hl7v2/a28.xsl");
 		processor.setXsltPath(r);	}
 	
 	@Test
 	public void testProcessorHandlesValidA01Message() throws Exception {
+		Message hl7Message = loadMessage("/hl7v2/A01.txt");
+		
+		
 		testProcessorProducesExpectedOutput(processor, "/hl7v2/A01.txt", "/oinkrequestmessages/A01.json");		
 	}
 	

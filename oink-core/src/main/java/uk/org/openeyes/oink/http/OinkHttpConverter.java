@@ -59,6 +59,9 @@ public class OinkHttpConverter {
 					.get(Exchange.HTTP_RESPONSE_CODE);
 			response.setStatus(code);
 		}
+		if (headers.containsKey("Location")) {
+			response.setLocationHeader((String) headers.get("Location"));
+		}
 		return response;
 	}
 

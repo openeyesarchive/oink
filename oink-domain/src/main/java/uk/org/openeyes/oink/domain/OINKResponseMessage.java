@@ -19,6 +19,7 @@ package uk.org.openeyes.oink.domain;
 public class OINKResponseMessage extends OINKMessage {
 
 	private int status; // Same as HTTP Codes
+	private String locationHeader;
 	private FhirBody body;
 
 	public OINKResponseMessage() {
@@ -50,6 +51,14 @@ public class OINKResponseMessage extends OINKMessage {
 
 	public void setBody(FhirBody body) {
 		this.body = body;
+	}
+	
+	public String getLocationHeader() {
+		return locationHeader;
+	}
+	
+	public void setLocationHeader(String locationHeader) {
+		this.locationHeader = locationHeader;
 	}
 
 	@Override

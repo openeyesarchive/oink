@@ -3,10 +3,18 @@ package uk.org.openeyes.oink.hl7v2;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
+import java.util.Iterator;
+import java.util.List;
 
 import org.apache.camel.Body;
+import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
+import org.apache.camel.ProducerTemplate;
 import org.apache.commons.io.IOUtils;
+import org.hl7.fhir.instance.model.AtomEntry;
 import org.hl7.fhir.instance.model.AtomFeed;
+import org.hl7.fhir.instance.model.Identifier;
+import org.hl7.fhir.instance.model.Organization;
 import org.hl7.fhir.instance.model.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +22,9 @@ import org.springframework.context.ResourceLoaderAware;
 import org.springframework.core.io.ResourceLoader;
 
 import uk.org.openeyes.oink.domain.FhirBody;
+import uk.org.openeyes.oink.domain.HttpMethod;
 import uk.org.openeyes.oink.domain.OINKRequestMessage;
+import uk.org.openeyes.oink.domain.OINKResponseMessage;
 import uk.org.openeyes.oink.fhir.FhirConverter;
 import uk.org.openeyes.oink.xml.XmlTransformer;
 import ca.uhn.hl7v2.model.Message;
@@ -33,8 +43,6 @@ public abstract class Hl7v2Processor {
 	private ValidationContext hl7v2ValidationContext;
 	private MessageValidator hl7v2Validator;
 	
-	private ResourceLoader resourceLoader;
-
 	public Hl7v2Processor() {
 		hl7v2Converter = new MessageConverter();
 		fhirConverter = new FhirConverter();
@@ -50,8 +58,11 @@ public abstract class Hl7v2Processor {
 		this.resource = xslFile;
 	}
 
-	public OINKRequestMessage process(@Body Message message) throws Exception {
-		log.debug("Processing a message");
+	public void process(@Body Message message, Exchange ex) throws Exception {
+		
+		String messageType = ex.getIn().getHeader("CamelHL7MessageType", String.class);
+		String messageEvent = ex.getIn().getHeader("CamelHL7TriggerEvent", String.class);
+		log.debug("Processing message type: "+messageType+" event: "+messageEvent);
 
 		// Validate message
 		hl7v2Validator.validate(message);
@@ -62,25 +73,78 @@ public abstract class Hl7v2Processor {
 		// Map to FHIR XML
 		String fhirXml = XmlTransformer.transform(hl7Xml, resource.getInputStream());
 
-		// Convert to FHIR Resource
+		// Convert to FHIR Bundle
 		AtomFeed bundle = fhirConverter.fromXmlToBundle(fhirXml);
 		
-		// Build FhirBody
-		FhirBody body = buildFhirBody(bundle);
+		// Process FHIR bundle entries
+		sendMessagingFormatAsFHIRRestFormat(bundle, ex);
 		
-
-		OINKRequestMessage outMessage = new OINKRequestMessage();
-		outMessage.setBody(body);
-		
-		setRestHeaders(outMessage);
-		
-		log.debug("Processed a message");
-		return outMessage;
+		log.debug("Processed a message..DONE");
 	}
 	
+	public abstract void sendMessagingFormatAsFHIRRestFormat(AtomFeed bundle, Exchange ex);
 	
-	public abstract FhirBody buildFhirBody(AtomFeed f);
+	public String getResourceByIdentifierss(Resource resource, List<Identifier> ids, Exchange ex) {
+		
+		// Build OINKRequestMessage for Query
+		OINKRequestMessage query = new OINKRequestMessage();
+		String resourceName = resource.getResourceType().toString();
+		query.setResourcePath("/"+resourceName);
+		query.setMethod(HttpMethod.GET);
+		
+		// Build search query
+		StringBuilder sb = new StringBuilder();
+		sb.append("identifier=");
+		Iterator<Identifier> iter = ids.iterator();
+		while (iter.hasNext()) {
+			Identifier id = iter.next();
+			if (id.getSystemSimple() != null && !id.getSystemSimple().isEmpty()) {
+				sb.append(id.getSystemSimple());
+				sb.append("|");
+			}
+			sb.append(id.getValueSimple());
+			if (iter.hasNext()) {
+				sb.append(",");
+			}
+		}
+		
+		query.setParameters(sb.toString());
+		
+		CamelContext ctx = ex.getContext();
+		ProducerTemplate prod = ctx.createProducerTemplate();
+		OINKResponseMessage resp = (OINKResponseMessage) prod.requestBody("direct:rabbit-rpc", query);
+
+		int status = resp.getStatus();
+		
+		AtomFeed bundle = resp.getBody().getBundle();
+		if (bundle.getTotalResults() == 0) {
+			return null;
+		} else if (bundle.getTotalResults() > 1) {
+			// throw exceptions
+		} else {
+			AtomEntry<? extends Resource> entry = bundle.getEntryList().get(0);
+			return entry.getId();
+		}
+		
+		return null;
+	}
 	
-	public abstract void setRestHeaders(OINKRequestMessage r);
+	public String postResource(Resource resource, Exchange ex) {
+		
+		// Build OINKRequestMessage for Query
+		OINKRequestMessage query = new OINKRequestMessage();
+		String resourceName = resource.getResourceType().toString();
+		query.setResourcePath("/"+resourceName);
+		query.setMethod(HttpMethod.POST);
+		
+		CamelContext ctx = ex.getContext();
+		ProducerTemplate prod = ctx.createProducerTemplate();
+		OINKResponseMessage resp = (OINKResponseMessage) prod.requestBody("direct:rabbit-rpc", query);
+
+		int status = resp.getStatus();
+		
+		String location = resp.getLocationHeader();
+		return location;
+	}	
 
 }

@@ -25,33 +25,37 @@
 		<constructor-arg>
 			<util:constant static-field="org.apache.camel.component.hl7.AckCode.AE" />
 		</constructor-arg>
-	</bean>	
-	
-	<bean id="a01Processor" class="uk.org.openeyes.oink.hl7v2.A01Processor">
-		<property name="xsltPath" value="osgibundle:/uk/org/openeyes/oink/adapter/hl7v2/a28.xsl" />
-	</bean>	
-
-	<bean id="a05Processor" class="uk.org.openeyes.oink.hl7v2.A05Processor">
-		<property name="xsltPath" value="osgibundle:/uk/org/openeyes/oink/adapter/hl7v2/a28.xsl" />
-	</bean>
-	
-	<bean id="a28Processor" class="uk.org.openeyes.oink.hl7v2.A28Processor">
-		<property name="xsltPath" value="osgibundle:/uk/org/openeyes/oink/adapter/hl7v2/a28.xsl" />
 	</bean>
 
-	<bean id="a31Processor" class="uk.org.openeyes.oink.hl7v2.A31Processor">
-		<property name="xsltPath" value="osgibundle:/uk/org/openeyes/oink/adapter/hl7v2/a28.xsl" />
+	<bean id="a01Processor" class="uk.org.openeyes.oink.hl7v2.ADTProcessor">
+		<property name="xsltPath"
+			value="osgibundle:/uk/org/openeyes/oink/adapter/hl7v2/a28.xsl" />
 	</bean>
 
-	<bean id="a40Processor" class="uk.org.openeyes.oink.hl7v2.A40Processor">
-		<property name="xsltPath" value="osgibundle:/uk/org/openeyes/oink/adapter/hl7v2/a28.xsl" />
+	<bean id="a05Processor" class="uk.org.openeyes.oink.hl7v2.ADTProcessor">
+		<property name="xsltPath"
+			value="osgibundle:/uk/org/openeyes/oink/adapter/hl7v2/a28.xsl" />
 	</bean>
 
-	<bean id="a19Processor" class="uk.org.openeyes.oink.hl7v2.A19Processor"/>
+	<bean id="a28Processor" class="uk.org.openeyes.oink.hl7v2.ADTProcessor">
+		<property name="xsltPath"
+			value="osgibundle:/uk/org/openeyes/oink/adapter/hl7v2/a28.xsl" />
+	</bean>
+
+	<bean id="a31Processor" class="uk.org.openeyes.oink.hl7v2.ADTProcessor">
+		<property name="xsltPath"
+			value="osgibundle:/uk/org/openeyes/oink/adapter/hl7v2/a28.xsl" />
+	</bean>
+
+	<bean id="a19Processor" class="uk.org.openeyes.oink.hl7v2.A19Processor" />
 
 	<bean id="hl7dataformat" class="org.apache.camel.component.hl7.HL7DataFormat">
 		<property name="validate" value="false" />
 	</bean>
+	
+	<bean id="synchRabbitProcessor" class="uk.org.openeyes.oink.rabbit.SynchronousRabbitProcessor">
+		<constructor-arg value="5000" />
+	</bean>	
 
 	<camelContext xmlns="http://camel.apache.org/schema/spring">
 
@@ -64,23 +68,21 @@
 				<handled>
 					<constant>true</constant>
 				</handled>
-				<to uri="log:GeneralError?level=ERROR&amp;showAll=true&amp;multiline=true" />
+				<to
+					uri="log:GeneralError?level=ERROR&amp;showAll=true&amp;multiline=true" />
 				<transform>
 					<ref>ackError</ref> <!-- auto-generates negative ack because of exception in Exchange -->
 				</transform>
 			</onException>
-			<setProperty propertyName="originalMessage">
-				<simple>${body}</simple>
-			</setProperty>
 			<choice>
 				<when>
 					<simple>${header.CamelHL7TriggerEvent} == 'A01'</simple>
 					<bean ref="a01Processor" />
-				</when>			
+				</when>
 				<when>
 					<simple>${header.CamelHL7TriggerEvent} == 'A05'</simple>
 					<bean ref="a05Processor" />
-				</when>				
+				</when>
 				<when>
 					<simple>${header.CamelHL7TriggerEvent} == 'A28'</simple>
 					<bean ref="a28Processor" />
@@ -89,41 +91,60 @@
 					<simple>${header.CamelHL7TriggerEvent} == 'A31'</simple>
 					<bean ref="a31Processor" />
 				</when>
-				<when>
-					<simple>${header.CamelHL7TriggerEvent} == 'A40'</simple>
-					<bean ref="a40Processor" />
-				</when>
 				<otherwise>
 					<transform>
-					
 						<ref>ackRejected</ref>
 					</transform>
 					<stop />
 				</otherwise>
 			</choice>
-			<setHeader headerName="rabbitmq.ROUTING_KEY">
-				<constant>{{rabbit.outboundRoutingKey}}</constant>
-			</setHeader>
-			<to uri="rabbitmq://{{rabbit.host}}:{{rabbit.port}}/{{rabbit.defaultExchange}}?vhost={{rabbit.vhost}}&amp;username={{rabbit.username}}&amp;password={{rabbit.password}}" />
-			<setBody>
-				<simple>${property.originalMessage}</simple>
-			</setBody>
 			<transform>
 				<ref>ack</ref>
 			</transform>
 		</route>
-		
- 		<route id="rabbit-consumer">
-			<from uri="rabbitmq://{{rabbit.host}}:{{rabbit.port}}/{{rabbit.defaultExchange}}?vhost={{rabbit.vhost}}&amp;username={{rabbit.username}}&amp;password={{rabbit.password}}&amp;routingKey={{rabbit.inboundRoutingKey}}"/>
-			<bean ref="a19Processor" method="buildQuery"/>
-			<to uri="mina2:tcp://{{remote.host}}:{{remote.port}}?sync=false&amp;codec=#hl7codec"/>
-			<bean ref="a19Processor" method="process"/>
+
+		<route id="rabbit-consumer">
+			<from
+				uri="rabbitmq://{{rabbit.host}}:{{rabbit.port}}/{{rabbit.defaultExchange}}?vhost={{rabbit.vhost}}&amp;username={{rabbit.username}}&amp;password={{rabbit.password}}&amp;routingKey={{rabbit.inboundRoutingKey}}" />
+			<bean ref="a19Processor" method="buildQuery" />
+			<to
+				uri="mina2:tcp://{{remote.host}}:{{remote.port}}?sync=false&amp;codec=#hl7codec" />
+			<bean ref="a19Processor" method="process" />
 			<setHeader headerName="rabbitmq.ROUTING_KEY">
 				<constant>${header.rabbitmq.REPLY_TO}</constant>
-			</setHeader>			
-			<to uri="rabbitmq://{{rabbit.host}}:{{rabbit.port}}/{{rabbit.defaultExchange}}?vhost={{rabbit.vhost}}&amp;username={{rabbit.username}}&amp;password={{rabbit.password}}"/>
+			</setHeader>
+			<to
+				uri="rabbitmq://{{rabbit.host}}:{{rabbit.port}}/{{rabbit.defaultExchange}}?vhost={{rabbit.vhost}}&amp;username={{rabbit.username}}&amp;password={{rabbit.password}}" />
 		</route>
-		
+
+		<!-- rabbit outgoing gateway -->
+		<route id="rabbit-rpc">
+			<from uri="direct:rabbit-rpc" />
+			<setHeader headerName="rabbitmq.ROUTING_KEY">
+				<simple>{{rabbit.outboundRoutingKey}}</simple>
+			</setHeader>
+			<setHeader headerName="rabbitmq.EXCHANGE_KEY">
+				<simple>{{rabbit.defaultExchange}}</simple>
+			</setHeader>
+			<setHeader headerName="rabbitmq.REPLY_TO">
+				<simple>{{rabbit.outboundResponseRoutingKey}}</simple>
+			</setHeader>
+			<bean ref="synchRabbitProcessor" method="prepare" />
+			<to
+				uri="rabbitmq://{{rabbit.host}}:{{rabbit.port}}/{{rabbit.defaultExchange}}?vhost={{rabbit.vhost}}&amp;username={{rabbit.username}}&amp;password={{rabbit.password}}" />
+			<bean ref="synchRabbitProcessor" method="waitForResponse" />
+			<removeHeaders pattern="*" />
+		</route>
+
+		<!-- rabbit response router -->
+		<route id="rabbit-rpc-response-router">
+			<from
+				uri="rabbitmq://{{rabbit.host}}:{{rabbit.port}}/{{rabbit.defaultExchange}}?vhost={{rabbit.vhost}}&amp;username={{rabbit.username}}&amp;password={{rabbit.password}}&amp;routingKey={{rabbit.outboundResponseRoutingKey}}" />
+			<recipientList>
+				<simple>seda:${headers.rabbitmq.CORRELATIONID}</simple>
+			</recipientList>
+		</route>
+
 	</camelContext>
 
 </beans>

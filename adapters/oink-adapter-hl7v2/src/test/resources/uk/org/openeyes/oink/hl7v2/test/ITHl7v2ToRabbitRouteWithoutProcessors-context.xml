@@ -11,15 +11,13 @@
 	<import resource="classpath:META-INF/spring/camel-general-context.xml" />
 	
 	<!-- Override processors with Mocked versions -->
-	<mockito:mock id="a01Processor" class="uk.org.openeyes.oink.hl7v2.A01Processor" />
+	<mockito:mock id="a01Processor" class="uk.org.openeyes.oink.hl7v2.ADTProcessor" />
 	
-	<mockito:mock id="a05Processor" class="uk.org.openeyes.oink.hl7v2.A05Processor" />
+	<mockito:mock id="a05Processor" class="uk.org.openeyes.oink.hl7v2.ADTProcessor" />
 
-	<mockito:mock id="a28Processor" class="uk.org.openeyes.oink.hl7v2.A28Processor" />
+	<mockito:mock id="a28Processor" class="uk.org.openeyes.oink.hl7v2.ADTProcessor" />
 
-	<mockito:mock id="a31Processor" class="uk.org.openeyes.oink.hl7v2.A31Processor" />
-
-	<mockito:mock id="a40Processor" class="uk.org.openeyes.oink.hl7v2.A40Processor" />
+	<mockito:mock id="a31Processor" class="uk.org.openeyes.oink.hl7v2.ADTProcessor" />
 
 	<bean id="bridgePropertyPlaceholder"
 		class="org.apache.camel.spring.spi.BridgePropertyPlaceholderConfigurer">
