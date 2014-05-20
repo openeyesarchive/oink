@@ -59,10 +59,6 @@ public abstract class Hl7v2Processor {
 	}
 
 	public void process(@Body Message message, Exchange ex) throws Exception {
-		
-		String messageType = ex.getIn().getHeader("CamelHL7MessageType", String.class);
-		String messageEvent = ex.getIn().getHeader("CamelHL7TriggerEvent", String.class);
-		log.debug("Processing message type: "+messageType+" event: "+messageEvent);
 
 		// Validate message
 		hl7v2Validator.validate(message);

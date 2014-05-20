@@ -18,6 +18,8 @@ package uk.org.openeyes.oink.domain;
 
 import java.io.Serializable;
 
+import uk.org.openeyes.oink.domain.json.OinkRequestMessageJsonConverter;
+
 /**
  * This message encapsulates a request for a resource (FHIR REST style)
  * somewhere on the OINK System.
@@ -36,7 +38,7 @@ public class OINKRequestMessage extends OINKMessage implements Serializable {
 	 */
 	private String origin;
 	private String destination;
-	
+
 	/*
 	 * FHIR REST components
 	 */
@@ -49,7 +51,8 @@ public class OINKRequestMessage extends OINKMessage implements Serializable {
 	public OINKRequestMessage() {
 	}
 
-	public OINKRequestMessage(String origin, String destination, String resourcePath, HttpMethod method, String query, FhirBody body) {
+	public OINKRequestMessage(String origin, String destination,
+			String resourcePath, HttpMethod method, String query, FhirBody body) {
 		this.origin = origin;
 		this.destination = destination;
 		this.resourcePath = resourcePath;
@@ -57,19 +60,19 @@ public class OINKRequestMessage extends OINKMessage implements Serializable {
 		this.body = body;
 		this.query = query;
 	}
-	
+
 	public String getOrigin() {
 		return origin;
 	}
-	
+
 	public void setOrigin(String origin) {
 		this.origin = origin;
 	}
-	
+
 	public String getDestination() {
 		return destination;
 	}
-	
+
 	public void setDestination(String destination) {
 		this.destination = destination;
 	}
@@ -116,6 +119,39 @@ public class OINKRequestMessage extends OINKMessage implements Serializable {
 	public String toString() {
 		return "OINKRequestMessage [resourcePath=" + resourcePath + ", method="
 				+ method + ", query=" + query + ", body=" + body + "]";
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((destination == null) ? 0 : destination.hashCode());
+		result = prime * result + ((method == null) ? 0 : method.hashCode());
+		result = prime * result + ((origin == null) ? 0 : origin.hashCode());
+		result = prime * result + ((query == null) ? 0 : query.hashCode());
+		result = prime * result
+				+ ((resourcePath == null) ? 0 : resourcePath.hashCode());
+		return result;
+	}
+
+	/**
+	 * Note. FHIR Implementation does not implement equals() so we compare JSON
+	 * representations instead
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		OINKRequestMessage other = (OINKRequestMessage) obj;
+		OinkRequestMessageJsonConverter converter = new OinkRequestMessageJsonConverter();
+		String thisJson = converter.toJsonString(this);
+		String otherJson = converter.toJsonString(other);
+		return thisJson.equals(otherJson);
 	}
 
 }

@@ -25,7 +25,6 @@ public class Hl7TestSupport {
 		context.setValidationContext(new NoValidation());
 		Parser p = context.getGenericParser();
 		Message adt = p.parse(message);
-		context.close();
 		return adt;
 	}
 	
