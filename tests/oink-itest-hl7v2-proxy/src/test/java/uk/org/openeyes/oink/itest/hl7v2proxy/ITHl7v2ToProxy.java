@@ -1,6 +1,8 @@
 package uk.org.openeyes.oink.itest.hl7v2proxy;
 
 import static org.ops4j.pax.exam.CoreOptions.maven;
+import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
+import static org.ops4j.pax.exam.CoreOptions.wrappedBundle;
 import static org.ops4j.pax.exam.MavenUtils.asInProject;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.configureConsole;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.features;
@@ -11,23 +13,12 @@ import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.replaceCo
 import static org.junit.Assert.*;
 
 import java.io.File;
-import java.io.InputStream;
-import java.util.List;
+import java.util.Dictionary;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpDelete;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.hl7.fhir.instance.formats.JsonParser;
-import org.hl7.fhir.instance.formats.Parser;
-import org.hl7.fhir.instance.model.AtomEntry;
-import org.hl7.fhir.instance.model.AtomFeed;
-import org.hl7.fhir.instance.model.Identifier;
-import org.hl7.fhir.instance.model.Patient;
-import org.hl7.fhir.instance.model.Resource;
+import javax.inject.Inject;
+
+import net.sf.saxon.expr.JPConverter.WrapExternalObject;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Option;
@@ -36,66 +27,61 @@ import org.ops4j.pax.exam.junit.PaxExam;
 import org.ops4j.pax.exam.karaf.options.LogLevelOption.LogLevel;
 import org.ops4j.pax.exam.options.MavenArtifactUrlReference;
 import org.ops4j.pax.exam.options.MavenUrlReference;
+import org.osgi.service.cm.ConfigurationAdmin;
 
+import ca.uhn.fhir.context.FhirContext;
+import ca.uhn.fhir.model.api.Bundle;
+import ca.uhn.fhir.model.dstu.resource.Patient;
+import ca.uhn.fhir.rest.client.IGenericClient;
 import ca.uhn.hl7v2.model.Message;
+import ca.uhn.hl7v2.model.v24.message.ACK;
 import uk.org.openeyes.oink.hl7v2.test.Hl7ITSupport;
 import uk.org.openeyes.oink.hl7v2.test.support.Hl7Client;
 
 @RunWith(PaxExam.class)
 public class ITHl7v2ToProxy {
 
+	@Inject
+	ConfigurationAdmin configAdmin;
+
 	@Test
 	public void testA01CreatePatientLeadsToANewPatientInEndServer()
 			throws Exception {
 
+		Dictionary<?, ?> hl7Props = configAdmin.getConfiguration(
+				"uk.org.openeyes.oink.hl7v2").getProperties();
+		Dictionary<?, ?> proxyProps = configAdmin.getConfiguration(
+				"uk.org.openeyes.oink.proxy").getProperties();
+
 		// Load example A01
-		Message exampleA01 = Hl7ITSupport.loadHl7Message("");
+		Message exampleA01 = Hl7ITSupport.loadHl7Message("/hl7v2/A01.xml");
 
-		// Send HL7v2 Client
-		Hl7Client.send(exampleA01, "", 0);
+		// Send A01 and get ACK response
+		ACK response = (ACK) Hl7Client.send(exampleA01,
+				(String) hl7Props.get("hl7v2.host"),
+				(Integer) hl7Props.get("hl7v2.port"));
+		assertEquals("AA", response.getMSA().getAcknowledgementCode());
 
-		// Search for Patient in FHIR Server
-		CloseableHttpClient httpClient = HttpClients.createDefault();
-		HttpGet httpGet = new HttpGet(
-				"http://rabbit.com/fhir/Patient?identifier=NHS|121311131");
-		CloseableHttpResponse response1 = httpClient.execute(httpGet);
-		AtomFeed bundle = null;
-		try {
-			int statusCode = response1.getStatusLine().getStatusCode();
-			HttpEntity entity1 = response1.getEntity();
-			InputStream is1 = entity1.getContent();
-			Parser parser = new JsonParser();
-			bundle = parser.parseGeneral(is1).getFeed();
-		} finally {
-			response1.close();
-		}
-		assertNotNull(bundle);
+		// See if Patient exists
+		FhirContext ctx = new FhirContext();
+		String proxyUri = (String) proxyProps.get("proxy.uri");
+		IGenericClient client = ctx.newRestfulGenericClient("http://"
+				+ proxyUri);
+
+		Bundle searchResults = client
+				.search()
+				.forResource(ca.uhn.fhir.model.dstu.resource.Patient.class)
+				.where(ca.uhn.fhir.model.dstu.resource.Patient.IDENTIFIER
+						.exactly().systemAndIdentifier("NHS", "9999999999")).execute();
 		
-		// Find patient in results
-		Patient patient = null;
-		String patientId = null;
-		List<AtomEntry<? extends Resource>> list = bundle.getEntryList();
-		outerLoop:
-		for (AtomEntry<? extends Resource> entry : list) {
-			String pid = entry.getId();
-			Patient p = (Patient) entry.getResource();
-			for (Identifier id : p.getIdentifier()) {
-				if (id.getSystemSimple().equals("NHS") && id.getValueSimple().equals("9999999999")) {
-					patient = p;
-					patientId = pid;
-					break outerLoop;
-				}
-			}
-		}
-		assertNotNull("Patient not found in results",patient);
+		assertEquals(1,searchResults.getEntries().size());
 		
+		// Delete patient
+		client.delete(Patient.class, searchResults.getEntries().get(0).getId());
+		
+
 		// Check details of Patient
 		fail("Not fully implemented");
-
-		// Delete Patient for future tests
-		HttpDelete httpDelete = new HttpDelete(patientId);
-		HttpResponse response2 = httpClient.execute(httpDelete);
-		
 	}
 
 	@Configuration
@@ -135,6 +121,12 @@ public class ITHl7v2ToProxy {
 				features(oinkFeaturesRepo, "oink-adapter-proxy"),
 				replaceConfigurationFile("etc/uk.org.openeyes.oink.proxy.cfg",
 						new File("src/test/resources/proxy.properties")),
+						
+				// Missing dependencies for the tests
+				wrappedBundle(maven("ca.uhn.hapi.fhir", "hapi-fhir-base")),
+				mavenBundle("org.apache.httpcomponents", "httpclient-osgi", "4.3.3"),
+				mavenBundle("org.apache.httpcomponents", "httpcore-osgi", "4.3.2"),
+				mavenBundle("org.apache.commons", "commons-lang3", "3.3.2")
 		// Remember that the test executes in another process. If you want to
 		// debug it, you need
 		// to tell Pax Exam to launch that process with debugging enabled.

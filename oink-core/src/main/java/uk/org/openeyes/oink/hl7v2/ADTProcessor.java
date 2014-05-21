@@ -29,7 +29,7 @@ public class ADTProcessor extends Hl7v2Processor {
 		// Extract Patient from Bundle
 		Patient patient = extractPatient(bundle);
 
-		String location = visit(patient, bundle, ex);
+		String location = postResourceAndReferencedResources(patient, bundle, ex);
 		log.info("Patient posted to server with url:" + location);
 
 	}
@@ -39,7 +39,7 @@ public class ADTProcessor extends Hl7v2Processor {
 	 * resources referenced by the Patient exist in the destination server
 	 * before posting the patient itself.
 	 */
-	private String visit(Patient p, AtomFeed bundle, Exchange ex)
+	private String postResourceAndReferencedResources(Patient p, AtomFeed bundle, Exchange ex)
 			throws OinkException {
 
 		// Handle Care Providers
@@ -54,12 +54,12 @@ public class ADTProcessor extends Hl7v2Processor {
 					.equals(ResourceType.Practitioner)) {
 				Practitioner practitioner = (Practitioner) resource
 						.getResource();
-				String absoluteUrl = visit(practitioner, bundle, ex);
+				String absoluteUrl = postResourceAndReferencedResources(practitioner, bundle, ex);
 				resourceRef.setReferenceSimple(absoluteUrl);
 			} else if (resource.getResource().getResourceType()
 					.equals(ResourceType.Organization)) {
 				Organization org = (Organization) resource.getResource();
-				String absoluteUrl = visit(org, bundle, ex);
+				String absoluteUrl = postResourceAndReferencedResources(org, bundle, ex);
 				resourceRef.setReferenceSimple(absoluteUrl);
 			} else {
 				log.error("A care provider was referenced which isn't a Practitioner or an Organization");
@@ -74,7 +74,7 @@ public class ADTProcessor extends Hl7v2Processor {
 			if (resource.getResource().getResourceType()
 					.equals(ResourceType.Organization)) {
 				Organization org = (Organization) resource.getResource();
-				String absoluteUrl = visit(org, bundle, ex);
+				String absoluteUrl = postResourceAndReferencedResources(org, bundle, ex);
 				managingOrgRef.setReferenceSimple(absoluteUrl);
 			} else {
 				log.error("A Managing Organization was referenced which isn't an Organization");
@@ -90,7 +90,7 @@ public class ADTProcessor extends Hl7v2Processor {
 	 * Processes an Organization in a bundle. Location and PartOf are not
 	 * catered for yet.
 	 */
-	private String visit(Organization org, AtomFeed bundle, Exchange ex) {
+	private String postResourceAndReferencedResources(Organization org, AtomFeed bundle, Exchange ex) {
 
 		// Search for organization
 		List<Identifier> ids = org.getIdentifier();
@@ -110,7 +110,7 @@ public class ADTProcessor extends Hl7v2Processor {
 	 * referenced by the Practitioner exist on the end server before posting the
 	 * Practitioner itself.
 	 */
-	private String visit(Practitioner p, AtomFeed bundle, Exchange ex) {
+	private String postResourceAndReferencedResources(Practitioner p, AtomFeed bundle, Exchange ex) {
 		ResourceReference orgRef = p.getOrganization();
 		if (orgRef != null) {
 			AtomEntry<? extends Resource> resource = bundle.getById(orgRef
@@ -118,7 +118,7 @@ public class ADTProcessor extends Hl7v2Processor {
 			if (resource.getResource().getResourceType()
 					.equals(ResourceType.Organization)) {
 				Organization org = (Organization) resource.getResource();
-				String absoluteUrl = visit(org, bundle, ex);
+				String absoluteUrl = postResourceAndReferencedResources(org, bundle, ex);
 				orgRef.setReferenceSimple(absoluteUrl);
 			} else {
 				log.error("An Organization was referenced which isn't an Organization");
