@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>uk.org.openeyes.oink</groupId>
 	<artifactId>oink</artifactId>
@@ -22,14 +23,15 @@
 		<maven-bundle-plugin.version>2.4.0</maven-bundle-plugin.version>
 		<maven-release-plugin.version>2.5</maven-release-plugin.version>
 		<log4j.version>1.2.17</log4j.version>
+		<hapi.version>2.2</hapi.version>
 	</properties>
 	<modules>
 		<module>oink-core</module>
 		<module>oink-domain</module>
 		<module>adapters</module>
-    <module>platforms</module>
-    <module>tests</module>
-  </modules>
+		<module>platforms</module>
+		<module>tests</module>
+	</modules>
 	<scm>
 		<connection>scm:git:git://github.com/openeyes/oink.git</connection>
 		<developerConnection>scm:git:git@github.com:openeyes/oink.git</developerConnection>
@@ -55,7 +57,7 @@
 				<groupId>org.springframework</groupId>
 				<artifactId>spring-aop</artifactId>
 				<version>${spring.version}</version>
-			</dependency>			
+			</dependency>
 			<dependency>
 				<groupId>org.springframework</groupId>
 				<artifactId>spring-context</artifactId>
@@ -81,7 +83,7 @@
 				<groupId>org.apache.camel</groupId>
 				<artifactId>camel-http</artifactId>
 				<version>${camel.version}</version>
-			</dependency>		
+			</dependency>
 			<dependency>
 				<groupId>org.apache.camel</groupId>
 				<artifactId>camel-spring</artifactId>
@@ -133,7 +135,8 @@
 					<configuration>
 						<autoVersionSubmodules>true</autoVersionSubmodules>
 						<allowTimestampedSnapshots>true</allowTimestampedSnapshots>
-						<!-- cannot be clean verify because our ITs wouldnt find our custom distro -->
+						<!-- cannot be clean verify because our ITs wouldnt find our custom 
+							distro -->
 						<preparationGoals>clean install</preparationGoals>
 					</configuration>
 				</plugin>
