@@ -16,6 +16,7 @@
  *******************************************************************************/
 package uk.org.openeyes.oink.http;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
@@ -49,9 +50,13 @@ public class OinkHttpConverter {
 			.getLogger(OinkHttpConverter.class);
 
 	public OINKResponseMessage buildOinkResponse(
-			@Headers Map<String, Object> headers, @Body InputStream body)
+			@Headers Map<String, Object> headers, @Body String body)
 			throws InvalidFhirRequestException, IOException {
-		FhirBody fhirBody = readFhirBody(body);
+		
+		// convert String into InputStream
+		InputStream is = new ByteArrayInputStream(body.getBytes());
+		
+		FhirBody fhirBody = readFhirBody(is);
 		OINKResponseMessage response = new OINKResponseMessage();
 		response.setBody(fhirBody);
 		if (headers.containsKey(Exchange.HTTP_RESPONSE_CODE)) {
@@ -137,6 +142,7 @@ public class OinkHttpConverter {
 		headers.put(Exchange.HTTP_PATH, message.getResourcePath());
 		headers.put(Exchange.HTTP_QUERY, message.getParameters());
 		headers.put(Exchange.HTTP_CHARACTER_ENCODING, "UTF-8");
+		headers.put("Accept", "application/json+fhir; charset=UTF-8");
 		try {
 			FhirBody body = message.getBody();
 			if (body != null) {

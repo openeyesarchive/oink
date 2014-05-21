@@ -27,6 +27,7 @@ import uk.org.openeyes.oink.domain.OINKRequestMessage;
 import uk.org.openeyes.oink.domain.OINKResponseMessage;
 import uk.org.openeyes.oink.hl7v2.test.support.Hl7Server;
 import uk.org.openeyes.oink.messaging.OinkMessageConverter;
+import uk.org.openeyes.oink.proxy.test.support.RabbitClient;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration()

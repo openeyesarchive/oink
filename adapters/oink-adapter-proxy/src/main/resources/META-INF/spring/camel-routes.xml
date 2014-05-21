@@ -14,13 +14,15 @@
 	<camelContext xmlns="http://camel.apache.org/schema/spring">
 	
 		<route>
-			<from uri="rabbitmq://{{rabbit.host}}:{{rabbit.port}}/{{rabbit.defaultExchange}}?vhost={{rabbit.vhost}}&amp;username={{rabbit.username}}&amp;password={{rabbit.password}}&amp;routingKey={{rabbit.routingKey}}"/>
+			<from uri="rabbitmq://{{rabbit.host}}:{{rabbit.port}}/{{rabbit.defaultExchange}}?vhost={{rabbit.vhost}}&amp;username={{rabbit.username}}&amp;password={{rabbit.password}}&amp;routingKey={{rabbit.routingKey}}&amp;autoDelete=false"/>
 			<bean ref="oinkHttpConverter" method="buildHttpRequest" />
+			<log message="${headers}"/>			
+			<to uri="http4://{{proxy.uri}}?throwExceptionOnFailure=false&amp;headerFilterStrategy=httpFilterStrategy&amp;authUsername={{proxy.username}}&amp;authPassword={{proxy.password}}"/>
+			<log message="${headers}"/>
 			<log message="${body}"/>
-			<to uri="http4://{{proxy.uri}}?"/>
 			<bean ref="oinkHttpConverter" method="buildOinkResponse" />
 			<bean ref="rabbitResponder" method="prepareHeaders"/>
-			<to uri="rabbitmq://{{rabbit.host}}:{{rabbit.port}}/{{rabbit.defaultExchange}}?vhost={{rabbit.vhost}}&amp;username={{rabbit.username}}&amp;password={{rabbit.password}}"/>	
+			<to uri="rabbitmq://{{rabbit.host}}:{{rabbit.port}}/{{rabbit.defaultExchange}}?vhost={{rabbit.vhost}}&amp;username={{rabbit.username}}&amp;password={{rabbit.password}}&amp;autoDelete=false"/>	
 		</route>
 
 	</camelContext>

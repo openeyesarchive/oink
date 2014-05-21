@@ -10,9 +10,9 @@
   <artifactId>tests</artifactId>
   <packaging>pom</packaging>
   <name>Oink :: Integration Tests</name>
-  <description>Integration tests for OINK and the custom Apache Karaf distribution porvided by OINK.</description>
+  <description>Integration tests for OINK and the custom Apache Karaf distribution provided by OINK.</description>
   <modules>
     <module>oink-itest-karaf</module>
-    <module>oink-itest-hl7v2-proxy</module>
+    <module>oink-itest-adapters</module>
   </modules>
 </project>

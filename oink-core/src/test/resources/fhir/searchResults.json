@@ -1,0 +1,89 @@
+{
+    "resourceType": "Bundle",
+    "title": "Search results",
+    "id": "urn:uuid:27882aa16ad8852-6a5b-4467-be78-%04x756a",
+    "link": [
+        {
+            "rel": "self",
+            "href": "http://192.168.1.100/api/Patient?identifier=1007913"
+        },
+        {
+            "rel": "base",
+            "href": "http://192.168.1.100/api"
+        }
+    ],
+    "updated": "2014-05-21T22:41:10+01:00",
+    "entry": [
+        {
+            "title": "Patient",
+            "id": "http://192.168.1.100/api/Patient/17885",
+            "link": [
+                {
+                    "rel": "self",
+                    "href": "http://192.168.1.100/api/Patient/17885/_history/1349436251"
+                }
+            ],
+            "updated": "2012-10-05T12:24:11+01:00",
+            "category": [
+                {
+                    "scheme": "http://hl7.org/fhir/tag/profile",
+                    "term": "http://openeyes.org.uk/fhir/1.7.0/profile/Patient"
+                }
+            ],
+            "content": {
+                "identifier": [
+                    {
+                        "use": "official",
+                        "label": "NHS Number",
+                        "system": "http://www.datadictionary.nhs.uk/data_dictionary/attributes/n/nhs/nhs_number_de.asp",
+                        "value": "1053991374"
+                    },
+                    {
+                        "label": "Hospital Number",
+                        "value": "1007913"
+                    }
+                ],
+                "name": [
+                    {
+                        "use": "usual",
+                        "family": [
+                            "Bray"
+                        ],
+                        "given": [
+                            "Agnes"
+                        ],
+                        "prefix": [
+                            "Mrs"
+                        ]
+                    }
+                ],
+                "telecom": [
+                    {
+                        "system": "phone",
+                        "value": "06422 9531945",
+                        "use": "home"
+                    }
+                ],
+                "gender": {
+                    "coding": [
+                        {
+                            "system": "http://hl7.org/fhir/v3/AdministrativeGender",
+                            "code": "F"
+                        }
+                    ]
+                },
+                "birthDate": "1970-10-06",
+                "address": [],
+                "careProvider": [
+                    {
+                        "reference": "Organization/prac-3"
+                    },
+                    {
+                        "reference": "Organization/cb-1"
+                    }
+                ],
+                "resourceType": "Patient"
+            }
+        }
+    ]
+}

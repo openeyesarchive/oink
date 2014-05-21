@@ -10,7 +10,6 @@
 
 	<artifactId>oink-itest-karaf</artifactId>
 	<name>Oink :: Integration Tests :: Karaf</name>
-	<description>Performs Karaf compliance integration tests</description>
 	<packaging>bundle</packaging>
 
 	<properties>
@@ -207,4 +206,5 @@
 		</pluginManagement>
 	</build>
 
+	<description>Integration Tests that test the provisioning of Oink Components on the Custom Karaf distro.</description>
 </project>

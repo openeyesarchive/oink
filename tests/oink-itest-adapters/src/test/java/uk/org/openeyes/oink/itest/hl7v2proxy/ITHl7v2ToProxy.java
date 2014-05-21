@@ -15,70 +15,65 @@ import static org.junit.Assert.*;
 import java.io.File;
 import java.util.Dictionary;
 
-import javax.inject.Inject;
-
 import net.sf.saxon.expr.JPConverter.WrapExternalObject;
 
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.PaxExam;
+import org.ops4j.pax.exam.junit.PaxExamServer;
 import org.ops4j.pax.exam.karaf.options.LogLevelOption.LogLevel;
 import org.ops4j.pax.exam.options.MavenArtifactUrlReference;
 import org.ops4j.pax.exam.options.MavenUrlReference;
 import org.osgi.service.cm.ConfigurationAdmin;
 
-import ca.uhn.fhir.context.FhirContext;
-import ca.uhn.fhir.model.api.Bundle;
-import ca.uhn.fhir.model.dstu.resource.Patient;
-import ca.uhn.fhir.rest.client.IGenericClient;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.v24.message.ACK;
 import uk.org.openeyes.oink.hl7v2.test.Hl7ITSupport;
 import uk.org.openeyes.oink.hl7v2.test.support.Hl7Client;
 
-@RunWith(PaxExam.class)
 public class ITHl7v2ToProxy {
 
-	@Inject
-	ConfigurationAdmin configAdmin;
+	@Rule
+	public PaxExamServer exam = new PaxExamServer();
 
 	@Test
 	public void testA01CreatePatientLeadsToANewPatientInEndServer()
 			throws Exception {
 
-		Dictionary<?, ?> hl7Props = configAdmin.getConfiguration(
-				"uk.org.openeyes.oink.hl7v2").getProperties();
-		Dictionary<?, ?> proxyProps = configAdmin.getConfiguration(
-				"uk.org.openeyes.oink.proxy").getProperties();
-
-		// Load example A01
-		Message exampleA01 = Hl7ITSupport.loadHl7Message("/hl7v2/A01.xml");
-
-		// Send A01 and get ACK response
-		ACK response = (ACK) Hl7Client.send(exampleA01,
-				(String) hl7Props.get("hl7v2.host"),
-				(Integer) hl7Props.get("hl7v2.port"));
-		assertEquals("AA", response.getMSA().getAcknowledgementCode());
-
-		// See if Patient exists
-		FhirContext ctx = new FhirContext();
-		String proxyUri = (String) proxyProps.get("proxy.uri");
-		IGenericClient client = ctx.newRestfulGenericClient("http://"
-				+ proxyUri);
-
-		Bundle searchResults = client
-				.search()
-				.forResource(ca.uhn.fhir.model.dstu.resource.Patient.class)
-				.where(ca.uhn.fhir.model.dstu.resource.Patient.IDENTIFIER
-						.exactly().systemAndIdentifier("NHS", "9999999999")).execute();
-		
-		assertEquals(1,searchResults.getEntries().size());
-		
-		// Delete patient
-		client.delete(Patient.class, searchResults.getEntries().get(0).getId());
-		
+//		Dictionary<?, ?> hl7Props = configAdmin.getConfiguration(
+//				"uk.org.openeyes.oink.hl7v2").getProperties();
+//		Dictionary<?, ?> proxyProps = configAdmin.getConfiguration(
+//				"uk.org.openeyes.oink.proxy").getProperties();
+//
+//		// Load example A01
+//		Message exampleA01 = Hl7ITSupport.loadHl7Message("/hl7v2/A01.xml");
+//
+//		// Send A01 and get ACK response
+//		ACK response = (ACK) Hl7Client.send(exampleA01,
+//				(String) hl7Props.get("hl7v2.host"),
+//				(Integer) hl7Props.get("hl7v2.port"));
+//		assertEquals("AA", response.getMSA().getAcknowledgementCode());
+//
+//		// See if Patient exists
+//		FhirContext ctx = new FhirContext();
+//		String proxyUri = (String) proxyProps.get("proxy.uri");
+//		IGenericClient client = ctx.newRestfulGenericClient("http://"
+//				+ proxyUri);
+//
+//		Bundle searchResults = client
+//				.search()
+//				.forResource(ca.uhn.fhir.model.dstu.resource.Patient.class)
+//				.where(ca.uhn.fhir.model.dstu.resource.Patient.IDENTIFIER
+//						.exactly().systemAndIdentifier("NHS", "9999999999")).execute();
+//		
+//		assertEquals(1,searchResults.getEntries().size());
+//		
+//		// Delete patient
+//		client.delete(Patient.class, searchResults.getEntries().get(0).getId());
+//			
 
 		// Check details of Patient
 		fail("Not fully implemented");
@@ -122,11 +117,6 @@ public class ITHl7v2ToProxy {
 				replaceConfigurationFile("etc/uk.org.openeyes.oink.proxy.cfg",
 						new File("src/test/resources/proxy.properties")),
 						
-				// Missing dependencies for the tests
-				wrappedBundle(maven("ca.uhn.hapi.fhir", "hapi-fhir-base")),
-				mavenBundle("org.apache.httpcomponents", "httpclient-osgi", "4.3.3"),
-				mavenBundle("org.apache.httpcomponents", "httpcore-osgi", "4.3.2"),
-				mavenBundle("org.apache.commons", "commons-lang3", "3.3.2")
 		// Remember that the test executes in another process. If you want to
 		// debug it, you need
 		// to tell Pax Exam to launch that process with debugging enabled.

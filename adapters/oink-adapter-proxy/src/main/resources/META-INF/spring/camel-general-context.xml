@@ -17,6 +17,8 @@
 
 	<bean id="oinkHttpConverter" class="uk.org.openeyes.oink.http.OinkHttpConverter">
 	</bean>
+	
+	<bean id="httpFilterStrategy" class="uk.org.openeyes.oink.http.HttpFilterStrategy"/>
 
 	<bean id="rabbitResponder" class="uk.org.openeyes.oink.rabbit.RabbitResponder" />
 

@@ -33,7 +33,6 @@
 		<bundle>wrap:mvn:org.apache.httpcomponents/httpcore/4.2.2</bundle>
 		<bundle>wrap:mvn:org.jdom/jdom/1.1.3</bundle>
 		<bundle>mvn:com.google.code.gson/gson/2.2.4</bundle>
-		<bundle>mvn:org.ops4j.pax.logging/pax-logging-api/1.7.2</bundle>
 	</feature>
 
 	<feature name='oink-core' version='${project.version}'
@@ -43,6 +42,7 @@
 		<feature version='${camel.version}'>camel-spring-security</feature>
 		<feature version='${spring.version}'>spring-tx</feature>
 		<bundle>mvn:commons-io/commons-io/${commonsio.version}</bundle>
+		<bundle>mvn:ca.uhn.hapi/hapi-osgi-base/2.2</bundle>
 		<bundle>mvn:uk.org.openeyes.oink/oink-core/${project.version}</bundle>
 	</feature>
 
@@ -79,7 +79,6 @@
 		<feature version='${camel.version}'>camel-rabbitmq</feature>
 		<feature version='${camel.version}'>camel-hl7</feature>
 		<feature version='${camel.version}'>camel-mina2</feature>		
-		<bundle>mvn:ca.uhn.hapi/hapi-osgi-base/2.2</bundle>
 		<bundle>mvn:uk.org.openeyes.oink.adapters/oink-adapter-hl7v2/${project.version}</bundle>
 	</feature>		
 
