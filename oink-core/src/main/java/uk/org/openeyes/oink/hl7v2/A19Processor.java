@@ -157,7 +157,7 @@ public class A19Processor extends Hl7v2Processor {
 	}
 
 	@Override
-	public void postResourcesInBundle(AtomFeed bundle, Exchange ex) {
+	public void processResourcesInBundle(AtomFeed bundle, Exchange ex) {
 		// TODO Complete		
 	}
 
