@@ -25,6 +25,7 @@ import uk.org.openeyes.oink.domain.FhirBody;
 import uk.org.openeyes.oink.domain.HttpMethod;
 import uk.org.openeyes.oink.domain.OINKRequestMessage;
 import uk.org.openeyes.oink.domain.OINKResponseMessage;
+import uk.org.openeyes.oink.exception.OinkException;
 import uk.org.openeyes.oink.fhir.FhirConverter;
 import uk.org.openeyes.oink.xml.XmlTransformer;
 import ca.uhn.hl7v2.model.Message;
@@ -73,14 +74,17 @@ public abstract class Hl7v2Processor {
 		AtomFeed bundle = fhirConverter.fromXmlToBundle(fhirXml);
 		
 		// Process FHIR bundle entries
-		sendMessagingFormatAsFHIRRestFormat(bundle, ex);
+		postResourcesInBundle(bundle, ex);
 		
 		log.debug("Processed a message..DONE");
 	}
 	
-	public abstract void sendMessagingFormatAsFHIRRestFormat(AtomFeed bundle, Exchange ex);
+	/**
+	 * Takes a Bundle and processes its components as individual FHIR Rest Resources
+	 */
+	public abstract void postResourcesInBundle(AtomFeed bundle, Exchange ex) throws OinkException;
 	
-	public String getResourceByIdentifierss(Resource resource, List<Identifier> ids, Exchange ex) {
+	public String searchForResourceByIdentifiers(Resource resource, List<Identifier> ids, Exchange ex) {
 		
 		// Build OINKRequestMessage for Query
 		OINKRequestMessage query = new OINKRequestMessage();
