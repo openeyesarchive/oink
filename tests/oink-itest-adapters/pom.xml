@@ -9,7 +9,7 @@
 		<version>0.3-SNAPSHOT</version>
 	</parent>
 	<artifactId>oink-itest-adapters</artifactId>
-	<name>Oink :: Integration Tests :: Hl7v2 and Proxy</name>
+	<name>Oink :: Integration Tests :: Adapters</name>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
@@ -21,6 +21,12 @@
 			<artifactId>pax-exam-container-karaf</artifactId>
 			<version>3.5.0</version>
 			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>commons-codec</groupId>
+					<artifactId>commons-codec</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.ops4j.pax.exam</groupId>
@@ -64,6 +70,12 @@
 			<version>${project.version}</version>
 			<type>test-jar</type>
 			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<artifactId>commons-codec</artifactId>
+					<groupId>commons-codec</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>uk.org.openeyes.oink.adapters</groupId>
@@ -71,6 +83,12 @@
 			<version>${project.version}</version>
 			<type>test-jar</type>
 			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<artifactId>commons-codec</artifactId>
+					<groupId>commons-codec</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<!-- test and logging -->
@@ -91,6 +109,11 @@
 			<artifactId>hapi-base</artifactId>
 			<version>2.2</version>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>commons-httpclient</groupId>
+			<artifactId>commons-httpclient</artifactId>
+			<version>3.1</version>
 		</dependency>
 	</dependencies>
 
