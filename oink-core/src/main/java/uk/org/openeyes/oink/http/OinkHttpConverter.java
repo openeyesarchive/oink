@@ -19,6 +19,8 @@ package uk.org.openeyes.oink.http;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.Body;
@@ -29,6 +31,7 @@ import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.hl7.fhir.instance.formats.JsonComposer;
 import org.hl7.fhir.instance.formats.JsonParser;
 import org.hl7.fhir.instance.formats.ParserBase.ResourceOrFeed;
+import org.hl7.fhir.instance.model.AtomCategory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,16 +55,20 @@ public class OinkHttpConverter {
 	public OINKResponseMessage buildOinkResponse(
 			@Headers Map<String, Object> headers, @Body String body)
 			throws InvalidFhirRequestException, IOException {
-		
-		// convert String into InputStream
-		InputStream is = new ByteArrayInputStream(body.getBytes());
-		
-		FhirBody fhirBody = readFhirBody(is);
+
 		OINKResponseMessage response = new OINKResponseMessage();
-		response.setBody(fhirBody);
+
+		if (body != null) {
+			try {
+				InputStream is = new ByteArrayInputStream(body.getBytes());
+				FhirBody fhirBody = readFhirBody(is);
+				response.setBody(fhirBody);
+			} catch (InvalidFhirRequestException ex) {
+				logger.warn("The response body is not a Fhir Resource or Bundle");
+			}
+		}
 		if (headers.containsKey(Exchange.HTTP_RESPONSE_CODE)) {
-			int code = (int) headers
-					.get(Exchange.HTTP_RESPONSE_CODE);
+			int code = (int) headers.get(Exchange.HTTP_RESPONSE_CODE);
 			response.setStatus(code);
 		}
 		if (headers.containsKey("Location")) {
@@ -137,11 +144,35 @@ public class OinkHttpConverter {
 
 	public String buildHttpRequest(@Body OINKRequestMessage message,
 			Exchange exchange) throws InvalidFhirRequestException {
-		
+
 		Map<String, Object> headers = exchange.getIn().getHeaders();
 		headers.put(Exchange.HTTP_PATH, message.getResourcePath());
 		headers.put(Exchange.HTTP_QUERY, message.getParameters());
 		headers.put(Exchange.HTTP_CHARACTER_ENCODING, "UTF-8");
+		headers.put(Exchange.HTTP_METHOD, message.getMethod().toString());
+
+		List<AtomCategory> tags = message.getTags();
+		if (!tags.isEmpty()) {
+			StringBuilder sb = new StringBuilder();
+			Iterator<AtomCategory> it = tags.iterator();
+			while (it.hasNext()) {
+				AtomCategory tag = it.next();
+				sb.append(tag.getTerm());
+				sb.append("; scheme=");
+				sb.append('"');
+				sb.append(tag.getScheme());
+				sb.append('"');
+				sb.append("; label=");
+				sb.append('"');
+				sb.append(tag.getLabel());
+				sb.append('"');
+				if (it.hasNext()) {
+					sb.append(", ");
+				}
+			}
+			headers.put("Category", sb.toString());
+		}
+
 		headers.put("Accept", "application/json+fhir; charset=UTF-8");
 		try {
 			FhirBody body = message.getBody();
@@ -153,7 +184,8 @@ public class OinkHttpConverter {
 				} else {
 					composer.compose(os, body.getBundle(), false);
 				}
-				headers.put(Exchange.CONTENT_TYPE, "application/json+fhir; charset=UTF-8");
+				headers.put(Exchange.CONTENT_TYPE,
+						"application/json+fhir; charset=UTF-8");
 				headers.put(Exchange.CHARSET_NAME, "UTF-8");
 				String bodyStr = os.toString("UTF-8");
 				return bodyStr;

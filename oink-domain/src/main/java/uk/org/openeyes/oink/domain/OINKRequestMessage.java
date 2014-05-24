@@ -17,6 +17,10 @@
 package uk.org.openeyes.oink.domain;
 
 import java.io.Serializable;
+import java.util.LinkedList;
+import java.util.List;
+
+import org.hl7.fhir.instance.model.AtomCategory;
 
 import uk.org.openeyes.oink.domain.json.OinkRequestMessageJsonConverter;
 
@@ -45,20 +49,32 @@ public class OINKRequestMessage extends OINKMessage implements Serializable {
 	private String resourcePath; // URI path corresponding to a Fhir Resource
 	private HttpMethod method; // HTTP Request Method e.g. GET, POST
 	private String query;
-
+	private List<AtomCategory> tags;
+	
 	private FhirBody body;
 
 	public OINKRequestMessage() {
+		tags = new LinkedList<AtomCategory>();
 	}
 
 	public OINKRequestMessage(String origin, String destination,
 			String resourcePath, HttpMethod method, String query, FhirBody body) {
+		this();
 		this.origin = origin;
 		this.destination = destination;
 		this.resourcePath = resourcePath;
 		this.method = method;
 		this.body = body;
 		this.query = query;
+	}
+	
+	public void addProfile(String profileTerm) {
+		AtomCategory cat = new AtomCategory("http://hl7.org/fhir/tag/profile", profileTerm, "");
+		tags.add(cat);
+	}
+	
+	public List<AtomCategory> getTags() {
+		return tags;
 	}
 
 	public String getOrigin() {
