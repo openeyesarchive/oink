@@ -1,0 +1,29 @@
+{
+    "identifier": [
+        {
+            "label": "General National Code",
+            "system": "http://www.datadictionary.nhs.uk/data_dictionary/attributes/g/general_medical_practitioner_ppd_code_de.asp",
+            "value": "QRST"
+        }
+    ],
+    "name": {
+        "use": "usual",
+        "family": [
+            "Kildare"
+        ],
+        "given": [
+            "Oliver"
+        ],
+        "prefix": [
+            "Dr"
+        ]
+    },
+    "telecom": [
+        {
+            "system": "phone",
+            "value": "0444 444 4444",
+            "use": "work"
+        }
+    ],
+    "resourceType": "Practitioner"
+}

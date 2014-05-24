@@ -25,6 +25,7 @@ import org.hl7.fhir.instance.formats.JsonParser;
 import org.hl7.fhir.instance.formats.Parser;
 import org.hl7.fhir.instance.model.Organization;
 import org.hl7.fhir.instance.model.Patient;
+import org.hl7.fhir.instance.model.Practitioner;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -180,6 +181,106 @@ public class ITProxyAdapter {
 		return matcher.group(1);
 	}
 
+	public void testPractitionerRead() throws Exception {
+		
+		// http://192.168.1.100:80/api/Organization/prac-1?_profile=http://openeyes.org.uk/fhir/1.7.0/profile/Organization/Practice
+		OINKRequestMessage req = new OINKRequestMessage();
+		req.setResourcePath("/Practitioner/gp-1");
+		req.addProfile("http://openeyes.org.uk/fhir/1.7.0/profile/Practitioner/Gp");
+		req.setMethod(HttpMethod.GET);
+		
+		RabbitClient client = new RabbitClient(
+				props.getProperty("rabbit.host"), Integer.parseInt(props
+						.getProperty("rabbit.port")),
+				props.getProperty("rabbit.vhost"),
+				props.getProperty("rabbit.username"),
+				props.getProperty("rabbit.password"));
+
+		OINKResponseMessage resp = client.sendAndRecieve(req,
+				props.getProperty("rabbit.routingKey"),
+				props.getProperty("rabbit.defaultExchange"));
+
+		assertEquals(200, resp.getStatus());
+		assertNotNull(resp.getBody());
+		assertNotNull(resp.getBody().getResource());
+		Practitioner org = (Practitioner) resp.getBody().getResource();
+		assertEquals("MNOP", org.getIdentifier().get(0).getValueSimple());
+		
+	}
+	
+	@Test
+	public void testPractitionerCreateUpdateAndDelete() throws Exception {
+		
+		
+		// CREATE
+		OINKRequestMessage req = new OINKRequestMessage();
+		req.setResourcePath("/Practitioner");
+		req.setMethod(HttpMethod.POST);
+		req.addProfile("http://openeyes.org.uk/fhir/1.7.0/profile/Practitioner/Gp");
+		InputStream is = ITProxyAdapter.class
+				.getResourceAsStream("/fhir/practitioner.json");
+		Parser parser = new JsonParser();
+		Practitioner p = (Practitioner) parser.parse(is);
+		FhirBody body = new FhirBody(p);
+		req.setBody(body);
+		
+		RabbitClient client = new RabbitClient(
+				props.getProperty("rabbit.host"), Integer.parseInt(props
+						.getProperty("rabbit.port")),
+				props.getProperty("rabbit.vhost"),
+				props.getProperty("rabbit.username"),
+				props.getProperty("rabbit.password"));
+
+		OINKResponseMessage resp = client.sendAndRecieve(req,
+				props.getProperty("rabbit.routingKey"),
+				props.getProperty("rabbit.defaultExchange"));
+
+
+		assertEquals(201, resp.getStatus());
+		String locationHeader = resp.getLocationHeader();
+		assertNotNull(locationHeader);
+		assertFalse(locationHeader.isEmpty());
+		log.info("Posted to "+locationHeader);	
+		
+		// See if Patient exists
+		DefaultHttpClient httpClient = new DefaultHttpClient();
+
+        httpClient.getCredentialsProvider().setCredentials(
+                new AuthScope(AuthScope.ANY_HOST, AuthScope.ANY_PORT), 
+                new UsernamePasswordCredentials("admin", "admin"));
+		
+		HttpGet httpGet = new HttpGet(locationHeader);
+		httpGet.setHeader("Accept", "application/fhir+json");
+		HttpResponse response1 = httpClient.execute(httpGet);
+		assertEquals(200, response1.getStatusLine().getStatusCode());
+		
+		// UPDATE
+		String id = getIdFromLocationHeader("Practitioner", locationHeader);
+		OINKRequestMessage updateRequest = new OINKRequestMessage();
+		updateRequest.setResourcePath("/Practitioner/"+id);
+		updateRequest.setMethod(HttpMethod.PUT);
+		updateRequest.addProfile("http://openeyes.org.uk/fhir/1.7.0/profile/Practitioner/Gp");
+		p.getTelecom().get(0).setValueSimple("0222 222 2222");
+		updateRequest.setBody(new FhirBody(p));
+		
+		OINKResponseMessage updateResponse = client.sendAndRecieve(updateRequest,
+				props.getProperty("rabbit.routingKey"),
+				props.getProperty("rabbit.defaultExchange"));		
+		assertEquals(200, updateResponse.getStatus());
+		
+		// DELETE
+		OINKRequestMessage deleteRequest = new OINKRequestMessage();
+		deleteRequest.setResourcePath("/Practitioner/"+id);
+		deleteRequest.setMethod(HttpMethod.DELETE);
+		deleteRequest.addProfile("http://openeyes.org.uk/fhir/1.7.0/profile/Practitioner/Gp");
+		
+		OINKResponseMessage deleteResponse = client.sendAndRecieve(deleteRequest,
+				props.getProperty("rabbit.routingKey"),
+				props.getProperty("rabbit.defaultExchange"));		
+		assertEquals(204, deleteResponse.getStatus());		
+		
+	}
+	
 	@Test
 	public void testPatientQuery() throws Exception {
 		// http://192.168.1.100/api/Patient?identifier=1007913&_format=json
@@ -274,7 +375,8 @@ public class ITProxyAdapter {
 		HttpResponse response1 = httpClient.execute(httpGet);
 		assertEquals(200, response1.getStatusLine().getStatusCode());
 	}
-
+	
+	
 	@Configuration
 	public Option[] config() {
 		MavenArtifactUrlReference karafUrl = maven()
