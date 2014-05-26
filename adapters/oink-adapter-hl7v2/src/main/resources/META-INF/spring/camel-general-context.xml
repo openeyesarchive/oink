@@ -27,9 +27,9 @@
 		</constructor-arg>
 	</bean>
 
-	<bean id="a01Processor" class="uk.org.openeyes.oink.hl7v2.ADTProcessor">
+	<bean id="a01Processor" class="uk.org.openeyes.oink.hl7v2.OpenEyesADTProcessor">
 		<property name="xsltPath"
-			value="osgibundle:/uk/org/openeyes/oink/adapter/hl7v2/a28.xsl" />
+			value="osgibundle:/uk/org/openeyes/oink/adapter/hl7v2/A01.xsl" />
 	</bean>
 
 	<bean id="a05Processor" class="uk.org.openeyes.oink.hl7v2.ADTProcessor">
@@ -104,8 +104,7 @@
 		</route>
 
 		<route id="rabbit-consumer">
-			<from
-				uri="rabbitmq://{{rabbit.host}}:{{rabbit.port}}/{{rabbit.defaultExchange}}?vhost={{rabbit.vhost}}&amp;username={{rabbit.username}}&amp;password={{rabbit.password}}&amp;routingKey={{rabbit.inboundRoutingKey}}" />
+			<from uri="rabbitmq://{{rabbit.host}}:{{rabbit.port}}/{{rabbit.defaultExchange}}?vhost={{rabbit.vhost}}&amp;username={{rabbit.username}}&amp;password={{rabbit.password}}&amp;routingKey={{rabbit.inboundRoutingKey}}&amp;autoDelete=false"/>
 			<bean ref="a19Processor" method="buildQuery" />
 			<to
 				uri="mina2:tcp://{{remote.host}}:{{remote.port}}?sync=false&amp;codec=#hl7codec" />
@@ -114,7 +113,7 @@
 				<constant>${header.rabbitmq.REPLY_TO}</constant>
 			</setHeader>
 			<to
-				uri="rabbitmq://{{rabbit.host}}:{{rabbit.port}}/{{rabbit.defaultExchange}}?vhost={{rabbit.vhost}}&amp;username={{rabbit.username}}&amp;password={{rabbit.password}}" />
+				uri="rabbitmq://{{rabbit.host}}:{{rabbit.port}}/{{rabbit.defaultExchange}}?vhost={{rabbit.vhost}}&amp;username={{rabbit.username}}&amp;password={{rabbit.password}}&amp;autoDelete=false" />
 		</route>
 
 		<!-- rabbit outgoing gateway -->
@@ -131,7 +130,7 @@
 			</setHeader>
 			<bean ref="synchRabbitProcessor" method="prepare" />
 			<to
-				uri="rabbitmq://{{rabbit.host}}:{{rabbit.port}}/{{rabbit.defaultExchange}}?vhost={{rabbit.vhost}}&amp;username={{rabbit.username}}&amp;password={{rabbit.password}}" />
+				uri="rabbitmq://{{rabbit.host}}:{{rabbit.port}}/{{rabbit.defaultExchange}}?vhost={{rabbit.vhost}}&amp;username={{rabbit.username}}&amp;password={{rabbit.password}}&amp;autoDelete=false" />
 			<bean ref="synchRabbitProcessor" method="waitForResponse" />
 			<removeHeaders pattern="*" />
 		</route>
@@ -139,7 +138,7 @@
 		<!-- rabbit response router -->
 		<route id="rabbit-rpc-response-router">
 			<from
-				uri="rabbitmq://{{rabbit.host}}:{{rabbit.port}}/{{rabbit.defaultExchange}}?vhost={{rabbit.vhost}}&amp;username={{rabbit.username}}&amp;password={{rabbit.password}}&amp;routingKey={{rabbit.outboundResponseRoutingKey}}" />
+				uri="rabbitmq://{{rabbit.host}}:{{rabbit.port}}/{{rabbit.defaultExchange}}?vhost={{rabbit.vhost}}&amp;username={{rabbit.username}}&amp;password={{rabbit.password}}&amp;routingKey={{rabbit.outboundResponseRoutingKey}}&amp;autoDelete=false" />
 			<recipientList>
 				<simple>seda:${headers.rabbitmq.CORRELATIONID}</simple>
 			</recipientList>

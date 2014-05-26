@@ -18,7 +18,6 @@ import uk.org.openeyes.oink.hl7v2.test.support.Hl7Client;
 import uk.org.openeyes.oink.messaging.OinkMessageConverter;
 import uk.org.openeyes.oink.proxy.test.support.RabbitServer;
 
-import com.rabbitmq.client.AMQP.BasicProperties;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;

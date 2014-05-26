@@ -15,7 +15,8 @@
 	<dependencies>
 		<dependency>
 			<groupId>me.fhir</groupId>
-			<artifactId>fhir-0.81</artifactId>
+			<artifactId>fhir-dstu1</artifactId>
+			<version>0.0.81.2489</version>
 		</dependency>
 		
 		<dependency>

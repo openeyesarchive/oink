@@ -16,9 +16,15 @@
  *******************************************************************************/
 package uk.org.openeyes.oink.http;
 
+import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectOutput;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -55,16 +61,18 @@ public class OinkHttpConverter {
 	public OINKResponseMessage buildOinkResponse(
 			@Headers Map<String, Object> headers, @Body String body)
 			throws InvalidFhirRequestException, IOException {
-
 		OINKResponseMessage response = new OINKResponseMessage();
+
+		String b = new String(body);
 
 		if (body != null) {
 			try {
-				InputStream is = new ByteArrayInputStream(body.getBytes());
-				FhirBody fhirBody = readFhirBody(is);
+				FhirBody fhirBody = readFhirBody(b);
 				response.setBody(fhirBody);
 			} catch (InvalidFhirRequestException ex) {
-				logger.warn("The response body is not a Fhir Resource or Bundle");
+				logger.warn("The response body was not recognised as a Fhir Resource or Bundle!");
+				logger.error(ex.getMessage());
+				logger.error(b);
 			}
 		}
 		if (headers.containsKey(Exchange.HTTP_RESPONSE_CODE)) {
@@ -120,12 +128,19 @@ public class OinkHttpConverter {
 		return message;
 	}
 
+	public static FhirBody readFhirBody(String str)
+			throws InvalidFhirRequestException, IOException {
+		InputStream stream = new ByteArrayInputStream(
+				str.getBytes(StandardCharsets.UTF_8));
+		return readFhirBody(stream);
+	}
+
 	public static FhirBody readFhirBody(InputStream is)
 			throws InvalidFhirRequestException, IOException {
 
-		if (is.available() <= 0) {
-			return null;
-		}
+		// if (is.available() <= 0) {
+		// return null;
+		// }
 
 		JsonParser parser = new JsonParser();
 		try {
@@ -138,6 +153,8 @@ public class OinkHttpConverter {
 		} catch (Exception e) {
 			throw new InvalidFhirRequestException(
 					"Could not read Fhir Body. Details: " + e.getMessage());
+		} finally {
+			is.close();
 		}
 
 	}

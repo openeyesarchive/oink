@@ -21,17 +21,17 @@ import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.*;
 import static org.ops4j.pax.exam.MavenUtils.asInProject;
 
 import java.io.File;
+
 import javax.inject.Inject;
 
 import org.ops4j.pax.exam.karaf.options.LogLevelOption.LogLevel;
 import org.ops4j.pax.exam.options.MavenArtifactUrlReference;
-import org.ops4j.pax.exam.options.MavenUrlReference;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.ProbeBuilder;
 import org.ops4j.pax.exam.TestProbeBuilder;
-import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.PaxExam;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
@@ -52,17 +52,17 @@ public class OinkHl7v2IT extends OinkKarafITSupport{
 	protected BundleContext bundleContext;
 	
 	@Test
-	public void checkFacadeHasASingleConfigPidAssociatedInTheFeaturesRepo() throws Exception {
+	public void checkHl7AdapterHasASingleConfigPidAssociatedInTheFeaturesRepo() throws Exception {
 		checkAdapterHasASingleConfigPidAssociatedInTheFeaturesRepo("hl7v2");
 	}
 	
 	@Test
-	public void checkFacadeContextFailsWithoutCfg() throws Exception {
+	public void checkHl7AdapterContextFailsWithoutCfg() throws Exception {
 		checkAdapterContextFailsWithoutCfg("hl7v2");
 	}
 	
 	@Test
-	public void checkFacadeContextDoesntFailWithCfg() throws Exception {
+	public void checkHl7AdapterContextDoesntFailWithCfg() throws Exception {
 		checkAdapterContextDoesntFailWithCfg("hl7v2");
 	}	
 	

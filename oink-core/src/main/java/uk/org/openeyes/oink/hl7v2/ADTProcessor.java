@@ -1,8 +1,11 @@
 package uk.org.openeyes.oink.hl7v2;
 
+import java.util.Iterator;
 import java.util.List;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.ProducerTemplate;
 import org.hl7.fhir.instance.model.AtomEntry;
 import org.hl7.fhir.instance.model.AtomFeed;
 import org.hl7.fhir.instance.model.Identifier;
@@ -15,6 +18,9 @@ import org.hl7.fhir.instance.model.ResourceType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import uk.org.openeyes.oink.domain.HttpMethod;
+import uk.org.openeyes.oink.domain.OINKRequestMessage;
+import uk.org.openeyes.oink.domain.OINKResponseMessage;
 import uk.org.openeyes.oink.exception.OinkException;
 
 public class ADTProcessor extends Hl7v2Processor {
@@ -89,8 +95,9 @@ public class ADTProcessor extends Hl7v2Processor {
 	/**
 	 * Processes an Organization in a bundle. Location and PartOf are not
 	 * catered for yet.
+	 * @throws OinkException 
 	 */
-	private String postResourceAndReferencedResources(Organization org, AtomFeed bundle, Exchange ex) {
+	private String postResourceAndReferencedResources(Organization org, AtomFeed bundle, Exchange ex) throws OinkException {
 
 		// Search for organization
 		List<Identifier> ids = org.getIdentifier();
@@ -109,8 +116,9 @@ public class ADTProcessor extends Hl7v2Processor {
 	 * Processes an Practitioner in a bundle. Making sure all resources
 	 * referenced by the Practitioner exist on the end server before posting the
 	 * Practitioner itself.
+	 * @throws OinkException 
 	 */
-	private String postResourceAndReferencedResources(Practitioner p, AtomFeed bundle, Exchange ex) {
+	private String postResourceAndReferencedResources(Practitioner p, AtomFeed bundle, Exchange ex) throws OinkException {
 		ResourceReference orgRef = p.getOrganization();
 		if (orgRef != null) {
 			AtomEntry<? extends Resource> resource = bundle.getById(orgRef
@@ -154,6 +162,101 @@ public class ADTProcessor extends Hl7v2Processor {
 			}
 		}
 		return p;
+	}
+	
+	/**
+	 * Searches for a resource over OINK using the resource's identifiers.
+	 * Expects a single entry in the results.
+	 * @throws OinkException 
+	 */
+	public String searchForResourceByIdentifiers(Resource resource,
+			List<Identifier> ids, Exchange ex) throws OinkException {
+
+		// Build OINKRequestMessage for Query
+		OINKRequestMessage query = buildSearchRequestMessage(resource,ids);
+
+		String resourceName = resource.getResourceType().toString();
+		log.info("Searching for " + resourceName + " using the message "
+				+ query.toString());
+
+		CamelContext ctx = ex.getContext();
+		ProducerTemplate prod = ctx.createProducerTemplate();
+		OINKResponseMessage resp = prod.requestBody("direct:rabbit-rpc", query,
+				OINKResponseMessage.class);
+
+		int status = resp.getStatus();
+
+		log.info("Response was " + status);
+
+		if (status == 200) {
+			AtomFeed bundle = resp.getBody().getBundle();
+			if (bundle == null || bundle.getTotalResults() == 0) {
+				return null;
+			} else if (bundle.getTotalResults() > 1) {
+				// throw exceptions
+			} else {
+				AtomEntry<? extends Resource> entry = bundle.getEntryList()
+						.get(0);
+				return entry.getId();
+			}
+		} else {
+			throw new OinkException("A preliminary search for a resource "+resourceName+" resulted in status "+status);
+		}
+
+		return null;
+	}
+
+	public OINKRequestMessage buildSearchRequestMessage(Resource resource,
+			List<Identifier> ids) {
+		// Build OINKRequestMessage for Query
+		OINKRequestMessage query = new OINKRequestMessage();
+		String resourceName = resource.getResourceType().toString();
+		query.setResourcePath("/" + resourceName);
+		query.setMethod(HttpMethod.GET);
+
+		// Build search query
+		StringBuilder sb = new StringBuilder();
+		sb.append("identifier=");
+		Iterator<Identifier> iter = ids.iterator();
+		while (iter.hasNext()) {
+			Identifier id = iter.next();
+			if (id.getSystemSimple() != null && !id.getSystemSimple().isEmpty()) {
+				sb.append(id.getSystemSimple());
+				sb.append("|");
+			}
+			sb.append(id.getValueSimple());
+			if (iter.hasNext()) {
+				sb.append(",");
+			}
+		}
+
+		query.setParameters(sb.toString());
+		return query;
+	}
+	
+	public String postResource(Resource resource, Exchange ex) {
+
+		// Build OINKRequestMessage for Query
+		OINKRequestMessage query = buildPostRequestMessage(resource);
+
+		CamelContext ctx = ex.getContext();
+		ProducerTemplate prod = ctx.createProducerTemplate();
+		OINKResponseMessage resp = (OINKResponseMessage) prod.requestBody(
+				"direct:rabbit-rpc", query);
+
+		int status = resp.getStatus();
+
+		String location = resp.getLocationHeader();
+		return location;
+	}
+	
+	public OINKRequestMessage buildPostRequestMessage(Resource resource) {
+		// Build OINKRequestMessage for Query
+		OINKRequestMessage query = new OINKRequestMessage();
+		String resourceName = resource.getResourceType().toString();
+		query.setResourcePath("/" + resourceName);
+		query.setMethod(HttpMethod.POST);
+		return query;
 	}
 
 }

@@ -100,6 +100,30 @@ public class ITProxyAdapter {
 	}
 	
 	@Test
+	public void testNoOrganizationSearchResults() throws Exception {
+		OINKRequestMessage req = new OINKRequestMessage();
+		req.setResourcePath("/Organization");
+		req.setParameters("_profile=http://openeyes.org.uk/fhir/1.7.0/profile/Organization/Practice&identifier=J83000");
+		req.setMethod(HttpMethod.GET);
+		
+		RabbitClient client = new RabbitClient(
+				props.getProperty("rabbit.host"), Integer.parseInt(props
+						.getProperty("rabbit.port")),
+				props.getProperty("rabbit.vhost"),
+				props.getProperty("rabbit.username"),
+				props.getProperty("rabbit.password"));
+		
+		OINKResponseMessage resp = client.sendAndRecieve(req,
+				props.getProperty("rabbit.routingKey"),
+				props.getProperty("rabbit.defaultExchange"));
+
+		assertEquals(200, resp.getStatus());
+		assertNotNull(resp.getBody());
+		assertNotNull(resp.getBody().getBundle());
+		assertEquals(0, resp.getBody().getBundle().getEntryList().size());
+	}
+	
+	@Test
 	public void testOrganizationCreateUpdateAndDelete() throws Exception {
 		
 		
@@ -375,7 +399,6 @@ public class ITProxyAdapter {
 		HttpResponse response1 = httpClient.execute(httpGet);
 		assertEquals(200, response1.getStatusLine().getStatusCode());
 	}
-	
 	
 	@Configuration
 	public Option[] config() {
