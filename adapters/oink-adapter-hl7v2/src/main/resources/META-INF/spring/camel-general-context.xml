@@ -32,19 +32,9 @@
 			value="osgibundle:/uk/org/openeyes/oink/adapter/hl7v2/A01.xsl" />
 	</bean>
 
-	<bean id="a05Processor" class="uk.org.openeyes.oink.hl7v2.ADTProcessor">
+	<bean id="a05Processor" class="uk.org.openeyes.oink.hl7v2.OpenEyesADTProcessor">
 		<property name="xsltPath"
-			value="osgibundle:/uk/org/openeyes/oink/adapter/hl7v2/a28.xsl" />
-	</bean>
-
-	<bean id="a28Processor" class="uk.org.openeyes.oink.hl7v2.ADTProcessor">
-		<property name="xsltPath"
-			value="osgibundle:/uk/org/openeyes/oink/adapter/hl7v2/a28.xsl" />
-	</bean>
-
-	<bean id="a31Processor" class="uk.org.openeyes.oink.hl7v2.ADTProcessor">
-		<property name="xsltPath"
-			value="osgibundle:/uk/org/openeyes/oink/adapter/hl7v2/a28.xsl" />
+			value="osgibundle:/uk/org/openeyes/oink/adapter/hl7v2/A05.xsl" />
 	</bean>
 
 	<bean id="a19Processor" class="uk.org.openeyes.oink.hl7v2.A19Processor" />
@@ -80,16 +70,8 @@
 					<bean ref="a01Processor" />
 				</when>
 				<when>
-					<simple>${header.CamelHL7TriggerEvent} == 'A05'</simple>
+					<simple>${header.CamelHL7TriggerEvent} == 'A05' or ${header.CamelHL7TriggerEvent} == 'A28' or ${header.CamelHL7TriggerEvent} == 'A31'</simple>
 					<bean ref="a05Processor" />
-				</when>
-				<when>
-					<simple>${header.CamelHL7TriggerEvent} == 'A28'</simple>
-					<bean ref="a28Processor" />
-				</when>
-				<when>
-					<simple>${header.CamelHL7TriggerEvent} == 'A31'</simple>
-					<bean ref="a31Processor" />
 				</when>
 				<otherwise>
 					<transform>

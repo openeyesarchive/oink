@@ -80,7 +80,7 @@ public class ITHl7v2ToProxy {
 	public void before() throws InterruptedException {
 		// Even though the bundles have started, the spring dm contexts may not
 		// be started yet so we must wait
-		Thread.sleep(10000);
+		Thread.sleep(15000);
 	}
 
 	@Test
@@ -113,7 +113,7 @@ public class ITHl7v2ToProxy {
 			throws Exception {
 
 		// Load example A05
-		Message exampleA05 = Hl7ITSupport.loadHl7Message("/hl7v2/A05.txt");
+		Message exampleA05 = Hl7ITSupport.loadHl7Message("/hl7v2/A05-mod.txt");
 
 		// Post A01
 		testMessageCanBePostedAndAcceptedByOink(exampleA05);
@@ -138,7 +138,7 @@ public class ITHl7v2ToProxy {
 			throws Exception {
 
 		// Load example A28
-		Message exampleA28 = Hl7ITSupport.loadHl7Message("/hl7v2/A28-2.txt");
+		Message exampleA28 = Hl7ITSupport.loadHl7Message("/hl7v2/A28-2-mod.txt");
 
 		// Post A28
 		testMessageCanBePostedAndAcceptedByOink(exampleA28);
@@ -163,7 +163,7 @@ public class ITHl7v2ToProxy {
 			throws Exception {
 
 		// Load example A31
-		Message exampleA31 = Hl7ITSupport.loadHl7Message("/hl7v2/A31-2.txt");
+		Message exampleA31 = Hl7ITSupport.loadHl7Message("/hl7v2/A31-2-mod.txt");
 
 		// Post A31
 		testMessageCanBePostedAndAcceptedByOink(exampleA31);
