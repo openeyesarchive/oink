@@ -200,4 +200,5 @@
 		</plugins>
 	</build>
 
+	<description>Support for A01,A05,A28,A31</description>
 </project>

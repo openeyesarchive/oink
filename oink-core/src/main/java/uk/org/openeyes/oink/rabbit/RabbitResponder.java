@@ -30,7 +30,7 @@ public class RabbitResponder {
 		if (replyTo == null || replyTo.isEmpty()) {
 			log.warn("No replyTo routingKey found. No response will be sent");
 		} else {
-			log.info("Replying to routingKey:"+replyTo);
+			log.debug("Replying to routingKey:"+replyTo);
 		}
 		ex.getIn().setHeader("rabbitmq.ROUTING_KEY", replyTo);
 	}

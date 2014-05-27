@@ -1,23 +1,33 @@
 package uk.org.openeyes.oink.hl7v2;
 
+import java.rmi.server.Operation;
 import java.util.Iterator;
 import java.util.List;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
+import org.hl7.fhir.instance.model.Address;
 import org.hl7.fhir.instance.model.AtomEntry;
 import org.hl7.fhir.instance.model.AtomFeed;
+import org.hl7.fhir.instance.model.CodeableConcept;
+import org.hl7.fhir.instance.model.Contact;
+import org.hl7.fhir.instance.model.HumanName;
 import org.hl7.fhir.instance.model.Identifier;
+import org.hl7.fhir.instance.model.OperationOutcome;
 import org.hl7.fhir.instance.model.Organization;
 import org.hl7.fhir.instance.model.Patient;
 import org.hl7.fhir.instance.model.Practitioner;
 import org.hl7.fhir.instance.model.Resource;
 import org.hl7.fhir.instance.model.ResourceReference;
 import org.hl7.fhir.instance.model.ResourceType;
+import org.hl7.fhir.instance.model.Contact.ContactSystem;
+import org.hl7.fhir.instance.model.HumanName.NameUse;
+import org.hl7.fhir.instance.model.Patient.ContactComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import uk.org.openeyes.oink.domain.FhirBody;
 import uk.org.openeyes.oink.domain.HttpMethod;
 import uk.org.openeyes.oink.domain.OINKRequestMessage;
 import uk.org.openeyes.oink.domain.OINKResponseMessage;
@@ -35,7 +45,8 @@ public class ADTProcessor extends Hl7v2Processor {
 		// Extract Patient from Bundle
 		Patient patient = extractPatient(bundle);
 
-		String location = postResourceAndReferencedResources(patient, bundle, ex);
+		String location = postResourceAndReferencedResources(patient, bundle,
+				ex);
 		log.info("Patient posted to server with url:" + location);
 
 	}
@@ -45,8 +56,10 @@ public class ADTProcessor extends Hl7v2Processor {
 	 * resources referenced by the Patient exist in the destination server
 	 * before posting the patient itself.
 	 */
-	private String postResourceAndReferencedResources(Patient p, AtomFeed bundle, Exchange ex)
-			throws OinkException {
+	private String postResourceAndReferencedResources(Patient p,
+			AtomFeed bundle, Exchange ex) throws OinkException {
+
+		log.debug("Posting Patient and all associated resources if necessary");
 
 		// Handle Care Providers
 		for (ResourceReference resourceRef : p.getCareProvider()) {
@@ -60,12 +73,14 @@ public class ADTProcessor extends Hl7v2Processor {
 					.equals(ResourceType.Practitioner)) {
 				Practitioner practitioner = (Practitioner) resource
 						.getResource();
-				String absoluteUrl = postResourceAndReferencedResources(practitioner, bundle, ex);
+				String absoluteUrl = postResourceAndReferencedResources(
+						practitioner, bundle, ex);
 				resourceRef.setReferenceSimple(absoluteUrl);
 			} else if (resource.getResource().getResourceType()
 					.equals(ResourceType.Organization)) {
 				Organization org = (Organization) resource.getResource();
-				String absoluteUrl = postResourceAndReferencedResources(org, bundle, ex);
+				String absoluteUrl = postResourceAndReferencedResources(org,
+						bundle, ex);
 				resourceRef.setReferenceSimple(absoluteUrl);
 			} else {
 				log.error("A care provider was referenced which isn't a Practitioner or an Organization");
@@ -80,12 +95,62 @@ public class ADTProcessor extends Hl7v2Processor {
 			if (resource.getResource().getResourceType()
 					.equals(ResourceType.Organization)) {
 				Organization org = (Organization) resource.getResource();
-				String absoluteUrl = postResourceAndReferencedResources(org, bundle, ex);
+				String absoluteUrl = postResourceAndReferencedResources(org,
+						bundle, ex);
 				managingOrgRef.setReferenceSimple(absoluteUrl);
 			} else {
 				log.error("A Managing Organization was referenced which isn't an Organization");
 			}
 		}
+
+		// OpenEyes QUICKFIX: Set Family use to usual
+		for (HumanName name : p.getName()) {
+			if (name.getUseSimple() == null) {
+				log.warn("Manually forcing patient's name use to be usual");				
+				name.setUseSimple(NameUse.usual);
+			}
+		}
+
+		// OpenEyes QUICKFIX: Set Phone system
+		for (Contact contact : p.getTelecom()) {
+			if (contact.getSystemSimple() == null) {
+				log.warn("Manually forcing patient's phone syste to be phone");
+				contact.setSystemSimple(ContactSystem.phone);
+			}
+		}
+
+		// OpenEyes QUICKFIX: Set Country to United Kingdom
+		for (Address address : p.getAddress()) {
+			log.warn("Manually forcing patient's addresses to be United Kingdom");
+			address.setCountrySimple("United Kingdom");
+		}
+
+		// OpenEyes QUICKFIX: Set NHS System identifier
+		String nhsNumberIdentifierSystem = "http://www.datadictionary.nhs.uk/data_dictionary/attributes/n/nhs/nhs_number_de.asp";
+		for (Identifier id : p.getIdentifier()) {
+			if (id.getSystemSimple().contains("NHS")) {
+				log.warn("Manually replacing Patient identifier system NHS with "
+						+ nhsNumberIdentifierSystem);
+				id.setSystemSimple(nhsNumberIdentifierSystem);
+			}
+		}
+
+		// OpenEyes QUICKFIX: Set Hospital Value
+		for (Identifier id : p.getIdentifier()) {
+			if (id.getSystemSimple().contains("PAS")) {
+				log.warn("Manually forcing Hospital Number identifier to work with Openeyes");
+				id.setSystem(null);
+				id.setLabelSimple("Hospital Number");
+			}
+		}
+
+		// OpenEyes QUICKFIX: Remove managingOrgRefs
+		log.warn("Manually removing Managing Org Ref");
+		p.setManagingOrganization(null);
+
+		// OpenEyes QUICKFIX: Remove careProviderRefs
+		log.warn("Manually removing Care Providers");
+		p.getCareProvider().clear();
 
 		// POST Patient
 		String location = postResource(p, ex);
@@ -95,12 +160,21 @@ public class ADTProcessor extends Hl7v2Processor {
 	/**
 	 * Processes an Organization in a bundle. Location and PartOf are not
 	 * catered for yet.
-	 * @throws OinkException 
+	 * 
+	 * @throws OinkException
 	 */
-	private String postResourceAndReferencedResources(Organization org, AtomFeed bundle, Exchange ex) throws OinkException {
+	private String postResourceAndReferencedResources(Organization org,
+			AtomFeed bundle, Exchange ex) throws OinkException {
 
 		// Search for organization
 		List<Identifier> ids = org.getIdentifier();
+
+		// Add identifier systemValue
+		String systemValue = "http://www.datadictionary.nhs.uk/data_dictionary/attributes/o/org/organisation_code_de.asp";
+		log.warn("Manually setting system value for Organization identifier to "
+				+ systemValue);
+		ids.get(0).setSystemSimple(systemValue);
+
 		String location = searchForResourceByIdentifiers(org, ids, ex);
 
 		if (location != null) {
@@ -116,9 +190,11 @@ public class ADTProcessor extends Hl7v2Processor {
 	 * Processes an Practitioner in a bundle. Making sure all resources
 	 * referenced by the Practitioner exist on the end server before posting the
 	 * Practitioner itself.
-	 * @throws OinkException 
+	 * 
+	 * @throws OinkException
 	 */
-	private String postResourceAndReferencedResources(Practitioner p, AtomFeed bundle, Exchange ex) throws OinkException {
+	private String postResourceAndReferencedResources(Practitioner p,
+			AtomFeed bundle, Exchange ex) throws OinkException {
 		ResourceReference orgRef = p.getOrganization();
 		if (orgRef != null) {
 			AtomEntry<? extends Resource> resource = bundle.getById(orgRef
@@ -126,7 +202,8 @@ public class ADTProcessor extends Hl7v2Processor {
 			if (resource.getResource().getResourceType()
 					.equals(ResourceType.Organization)) {
 				Organization org = (Organization) resource.getResource();
-				String absoluteUrl = postResourceAndReferencedResources(org, bundle, ex);
+				String absoluteUrl = postResourceAndReferencedResources(org,
+						bundle, ex);
 				orgRef.setReferenceSimple(absoluteUrl);
 			} else {
 				log.error("An Organization was referenced which isn't an Organization");
@@ -137,6 +214,20 @@ public class ADTProcessor extends Hl7v2Processor {
 		List<Identifier> ids = p.getIdentifier();
 		String location = searchForResourceByIdentifiers(p, ids, ex);
 
+		// OPENEYES QUICKFIX: Add identifier systemValue
+		String systemValue = "http://www.datadictionary.nhs.uk/data_dictionary/attributes/g/general_medical_practitioner_ppd_code_de.asp";
+		log.warn("Manually setting system value for Practitioner identifier to "
+				+ systemValue);
+		ids.get(0).setSystemSimple(systemValue);
+
+		// OPENEYES QUICKFIX: Add human name . use
+		log.warn("Manually setting use value for Practioner's name");
+		p.getName().setUseSimple(NameUse.usual);
+
+		// OPENEYES QUICKFIX: Remove reference to parent organisation
+		log.warn("Manually removing reference to Organization");
+		p.setOrganization(null);
+
 		if (location != null) {
 			return location;
 		}
@@ -146,7 +237,8 @@ public class ADTProcessor extends Hl7v2Processor {
 	}
 
 	/**
-	 * Searches for the single Patient entry that should be in the bundle. Warns if another one is present.
+	 * Searches for the single Patient entry that should be in the bundle. Warns
+	 * if another one is present.
 	 */
 	private Patient extractPatient(AtomFeed bundle) {
 		Patient p = null;
@@ -163,20 +255,21 @@ public class ADTProcessor extends Hl7v2Processor {
 		}
 		return p;
 	}
-	
+
 	/**
 	 * Searches for a resource over OINK using the resource's identifiers.
 	 * Expects a single entry in the results.
-	 * @throws OinkException 
+	 * 
+	 * @throws OinkException
 	 */
 	public String searchForResourceByIdentifiers(Resource resource,
 			List<Identifier> ids, Exchange ex) throws OinkException {
 
 		// Build OINKRequestMessage for Query
-		OINKRequestMessage query = buildSearchRequestMessage(resource,ids);
+		OINKRequestMessage query = buildSearchRequestMessage(resource, ids);
 
 		String resourceName = resource.getResourceType().toString();
-		log.info("Searching for " + resourceName + " using the message "
+		log.debug("Searching for " + resourceName + " using the message "
 				+ query.toString());
 
 		CamelContext ctx = ex.getContext();
@@ -186,24 +279,25 @@ public class ADTProcessor extends Hl7v2Processor {
 
 		int status = resp.getStatus();
 
-		log.info("Response was " + status);
+		log.debug("Response had code " + status);
 
 		if (status == 200) {
 			AtomFeed bundle = resp.getBody().getBundle();
-			if (bundle == null || bundle.getTotalResults() == 0) {
+			if (bundle == null || bundle.getEntryList().isEmpty()) {
 				return null;
-			} else if (bundle.getTotalResults() > 1) {
-				// throw exceptions
+			} else if (bundle.getEntryList().size() > 1) {
+				throw new OinkException(
+						"Multiple possible entries found for resource. Cannot be trusted to choose a single one.");
 			} else {
 				AtomEntry<? extends Resource> entry = bundle.getEntryList()
 						.get(0);
 				return entry.getId();
 			}
 		} else {
-			throw new OinkException("A preliminary search for a resource "+resourceName+" resulted in status "+status);
+			throw new OinkException("A preliminary search for a resource "
+					+ resourceName + " resulted in status " + status);
 		}
 
-		return null;
 	}
 
 	public OINKRequestMessage buildSearchRequestMessage(Resource resource,
@@ -233,29 +327,41 @@ public class ADTProcessor extends Hl7v2Processor {
 		query.setParameters(sb.toString());
 		return query;
 	}
-	
-	public String postResource(Resource resource, Exchange ex) {
+
+	public String postResource(Resource resource, Exchange ex)
+			throws OinkException {
 
 		// Build OINKRequestMessage for Query
 		OINKRequestMessage query = buildPostRequestMessage(resource);
 
 		CamelContext ctx = ex.getContext();
 		ProducerTemplate prod = ctx.createProducerTemplate();
-		OINKResponseMessage resp = (OINKResponseMessage) prod.requestBody(
-				"direct:rabbit-rpc", query);
+		OINKResponseMessage resp = prod.requestBody("direct:rabbit-rpc", query,
+				OINKResponseMessage.class);
 
 		int status = resp.getStatus();
+
+		if (status / 100 != 2) {
+			throw new OinkException("Failure to post "
+					+ resource.getResourceType().toString() + ", response was "
+					+ status);
+		} else {
+			log.debug("Resource of type:"
+					+ resource.getResourceType().toString()
+					+ " was posted with status " + status);
+		}
 
 		String location = resp.getLocationHeader();
 		return location;
 	}
-	
+
 	public OINKRequestMessage buildPostRequestMessage(Resource resource) {
 		// Build OINKRequestMessage for Query
 		OINKRequestMessage query = new OINKRequestMessage();
 		String resourceName = resource.getResourceType().toString();
 		query.setResourcePath("/" + resourceName);
 		query.setMethod(HttpMethod.POST);
+		query.setBody(new FhirBody(resource));
 		return query;
 	}
 

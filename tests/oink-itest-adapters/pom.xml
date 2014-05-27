@@ -34,12 +34,13 @@
 			<version>3.5.0</version>
 			<scope>test</scope>
 		</dependency>
+		
 		<dependency>
-			<groupId>org.ops4j.pax.runner</groupId>
-			<artifactId>pax-runner-no-jcl</artifactId>
-			<version>1.8.5</version>
-			<scope>test</scope>
-		</dependency>
+            <groupId>org.ops4j.pax.exam</groupId>
+            <artifactId>pax-exam-link-mvn</artifactId>
+            <version>3.5.0</version>
+            <scope>test</scope>
+        </dependency>
 
 		<dependency>
 			<groupId>uk.org.openeyes.oink.karaf</groupId>
@@ -83,12 +84,6 @@
 			<version>${project.version}</version>
 			<type>test-jar</type>
 			<scope>test</scope>
-			<exclusions>
-				<exclusion>
-					<artifactId>commons-codec</artifactId>
-					<groupId>commons-codec</groupId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 
 		<!-- test and logging -->

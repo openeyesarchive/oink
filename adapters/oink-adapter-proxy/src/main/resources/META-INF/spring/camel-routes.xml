@@ -13,15 +13,15 @@
 
 	<camelContext xmlns="http://camel.apache.org/schema/spring">
 	
-		<route>
+		<route id="proxy-route">
 			<from uri="rabbitmq://{{rabbit.host}}:{{rabbit.port}}/{{rabbit.defaultExchange}}?vhost={{rabbit.vhost}}&amp;username={{rabbit.username}}&amp;password={{rabbit.password}}&amp;routingKey={{rabbit.routingKey}}&amp;autoDelete=false"/>
-			<log message="Proxy adapter received OinkRequestMessage"/>
+			<log loggingLevel="DEBUG" message="Proxy adapter received OinkRequestMessage"/>
 			<bean ref="oinkHttpConverter" method="buildHttpRequest" />
-			<to uri="http4://{{proxy.uri}}?throwExceptionOnFailure=false&amp;headerFilterStrategy=httpFilterStrategy&amp;authUsername={{proxy.username}}&amp;authPassword={{proxy.password}}&amp;httpClient.cookiePolicy=ignoreCookies"/>
+			<to uri="http4://{{proxy.uri}}?throwExceptionOnFailure=false&amp;headerFilterStrategy=httpFilterStrategy&amp;authUsername={{proxy.username}}&amp;authPassword={{proxy.password}}&amp;httpClient.cookiePolicy=ignoreCookies&amp;authenticationPreemptive=true"/>
 			<convertBodyTo type="java.lang.String" charset="utf-8" />
 			<bean ref="oinkHttpConverter" method="buildOinkResponse" />
 			<bean ref="rabbitResponder" method="prepareHeaders"/>
-			<log message="Proxy adapter returning OinkResponseMessage"/>
+			<log loggingLevel="DEBUG" message="Proxy adapter returning OinkResponseMessage"/>
 			<to uri="rabbitmq://{{rabbit.host}}:{{rabbit.port}}/{{rabbit.defaultExchange}}?vhost={{rabbit.vhost}}&amp;username={{rabbit.username}}&amp;password={{rabbit.password}}&amp;autoDelete=false"/>	
 		</route>
 

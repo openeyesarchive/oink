@@ -1087,7 +1087,7 @@
 		<xsl:variable name="complexTypes.Identifier_in" select="."/>
 		<identifier>
 			<xsl:variable name="value_133" select="$complexTypes.Identifier_in/self::node()"/>
-			<xsl:variable name="system_135" select="$complexTypes.Identifier_in/ancestor::oms:PD1.3/oms:XON.6"/>
+			<xsl:variable name="system_135" select="$complexTypes.Identifier_in/ancestor::oms:PD1.3/oms:XON.2"/>
 			<xsl:if test="string($value_133)">
 				<xsl:call-template name="value_41">
 					<xsl:with-param name="complexTypes.Identifier_in" select="$complexTypes.Identifier_in"/>
@@ -1116,7 +1116,7 @@
 		<xsl:param name="complexTypes.Identifier_in"/>
 		<!--WProc template for path /a:feed/a:entry_Organization/a:content/Organization/identifier/system-->
 		<system>
-			<xsl:variable name="system_136" select="$complexTypes.Identifier_in/ancestor::oms:PD1.3/oms:XON.6"/>
+			<xsl:variable name="system_136" select="$complexTypes.Identifier_in/ancestor::oms:PD1.3/oms:XON.2"/>
 			<xsl:if test="string($system_136)">
 				<xsl:attribute name="value">
 					<xsl:value-of select="$system_136"/>

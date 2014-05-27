@@ -62,17 +62,15 @@ public class OinkHttpConverter {
 			@Headers Map<String, Object> headers, @Body String body)
 			throws InvalidFhirRequestException, IOException {
 		OINKResponseMessage response = new OINKResponseMessage();
-
-		String b = new String(body);
-
+		
 		if (body != null) {
 			try {
-				FhirBody fhirBody = readFhirBody(b);
+				FhirBody fhirBody = readFhirBody(body);
 				response.setBody(fhirBody);
 			} catch (InvalidFhirRequestException ex) {
 				logger.warn("The response body was not recognised as a Fhir Resource or Bundle!");
 				logger.error(ex.getMessage());
-				logger.error(b);
+				logger.debug(body);
 			}
 		}
 		if (headers.containsKey(Exchange.HTTP_RESPONSE_CODE)) {
