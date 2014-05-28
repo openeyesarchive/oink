@@ -14,5 +14,6 @@
   <modules>
     <module>oink-itest-karaf</module>
     <module>oink-itest-adapters</module>
+    <module>oink-itest-shared</module>
   </modules>
 </project>

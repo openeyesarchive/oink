@@ -14,16 +14,20 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.ops4j.pax.exam.Configuration;
+import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.Option;
+import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.junit.PaxExamServer;
 import org.ops4j.pax.exam.karaf.options.LogLevelOption.LogLevel;
 import org.ops4j.pax.exam.options.MavenArtifactUrlReference;
 import org.ops4j.pax.exam.options.MavenUrlReference;
+import org.ops4j.pax.exam.spi.PaxExamRuntime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,11 +45,11 @@ import ca.uhn.hl7v2.model.v24.message.ACK;
  */
 public class ITHl7v2Adapter {
 
-	@Rule
-	public PaxExamServer exam = new PaxExamServer();
-
 	private static Properties props;
-	private static final Logger log = LoggerFactory.getLogger(ITHl7v2Adapter.class);
+	private static final Logger log = LoggerFactory
+			.getLogger(ITHl7v2Adapter.class);
+
+	private static TestContainer examContainer;
 
 	@BeforeClass
 	public static void setUp() throws IOException, InterruptedException {
@@ -53,35 +57,30 @@ public class ITHl7v2Adapter {
 		InputStream is = ITHl7v2Adapter.class
 				.getResourceAsStream("/hl7v2.properties");
 		props.load(is);
+
+		// Start Pax Exam
+		ExamSystem system = PaxExamRuntime.createServerSystem(config());
+		examContainer = PaxExamRuntime.createContainer(system);
+		examContainer.start();
+		
+		// TODO Fix - For some reason a large wait is required
+		Thread.sleep(45000);
 	}
-	
+
+	@AfterClass
+	public static void tearDown() {
+		examContainer.stop();
+	}
+
 	@Before
 	public void before() throws InterruptedException {
 		// Even though the bundles have started, the spring dm contexts may not
 		// be started yet so we must wait
-		Thread.sleep(10000);
+		Thread.sleep(15000);
 	}
-	
-	@Test
-	public void testA01isAccepted() throws Exception {
-		
-		Message a01 = Hl7ITSupport.loadHl7Message("/hl7v2/A01.txt");
 
-		HapiContext context = new DefaultHapiContext();
-		Connection hl7v2Conn = context.newClient((String) props.get("hl7v2.host"), (Integer) Integer.parseInt(props.getProperty("hl7v2.port")),
-				false);
-		Initiator initiator = hl7v2Conn.getInitiator();
-		ACK response = (ACK) initiator.sendAndReceive(a01);
-		context.close();
-		
-		assertEquals("AA", response.getMSA().getAcknowledgementCode());
-	
-		
-	}
-	
-	
 	@Configuration
-	public Option[] config() {
+	public static Option[] config() {
 		MavenArtifactUrlReference karafUrl = maven()
 				.groupId("uk.org.openeyes.oink.karaf").artifactId("distro")
 				.version(asInProject()).type("tar.gz");
@@ -106,11 +105,14 @@ public class ITHl7v2Adapter {
 				// configureConsole().ignoreLocalConsole(),
 				// Force the log level to INFO so we have more details during
 				// the test. It defaults to WARN.
-				logLevel(LogLevel.INFO),
 				// Provision the example feature exercised by this test
 				features(oinkFeaturesRepo, "oink-adapter-hl7v2"),
-				replaceConfigurationFile("etc/uk.org.openeyes.oink.hl7v2.cfg",
-						new File("src/test/resources/hl7v2.properties")),
+				replaceConfigurationFile(
+						"etc/uk.org.openeyes.oink.hl7v2.cfg",
+						new File(
+								"../oink-itest-shared/src/main/resources/hl7v2.properties")),
+				replaceConfigurationFile("etc/org.ops4j.pax.logging.cfg",
+						new File("src/test/resources/log4j.properties")),
 
 		// Remember that the test executes in another process. If you
 		// want to

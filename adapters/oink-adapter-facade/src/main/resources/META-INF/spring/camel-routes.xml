@@ -42,7 +42,7 @@
 						<bean ref="rabbitProcessor" method="setRabbitRouteHeaders" />
 						<bean ref="synchRabbitProcessor" method="prepare" />
 						<to
-							uri="rabbitmq://{{rabbit.host}}:{{rabbit.port}}/{{rabbit.defaultExchange}}?vhost={{rabbit.vhost}}&amp;username={{rabbit.username}}&amp;password={{rabbit.password}}" />
+							uri="rabbitmq://{{rabbit.host}}:{{rabbit.port}}/{{rabbit.defaultExchange}}?vhost={{rabbit.vhost}}&amp;username={{rabbit.username}}&amp;password={{rabbit.password}}&amp;autoDelete=false" />
 						<bean ref="synchRabbitProcessor" method="waitForResponse" />
 						<removeHeaders pattern="*" />
 						<bean ref="oinkHttpConverter" method="buildHttpResponse" />
@@ -54,7 +54,7 @@
 		<!-- Facade response router -->
 		<route>
 			<from
-				uri="rabbitmq://{{rabbit.host}}:{{rabbit.port}}/{{rabbit.defaultExchange}}?vhost={{rabbit.vhost}}&amp;username={{rabbit.username}}&amp;password={{rabbit.password}}&amp;queue={{rabbit.responseRoutingKey}}&amp;routingKey={{rabbit.responseRoutingKey}}" />
+				uri="rabbitmq://{{rabbit.host}}:{{rabbit.port}}/{{rabbit.defaultExchange}}?vhost={{rabbit.vhost}}&amp;username={{rabbit.username}}&amp;password={{rabbit.password}}&amp;queue={{rabbit.responseRoutingKey}}&amp;routingKey={{rabbit.responseRoutingKey}}&amp;autoDelete=false" />
 			<recipientList>
 				<simple>seda:${headers.rabbitmq.CORRELATIONID}</simple>
 			</recipientList>

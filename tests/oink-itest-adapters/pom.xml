@@ -15,6 +15,12 @@
 	</properties>
 	<dependencies>
 
+		<dependency>
+			<groupId>uk.org.openeyes.oink</groupId>
+			<artifactId>oink-itest-shared</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
 		<!-- Dependencies for pax exam karaf container -->
 		<dependency>
 			<groupId>org.ops4j.pax.exam</groupId>
@@ -34,13 +40,13 @@
 			<version>3.5.0</version>
 			<scope>test</scope>
 		</dependency>
-		
+
 		<dependency>
-            <groupId>org.ops4j.pax.exam</groupId>
-            <artifactId>pax-exam-link-mvn</artifactId>
-            <version>3.5.0</version>
-            <scope>test</scope>
-        </dependency>
+			<groupId>org.ops4j.pax.exam</groupId>
+			<artifactId>pax-exam-link-mvn</artifactId>
+			<version>3.5.0</version>
+			<scope>test</scope>
+		</dependency>
 
 		<dependency>
 			<groupId>uk.org.openeyes.oink.karaf</groupId>
@@ -109,7 +115,7 @@
 			<groupId>ca.uhn.hapi.fhir</groupId>
 			<artifactId>hapi-fhir-base</artifactId>
 			<version>0.3</version>
-			<scope>test</scope>			
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>commons-httpclient</groupId>
@@ -120,6 +126,35 @@
 
 	<build>
 		<plugins>
+
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>1.1</version>
+				<executions>
+					<execution>
+						<id>start-rabbit</id>
+						<phase>pre-integration-test</phase>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<configuration>
+							<executable>../oink-itest-shared/src/main/resources/config/startRabbit.sh</executable>
+						</configuration>
+					</execution>
+					<execution>
+						<id>stop-rabbit</id>
+						<phase>post-integration-test</phase>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<configuration>
+							<executable>../oink-itest-shared/src/main/resources/config/stopRabbit.sh</executable>
+						</configuration>
+					</execution>					
+				</executions>
+			</plugin>
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-failsafe-plugin</artifactId>

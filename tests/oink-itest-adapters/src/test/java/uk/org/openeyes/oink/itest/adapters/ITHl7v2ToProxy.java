@@ -21,16 +21,20 @@ import org.apache.http.HttpRequest;
 import org.apache.http.HttpRequestInterceptor;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.protocol.HttpContext;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.ops4j.pax.exam.Configuration;
+import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.Option;
+import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.junit.PaxExamServer;
 import org.ops4j.pax.exam.karaf.options.LogLevelOption.LogLevel;
 import org.ops4j.pax.exam.options.MavenArtifactUrlReference;
 import org.ops4j.pax.exam.options.MavenUrlReference;
+import org.ops4j.pax.exam.spi.PaxExamRuntime;
 import org.ops4j.pax.exam.util.PathUtils;
 
 import ca.uhn.fhir.context.FhirContext;
@@ -56,14 +60,14 @@ import uk.org.openeyes.oink.hl7v2.test.Hl7ITSupport;
  */
 public class ITHl7v2ToProxy {
 
-	@Rule
-	public PaxExamServer exam = new PaxExamServer();
 
 	private static Properties hl7Props;
 	private static Properties proxyProps;
+	
+	private static TestContainer examContainer;
 
 	@BeforeClass
-	public static void setUp() throws IOException {
+	public static void setUp() throws IOException, InterruptedException {
 
 		hl7Props = new Properties();
 		InputStream hl7PropsIs = ITHl7v2ToProxy.class
@@ -74,6 +78,19 @@ public class ITHl7v2ToProxy {
 		InputStream proxyPropsIs = ITHl7v2ToProxy.class
 				.getResourceAsStream("/proxy.properties");
 		proxyProps.load(proxyPropsIs);
+		
+		// Start Pax Exam
+		ExamSystem system = PaxExamRuntime.createServerSystem(config());
+		examContainer = PaxExamRuntime.createContainer(system);
+		examContainer.start();
+		
+		// TODO Fix - For some reason a large wait is required
+		Thread.sleep(45000);
+	}
+	
+	@AfterClass
+	public static void tearDown() {
+		examContainer.stop();
 	}
 
 	@Before
@@ -94,7 +111,7 @@ public class ITHl7v2ToProxy {
 		testMessageCanBePostedAndAcceptedByOink(exampleA01);
 
 		// Search for Patient
-		IGenericClient client = buildHapiClient(proxyProps);
+		IGenericClient client = ITSupport.buildHapiClient(proxyProps);
 
 		Bundle searchResults = client
 				.search()
@@ -119,7 +136,7 @@ public class ITHl7v2ToProxy {
 		testMessageCanBePostedAndAcceptedByOink(exampleA05);
 
 		// Search for Patient
-		IGenericClient client = buildHapiClient(proxyProps);
+		IGenericClient client = ITSupport.buildHapiClient(proxyProps);
 
 		Bundle searchResults = client
 				.search()
@@ -144,7 +161,7 @@ public class ITHl7v2ToProxy {
 		testMessageCanBePostedAndAcceptedByOink(exampleA28);
 
 		// Search for Patient
-		IGenericClient client = buildHapiClient(proxyProps);
+		IGenericClient client = ITSupport.buildHapiClient(proxyProps);
 
 		Bundle searchResults = client
 				.search()
@@ -169,7 +186,7 @@ public class ITHl7v2ToProxy {
 		testMessageCanBePostedAndAcceptedByOink(exampleA31);
 
 		// Search for Patient
-		IGenericClient client = buildHapiClient(proxyProps);
+		IGenericClient client = ITSupport.buildHapiClient(proxyProps);
 
 		Bundle searchResults = client
 				.search()
@@ -209,45 +226,7 @@ public class ITHl7v2ToProxy {
 				.getValue());
 	}
 
-	public static IGenericClient buildHapiClient(Properties proxyProps) {
-		// See if Patient exists
-		String proxyUri = (String) proxyProps.get("proxy.uri");
-
-		// Create a context and get the client factory so it can be configured
-		FhirContext ctx = new FhirContext();
-		IRestfulClientFactory clientFactory = ctx.getRestfulClientFactory();
-
-		// Create an HTTP Client Builder
-		HttpClientBuilder builder = HttpClientBuilder.create();
-
-		// This interceptor adds HTTP username/password to every request
-		String username = (String) proxyProps.get("proxy.username");
-		String password = (String) proxyProps.get("proxy.password");
-		builder.addInterceptorFirst(new HttpBasicAuthInterceptor(username,
-				password));
-		
-		builder.addInterceptorFirst(new HttpRequestInterceptor() {
-			
-			@Override
-			public void process(HttpRequest req, HttpContext context)
-					throws HttpException, IOException {
-				req.addHeader("Accept", "application/json+fhir; charset=UTF-8");
-			}
-		});
-
-		// Use the new HTTP client builder
-		clientFactory.setHttpClient(builder.build());
-		
-		IGenericClient client = clientFactory.newGenericClient("http://"
-				+ proxyUri);
-		
-		
-
-		return client;
-	}
-
-	@Configuration
-	public Option[] config() {
+	public static Option[] config() {
 		MavenArtifactUrlReference karafUrl = maven()
 				.groupId("uk.org.openeyes.oink.karaf").artifactId("distro")
 				.version(asInProject()).type("tar.gz");
@@ -276,10 +255,10 @@ public class ITHl7v2ToProxy {
 				// Provision the example feature exercised by this test
 				features(oinkFeaturesRepo, "oink-adapter-hl7v2"),
 				replaceConfigurationFile("etc/uk.org.openeyes.oink.hl7v2.cfg",
-						new File("src/test/resources/hl7v2.properties")),
+						new File("../oink-itest-shared/src/main/resources/hl7v2.properties")),
 				features(oinkFeaturesRepo, "oink-adapter-proxy"),
 				replaceConfigurationFile("etc/uk.org.openeyes.oink.proxy.cfg",
-						new File("src/test/resources/proxy.properties")),
+						new File("../oink-itest-shared/src/main/resources/proxy.properties")),
 				replaceConfigurationFile("etc/org.ops4j.pax.logging.cfg",
 								new File("src/test/resources/log4j.properties")),						
 
