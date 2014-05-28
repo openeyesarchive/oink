@@ -7,25 +7,11 @@
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
        http://www.openeyes.org.uk/schema/oink http://www.openeyes.org.uk/schema/oink/oink-1.0.xsd">
 
-	<bean id="bridgePropertyPlaceholder"
-		class="org.apache.camel.spring.spi.BridgePropertyPlaceholderConfigurer">
-		<property name="location" value="${integrationTestProperties}" />
-	</bean>
-
 	<import resource="classpath:spring-plain/camel-non-osgi-context.xml" />
-
-	<bean id="routingService" class="uk.org.openeyes.oink.facade.FacadeRoutingService">
-		<constructor-arg>
-			<oink:facadeRabbitMapper>
-				<oink:mapping resource="*" method="ANY" exchange="test"
-					route="siteB" />
-			</oink:facadeRabbitMapper>
-		</constructor-arg>
-		<constructor-arg value="${rabbit.responseRoutingKey}" />
+	
+	<bean id="propertiesSource" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+		<property name="location" value="classpath:facade-test.properties"/>
 	</bean>
 
-	<bean id="synchRabbitProcessor" class="uk.org.openeyes.oink.rabbit.SynchronousRabbitProcessor">
-		<constructor-arg value="10000" />
-	</bean>
 
 </beans>

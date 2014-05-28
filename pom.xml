@@ -15,6 +15,7 @@
 		<camel.version>2.12.3</camel.version>
 		<karaf.version>3.0.1</karaf.version>
 		<commonsio.version>2.4</commonsio.version>
+		<commons-configuration.version>1.8</commons-configuration.version>
 		<osgi.version>4.0.0</osgi.version>
 		<slf4j.version>1.7.7</slf4j.version>
 		<fhir.version>2382-SNAPSHOT</fhir.version>

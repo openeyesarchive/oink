@@ -53,9 +53,7 @@ public class SynchronousRabbitProcessor {
 						"seda:" + synchronousRequestId, timeOut);
 
 		if (resultFromQueuingSystem != null) {
-			
 			e.setOut(resultFromQueuingSystem.getIn());
-
 		} else {
 			throw new SynchronousRabbitTimeoutException();
 		}

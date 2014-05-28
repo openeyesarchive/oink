@@ -38,6 +38,7 @@ import org.hl7.fhir.instance.formats.ParserBase.ResourceOrFeed;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,7 +67,7 @@ public class ITFacadeRoute {
 
 	private static ConnectionFactory factory;
 
-	private final static String THIRD_PARTY_QUEUE_NAME = "siteB";
+	private final static String THIRD_PARTY_QUEUE_NAME = "openeyes.in";
 	
 	private volatile AssertionError thirdPartyAssertionError; 
 
@@ -95,72 +96,6 @@ public class ITFacadeRoute {
 	@Before
 	public void before() {
 		thirdPartyAssertionError = null;
-	}
-
-	@Test
-	@DirtiesContext
-	public void testRequestFailsOnMissingAuthenticationHeader()
-			throws HttpException, IOException {
-
-		// Prepare request
-		HttpClient client = new HttpClient();
-		HttpMethod method = new GetMethod(
-				testProperties.getProperty("facade.uri") + "/Patient");
-
-		client.executeMethod(method);
-		byte[] responseBody = method.getResponseBody();
-		method.releaseConnection();
-
-		Assert.assertEquals(HttpStatus.SC_UNAUTHORIZED, method.getStatusCode());
-	}
-
-	@Test
-	@DirtiesContext
-	public void testRequestFailsOnInvalidCredentials() throws HttpException,
-			IOException {
-
-		// Prepare request
-		HttpClient client = new HttpClient();
-
-		HttpMethod method = new GetMethod(
-				testProperties.getProperty("facade.uri") + "/Patient");
-		UsernamePasswordCredentials creds = new UsernamePasswordCredentials(
-				"wrongusernameandformat",
-				testProperties.getProperty("testUser.password"));
-
-		method.addRequestHeader("Authorization",
-				BasicScheme.authenticate(creds, "US-ASCII"));
-		client.executeMethod(method);
-		byte[] responseBody = method.getResponseBody();
-		method.releaseConnection();
-
-		Assert.assertEquals(HttpStatus.SC_UNAUTHORIZED, method.getStatusCode());
-	}
-
-	@Test
-	@DirtiesContext
-	public void testAuthenticationCanSucceed() throws HttpException,
-			IOException {
-
-		// Prepare request
-		HttpClient client = new HttpClient();
-
-		HttpMethod method = new GetMethod(
-				testProperties.getProperty("facade.uri") + "/Patient");
-
-		UsernamePasswordCredentials creds = new UsernamePasswordCredentials(
-				testProperties.getProperty("testUser.username"),
-				testProperties.getProperty("testUser.password"));
-
-		method.addRequestHeader("Authorization",
-				BasicScheme.authenticate(creds, "US-ASCII"));
-
-		client.executeMethod(method);
-		byte[] responseBody = method.getResponseBody();
-		method.releaseConnection();
-
-		Assert.assertNotEquals(HttpStatus.SC_UNAUTHORIZED,
-				method.getStatusCode());
 	}
 	
 	@Test
@@ -212,13 +147,6 @@ public class ITFacadeRoute {
 
 		PostMethod method = new PostMethod(
 				testProperties.getProperty("facade.uri") + "/Patient");
-
-		UsernamePasswordCredentials creds = new UsernamePasswordCredentials(
-				testProperties.getProperty("testUser.username"),
-				testProperties.getProperty("testUser.password"));
-
-		method.addRequestHeader("Authorization",
-				BasicScheme.authenticate(creds, "US-ASCII"));
 		
 		method.addRequestHeader("Content-Type", "application/json+fhir");
 
@@ -282,13 +210,6 @@ public class ITFacadeRoute {
 
 		HttpMethod method = new GetMethod(
 				testProperties.getProperty("facade.uri") + "/Patient/2342452");
-
-		UsernamePasswordCredentials creds = new UsernamePasswordCredentials(
-				testProperties.getProperty("testUser.username"),
-				testProperties.getProperty("testUser.password"));
-
-		method.addRequestHeader("Authorization",
-				BasicScheme.authenticate(creds, "US-ASCII"));
 
 		client.executeMethod(method);
 		thirdp.close();

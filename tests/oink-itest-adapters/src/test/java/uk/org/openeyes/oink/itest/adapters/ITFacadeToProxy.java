@@ -39,6 +39,7 @@ import org.ops4j.pax.exam.util.PathUtils;
 
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.model.api.Bundle;
+import ca.uhn.fhir.model.dstu.resource.Conformance;
 import ca.uhn.fhir.model.dstu.resource.Patient;
 import ca.uhn.fhir.rest.client.HttpBasicAuthInterceptor;
 import ca.uhn.fhir.rest.client.IGenericClient;
@@ -47,21 +48,24 @@ import ca.uhn.hl7v2.DefaultHapiContext;
 import ca.uhn.hl7v2.HapiContext;
 import ca.uhn.hl7v2.app.Connection;
 import ca.uhn.hl7v2.app.Initiator;
+import ca.uhn.hl7v2.conf.spec.MetaData;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.v24.message.ACK;
 import uk.org.openeyes.oink.hl7v2.test.Hl7ITSupport;
 
 /**
  * 
- * Tests the intercompability of the standard HL7v2 Adapter and the standard
+ * Tests the intercompability of the standard Facade and the standard
  * Proxy adapter running on the same Karaf container.
+ * 
+ * The proxy adapter is bound to an OpenEyes instance
  * 
  * @author Oliver Wilkie
  */
-public class ITHl7v2ToProxy {
+public class ITFacadeToProxy {
 
 
-	private static Properties hl7Props;
+	private static Properties facadeProps;
 	private static Properties proxyProps;
 	
 	private static TestContainer examContainer;
@@ -69,13 +73,13 @@ public class ITHl7v2ToProxy {
 	@BeforeClass
 	public static void setUp() throws IOException, InterruptedException {
 
-		hl7Props = new Properties();
-		InputStream hl7PropsIs = ITHl7v2ToProxy.class
-				.getResourceAsStream("/hl7v2.properties");
-		hl7Props.load(hl7PropsIs);
+		facadeProps = new Properties();
+		InputStream facadePropsIs = ITFacadeToProxy.class
+				.getResourceAsStream("/facade.properties");
+		facadeProps.load(facadePropsIs);
 
 		proxyProps = new Properties();
-		InputStream proxyPropsIs = ITHl7v2ToProxy.class
+		InputStream proxyPropsIs = ITFacadeToProxy.class
 				.getResourceAsStream("/proxy.properties");
 		proxyProps.load(proxyPropsIs);
 		
@@ -99,131 +103,43 @@ public class ITHl7v2ToProxy {
 		// be started yet so we must wait
 		Thread.sleep(15000);
 	}
-
+	
 	@Test
-	public void testA01CreatePatientLeadsToANewPatientInEndServer()
-			throws Exception {
-
-		// Load example A01
-		Message exampleA01 = Hl7ITSupport.loadHl7Message("/hl7v2/A01-mod.txt");
-
-		// Post A01
-		testMessageCanBePostedAndAcceptedByOink(exampleA01);
-
-		// Search for Patient
-		IGenericClient client = ITSupport.buildHapiClientForProxy(proxyProps);
-
-		Bundle searchResults = client
-				.search()
-				.forResource(ca.uhn.fhir.model.dstu.resource.Patient.class)
-				.where(ca.uhn.fhir.model.dstu.resource.Patient.IDENTIFIER
-						.exactly().identifier("9999999999"))
-				.and(ca.uhn.fhir.model.dstu.resource.Patient.GIVEN.matches()
-						.value("Test")).execute();
+	public void testCanGetMetadataOfOpenEyes() {
 		
-		assertEquals(1, searchResults.getEntries().size());
+		String facadeUri = (String) facadeProps.get("facade.uri");
 
-	}
+		// Create a context and get the client factory so it can be configured
+		FhirContext ctx = new FhirContext();
+		IRestfulClientFactory clientFactory = ctx.getRestfulClientFactory();
 
-	@Test
-	public void testA05CreatePatientLeadsToANewPatientInEndServer()
-			throws Exception {
+		// Create an HTTP Client Builder
+		HttpClientBuilder builder = HttpClientBuilder.create();
 
-		// Load example A05
-		Message exampleA05 = Hl7ITSupport.loadHl7Message("/hl7v2/A05-mod.txt");
+		// This interceptor adds HTTP username/password to every request
+		String username = (String) proxyProps.get("proxy.username");
+		String password = (String) proxyProps.get("proxy.password");
+		builder.addInterceptorFirst(new HttpBasicAuthInterceptor(username,
+				password));
+		
+		builder.addInterceptorFirst(new HttpRequestInterceptor() {
+			@Override
+			public void process(HttpRequest req, HttpContext context)
+					throws HttpException, IOException {
+				req.addHeader("Accept", "application/json+fhir; charset=UTF-8");
+			}
+		});
 
-		// Post A01
-		testMessageCanBePostedAndAcceptedByOink(exampleA05);
-
-		// Search for Patient
-		IGenericClient client = ITSupport.buildHapiClientForProxy(proxyProps);
-
-		Bundle searchResults = client
-				.search()
-				.forResource(ca.uhn.fhir.model.dstu.resource.Patient.class)
-				.where(ca.uhn.fhir.model.dstu.resource.Patient.IDENTIFIER
-						.exactly().identifier("9999999999"))
-				.and(ca.uhn.fhir.model.dstu.resource.Patient.GIVEN.matches()
-						.value("Testdon")).execute();
-
-		assertEquals(1, searchResults.getEntries().size());
-
-	}
-
-	@Test
-	public void testA28CreatePatientLeadsToANewPatientInEndServer()
-			throws Exception {
-
-		// Load example A28
-		Message exampleA28 = Hl7ITSupport.loadHl7Message("/hl7v2/A28-2-mod.txt");
-
-		// Post A28
-		testMessageCanBePostedAndAcceptedByOink(exampleA28);
-
-		// Search for Patient
-		IGenericClient client = ITSupport.buildHapiClientForProxy(proxyProps);
-
-		Bundle searchResults = client
-				.search()
-				.forResource(ca.uhn.fhir.model.dstu.resource.Patient.class)
-				.where(ca.uhn.fhir.model.dstu.resource.Patient.IDENTIFIER
-						.exactly().identifier("6509874369"))
-				.and(ca.uhn.fhir.model.dstu.resource.Patient.GIVEN.matches()
-						.value("RANDELL")).execute();
-
-		assertEquals(1, searchResults.getEntries().size());
-
-	}
-
-	@Test
-	public void testA31CreatePatientLeadsToANewPatientInEndServer()
-			throws Exception {
-
-		// Load example A31
-		Message exampleA31 = Hl7ITSupport.loadHl7Message("/hl7v2/A31-2-mod.txt");
-
-		// Post A31
-		testMessageCanBePostedAndAcceptedByOink(exampleA31);
-
-		// Search for Patient
-		IGenericClient client = ITSupport.buildHapiClientForProxy(proxyProps);
-
-		Bundle searchResults = client
-				.search()
-				.forResource(ca.uhn.fhir.model.dstu.resource.Patient.class)
-				.where(ca.uhn.fhir.model.dstu.resource.Patient.IDENTIFIER
-						.exactly().identifier("4148734654"))
-				.and(ca.uhn.fhir.model.dstu.resource.Patient.GIVEN.matches()
-						.value("RICHIE")).execute();
-
-		assertEquals(1, searchResults.getEntries().size());
-
-	}
-
-	public void testMessageCanBePostedAndAcceptedByOink(Message m)
-			throws Exception {
-		Properties hl7Props = new Properties();
-		InputStream hl7PropsIs = ITHl7v2ToProxy.class
-				.getResourceAsStream("/hl7v2.properties");
-		hl7Props.load(hl7PropsIs);
-
-		Properties proxyProps = new Properties();
-		InputStream proxyPropsIs = ITHl7v2ToProxy.class
-				.getResourceAsStream("/proxy.properties");
-		proxyProps.load(proxyPropsIs);
-
-		// Send message and get ACK response
-		HapiContext context = new DefaultHapiContext();
-		Connection hl7v2Conn = context.newClient(
-				(String) hl7Props.get("hl7v2.host"),
-				(Integer) Integer.parseInt(hl7Props.getProperty("hl7v2.port")),
-				false);
-		Initiator initiator = hl7v2Conn.getInitiator();
-		ACK response = (ACK) initiator.sendAndReceive(m);
-		context.close();
-
-		assertEquals("AA", response.getMSA().getAcknowledgementCode()
-				.getValue());
+		// Use the new HTTP client builder
+		clientFactory.setHttpClient(builder.build());
+		
+		IGenericClient client = clientFactory.newGenericClient(facadeUri);		
+		
+		Conformance c = client.conformance();
+		
+		
+				
+		
 	}
 
 	public static Option[] config() {
@@ -253,9 +169,9 @@ public class ITHl7v2ToProxy {
 				// the test. It defaults to WARN.
 				//logLevel(LogLevel.DEBUG),
 				// Provision the example feature exercised by this test
-				features(oinkFeaturesRepo, "oink-adapter-hl7v2"),
-				replaceConfigurationFile("etc/uk.org.openeyes.oink.hl7v2.cfg",
-						new File("../oink-itest-shared/src/main/resources/hl7v2.properties")),
+				features(oinkFeaturesRepo, "oink-adapter-facade"),
+				replaceConfigurationFile("etc/uk.org.openeyes.oink.facade.cfg",
+						new File("../oink-itest-shared/src/main/resources/facade.properties")),
 				features(oinkFeaturesRepo, "oink-adapter-proxy"),
 				replaceConfigurationFile("etc/uk.org.openeyes.oink.proxy.cfg",
 						new File("../oink-itest-shared/src/main/resources/proxy.properties")),

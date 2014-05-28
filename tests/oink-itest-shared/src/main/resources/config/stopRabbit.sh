@@ -4,7 +4,7 @@ eval rabbitmqctl status
 
 if [ $? -ne 0 ]; then
 	echo RabbitMQ isnt available to stop
-	exit 1
+	exit 0
 fi
 
 eval rabbitmqctl stop

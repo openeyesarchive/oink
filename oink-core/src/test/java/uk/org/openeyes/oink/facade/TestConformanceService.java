@@ -18,6 +18,7 @@ package uk.org.openeyes.oink.facade;
 
 import static org.junit.Assert.*;
 
+import org.hl7.fhir.instance.model.ResourceType;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
@@ -33,10 +34,5 @@ public class TestConformanceService {
 	public static void tearDownAfterClass() throws Exception {
 	}
 
-	@Ignore
-	@Test
-	public void test() {
-		fail("Not yet implemented");
-	}
 
 }
