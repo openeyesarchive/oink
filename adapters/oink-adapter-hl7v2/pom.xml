@@ -118,6 +118,13 @@
 
 		<!-- testing -->
 		<dependency>
+			<groupId>uk.org.openeyes.oink</groupId>
+			<artifactId>oink-core</artifactId>
+			<version>${project.version}</version>
+			<scope>test</scope>
+			<type>test-jar</type>
+		</dependency>		
+		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-test</artifactId>
 			<scope>test</scope>

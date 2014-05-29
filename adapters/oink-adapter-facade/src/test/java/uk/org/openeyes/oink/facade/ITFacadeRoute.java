@@ -120,7 +120,7 @@ public class ITFacadeRoute {
 					ByteArrayOutputStream os = new ByteArrayOutputStream();
 					composer.compose(os, incoming.getBody().getResource(), false);
 					String receivedJson = os.toString();
-					String expectedJson = IOUtils.toString(this.getClass().getResourceAsStream("/patient.json"));
+					String expectedJson = IOUtils.toString(this.getClass().getResourceAsStream("/example-messages/fhir/patient.json"));
 					Assert.assertEquals(expectedJson, receivedJson);
 				} catch (Exception e) {
 					Assert.assertTrue(false);
@@ -150,7 +150,7 @@ public class ITFacadeRoute {
 		
 		method.addRequestHeader("Content-Type", "application/json+fhir");
 
-		InputStream is = this.getClass().getResourceAsStream("/patient.json");
+		InputStream is = this.getClass().getResourceAsStream("/example-messages/fhir/patient.json");
 		method.setRequestEntity(new InputStreamRequestEntity(is));
 		client.executeMethod(method);
 		thirdp.close();
@@ -195,7 +195,7 @@ public class ITFacadeRoute {
 		// Specify what the third party service should return
 		OINKResponseMessage mockResponse = new OINKResponseMessage();
 		mockResponse.setStatus(200);
-		mockResponse.setBody(buildFhirBodyFromResource("/patient.json"));
+		mockResponse.setBody(buildFhirBodyFromResource("/example-messages/fhir/patient.json"));
 
 		// Start the third party service
 		SimulatedThirdParty thirdp = new SimulatedThirdParty(v, mockResponse);
@@ -229,7 +229,7 @@ public class ITFacadeRoute {
 		
 		Assert.assertEquals(HttpStatus.SC_OK, responseCode);
 		Assert.assertEquals("application/json+fhir", responseContentType);
-		Assert.assertEquals(IOUtils.toString(this.getClass().getResourceAsStream("/patient.json"),"UTF-8"), responseJson);
+		Assert.assertEquals(IOUtils.toString(this.getClass().getResourceAsStream("/example-messages/fhir/patient.json"),"UTF-8"), responseJson);
 	}
 	
 	private static FhirBody buildFhirBodyFromResource(String resourcePath) throws Exception {

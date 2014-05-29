@@ -1,12 +1,10 @@
 package uk.org.openeyes.oink.itest.adapters;
 
 import static org.ops4j.pax.exam.CoreOptions.maven;
-import static org.ops4j.pax.exam.CoreOptions.systemProperty;
 import static org.ops4j.pax.exam.MavenUtils.asInProject;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.configureConsole;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.features;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.karafDistributionConfiguration;
-import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.logLevel;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.replaceConfigurationFile;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.keepRuntimeFolder;
 import static org.junit.Assert.*;
@@ -28,7 +26,6 @@ import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.utils.URIBuilder;
-import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -40,41 +37,21 @@ import org.hl7.fhir.instance.model.ResourceType;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Rule;
 import org.junit.Test;
-import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.TestContainer;
-import org.ops4j.pax.exam.junit.PaxExamServer;
-import org.ops4j.pax.exam.karaf.options.LogLevelOption.LogLevel;
 import org.ops4j.pax.exam.options.MavenArtifactUrlReference;
 import org.ops4j.pax.exam.options.MavenUrlReference;
 import org.ops4j.pax.exam.spi.PaxExamRuntime;
-import org.ops4j.pax.exam.util.PathUtils;
-
-import com.rabbitmq.client.GetResponse;
-
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.model.api.Bundle;
 import ca.uhn.fhir.model.dstu.resource.Conformance;
 import ca.uhn.fhir.model.dstu.resource.Patient;
-import ca.uhn.fhir.model.dstu.resource.Practitioner;
-import ca.uhn.fhir.model.dstu.resource.Profile;
-import ca.uhn.fhir.parser.JsonParser;
 import ca.uhn.fhir.rest.client.HttpBasicAuthInterceptor;
 import ca.uhn.fhir.rest.client.IGenericClient;
 import ca.uhn.fhir.rest.client.IRestfulClientFactory;
-import ca.uhn.hl7v2.DefaultHapiContext;
-import ca.uhn.hl7v2.HapiContext;
-import ca.uhn.hl7v2.app.Connection;
-import ca.uhn.hl7v2.app.Initiator;
-import ca.uhn.hl7v2.conf.spec.MetaData;
-import ca.uhn.hl7v2.model.Message;
-import ca.uhn.hl7v2.model.v24.message.ACK;
-import uk.org.openeyes.oink.fhir.FhirConversionException;
 import uk.org.openeyes.oink.fhir.FhirConverter;
-import uk.org.openeyes.oink.hl7v2.test.Hl7ITSupport;
 
 /**
  * 
@@ -207,9 +184,7 @@ public class ITFacadeToProxy {
 		
 		URIBuilder builder = new URIBuilder();
 		URI uri = builder.setScheme("http").setHost("localhost").setPort(8899).setPath("/oink/Practitioner").setParameter("_profile", "http://openeyes.org.uk/fhir/1.7.0/profile/Practitioner/Gp").build();
-		
-		System.out.println(uri.toString());
-		
+				
 		CloseableHttpClient httpclient = HttpClients.createDefault();
 		HttpGet httpGet = new HttpGet(uri);
 		httpGet.addHeader("Accept", "application/json+fhir; charset=UTF-8");
@@ -246,7 +221,7 @@ public class ITFacadeToProxy {
 		httpPost.addHeader("Accept", "application/json+fhir; charset=UTF-8");
 		httpPost.addHeader("Category","http://openeyes.org.uk/fhir/1.7.0/profile/Practitioner/Gp; scheme=\"http://hl7.org/fhir/tag/profile\"; label=\"\"");
 		httpPost.addHeader("Content-Type","application/json+fhir");
-		InputStream is = getClass().getResourceAsStream("/fhir/practitioner.json");
+		InputStream is = getClass().getResourceAsStream("/example-messages/fhir/practitioner.json");
 		
 		StringWriter writer = new StringWriter();
 		IOUtils.copy(is, writer);

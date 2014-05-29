@@ -27,7 +27,7 @@ public class TestOinkHttpConverter {
 		OinkHttpConverter conv = new OinkHttpConverter();
 
 		InputStream is = TestOinkHttpConverter.class
-				.getResourceAsStream("/fhir/searchResults.json");
+				.getResourceAsStream("/example-messages/fhir/searchResults.json");
 
 		FhirBody body = conv.readFhirBody(is);
 
@@ -38,7 +38,7 @@ public class TestOinkHttpConverter {
 		OinkHttpConverter conv = new OinkHttpConverter();
 
 		InputStream inputStream = this.getClass().getResourceAsStream(
-				"/fhir/noSearchResults.json");
+				"/example-messages/fhir/noSearchResults.json");
 		assertNotNull(inputStream);
 
 		StringWriter writer = new StringWriter();

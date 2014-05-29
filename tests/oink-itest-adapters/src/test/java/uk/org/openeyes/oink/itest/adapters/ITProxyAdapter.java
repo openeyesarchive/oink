@@ -168,7 +168,7 @@ public class ITProxyAdapter {
 		req.setMethod(HttpMethod.POST);
 		req.addProfile("http://openeyes.org.uk/fhir/1.7.0/profile/Organization/Practice");
 		InputStream is = ITProxyAdapter.class
-				.getResourceAsStream("/fhir/organization.json");
+				.getResourceAsStream("/example-messages/fhir/organization.json");
 		Parser parser = new JsonParser();
 		Organization p = (Organization) parser.parse(is);
 		FhirBody body = new FhirBody(p);
@@ -277,7 +277,7 @@ public class ITProxyAdapter {
 		req.setMethod(HttpMethod.POST);
 		req.addProfile("http://openeyes.org.uk/fhir/1.7.0/profile/Practitioner/Gp");
 		InputStream is = ITProxyAdapter.class
-				.getResourceAsStream("/fhir/practitioner.json");
+				.getResourceAsStream("/example-messages/fhir/practitioner2.json");
 		Parser parser = new JsonParser();
 		Practitioner p = (Practitioner) parser.parse(is);
 		FhirBody body = new FhirBody(p);
@@ -397,7 +397,7 @@ public class ITProxyAdapter {
 		req.setMethod(HttpMethod.POST);
 
 		InputStream is = ITProxyAdapter.class
-				.getResourceAsStream("/fhir/Patient.json");
+				.getResourceAsStream("/example-messages/fhir/patient2.json");
 		Parser parser = new JsonParser();
 		Patient p = (Patient) parser.parse(is);
 

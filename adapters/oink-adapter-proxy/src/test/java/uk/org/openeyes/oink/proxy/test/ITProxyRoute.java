@@ -134,7 +134,7 @@ public class ITProxyRoute {
 	public void testGetRequestGetsProxied() throws Exception {
 		
 		// Mock endpoint server
-		InputStream is = ITProxyRoute.class.getResourceAsStream("/patient.json");
+		InputStream is = ITProxyRoute.class.getResourceAsStream("/example-messages/fhir/patient.json");
 		StringWriter writer = new StringWriter();
 		IOUtils.copy(is, writer);
 		String jsonPatient = writer.toString();
@@ -207,7 +207,7 @@ public class ITProxyRoute {
 		OINKRequestMessage request = new OINKRequestMessage();
 		request.setResourcePath("/Patient");
 		request.setMethod(HttpMethod.POST);
-		FhirBody body = buildFhirBodyFromResource("/patient.json");
+		FhirBody body = buildFhirBodyFromResource("/example-messages/fhir/patient.json");
 		request.setBody(body);
 
 		// Send Oink request over rabbit
@@ -235,7 +235,7 @@ public class ITProxyRoute {
 		// Assert mocked server receives request intact
 		String requestBodyReceivedByServer = server.getRequestBody();
 		StringWriter writer = new StringWriter();
-		IOUtils.copy(ITProxyRoute.class.getResourceAsStream("/patient.json"), writer);
+		IOUtils.copy(ITProxyRoute.class.getResourceAsStream("/example-messages/fhir/patient.json"), writer);
 		String expectedBodyReceivedByServer = writer.toString();
 		assertEquals(expectedBodyReceivedByServer, requestBodyReceivedByServer);
 

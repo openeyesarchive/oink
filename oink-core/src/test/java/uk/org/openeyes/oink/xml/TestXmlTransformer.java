@@ -20,7 +20,7 @@ public class TestXmlTransformer {
 	@Test
 	public void testSimpleTransform() throws IOException, TransformerFactoryConfigurationError, TransformerException {
 
-		String inputXml = getResourceAsString("/hl7v2/A28-3.xml");
+		String inputXml = getResourceAsString("/example-messages/hl7v2/A28-3.xml");
 		InputStream xsl = TestXmlTransformer.class.getResourceAsStream("/uk/org/openeyes/oink/hl7v2/A28.xsl");
 		
 		XmlTransformer transformer = new XmlTransformer();

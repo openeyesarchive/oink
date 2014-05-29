@@ -14,7 +14,7 @@ public class TestOinkMessageConverter {
 	@Test
 	public void testCanParseResponseFromOink() throws IOException {
 		
-		InputStream is = getClass().getResourceAsStream("/oinkresponsemessages/searchResults.json");
+		InputStream is = getClass().getResourceAsStream("/example-messages/oinkresponsemessages/searchResults.json");
 		
 		StringWriter writer = new StringWriter();
 		IOUtils.copy(is, writer);
