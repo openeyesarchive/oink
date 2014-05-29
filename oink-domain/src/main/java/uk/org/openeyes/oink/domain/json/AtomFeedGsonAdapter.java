@@ -33,6 +33,7 @@ public class AtomFeedGsonAdapter implements JsonSerializer<AtomFeed>,
 			ResourceOrFeed resourceOrFeed = parser.parseGeneral(is);
 			return resourceOrFeed.getFeed();
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new JsonParseException("Invalid AtomFeed structure: "
 					+ e.getMessage());
 		} finally {
@@ -51,6 +52,10 @@ public class AtomFeedGsonAdapter implements JsonSerializer<AtomFeed>,
 		try {
 			composer.compose(os, src, false);
 			String element = os.toString();
+			
+			// Bug - Fhir Java Implementation serializes empty strings as NULL
+			element = element.replaceAll("null", "\"\"");
+			
 			JsonObject ob = new JsonObject();
 			com.google.gson.JsonParser gsonParser = new com.google.gson.JsonParser();
 			return gsonParser.parse(element);

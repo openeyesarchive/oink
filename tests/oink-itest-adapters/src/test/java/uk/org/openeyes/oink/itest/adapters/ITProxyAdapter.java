@@ -135,6 +135,30 @@ public class ITProxyAdapter {
 	}
 
 	@Test
+	public void testPatientSearchResults() throws Exception {
+		OINKRequestMessage req = new OINKRequestMessage();
+		req.setResourcePath("/Patient");
+		req.setMethod(HttpMethod.GET);
+
+		RabbitClient client = new RabbitClient(
+				props.getProperty("rabbit.host"), Integer.parseInt(props
+						.getProperty("rabbit.port")),
+				props.getProperty("rabbit.vhost"),
+				props.getProperty("rabbit.username"),
+				props.getProperty("rabbit.password"));
+
+		OINKResponseMessage resp = client.sendAndRecieve(req,
+				props.getProperty("rabbit.routingKey"),
+				props.getProperty("rabbit.defaultExchange"));
+
+		assertEquals(200, resp.getStatus());
+		assertNotNull(resp.getBody());
+		assertNotNull(resp.getBody().getBundle());
+		assertNotEquals(0, resp.getBody().getBundle().getEntryList().size());
+	}
+
+	
+	@Test
 	public void testOrganizationCreateUpdateAndDelete() throws Exception {
 
 		// CREATE

@@ -19,6 +19,9 @@ package uk.org.openeyes.oink.messaging;
 import org.apache.camel.Converter;
 import org.apache.camel.TypeConverter;
 import org.apache.commons.lang3.SerializationUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import uk.org.openeyes.oink.domain.OINKRequestMessage;
 import uk.org.openeyes.oink.domain.OINKResponseMessage;
 import uk.org.openeyes.oink.domain.json.OinkRequestMessageJsonConverter;
@@ -33,6 +36,8 @@ import uk.org.openeyes.oink.domain.json.OinkResponseMessageJsonConverter;
  */
 @Converter
 public class OinkMessageConverter {
+	
+	private static final Logger log = LoggerFactory.getLogger(OinkMessageConverter.class);
 
 	OinkRequestMessageJsonConverter reqConv;
 	OinkResponseMessageJsonConverter respConv;
@@ -83,6 +88,7 @@ public class OinkMessageConverter {
 	@Converter
 	public OINKResponseMessage responseMessageFromByteArray(byte[] message) {
 		String json = (String) SerializationUtils.deserialize(message);
+		log.debug("Message is: "+json);
 		return responseMessageFromJsonString(json);
 	}
 

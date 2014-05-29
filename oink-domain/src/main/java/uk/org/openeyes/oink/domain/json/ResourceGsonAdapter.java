@@ -51,6 +51,10 @@ public class ResourceGsonAdapter implements JsonSerializer<Resource>,
 		try {
 			composer.compose(os, src, false);
 			String element = os.toString();
+			
+			// Bug - Fhir Java Implementation serializes empty strings as NULL
+			element = element.replaceAll("null", "\"\"");
+			
 			JsonObject ob = new JsonObject();
 			com.google.gson.JsonParser gsonParser = new com.google.gson.JsonParser();
 			return gsonParser.parse(element);

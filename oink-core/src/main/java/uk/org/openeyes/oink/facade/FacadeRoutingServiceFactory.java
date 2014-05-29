@@ -49,9 +49,11 @@ public class FacadeRoutingServiceFactory {
 		HttpMapper<RabbitRoute> mappings;
 		String defaultReplyRoutingKey;
 
+		log.debug("Using props: "+adapterProperties.toString());
+		
 		Configuration config = ConfigurationConverter
 				.getConfiguration(adapterProperties);
-
+		
 		String defaultExchange = config.getString(MAPPING_DEFAULT_EXCHANGE_KEY);
 		defaultReplyRoutingKey = config
 				.getString(MAPPING_DEFAULT_REPLY_ROUTING_KEY);
@@ -125,6 +127,7 @@ public class FacadeRoutingServiceFactory {
 	private int getNumberOfMappingsGiven(Configuration facadeConfig) {
 		if (facadeConfig.isEmpty()) {
 			log.error("No mapping entries are in the program's config file. The facade will not map any requests!");
+			return 0;
 		}
 
 		int numOfMappings = 0;

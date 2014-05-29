@@ -11,7 +11,7 @@
 	
 	<bean id="bridgePropertyPlaceholder"
 		class="org.apache.camel.spring.spi.BridgePropertyPlaceholderConfigurer">
-		<property name="location" value="${integrationTestProperties}" />
+		<property name="location" value="classpath:/proxy-test.properties" />
 	</bean>
 
 </beans>
