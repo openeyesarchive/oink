@@ -14,13 +14,22 @@ import static org.junit.Assert.*;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.util.Properties;
 
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpException;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpRequestInterceptor;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.client.HttpClients;
 import org.apache.http.protocol.HttpContext;
+import org.apache.http.util.EntityUtils;
+import org.hl7.fhir.instance.model.AtomFeed;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -41,6 +50,9 @@ import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.model.api.Bundle;
 import ca.uhn.fhir.model.dstu.resource.Conformance;
 import ca.uhn.fhir.model.dstu.resource.Patient;
+import ca.uhn.fhir.model.dstu.resource.Practitioner;
+import ca.uhn.fhir.model.dstu.resource.Profile;
+import ca.uhn.fhir.parser.JsonParser;
 import ca.uhn.fhir.rest.client.HttpBasicAuthInterceptor;
 import ca.uhn.fhir.rest.client.IGenericClient;
 import ca.uhn.fhir.rest.client.IRestfulClientFactory;
@@ -51,6 +63,8 @@ import ca.uhn.hl7v2.app.Initiator;
 import ca.uhn.hl7v2.conf.spec.MetaData;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.v24.message.ACK;
+import uk.org.openeyes.oink.fhir.FhirConversionException;
+import uk.org.openeyes.oink.fhir.FhirConverter;
 import uk.org.openeyes.oink.hl7v2.test.Hl7ITSupport;
 
 /**
@@ -175,6 +189,38 @@ public class ITFacadeToProxy {
 		
 		assertNotNull(response);
 		assertNotEquals(0, response.getEntries().size());
+		
+	}
+	
+	@Test
+	public void testGetPractitioners() throws Exception {
+		String facadeUri = (String) facadeProps.get("facade.uri");
+		
+		URIBuilder builder = new URIBuilder();
+		URI uri = builder.setScheme("http").setHost("localhost").setPort(8899).setPath("/oink/Practitioner").setParameter("_profile", "http://openeyes.org.uk/fhir/1.7.0/profile/Practitioner/Gp").build();
+		
+		System.out.println(uri.toString());
+		
+		CloseableHttpClient httpclient = HttpClients.createDefault();
+		HttpGet httpGet = new HttpGet(uri);
+		httpGet.addHeader("Accept", "application/json+fhir; charset=UTF-8");
+		CloseableHttpResponse response1 = httpclient.execute(httpGet);
+
+		assertEquals(200, response1.getStatusLine().getStatusCode());
+		String json = null;
+		try {
+		    HttpEntity entity1 = response1.getEntity();
+		    json = EntityUtils.toString(entity1);
+		} finally {
+		    response1.close();
+		}
+		
+		assertNotNull(json);
+	
+		FhirConverter conv = new FhirConverter();
+		AtomFeed response = conv.fromJsonOrXml(json);
+		
+		assertNotEquals(0, response.getEntryList().size());
 		
 	}
 
