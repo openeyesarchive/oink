@@ -93,6 +93,7 @@ public class OinkHttpConverter {
 		String path = (String) headers.get(Exchange.HTTP_PATH);
 		String verb = (String) headers.get(Exchange.HTTP_METHOD);
 		String query = (String) headers.get(Exchange.HTTP_QUERY);
+		String profile = (String) headers.get("Category");
 
 		OINKRequestMessage message = new OINKRequestMessage();
 
@@ -106,6 +107,10 @@ public class OinkHttpConverter {
 		message.setMethod(method);
 
 		message.setParameters(query);
+		
+		if (profile != null) {
+			message.addProfile(profile);
+		}
 
 		if (length != null && length > 0) {
 			if (mimeType == null) {
@@ -215,6 +220,10 @@ public class OinkHttpConverter {
 			@OutHeaders Map<String, Object> headers)
 			throws InvalidFhirResponseException {
 		headers.put(Exchange.HTTP_RESPONSE_CODE, message.getStatus());
+		
+		if (message.getLocationHeader() != null) {
+			headers.put("Location", message.getLocationHeader());
+		}
 
 		try {
 			FhirBody body = message.getBody();

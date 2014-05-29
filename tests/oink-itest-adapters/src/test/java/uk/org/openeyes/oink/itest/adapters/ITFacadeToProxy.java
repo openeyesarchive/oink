@@ -14,22 +14,29 @@ import static org.junit.Assert.*;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringWriter;
 import java.net.URI;
 import java.util.Properties;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpException;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpRequestInterceptor;
 import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.entity.InputStreamEntity;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
 import org.hl7.fhir.instance.model.AtomFeed;
+import org.hl7.fhir.instance.model.ResourceType;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -45,6 +52,8 @@ import org.ops4j.pax.exam.options.MavenArtifactUrlReference;
 import org.ops4j.pax.exam.options.MavenUrlReference;
 import org.ops4j.pax.exam.spi.PaxExamRuntime;
 import org.ops4j.pax.exam.util.PathUtils;
+
+import com.rabbitmq.client.GetResponse;
 
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.model.api.Bundle;
@@ -220,8 +229,66 @@ public class ITFacadeToProxy {
 		FhirConverter conv = new FhirConverter();
 		AtomFeed response = conv.fromJsonOrXml(json);
 		
-		assertNotEquals(0, response.getEntryList().size());
+		assertNotEquals(0, response.getEntryList().size());	
+	}
+	
+	@Test
+	public void testCreateAndDeletePractitioners() throws Exception {
+		String facadeUri = (String) facadeProps.get("facade.uri");
 		
+		URIBuilder builder = new URIBuilder();
+		URI uri = builder.setScheme("http").setHost("localhost").setPort(8899).setPath("/oink/Practitioner").setParameter("_profile", "http://openeyes.org.uk/fhir/1.7.0/profile/Practitioner/Gp").build();
+		
+		System.out.println(uri.toString());
+		
+		CloseableHttpClient httpclient = HttpClients.createDefault();
+		HttpPost httpPost = new HttpPost(uri);
+		httpPost.addHeader("Accept", "application/json+fhir; charset=UTF-8");
+		httpPost.addHeader("Category","http://openeyes.org.uk/fhir/1.7.0/profile/Practitioner/Gp; scheme=\"http://hl7.org/fhir/tag/profile\"; label=\"\"");
+		httpPost.addHeader("Content-Type","application/json+fhir");
+		InputStream is = getClass().getResourceAsStream("/fhir/practitioner.json");
+		
+		StringWriter writer = new StringWriter();
+		IOUtils.copy(is, writer);
+		String theString = writer.toString();
+		
+		StringEntity isEntity = new StringEntity(theString); 
+				
+		httpPost.setEntity(isEntity);
+		
+		CloseableHttpResponse response1 = httpclient.execute(httpPost);
+
+		assertEquals(201, response1.getStatusLine().getStatusCode());
+		
+		// Note location header is the real end-server location not the facade
+		// e.g. http://192.168.1.100/api/Practitioner/gp-4/_history/1401366763
+		String locationHeader = response1.getHeaders("Location")[0].getValue();
+		assertNotNull(locationHeader);
+		
+		String resourceId = extractResourceIdFromUri(locationHeader);
+		assertNotNull(resourceId);
+		
+		URIBuilder builder2 = new URIBuilder();
+		URI uri2 = builder2.setScheme("http").setHost("localhost").setPort(8899).setPath("/oink/Practitioner/"+resourceId).setParameter("_profile", "http://openeyes.org.uk/fhir/1.7.0/profile/Practitioner/Gp").build();
+		
+		
+		HttpDelete httpDelete = new HttpDelete(uri2);
+		CloseableHttpResponse response2 = httpclient.execute(httpDelete);
+		assertEquals(204, response2.getStatusLine().getStatusCode());
+	}
+	
+	private String extractResourceIdFromUri(String locationUri) {
+		
+		String[] parts = locationUri.split("/");
+		for (int i=0; i<parts.length-1; i++) {
+			try {
+				ResourceType res = ResourceType.valueOf(parts[i]);
+				return parts[i+1];
+			} catch (Exception ex) {
+				continue;
+			}
+		}
+		return null;
 	}
 
 	public static Option[] config() {

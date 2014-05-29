@@ -1,0 +1,1 @@
+{"resourceType":"Practitioner","identifier":[{"system":"http://www.datadictionary.nhs.uk/data_dictionary/attributes/g/general_medical_practitioner_ppd_code_de.asp","value":"G1701835"}],"name":{"use":"usual", "family":["Test"],"given":["T "]},"role":[{"coding":[{"system":"http://hl7.org/fhir/vs/practitioner-role","code":"doctor"}]}]}
