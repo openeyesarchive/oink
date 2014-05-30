@@ -1,4 +1,4 @@
-package uk.org.openeyes.oink.hl7v2.test.support;
+package uk.org.openeyes.oink.test;
 
 import java.util.Map;
 
@@ -12,6 +12,13 @@ import ca.uhn.hl7v2.protocol.ReceivingApplicationException;
 import ca.uhn.hl7v2.protocol.ReceivingApplicationExceptionHandler;
 import ca.uhn.hl7v2.validation.impl.NoValidation;
 
+
+/**
+ * 
+ * A Simple HL7Server that can receive messages and return responses over TCP
+ * 
+ * @author Oliver Wilkie
+ */
 public class Hl7Server {
 
 	HapiContext context;

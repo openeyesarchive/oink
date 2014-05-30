@@ -25,9 +25,10 @@ import ca.uhn.hl7v2.protocol.ReceivingApplicationException;
 import uk.org.openeyes.oink.domain.HttpMethod;
 import uk.org.openeyes.oink.domain.OINKRequestMessage;
 import uk.org.openeyes.oink.domain.OINKResponseMessage;
-import uk.org.openeyes.oink.hl7v2.test.support.Hl7Server;
 import uk.org.openeyes.oink.messaging.OinkMessageConverter;
 import uk.org.openeyes.oink.proxy.test.support.RabbitClient;
+import uk.org.openeyes.oink.test.Hl7Helper;
+import uk.org.openeyes.oink.test.Hl7Server;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration()
@@ -63,7 +64,7 @@ public class ITRabbitToHl7v2Route extends Hl7ITSupport {
 					Map<String, Object> theMetadata)
 					throws ReceivingApplicationException, HL7Exception {
 				try {
-					Message m = loadHl7Message("/oinkrequestmessages/ADR-A19.json");
+					Message m = Hl7Helper.loadHl7Message("/oinkrequestmessages/ADR-A19.json");
 					return m;
 				} catch (IOException e) {
 					throw new HL7Exception(e);

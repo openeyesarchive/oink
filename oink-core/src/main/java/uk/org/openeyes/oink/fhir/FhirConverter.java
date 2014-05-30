@@ -10,14 +10,18 @@ import org.hl7.fhir.instance.formats.ParserBase.ResourceOrFeed;
 import org.hl7.fhir.instance.model.AtomFeed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xmlpull.v1.XmlPullParserException;
+
+import uk.org.openeyes.oink.exception.OinkException;
 
 @Converter
 public class FhirConverter {
 
 	private final JsonParser jsonParser;
 	private final XmlParser xmlParser;
-	
-	private static final Logger log = LoggerFactory.getLogger(FhirConverter.class);
+
+	private static final Logger log = LoggerFactory
+			.getLogger(FhirConverter.class);
 
 	public FhirConverter() {
 		xmlParser = new XmlParser();
@@ -42,11 +46,17 @@ public class FhirConverter {
 		}
 		return f;
 	}
-	
+
 	public AtomFeed fromXmlToBundle(String xml) throws Exception {
-		InputStream is = new ByteArrayInputStream(xml.getBytes());
-		AtomFeed f = xmlParser.parseGeneral(is).getFeed();
-		return f;
+		try {
+			InputStream is = new ByteArrayInputStream(xml.getBytes());
+			AtomFeed f = xmlParser.parseGeneral(is).getFeed();
+			return f;
+		} catch (XmlPullParserException parserEx) {
+			log.error("Failed to parse XML content. Structure may not be valid");
+			throw new OinkException("Failed to parse XML content. Message is:"
+					+ parserEx.getMessage());
+		}
 	}
 
 }

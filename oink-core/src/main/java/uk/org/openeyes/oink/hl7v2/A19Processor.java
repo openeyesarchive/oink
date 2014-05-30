@@ -68,7 +68,7 @@ public class A19Processor extends Hl7v2Processor {
 			XCN who0 = qrd.getWhoSubjectFilter(0);
 			who0.getFamilyName().getSurname().setValue(familyName);
 		} else {
-			throw new OinkException("Only search by NHS number currently supported");
+			throw new OinkException("Only search by NHS number or family name currently supported");
 		}
 		// Set what subject filter
 		qrd.getWhatSubjectFilter(0).getIdentifier().setValue("DEM");

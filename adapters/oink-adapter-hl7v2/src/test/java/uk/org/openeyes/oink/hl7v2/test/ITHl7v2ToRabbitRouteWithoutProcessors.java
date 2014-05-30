@@ -24,6 +24,7 @@ import uk.org.openeyes.oink.domain.OINKRequestMessage;
 import uk.org.openeyes.oink.hl7v2.ADTProcessor;
 import uk.org.openeyes.oink.hl7v2.Hl7v2Processor;
 import uk.org.openeyes.oink.messaging.OinkMessageConverter;
+import uk.org.openeyes.oink.test.Hl7Helper;
 
 /**
  * 
@@ -74,7 +75,7 @@ public class ITHl7v2ToRabbitRouteWithoutProcessors extends Hl7ITSupport {
 	public void testA01MessageRoutesOntoRabbit() throws Exception {
 
 		// Choose a message to send
-		Message m = loadHl7Message("/hl7v2/A01.txt");
+		Message m = Hl7Helper.loadHl7Message("/hl7v2/A01.txt");
 
 		// Prepare mocks
 		String oinkJson = loadResourceAsString("/oinkrequestmessages/A01.json");
@@ -100,7 +101,7 @@ public class ITHl7v2ToRabbitRouteWithoutProcessors extends Hl7ITSupport {
 	public void testA05MessageRoutesOntoRabbit() throws Exception {
 
 		// Choose a message to send
-		Message m = loadHl7Message("/hl7v2/A05.txt");
+		Message m = Hl7Helper.loadHl7Message("/hl7v2/A05.txt");
 
 		// Prepare mocks
 		String oinkJson = loadResourceAsString("/oinkrequestmessages/A05.json");
@@ -124,7 +125,7 @@ public class ITHl7v2ToRabbitRouteWithoutProcessors extends Hl7ITSupport {
 	public void testA28MessageRoutesOntoRabbit() throws Exception {
 
 		// Choose a message to send
-		Message m = loadHl7Message("/hl7v2/A28-1.txt");
+		Message m = Hl7Helper.loadHl7Message("/hl7v2/A28-1.txt");
 
 		// Prepare mocks
 		String oinkJson = loadResourceAsString("/oinkrequestmessages/A28-1.json");
@@ -149,7 +150,7 @@ public class ITHl7v2ToRabbitRouteWithoutProcessors extends Hl7ITSupport {
 	public void testA31MessageRoutesOntoRabbit() throws Exception {
 
 		// Choose a message to send
-		Message m = loadHl7Message("/hl7v2/A31-2.txt");
+		Message m = Hl7Helper.loadHl7Message("/hl7v2/A31-2.txt");
 
 		// Prepare mocks
 		String oinkJson = loadResourceAsString("/oinkrequestmessages/A31-2.json");
@@ -190,7 +191,7 @@ public class ITHl7v2ToRabbitRouteWithoutProcessors extends Hl7ITSupport {
 				getProperty("rabbit.outboundRoutingKey"));
 
 		// Choose a message to send
-		Message m = loadHl7Message("/hl7v2/A04.txt");
+		Message m = Hl7Helper.loadHl7Message("/hl7v2/A04.txt");
 
 		// Send message
 		String host = getProperty("hl7v2.host");

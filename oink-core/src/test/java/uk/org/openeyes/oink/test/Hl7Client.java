@@ -1,4 +1,4 @@
-package uk.org.openeyes.oink.hl7v2.test.support;
+package uk.org.openeyes.oink.test;
 
 import java.io.IOException;
 

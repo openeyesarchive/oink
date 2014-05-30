@@ -14,9 +14,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import uk.org.openeyes.oink.domain.OINKRequestMessage;
-import uk.org.openeyes.oink.hl7v2.test.support.Hl7Client;
 import uk.org.openeyes.oink.messaging.OinkMessageConverter;
 import uk.org.openeyes.oink.proxy.test.support.RabbitServer;
+import uk.org.openeyes.oink.test.Hl7Client;
+import uk.org.openeyes.oink.test.Hl7Helper;
 
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
@@ -42,7 +43,7 @@ public abstract class Hl7ITSupport {
 	
 	public void testIncomingMessageIsProcessedAndRouted(String hl7msgPath, String oinkmsgPath) throws HL7Exception, IOException, LLPException, InterruptedException, JSONException {
 		// Choose a message to send
-		Message m = loadHl7Message(hl7msgPath);
+		Message m = Hl7Helper.loadHl7Message(hl7msgPath);
 		
 		// Prepare RabbitServer
 		RabbitServer server = new RabbitServer(getProperty("rabbit.host"),
@@ -71,19 +72,6 @@ public abstract class Hl7ITSupport {
 		String expectedJson = loadResourceAsString(oinkmsgPath);
 		String actualJson = conv.toJsonString(request);		
 		JSONAssert.assertEquals(expectedJson,actualJson, false);
-	}
-
-	public static Message loadHl7Message(String path) throws IOException, HL7Exception {
-		InputStream is = Hl7ITSupport.class.getResourceAsStream(path);
-		StringWriter writer = new StringWriter();
-		IOUtils.copy(is, writer);
-		String message = writer.toString();
-		HapiContext context = new DefaultHapiContext();
-
-		context.setValidationContext(new NoValidation());
-		Parser p = context.getGenericParser();
-		Message adt = p.parse(message);
-		return adt;
 	}
 
 	protected void setProperties(String path) throws IOException {

@@ -1,12 +1,10 @@
 package uk.org.openeyes.oink.itest.adapters;
 
 import static org.ops4j.pax.exam.CoreOptions.maven;
-import static org.ops4j.pax.exam.CoreOptions.systemProperty;
 import static org.ops4j.pax.exam.MavenUtils.asInProject;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.configureConsole;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.features;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.karafDistributionConfiguration;
-import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.logLevel;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.replaceConfigurationFile;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.keepRuntimeFolder;
 import static org.junit.Assert.*;
@@ -16,40 +14,25 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-import org.apache.http.HttpException;
-import org.apache.http.HttpRequest;
-import org.apache.http.HttpRequestInterceptor;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.protocol.HttpContext;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Rule;
 import org.junit.Test;
-import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.ExamSystem;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.TestContainer;
-import org.ops4j.pax.exam.junit.PaxExamServer;
-import org.ops4j.pax.exam.karaf.options.LogLevelOption.LogLevel;
 import org.ops4j.pax.exam.options.MavenArtifactUrlReference;
 import org.ops4j.pax.exam.options.MavenUrlReference;
 import org.ops4j.pax.exam.spi.PaxExamRuntime;
-import org.ops4j.pax.exam.util.PathUtils;
-
-import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.model.api.Bundle;
-import ca.uhn.fhir.model.dstu.resource.Patient;
-import ca.uhn.fhir.rest.client.HttpBasicAuthInterceptor;
 import ca.uhn.fhir.rest.client.IGenericClient;
-import ca.uhn.fhir.rest.client.IRestfulClientFactory;
 import ca.uhn.hl7v2.DefaultHapiContext;
 import ca.uhn.hl7v2.HapiContext;
 import ca.uhn.hl7v2.app.Connection;
 import ca.uhn.hl7v2.app.Initiator;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.v24.message.ACK;
-import uk.org.openeyes.oink.hl7v2.test.Hl7ITSupport;
+import uk.org.openeyes.oink.test.Hl7Helper;
 
 /**
  * 
@@ -105,7 +88,7 @@ public class ITHl7v2ToProxy {
 			throws Exception {
 
 		// Load example A01
-		Message exampleA01 = Hl7ITSupport.loadHl7Message("/example-messages/hl7v2/A01-mod.txt");
+		Message exampleA01 = Hl7Helper.loadHl7Message("/example-messages/hl7v2/A01-mod.txt");
 
 		// Post A01
 		testMessageCanBePostedAndAcceptedByOink(exampleA01);
@@ -130,7 +113,7 @@ public class ITHl7v2ToProxy {
 			throws Exception {
 
 		// Load example A05
-		Message exampleA05 = Hl7ITSupport.loadHl7Message("/example-messages/hl7v2/A05-mod.txt");
+		Message exampleA05 = Hl7Helper.loadHl7Message("/example-messages/hl7v2/A05-mod.txt");
 
 		// Post A01
 		testMessageCanBePostedAndAcceptedByOink(exampleA05);
@@ -155,7 +138,7 @@ public class ITHl7v2ToProxy {
 			throws Exception {
 
 		// Load example A28
-		Message exampleA28 = Hl7ITSupport.loadHl7Message("/example-messages/hl7v2/A28-2-mod.txt");
+		Message exampleA28 = Hl7Helper.loadHl7Message("/example-messages/hl7v2/A28-2-mod.txt");
 
 		// Post A28
 		testMessageCanBePostedAndAcceptedByOink(exampleA28);
@@ -180,7 +163,7 @@ public class ITHl7v2ToProxy {
 			throws Exception {
 
 		// Load example A31
-		Message exampleA31 = Hl7ITSupport.loadHl7Message("/example-messages/hl7v2/A31-2-mod.txt");
+		Message exampleA31 = Hl7Helper.loadHl7Message("/example-messages/hl7v2/A31-2-mod.txt");
 
 		// Post A31
 		testMessageCanBePostedAndAcceptedByOink(exampleA31);

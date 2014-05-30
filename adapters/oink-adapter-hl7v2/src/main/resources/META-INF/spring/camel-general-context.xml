@@ -37,15 +37,18 @@
 			value="osgibundle:/uk/org/openeyes/oink/adapter/hl7v2/A05.xsl" />
 	</bean>
 
-	<bean id="a19Processor" class="uk.org.openeyes.oink.hl7v2.A19Processor" />
+	<bean id="a19Processor" class="uk.org.openeyes.oink.hl7v2.A19Processor">
+		<property name="xsltPath"
+			value="osgibundle:/uk/org/openeyes/oink/adapter/hl7v2/ADR.xsl" />
+	</bean>
 
 	<bean id="hl7dataformat" class="org.apache.camel.component.hl7.HL7DataFormat">
 		<property name="validate" value="false" />
 	</bean>
-	
+
 	<bean id="synchRabbitProcessor" class="uk.org.openeyes.oink.rabbit.SynchronousRabbitProcessor">
 		<constructor-arg value="5000" />
-	</bean>	
+	</bean>
 
 	<camelContext xmlns="http://camel.apache.org/schema/spring">
 
@@ -86,7 +89,8 @@
 		</route>
 
 		<route id="rabbit-consumer">
-			<from uri="rabbitmq://{{rabbit.host}}:{{rabbit.port}}/{{rabbit.defaultExchange}}?vhost={{rabbit.vhost}}&amp;username={{rabbit.username}}&amp;password={{rabbit.password}}&amp;routingKey={{rabbit.inboundRoutingKey}}&amp;autoDelete=false"/>
+			<from
+				uri="rabbitmq://{{rabbit.host}}:{{rabbit.port}}/{{rabbit.defaultExchange}}?vhost={{rabbit.vhost}}&amp;username={{rabbit.username}}&amp;password={{rabbit.password}}&amp;routingKey={{rabbit.inboundRoutingKey}}&amp;autoDelete=false" />
 			<bean ref="a19Processor" method="buildQuery" />
 			<to
 				uri="mina2:tcp://{{remote.host}}:{{remote.port}}?sync=false&amp;codec=#hl7codec" />

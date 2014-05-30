@@ -73,6 +73,12 @@ public abstract class Hl7v2Processor {
 
 		// Convert to HL7v2 XML format
 		String hl7Xml = hl7v2Converter.toXml(message);
+		
+		if (!resource.exists()) {
+			String s = "No XLS transform found for this converter";
+			log.error(s);
+			throw new OinkException(s);
+		}
 
 		// Map to FHIR XML format
 		String fhirXml = XmlTransformer.transform(hl7Xml,
