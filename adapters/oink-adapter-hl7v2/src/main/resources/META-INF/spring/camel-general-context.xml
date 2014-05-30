@@ -51,8 +51,8 @@
 	</bean>
 
 	<bean id="rabbitRpcErrorProcessor" class="uk.org.openeyes.oink.rabbit.OinkRPCExceptionProcessor" />
-	
-	<bean id="isRabbitRPC" class="uk.org.openeyes.oink.rabbit.IsRabbitRPC"/>
+
+	<bean id="isRabbitRPC" class="uk.org.openeyes.oink.rabbit.IsRabbitRPC" />
 
 	<camelContext xmlns="http://camel.apache.org/schema/spring">
 
@@ -94,6 +94,9 @@
 		</route>
 
 		<!-- Send transformed HL7v2 message out to OINK -->
+
+
+		<!-- rabbit outgoing gateway -->
 		<route id="rabbit-rpc">
 			<from uri="direct:rabbit-rpc" />
 			<setHeader headerName="rabbitmq.ROUTING_KEY">
@@ -102,9 +105,23 @@
 			<setHeader headerName="rabbitmq.EXCHANGE_KEY">
 				<simple>{{rabbit.defaultExchange}}</simple>
 			</setHeader>
+			<setHeader headerName="rabbitmq.REPLY_TO">
+				<simple>{{rabbit.outboundResponseRoutingKey}}</simple>
+			</setHeader>
+			<bean ref="synchRabbitProcessor" method="prepare" />
 			<to
 				uri="rabbitmq://{{rabbit.host}}:{{rabbit.port}}/{{rabbit.defaultExchange}}?vhost={{rabbit.vhost}}&amp;username={{rabbit.username}}&amp;password={{rabbit.password}}&amp;autoDelete=false" />
+			<bean ref="synchRabbitProcessor" method="waitForResponse" />
 			<removeHeaders pattern="*" />
+		</route>
+
+		<!-- rabbit response router -->
+		<route id="rabbit-rpc-response-router">
+			<from
+				uri="rabbitmq://{{rabbit.host}}:{{rabbit.port}}/{{rabbit.defaultExchange}}?vhost={{rabbit.vhost}}&amp;username={{rabbit.username}}&amp;password={{rabbit.password}}&amp;routingKey={{rabbit.outboundResponseRoutingKey}}&amp;autoDelete=false" />
+			<recipientList>
+				<simple>seda:${headers.rabbitmq.CORRELATIONID}</simple>
+			</recipientList>
 		</route>
 
 		<!-- Accept incoming OINK request for Patient Search -->
@@ -113,12 +130,16 @@
 				uri="rabbitmq://{{rabbit.host}}:{{rabbit.port}}/{{rabbit.defaultExchange}}?vhost={{rabbit.vhost}}&amp;username={{rabbit.username}}&amp;password={{rabbit.password}}&amp;routingKey={{rabbit.inboundRoutingKey}}&amp;autoDelete=false" />
 			<onException>
 				<exception>java.lang.Exception</exception>
-				<handled><ref>isRabbitRPC</ref></handled>
+				<handled>
+					<ref>isRabbitRPC</ref>
+				</handled>
 				<process ref="rabbitRpcErrorProcessor" />
-				<to uri="log:GeneralError?level=ERROR&amp;showAll=true&amp;multiline=true" />
+				<to
+					uri="log:GeneralError?level=ERROR&amp;showAll=true&amp;multiline=true" />
 				<when>
 					<header>rabbitmq.ROUTING_KEY</header>
-					<to uri="rabbitmq://{{rabbit.host}}:{{rabbit.port}}/{{rabbit.defaultExchange}}?vhost={{rabbit.vhost}}&amp;username={{rabbit.username}}&amp;password={{rabbit.password}}&amp;autoDelete=false" />
+					<to
+						uri="rabbitmq://{{rabbit.host}}:{{rabbit.port}}/{{rabbit.defaultExchange}}?vhost={{rabbit.vhost}}&amp;username={{rabbit.username}}&amp;password={{rabbit.password}}&amp;autoDelete=false" />
 				</when>
 			</onException>
 			<bean ref="a19Processor" method="buildQuery" />
