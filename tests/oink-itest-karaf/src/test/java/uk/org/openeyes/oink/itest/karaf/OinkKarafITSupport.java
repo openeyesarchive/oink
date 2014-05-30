@@ -22,6 +22,8 @@ import org.springframework.osgi.context.event.OsgiBundleApplicationContextEvent;
 import org.springframework.osgi.context.event.OsgiBundleApplicationContextListener;
 import org.springframework.osgi.context.event.OsgiBundleContextFailedEvent;
 
+import uk.org.openeyes.oink.it.ITSupport;
+
 
 /**
  * 
@@ -70,20 +72,14 @@ public class OinkKarafITSupport {
 		assertTrue(listener.getContextFailed());
 	}
 	
-	public void checkAdapterContextDoesntFailWithCfg(String adapterSuffix) throws Exception {
+	public void checkAdapterContextDoesntFailWithCfg(String adapterSuffix, String configSysProperty) throws Exception {
 		
 		// Make sure facade-feature is installed
 		Feature feature = featuresService.getFeature("oink-adapter-"+adapterSuffix);
 		assertFalse(featuresService.isInstalled(feature));
 		
 		// Load cfg
-		Properties properties = new Properties();
-		File f = new File("../../../src/test/resources/"+adapterSuffix+".properties");
-		assertTrue("No "+adapterSuffix+".properties file found in src/test/resources",f.exists());
-		FileInputStream fileIo = new FileInputStream(f);
-		properties.load(fileIo);
-		fileIo.close();
-
+		Properties properties = ITSupport.getPropertiesBySystemProperty(configSysProperty);
 		// Place cfg
 		org.osgi.service.cm.Configuration c = configurationAdmin.getConfiguration("uk.org.openeyes.oink."+adapterSuffix);
 		assertNull("Existing configuration found",c.getProperties());

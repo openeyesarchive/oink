@@ -19,6 +19,8 @@
 			<groupId>uk.org.openeyes.oink</groupId>
 			<artifactId>oink-itest-shared</artifactId>
 			<version>${project.version}</version>
+			<scope>test</scope>
+			<type>test-jar</type>
 		</dependency>
 
 		<!-- Dependencies for pax exam karaf container -->

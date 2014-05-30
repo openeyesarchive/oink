@@ -1,6 +1,9 @@
-package uk.org.openeyes.oink.itest.adapters;
+package uk.org.openeyes.oink.it;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
 
 import org.apache.http.HttpException;
@@ -15,6 +18,21 @@ import ca.uhn.fhir.rest.client.IGenericClient;
 import ca.uhn.fhir.rest.client.IRestfulClientFactory;
 
 public class ITSupport {
+	
+	public static File getPropertyFileBySystemProperty(String systemProperty) {
+		String path = System.getProperty(systemProperty);
+		File f = new File(path);
+		return f;
+	}
+	
+	public static Properties getPropertiesBySystemProperty(String systemProperty) throws IOException {
+		File f = getPropertyFileBySystemProperty(systemProperty);
+		FileInputStream fis = new FileInputStream(f);
+		Properties p = new Properties();
+		p.load(fis);
+		fis.close();
+		return p;
+	}
 
 	public static IGenericClient buildHapiClientForProxy(Properties proxyProps) {
 		// See if Patient exists

@@ -63,7 +63,7 @@ public class OinkFacadeIT extends OinkKarafITSupport{
 	
 	@Test
 	public void checkFacadeContextDoesntFailWithCfg() throws Exception {
-		checkAdapterContextDoesntFailWithCfg("facade");
+		checkAdapterContextDoesntFailWithCfg("facade","it.facadeToProxy.config");
 	}	
 	
 	@ProbeBuilder

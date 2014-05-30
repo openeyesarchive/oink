@@ -41,69 +41,74 @@ import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.protocol.ReceivingApplication;
 import ca.uhn.hl7v2.protocol.ReceivingApplicationException;
 import uk.org.openeyes.oink.fhir.FhirConverter;
+import uk.org.openeyes.oink.it.ITSupport;
 import uk.org.openeyes.oink.test.Hl7Helper;
 import uk.org.openeyes.oink.test.Hl7Server;
 
+/**
+ * 
+ * This class tests the behaviour of using the facade with an HL7v2 Server. It
+ * tests a user's ability to make FHIR REST requests which get converted to/from
+ * HL7v2 messages by the HL7v2 adapter.
+ * 
+ */
 public class ITFacadeToHl7v2 {
-	
+
 	private static Properties hl7Props;
 	private static Properties facadeProps;
-	
+
 	private static TestContainer examContainer;
 
 	@BeforeClass
 	public static void setUp() throws IOException, InterruptedException {
-
-		hl7Props = new Properties();
-		InputStream hl7PropsIs = ITFacadeToHl7v2.class
-				.getResourceAsStream("/hl7v2.properties");
-		hl7Props.load(hl7PropsIs);
-
-		facadeProps = new Properties();
-		InputStream proxyPropsIs = ITFacadeToHl7v2.class
-				.getResourceAsStream("/facade-toHl7.properties");
-		facadeProps.load(proxyPropsIs);
 		
+		hl7Props = ITSupport.getPropertiesBySystemProperty("it.hl7v2.config");
+		facadeProps = ITSupport.getPropertiesBySystemProperty("it.facadeToHl7v2.config");
+
 		// Start Pax Exam
 		ExamSystem system = PaxExamRuntime.createServerSystem(config());
 		examContainer = PaxExamRuntime.createContainer(system);
 		examContainer.start();
-		
+
 		// TODO Fix - For some reason a large wait is required
 		Thread.sleep(45000);
 	}
-	
+
 	@AfterClass
 	public static void tearDown() {
 		examContainer.stop();
 	}
-	
+
 	@Test
-	public void testPatientQueryIsPossibleUsingMockedHl7Server() throws Exception {
-		
+	public void testPatientQueryIsPossibleUsingMockedHl7Server()
+			throws Exception {
+
 		// Mock an HL7 Server
 		Hl7Server hl7Server = new Hl7Server(5678, false);
-		
-		final Message searchResults = Hl7Helper.loadHl7Message("/example-messages/hl7v2/ADR-A19.txt");
+
+		final Message searchResults = Hl7Helper
+				.loadHl7Message("/example-messages/hl7v2/ADR-A19.txt");
 		hl7Server.setMessageHandler("QRY", "A19", new ReceivingApplication() {
-			
+
 			@Override
-			public Message processMessage(Message in, Map<String, Object> metadata)
+			public Message processMessage(Message in,
+					Map<String, Object> metadata)
 					throws ReceivingApplicationException, HL7Exception {
 				// Always return search results
 				return searchResults;
 			}
-			
+
 			@Override
 			public boolean canProcess(Message message) {
 				return true;
 			}
 		});
-		
+
 		hl7Server.start();
-		
+
 		// Make a Patient Query
-		URIBuilder builder = new URIBuilder(facadeProps.getProperty("facade.uri")+"/Patient");
+		URIBuilder builder = new URIBuilder(
+				facadeProps.getProperty("facade.uri") + "/Patient");
 		builder.addParameter("identifier", "NHS|123456");
 		CloseableHttpClient httpclient = HttpClients.createDefault();
 		HttpGet httpGet = new HttpGet(builder.build());
@@ -114,21 +119,21 @@ public class ITFacadeToHl7v2 {
 		assertEquals(200, response1.getStatusLine().getStatusCode());
 		String json = null;
 		try {
-		    HttpEntity entity1 = response1.getEntity();
-		    json = EntityUtils.toString(entity1);
+			HttpEntity entity1 = response1.getEntity();
+			json = EntityUtils.toString(entity1);
 		} finally {
-		    response1.close();
+			response1.close();
 			hl7Server.stop();
 		}
-		
+
 		assertNotNull(json);
-	
+
 		FhirConverter conv = new FhirConverter();
 		AtomFeed response = conv.fromJsonOrXml(json);
-		
-		assertNotEquals(0, response.getEntryList().size());	
+
+		assertNotEquals(0, response.getEntryList().size());
 	}
-	
+
 	public static Option[] config() {
 		MavenArtifactUrlReference karafUrl = maven()
 				.groupId("uk.org.openeyes.oink.karaf").artifactId("distro")
@@ -154,16 +159,17 @@ public class ITFacadeToHl7v2 {
 				configureConsole().ignoreLocalConsole(),
 				// Force the log level to INFO so we have more details during
 				// the test. It defaults to WARN.
-				//logLevel(LogLevel.DEBUG),
+				// logLevel(LogLevel.DEBUG),
 				// Provision the example feature exercised by this test
 				features(oinkFeaturesRepo, "oink-adapter-hl7v2"),
-				replaceConfigurationFile("etc/uk.org.openeyes.oink.hl7v2.cfg",
-						new File("../oink-itest-shared/src/main/resources/hl7v2.properties")),
+				replaceConfigurationFile(
+						"etc/uk.org.openeyes.oink.hl7v2.cfg",
+						ITSupport.getPropertyFileBySystemProperty("it.hl7v2.config")),
 				features(oinkFeaturesRepo, "oink-adapter-facade"),
 				replaceConfigurationFile("etc/uk.org.openeyes.oink.facade.cfg",
-						new File("src/test/resources/facade-toHl7.properties")),
+						ITSupport.getPropertyFileBySystemProperty("it.facadeToHl7v2.config")),
 				replaceConfigurationFile("etc/org.ops4j.pax.logging.cfg",
-								new File("src/test/resources/log4j.properties")),						
+						new File("src/test/resources/log4j.properties")),
 
 		// Remember that the test executes in another process. If you want to
 		// debug it, you need
@@ -174,5 +180,5 @@ public class ITFacadeToHl7v2 {
 		// debugConfiguration("5005", true),
 		};
 	}
-	
+
 }

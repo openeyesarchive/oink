@@ -59,7 +59,7 @@ public class OinkProxyIT extends OinkKarafITSupport {
 	
 	@Test
 	public void checkProxyContextDoesntFailWithCfg() throws Exception {
-		checkAdapterContextDoesntFailWithCfg("proxy");
+		checkAdapterContextDoesntFailWithCfg("proxy", "it.proxy.config");
 	}	
 		
 	@ProbeBuilder

@@ -63,7 +63,7 @@ public class OinkHl7v2IT extends OinkKarafITSupport{
 	
 	@Test
 	public void checkHl7AdapterContextDoesntFailWithCfg() throws Exception {
-		checkAdapterContextDoesntFailWithCfg("hl7v2");
+		checkAdapterContextDoesntFailWithCfg("hl7v2", "it.hl7v2.config");
 	}	
 	
 	@ProbeBuilder

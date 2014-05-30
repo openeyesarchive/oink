@@ -47,6 +47,7 @@ import uk.org.openeyes.oink.domain.FhirBody;
 import uk.org.openeyes.oink.domain.HttpMethod;
 import uk.org.openeyes.oink.domain.OINKRequestMessage;
 import uk.org.openeyes.oink.domain.OINKResponseMessage;
+import uk.org.openeyes.oink.it.ITSupport;
 import uk.org.openeyes.oink.proxy.test.support.RabbitClient;
 
 /*
@@ -63,10 +64,7 @@ public class ITProxyAdapter {
 	@BeforeClass
 	public static void setUp() throws IOException, InterruptedException {
 
-		props = new Properties();
-		InputStream proxyPropsIs = ITHl7v2ToProxy.class
-				.getResourceAsStream("/proxy.properties");
-		props.load(proxyPropsIs);
+		props = ITSupport.getPropertiesBySystemProperty("it.proxy.config");
 
 		// Start Pax Exam
 		ExamSystem system = PaxExamRuntime.createServerSystem(config());
@@ -455,7 +453,7 @@ public class ITProxyAdapter {
 				// It is really nice if the container sticks around after the
 				// test so you can check the contents
 				// of the data directory when things go wrong.
-				keepRuntimeFolder(),
+				//keepRuntimeFolder(),
 				// Don't bother with local console output as it just ends up
 				// cluttering the logs
 				// configureConsole().ignoreLocalConsole(),
@@ -466,8 +464,7 @@ public class ITProxyAdapter {
 				features(oinkFeaturesRepo, "oink-adapter-proxy"),
 				replaceConfigurationFile(
 						"etc/uk.org.openeyes.oink.proxy.cfg",
-						new File(
-								"../oink-itest-shared/src/main/resources/proxy.properties")),
+						ITSupport.getPropertyFileBySystemProperty("it.proxy.config")),
 
 		// Remember that the test executes in another process. If you
 		// want to

@@ -24,6 +24,7 @@ import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.options.MavenArtifactUrlReference;
 import org.ops4j.pax.exam.options.MavenUrlReference;
 import org.ops4j.pax.exam.spi.PaxExamRuntime;
+
 import ca.uhn.fhir.model.api.Bundle;
 import ca.uhn.fhir.rest.client.IGenericClient;
 import ca.uhn.hl7v2.DefaultHapiContext;
@@ -32,6 +33,7 @@ import ca.uhn.hl7v2.app.Connection;
 import ca.uhn.hl7v2.app.Initiator;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.v24.message.ACK;
+import uk.org.openeyes.oink.it.ITSupport;
 import uk.org.openeyes.oink.test.Hl7Helper;
 
 /**
@@ -52,15 +54,9 @@ public class ITHl7v2ToProxy {
 	@BeforeClass
 	public static void setUp() throws IOException, InterruptedException {
 
-		hl7Props = new Properties();
-		InputStream hl7PropsIs = ITHl7v2ToProxy.class
-				.getResourceAsStream("/hl7v2.properties");
-		hl7Props.load(hl7PropsIs);
-
-		proxyProps = new Properties();
-		InputStream proxyPropsIs = ITHl7v2ToProxy.class
-				.getResourceAsStream("/proxy.properties");
-		proxyProps.load(proxyPropsIs);
+		hl7Props = ITSupport.getPropertiesBySystemProperty("it.hl7v2.config");
+				
+		proxyProps = ITSupport.getPropertiesBySystemProperty("it.proxy.config");
 		
 		// Start Pax Exam
 		ExamSystem system = PaxExamRuntime.createServerSystem(config());
@@ -185,16 +181,6 @@ public class ITHl7v2ToProxy {
 
 	public void testMessageCanBePostedAndAcceptedByOink(Message m)
 			throws Exception {
-		Properties hl7Props = new Properties();
-		InputStream hl7PropsIs = ITHl7v2ToProxy.class
-				.getResourceAsStream("/hl7v2.properties");
-		hl7Props.load(hl7PropsIs);
-
-		Properties proxyProps = new Properties();
-		InputStream proxyPropsIs = ITHl7v2ToProxy.class
-				.getResourceAsStream("/proxy.properties");
-		proxyProps.load(proxyPropsIs);
-
 		// Send message and get ACK response
 		HapiContext context = new DefaultHapiContext();
 		Connection hl7v2Conn = context.newClient(
@@ -238,10 +224,10 @@ public class ITHl7v2ToProxy {
 				// Provision the example feature exercised by this test
 				features(oinkFeaturesRepo, "oink-adapter-hl7v2"),
 				replaceConfigurationFile("etc/uk.org.openeyes.oink.hl7v2.cfg",
-						new File("../oink-itest-shared/src/main/resources/hl7v2.properties")),
+						ITSupport.getPropertyFileBySystemProperty("it.hl7v2.config")),
 				features(oinkFeaturesRepo, "oink-adapter-proxy"),
 				replaceConfigurationFile("etc/uk.org.openeyes.oink.proxy.cfg",
-						new File("../oink-itest-shared/src/main/resources/proxy.properties")),
+						ITSupport.getPropertyFileBySystemProperty("it.proxy.config")),
 				replaceConfigurationFile("etc/org.ops4j.pax.logging.cfg",
 								new File("src/test/resources/log4j.properties")),						
 

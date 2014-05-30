@@ -44,6 +44,7 @@ import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.options.MavenArtifactUrlReference;
 import org.ops4j.pax.exam.options.MavenUrlReference;
 import org.ops4j.pax.exam.spi.PaxExamRuntime;
+
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.model.api.Bundle;
 import ca.uhn.fhir.model.dstu.resource.Conformance;
@@ -52,6 +53,7 @@ import ca.uhn.fhir.rest.client.HttpBasicAuthInterceptor;
 import ca.uhn.fhir.rest.client.IGenericClient;
 import ca.uhn.fhir.rest.client.IRestfulClientFactory;
 import uk.org.openeyes.oink.fhir.FhirConverter;
+import uk.org.openeyes.oink.it.ITSupport;
 
 /**
  * 
@@ -73,15 +75,9 @@ public class ITFacadeToProxy {
 	@BeforeClass
 	public static void setUp() throws IOException, InterruptedException {
 
-		facadeProps = new Properties();
-		InputStream facadePropsIs = ITFacadeToProxy.class
-				.getResourceAsStream("/facade.properties");
-		facadeProps.load(facadePropsIs);
+		facadeProps = ITSupport.getPropertiesBySystemProperty("it.facadeToProxy.config");
 
-		proxyProps = new Properties();
-		InputStream proxyPropsIs = ITFacadeToProxy.class
-				.getResourceAsStream("/proxy.properties");
-		proxyProps.load(proxyPropsIs);
+		proxyProps = ITSupport.getPropertiesBySystemProperty("it.proxy.config");
 		
 		// Start Pax Exam
 		ExamSystem system = PaxExamRuntime.createServerSystem(config());
@@ -295,10 +291,10 @@ public class ITFacadeToProxy {
 				// Provision the example feature exercised by this test
 				features(oinkFeaturesRepo, "oink-adapter-facade"),
 				replaceConfigurationFile("etc/uk.org.openeyes.oink.facade.cfg",
-						new File("../oink-itest-shared/src/main/resources/facade.properties")),
+						ITSupport.getPropertyFileBySystemProperty("it.facadeToProxy.config")),
 				features(oinkFeaturesRepo, "oink-adapter-proxy"),
 				replaceConfigurationFile("etc/uk.org.openeyes.oink.proxy.cfg",
-						new File("../oink-itest-shared/src/main/resources/proxy.properties")),
+						ITSupport.getPropertyFileBySystemProperty("it.proxy.config")),
 				replaceConfigurationFile("etc/org.ops4j.pax.logging.cfg",
 								new File("src/test/resources/log4j.properties")),						
 

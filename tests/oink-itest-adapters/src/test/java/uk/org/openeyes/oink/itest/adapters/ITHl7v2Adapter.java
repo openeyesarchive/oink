@@ -32,6 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import uk.org.openeyes.oink.hl7v2.test.Hl7ITSupport;
+import uk.org.openeyes.oink.it.ITSupport;
 import uk.org.openeyes.oink.proxy.test.support.RabbitServer;
 import ca.uhn.hl7v2.DefaultHapiContext;
 import ca.uhn.hl7v2.HapiContext;
@@ -53,10 +54,7 @@ public class ITHl7v2Adapter {
 
 	@BeforeClass
 	public static void setUp() throws IOException, InterruptedException {
-		props = new Properties();
-		InputStream is = ITHl7v2Adapter.class
-				.getResourceAsStream("/hl7v2.properties");
-		props.load(is);
+		props = ITSupport.getPropertiesBySystemProperty("it.hl7v2.config");
 
 		// Start Pax Exam
 		ExamSystem system = PaxExamRuntime.createServerSystem(config());
@@ -99,7 +97,7 @@ public class ITHl7v2Adapter {
 				// It is really nice if the container sticks around after the
 				// test so you can check the contents
 				// of the data directory when things go wrong.
-				keepRuntimeFolder(),
+				//keepRuntimeFolder(),
 				// Don't bother with local console output as it just ends up
 				// cluttering the logs
 				// configureConsole().ignoreLocalConsole(),
@@ -109,8 +107,7 @@ public class ITHl7v2Adapter {
 				features(oinkFeaturesRepo, "oink-adapter-hl7v2"),
 				replaceConfigurationFile(
 						"etc/uk.org.openeyes.oink.hl7v2.cfg",
-						new File(
-								"../oink-itest-shared/src/main/resources/hl7v2.properties")),
+						ITSupport.getPropertyFileBySystemProperty("it.hl7v2.config")),
 				replaceConfigurationFile("etc/org.ops4j.pax.logging.cfg",
 						new File("src/test/resources/log4j.properties")),
 
