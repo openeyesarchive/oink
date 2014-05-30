@@ -16,10 +16,10 @@
  *******************************************************************************/
 package uk.org.openeyes.oink.http;
 
-import uk.org.openeyes.oink.exception.HttpStatusCode;
 import uk.org.openeyes.oink.exception.OinkException;
+import uk.org.openeyes.oink.exception.OinkExceptionStatusCode;
 
-@HttpStatusCode(400)
+@OinkExceptionStatusCode(400)
 public class InvalidFhirRequestException extends OinkException{
 	
 	public InvalidFhirRequestException(String m) {

@@ -16,10 +16,10 @@
  *******************************************************************************/
 package uk.org.openeyes.oink.rabbit;
 
-import uk.org.openeyes.oink.exception.HttpStatusCode;
 import uk.org.openeyes.oink.exception.OinkException;
+import uk.org.openeyes.oink.exception.OinkExceptionStatusCode;
 
-@HttpStatusCode(504)
+@OinkExceptionStatusCode(504)
 public class SynchronousRabbitTimeoutException extends OinkException {
 
 }

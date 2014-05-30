@@ -21,5 +21,6 @@ package uk.org.openeyes.oink.domain;
  * system.
  */
 public abstract class OINKMessage {
+	
 
 }

@@ -16,7 +16,9 @@
  *******************************************************************************/
 package uk.org.openeyes.oink.exception;
 
-@HttpStatusCode(500)
+
+
+@OinkExceptionStatusCode(500)
 public class OinkException extends Exception {
 
 	public OinkException() {

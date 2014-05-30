@@ -52,6 +52,7 @@
 
 	<camelContext xmlns="http://camel.apache.org/schema/spring">
 
+		<!-- Accept incoming HL7 messages -->
 		<route id="hl7-consumer">
 			<from
 				uri="mina2:tcp://{{hl7v2.host}}:{{hl7v2.port}}?sync=false&amp;codec=#hl7codec" />
@@ -88,21 +89,7 @@
 			</transform>
 		</route>
 
-		<route id="rabbit-consumer">
-			<from
-				uri="rabbitmq://{{rabbit.host}}:{{rabbit.port}}/{{rabbit.defaultExchange}}?vhost={{rabbit.vhost}}&amp;username={{rabbit.username}}&amp;password={{rabbit.password}}&amp;routingKey={{rabbit.inboundRoutingKey}}&amp;autoDelete=false" />
-			<bean ref="a19Processor" method="buildQuery" />
-			<to
-				uri="mina2:tcp://{{remote.host}}:{{remote.port}}?sync=false&amp;codec=#hl7codec" />
-			<bean ref="a19Processor" method="process" />
-			<setHeader headerName="rabbitmq.ROUTING_KEY">
-				<constant>${header.rabbitmq.REPLY_TO}</constant>
-			</setHeader>
-			<to
-				uri="rabbitmq://{{rabbit.host}}:{{rabbit.port}}/{{rabbit.defaultExchange}}?vhost={{rabbit.vhost}}&amp;username={{rabbit.username}}&amp;password={{rabbit.password}}&amp;autoDelete=false" />
-		</route>
-
-		<!-- rabbit outgoing gateway -->
+		<!-- Send transformed HL7v2 message out to OINK -->
 		<route id="rabbit-rpc">
 			<from uri="direct:rabbit-rpc" />
 			<setHeader headerName="rabbitmq.ROUTING_KEY">
@@ -111,23 +98,21 @@
 			<setHeader headerName="rabbitmq.EXCHANGE_KEY">
 				<simple>{{rabbit.defaultExchange}}</simple>
 			</setHeader>
-			<setHeader headerName="rabbitmq.REPLY_TO">
-				<simple>{{rabbit.outboundResponseRoutingKey}}</simple>
-			</setHeader>
-			<bean ref="synchRabbitProcessor" method="prepare" />
 			<to
 				uri="rabbitmq://{{rabbit.host}}:{{rabbit.port}}/{{rabbit.defaultExchange}}?vhost={{rabbit.vhost}}&amp;username={{rabbit.username}}&amp;password={{rabbit.password}}&amp;autoDelete=false" />
-			<bean ref="synchRabbitProcessor" method="waitForResponse" />
 			<removeHeaders pattern="*" />
 		</route>
 
-		<!-- rabbit response router -->
-		<route id="rabbit-rpc-response-router">
-			<from
-				uri="rabbitmq://{{rabbit.host}}:{{rabbit.port}}/{{rabbit.defaultExchange}}?vhost={{rabbit.vhost}}&amp;username={{rabbit.username}}&amp;password={{rabbit.password}}&amp;routingKey={{rabbit.outboundResponseRoutingKey}}&amp;autoDelete=false" />
-			<recipientList>
-				<simple>seda:${headers.rabbitmq.CORRELATIONID}</simple>
-			</recipientList>
+		<!-- Accept incoming OINK request for Patient Search -->
+		<route id="rabbit-consumer">
+			<from uri="rabbitmq://{{rabbit.host}}:{{rabbit.port}}/{{rabbit.defaultExchange}}?vhost={{rabbit.vhost}}&amp;username={{rabbit.username}}&amp;password={{rabbit.password}}&amp;routingKey={{rabbit.inboundRoutingKey}}&amp;autoDelete=false" />
+			<bean ref="a19Processor" method="buildQuery" />
+			<to uri="mina2:tcp://{{remote.host}}:{{remote.port}}?sync=false&amp;codec=#hl7codec" />
+			<bean ref="a19Processor" method="process" />
+			<setHeader headerName="rabbitmq.ROUTING_KEY">
+				<constant>${header.rabbitmq.REPLY_TO}</constant>
+			</setHeader>
+			<to uri="rabbitmq://{{rabbit.host}}:{{rabbit.port}}/{{rabbit.defaultExchange}}?vhost={{rabbit.vhost}}&amp;username={{rabbit.username}}&amp;password={{rabbit.password}}&amp;autoDelete=false" />
 		</route>
 
 	</camelContext>

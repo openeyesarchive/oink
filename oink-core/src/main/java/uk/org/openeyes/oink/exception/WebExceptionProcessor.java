@@ -46,9 +46,9 @@ public class WebExceptionProcessor implements Processor {
 
 		int errorCode = DEFAULT_ERROR_CODE;
 
-		if (e.getClass().isAnnotationPresent(HttpStatusCode.class)) {
-			HttpStatusCode statusCode = e.getClass().getAnnotation(
-					HttpStatusCode.class);
+		if (e.getClass().isAnnotationPresent(OinkExceptionStatusCode.class)) {
+			OinkExceptionStatusCode statusCode = e.getClass().getAnnotation(
+					OinkExceptionStatusCode.class);
 			errorCode = statusCode.value();
 			logger.info("Setting HTTP Response Code to " + errorCode
 					+ " due to exception: " + e.getClass().getName());

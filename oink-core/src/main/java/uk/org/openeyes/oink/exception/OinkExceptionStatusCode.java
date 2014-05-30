@@ -19,8 +19,16 @@ package uk.org.openeyes.oink.exception;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-@Retention(RetentionPolicy.RUNTIME) // Make this annotation accessible at runtime via reflection.
-public @interface HttpStatusCode {
+/**
+ * 
+ * Java annotation for OinkExceptions allows you to specify an Http Status Code
+ * that corresponds to this type of exception
+ * 
+ * @author Oliver Wilkie
+ */
+@Retention(RetentionPolicy.RUNTIME)
+// Make this annotation accessible at runtime via reflection.
+public @interface OinkExceptionStatusCode {
 
 	int value();
 }
