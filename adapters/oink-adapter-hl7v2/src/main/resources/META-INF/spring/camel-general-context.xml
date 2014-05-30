@@ -50,6 +50,10 @@
 		<constructor-arg value="5000" />
 	</bean>
 
+	<bean id="rabbitRpcErrorProcessor" class="uk.org.openeyes.oink.rabbit.OinkRPCExceptionProcessor" />
+	
+	<bean id="isRabbitRPC" class="uk.org.openeyes.oink.rabbit.IsRabbitRPC"/>
+
 	<camelContext xmlns="http://camel.apache.org/schema/spring">
 
 		<!-- Accept incoming HL7 messages -->
@@ -105,14 +109,27 @@
 
 		<!-- Accept incoming OINK request for Patient Search -->
 		<route id="rabbit-consumer">
-			<from uri="rabbitmq://{{rabbit.host}}:{{rabbit.port}}/{{rabbit.defaultExchange}}?vhost={{rabbit.vhost}}&amp;username={{rabbit.username}}&amp;password={{rabbit.password}}&amp;routingKey={{rabbit.inboundRoutingKey}}&amp;autoDelete=false" />
+			<from
+				uri="rabbitmq://{{rabbit.host}}:{{rabbit.port}}/{{rabbit.defaultExchange}}?vhost={{rabbit.vhost}}&amp;username={{rabbit.username}}&amp;password={{rabbit.password}}&amp;routingKey={{rabbit.inboundRoutingKey}}&amp;autoDelete=false" />
+			<onException>
+				<exception>java.lang.Exception</exception>
+				<handled><ref>isRabbitRPC</ref></handled>
+				<process ref="rabbitRpcErrorProcessor" />
+				<to uri="log:GeneralError?level=ERROR&amp;showAll=true&amp;multiline=true" />
+				<when>
+					<header>rabbitmq.ROUTING_KEY</header>
+					<to uri="rabbitmq://{{rabbit.host}}:{{rabbit.port}}/{{rabbit.defaultExchange}}?vhost={{rabbit.vhost}}&amp;username={{rabbit.username}}&amp;password={{rabbit.password}}&amp;autoDelete=false" />
+				</when>
+			</onException>
 			<bean ref="a19Processor" method="buildQuery" />
-			<to uri="mina2:tcp://{{remote.host}}:{{remote.port}}?sync=false&amp;codec=#hl7codec" />
+			<to
+				uri="mina2:tcp://{{remote.host}}:{{remote.port}}?sync=false&amp;codec=#hl7codec" />
 			<bean ref="a19Processor" method="process" />
 			<setHeader headerName="rabbitmq.ROUTING_KEY">
 				<constant>${header.rabbitmq.REPLY_TO}</constant>
 			</setHeader>
-			<to uri="rabbitmq://{{rabbit.host}}:{{rabbit.port}}/{{rabbit.defaultExchange}}?vhost={{rabbit.vhost}}&amp;username={{rabbit.username}}&amp;password={{rabbit.password}}&amp;autoDelete=false" />
+			<to
+				uri="rabbitmq://{{rabbit.host}}:{{rabbit.port}}/{{rabbit.defaultExchange}}?vhost={{rabbit.vhost}}&amp;username={{rabbit.username}}&amp;password={{rabbit.password}}&amp;autoDelete=false" />
 		</route>
 
 	</camelContext>
