@@ -1,6 +1,18 @@
 #OINK
 The OpenEyes Integration Toolkit for connecting an OpenEyes instance to other healthcare information systems.
 
+## Building
+```
+mvn clean install
+```
+A distributable custom Karaf container containing OINK is available under the *platforms/karaf/distro* module. 
+
+If your build fails because you do not have an environment capable of running the integration tests (which take a while to run) then alternatively use
+
+```
+mvn clean install -Dskip.ITs=true
+```
+
 ##Testing
 OpenEyes has a CI Jenkins server that monitors the health of this repository.
 
@@ -12,29 +24,28 @@ mvn test
 ```
 
 ### Integration Tests
-Integration tests are located within tests folder and can be run using the command `mvn verify`. 
+Integration tests are located within tests folder and can be run specifically using the command `mvn verify` or by doing a standard `mvn clean install`. 
 
 To override the default properties used in the integration tests for your own environment use a command like this..
 
 ```
-mvn verify -Dfacade.test.properties=file:{pathToFacadePropertiesFile} -proxy.test.properties=file:{pathToProxyPropertiesFile} etc
+mvn verify -Dit.facadeToHl7v2.config=pathToFacadePropertiesFile -Dit.proxy.config=pathToProxyPropertiesFile etc
 ```
+
+The .property files in oink-itest-shared will be used in the absence of custom properties.
+
+At present there are four property files required for the integration tests
+
+* it.proxy.config (rabbitMQ settings, url of proxy target)
+* it.hl7v2.config (rabbitMQ settings, hl7v2 server settings)
+* it.facadeToHl7v2.config (rabbitMQ settings, facade mappings, facade server settings)
+* it.facadeToProxy.config (rabbitMQ settings, facade mappings, facade server settings)
 
 ## Using
-A 1.0 OINK release is not possible until all of its dependancies are also officially released. In the meantime you can build and run OINK in its current 0.x version.
 
-### Current Dependancies
-- [FHIR Java Implementation](http://www.hl7.org/implement/standards/fhir/downloads.html) - Latest snapshot manually installed to local Maven repo. Alternatively configure your local repo to scan the Sonatype Snapshots Repo
 
-```
-		<dependency>
-			<groupId>me.fhir</groupId>
-			<artifactId>fhir-0.81</artifactId>
-			<version>${fhir.version}</version>
-		</dependency>
-```
-
-NB. Properties ${} are set in parent POM
+### Notable Dependancies
+- [FHIR Java Implementation](http://www.hl7.org/implement/standards/fhir/downloads.html)
 
 
 ### How to use OINK
