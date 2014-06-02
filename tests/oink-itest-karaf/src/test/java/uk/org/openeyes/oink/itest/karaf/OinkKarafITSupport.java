@@ -86,6 +86,12 @@ public class OinkKarafITSupport {
 		serviceRegistration.unregister();
 		featuresService.uninstallFeature("oink-adapter-"+adapterSuffix);
 		
+		// Delete properties placeholder
+		org.osgi.service.cm.Configuration c = configurationAdmin.getConfiguration("uk.org.openeyes.oink."+adapterSuffix);
+		if (c != null) {
+			c.delete();
+		}
+		
 		assertTrue("Should have failed but actually seems to have started", listener.getContextFailed());
 	}
 	

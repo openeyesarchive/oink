@@ -27,6 +27,8 @@ import javax.inject.Inject;
 import org.ops4j.pax.exam.karaf.options.LogLevelOption.LogLevel;
 import org.ops4j.pax.exam.options.MavenArtifactUrlReference;
 import org.ops4j.pax.exam.options.MavenUrlReference;
+import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
+import org.ops4j.pax.exam.spi.reactors.PerClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Configuration;
@@ -44,6 +46,7 @@ import org.slf4j.LoggerFactory;
  * @author Oliver Wilkie
  */
 @RunWith(PaxExam.class)
+@ExamReactorStrategy(PerClass.class)
 public class OinkFacadeIT extends OinkKarafITSupport {
 
 	private static final Logger logger = LoggerFactory
