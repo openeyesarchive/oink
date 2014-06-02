@@ -8,7 +8,6 @@
 		<artifactId>tests</artifactId>
 		<version>0.3-SNAPSHOT</version>
 	</parent>
-	<groupId>uk.org.openeyes.oink</groupId>
 	<artifactId>oink-itest-shared</artifactId>
 	<name>Oink :: Integration Tests :: Shared</name>
 	<properties>

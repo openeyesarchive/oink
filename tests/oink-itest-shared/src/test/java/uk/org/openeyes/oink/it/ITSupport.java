@@ -2,6 +2,7 @@ package uk.org.openeyes.oink.it;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
@@ -27,6 +28,9 @@ public class ITSupport {
 	
 	public static Properties getPropertiesBySystemProperty(String systemProperty) throws IOException {
 		File f = getPropertyFileBySystemProperty(systemProperty);
+		if (!f.exists()) {
+			throw new FileNotFoundException("No file found at "+ f.getAbsolutePath() + " for system property "+systemProperty+" is it set correctly?");
+		}
 		FileInputStream fis = new FileInputStream(f);
 		Properties p = new Properties();
 		p.load(fis);
