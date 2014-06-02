@@ -30,6 +30,9 @@ public class FhirConverter {
 
 	@Converter
 	public AtomFeed fromJsonOrXml(String input) throws FhirConversionException {
+		if (input.contains("\"\"")) {
+			log.warn("Possible empty string value detected in input. Valid FHIR doesn't contain empty strings!");
+		}
 		AtomFeed f = null;
 		try {
 			InputStream is = new ByteArrayInputStream(input.getBytes());

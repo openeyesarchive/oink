@@ -80,10 +80,13 @@ public abstract class Hl7v2Processor {
 			log.error(s);
 			throw new OinkException(s);
 		}
-
+		
 		// Map to FHIR XML format
 		String fhirXml = XmlTransformer.transform(hl7Xml,
 				resource.getInputStream());
+		
+		// Bug Fix -- Remove empty tags (valid transform shouldnt have them anyway)
+		fhirXml = fhirXml.replaceAll("<[a-zA-Z0-9]*/>", "");
 
 		// Convert to FHIR Bundle
 		AtomFeed bundle = fhirConverter.fromXmlToBundle(fhirXml);

@@ -6,20 +6,20 @@
 		<xsl:message>local name: [&lt;xsl:value-of select='local-name()'/&gt;]</xsl:message>
 		<xsl:message>namespace uri: [&lt;xsl:value-of select='namespace-uri()''/&gt;]</xsl:message>
 	</xsl:template>
-	<xsl:template match="/oms:ADR_A19" mode="main">
+	<xsl:template match="/oms:ADT_A05" mode="main">
 		<!--WProc template for path empty path-->
-		<xsl:variable name="v_1" select="/oms:ADR_A19"/>
+		<xsl:variable name="v_1" select="/oms:ADT_A05"/>
 		<xsl:apply-templates mode="feed_m1" select="$v_1"/>
 	</xsl:template>
-	<xsl:template match="oms:ADR_A19" mode="feed_m1">
+	<xsl:template match="oms:ADT_A05" mode="feed_m1">
 		<!--WProc template for path /a:feed-->
 		<xsl:variable name="feed.AtomFeed_in" select="."/>
 		<a:feed>
-			<xsl:variable name="v_8" select="$feed.AtomFeed_in/oms:ADR_A19.QUERY_RESPONSE/oms:PID"/>
+			<xsl:variable name="v_8" select="$feed.AtomFeed_in/oms:PID"/>
 			<xsl:variable name="resources.Patient_in" select="$v_8/self::node()"/>
-			<xsl:variable name="v_121" select="$feed.AtomFeed_in/oms:ADR_A19.QUERY_RESPONSE/oms:PD1/oms:PD1.3"/>
+			<xsl:variable name="v_121" select="$feed.AtomFeed_in/oms:PD1/oms:PD1.3"/>
 			<xsl:variable name="resources.Organization_in" select="$v_121/self::node()"/>
-			<xsl:variable name="v_137" select="$feed.AtomFeed_in/oms:ADR_A19.QUERY_RESPONSE/oms:PD1/oms:PD1.4"/>
+			<xsl:variable name="v_137" select="$feed.AtomFeed_in/oms:PD1/oms:PD1.4"/>
 			<xsl:variable name="resources.Practitioner_in" select="$v_137/self::node()"/>
 			<xsl:call-template name="a:authorName_1"/>
 			<xsl:call-template name="a:authorUri_2"/>
@@ -57,7 +57,7 @@
 	<xsl:template name="a:title_4">
 		<!--WProc template for path /a:feed/a:title-->
 		<a:title>
-			<xsl:variable name="title_5" select="'FHIR Patient Bundle from V2 ADR_A19'"/>
+			<xsl:variable name="title_5" select="'FHIR Patient Bundle from V2 ADT'"/>
 			<xsl:value-of select="$title_5"/>
 		</a:title>
 	</xsl:template>
@@ -131,19 +131,19 @@
 			</xsl:variable>
 			<xsl:variable name="v_30" select="$resources.Patient_in/oms:PID.13"/>
 			<xsl:variable name="complexTypes.Contact_in" select="$v_30/self::node()"/>
-			<xsl:variable name="v_35" select="$resources.Patient_in/ancestor::oms:ADR_A19.QUERY_RESPONSE/oms:NK1"/>
+			<xsl:variable name="v_35" select="$resources.Patient_in/ancestor::oms:ADT_A05/oms:NK1"/>
 			<xsl:variable name="components.PatientContactComponent_in" select="$v_35/self::node()"/>
 			<xsl:variable name="v_83" select="$resources.Patient_in/oms:PID.5"/>
 			<xsl:variable name="complexTypes.HumanName_in" select="$v_83/self::node()"/>
-			<xsl:variable name="v_92" select="$resources.Patient_in/ancestor::oms:ADR_A19.QUERY_RESPONSE/oms:PD1/oms:PD1.4/oms:XCN.1"/>
+			<xsl:variable name="v_92" select="$resources.Patient_in/ancestor::oms:ADT_A05/oms:PD1/oms:PD1.4/oms:XCN.1"/>
 			<xsl:variable name="v_93" select="$v_92/ancestor::oms:PD1.4"/>
 			<xsl:variable name="v_94" select="$v_93/self::node()"/>
-			<xsl:variable name="feed.AtomFeed_in" select="($v_94/ancestor::oms:ADR_A19)[1]"/>
+			<xsl:variable name="feed.AtomFeed_in" select="($v_94/ancestor::oms:ADT_A05)[1]"/>
 			<xsl:variable name="resources.Practitioner_in" select="$v_93/self::node()[($feed.AtomFeed_in)]"/>
-			<xsl:variable name="v_100" select="$resources.Patient_in/ancestor::oms:ADR_A19.QUERY_RESPONSE/oms:PD1/oms:PD1.3/oms:XON.3"/>
+			<xsl:variable name="v_100" select="$resources.Patient_in/ancestor::oms:ADT_A05/oms:PD1/oms:PD1.3/oms:XON.3"/>
 			<xsl:variable name="v_101" select="$v_100/ancestor::oms:PD1.3"/>
 			<xsl:variable name="v_102" select="$v_101/self::node()"/>
-			<xsl:variable name="feed.AtomFeed_in" select="($v_102/ancestor::oms:ADR_A19)[1]"/>
+			<xsl:variable name="feed.AtomFeed_in" select="($v_102/ancestor::oms:ADT_A05)[1]"/>
 			<xsl:variable name="resources.Organization_in" select="$v_101/self::node()[($feed.AtomFeed_in)]"/>
 			<xsl:variable name="v_108" select="$resources.Patient_in/oms:PID.11"/>
 			<xsl:variable name="complexTypes.Address_in" select="$v_108/self::node()"/>
@@ -809,10 +809,10 @@
 		<!--WProc template for path /a:feed/a:entry_Patient/a:content/Patient/careProvider/reference-->
 		<reference>
 			<xsl:variable name="v_95">
-				<xsl:variable name="v_96" select="$resources.Patient_in/ancestor::oms:ADR_A19.QUERY_RESPONSE/oms:PD1/oms:PD1.4/oms:XCN.1"/>
+				<xsl:variable name="v_96" select="$resources.Patient_in/ancestor::oms:ADT_A05/oms:PD1/oms:PD1.4/oms:XCN.1"/>
 				<xsl:variable name="v_97" select="$v_96/ancestor::oms:PD1.4"/>
 				<xsl:variable name="v_98" select="$v_97/self::node()"/>
-				<xsl:variable name="feed.AtomFeed_in" select="($v_98/ancestor::oms:ADR_A19)[1]"/>
+				<xsl:variable name="feed.AtomFeed_in" select="($v_98/ancestor::oms:ADT_A05)[1]"/>
 				<xsl:variable name="resources.Practitioner_in" select="$v_97/self::node()[($feed.AtomFeed_in)]"/>
 				<xsl:apply-templates mode="reso_m28" select="$resources.Practitioner_in"/>
 			</xsl:variable>
@@ -844,10 +844,10 @@
 		<!--WProc template for path /a:feed/a:entry_Patient/a:content/Patient/managingOrganization/reference-->
 		<reference>
 			<xsl:variable name="v_103">
-				<xsl:variable name="v_104" select="$resources.Patient_in/ancestor::oms:ADR_A19.QUERY_RESPONSE/oms:PD1/oms:PD1.3/oms:XON.3"/>
+				<xsl:variable name="v_104" select="$resources.Patient_in/ancestor::oms:ADT_A05/oms:PD1/oms:PD1.3/oms:XON.3"/>
 				<xsl:variable name="v_105" select="$v_104/ancestor::oms:PD1.3"/>
 				<xsl:variable name="v_106" select="$v_105/self::node()"/>
-				<xsl:variable name="feed.AtomFeed_in" select="($v_106/ancestor::oms:ADR_A19)[1]"/>
+				<xsl:variable name="feed.AtomFeed_in" select="($v_106/ancestor::oms:ADT_A05)[1]"/>
 				<xsl:variable name="resources.Organization_in" select="$v_105/self::node()[($feed.AtomFeed_in)]"/>
 				<xsl:apply-templates mode="reso_m30" select="$resources.Organization_in"/>
 			</xsl:variable>
@@ -1166,7 +1166,7 @@
 			<xsl:variable name="v_140" select="$resources.Practitioner_in/ancestor::oms:PD1/oms:PD1.3/oms:XON.3"/>
 			<xsl:variable name="v_141" select="$v_140/ancestor::oms:PD1.3"/>
 			<xsl:variable name="v_142" select="$v_141/self::node()"/>
-			<xsl:variable name="feed.AtomFeed_in" select="($v_142/ancestor::oms:ADR_A19)[1]"/>
+			<xsl:variable name="feed.AtomFeed_in" select="($v_142/ancestor::oms:ADT_A05)[1]"/>
 			<xsl:variable name="resources.Organization_in" select="$v_141/self::node()[($feed.AtomFeed_in)]"/>
 			<xsl:variable name="v_148" select="$resources.Practitioner_in/self::node()"/>
 			<xsl:variable name="complexTypes.HumanName_in" select="$v_148/self::node()"/>
@@ -1200,7 +1200,7 @@
 				<xsl:variable name="v_144" select="$resources.Practitioner_in/ancestor::oms:PD1/oms:PD1.3/oms:XON.3"/>
 				<xsl:variable name="v_145" select="$v_144/ancestor::oms:PD1.3"/>
 				<xsl:variable name="v_146" select="$v_145/self::node()"/>
-				<xsl:variable name="feed.AtomFeed_in" select="($v_146/ancestor::oms:ADR_A19)[1]"/>
+				<xsl:variable name="feed.AtomFeed_in" select="($v_146/ancestor::oms:ADT_A05)[1]"/>
 				<xsl:variable name="resources.Organization_in" select="$v_145/self::node()[($feed.AtomFeed_in)]"/>
 				<xsl:apply-templates mode="reso_m40" select="$resources.Organization_in"/>
 			</xsl:variable>

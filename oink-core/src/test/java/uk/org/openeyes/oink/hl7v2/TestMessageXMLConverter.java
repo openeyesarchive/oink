@@ -24,6 +24,13 @@ public class TestMessageXMLConverter extends Hl7TestSupport {
 	}
 	
 	@Test
+	public void testCanLoadExampleA19Result() throws Exception {
+		Message msg = loadMessage("/example-messages/hl7v2/ADR-A19-mod.txt");
+		MessageConverter conv = new MessageConverter();
+		String xml = conv.toXml(msg);
+	}
+	
+	@Test
 	@Ignore
 	public void convertPipeToXml() throws HL7Exception, IOException {
 		String message = "ADR-A19";

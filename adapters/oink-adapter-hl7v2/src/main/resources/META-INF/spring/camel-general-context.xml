@@ -144,11 +144,9 @@
 			</onException>
 			<bean ref="a19Processor" method="buildQuery" />
 			<to
-				uri="mina2:tcp://{{remote.host}}:{{remote.port}}?sync=false&amp;codec=#hl7codec" />
+				uri="mina2:tcp://{{remote.host}}:{{remote.port}}?sync=true&amp;codec=#hl7codec" />
+			<unmarshal ref="hl7dataformat" />
 			<bean ref="a19Processor" method="process" />
-			<setHeader headerName="rabbitmq.ROUTING_KEY">
-				<constant>${header.rabbitmq.REPLY_TO}</constant>
-			</setHeader>
 			<to
 				uri="rabbitmq://{{rabbit.host}}:{{rabbit.port}}/{{rabbit.defaultExchange}}?vhost={{rabbit.vhost}}&amp;username={{rabbit.username}}&amp;password={{rabbit.password}}&amp;autoDelete=false" />
 		</route>

@@ -5,6 +5,8 @@ import java.nio.charset.Charset;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+import net.wimpi.telnetd.io.terminal.xterm;
+
 import org.apache.camel.Exchange;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
@@ -13,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import uk.org.openeyes.oink.common.RandomStringGenerator;
+import uk.org.openeyes.oink.domain.FhirBody;
 import uk.org.openeyes.oink.domain.OINKRequestMessage;
 import uk.org.openeyes.oink.domain.OINKResponseMessage;
 import uk.org.openeyes.oink.exception.OinkException;
@@ -152,13 +155,15 @@ public class A19Processor extends Hl7v2Processor {
 		
 	}
 
-	public OINKResponseMessage processResponse(Message message) {
-		return null;
-	}
-
 	@Override
 	public void processResourcesInBundle(AtomFeed bundle, Exchange ex) {
-		// TODO Complete		
+		OINKResponseMessage resp = new OINKResponseMessage();
+		resp.setStatus(200);
+		resp.setBody(new FhirBody(bundle));
+		ex.getIn().setBody(resp);	
+		ex.getIn().setHeader("rabbitmq.ROUTING_KEY", ex.getIn().getHeader("rabbitmq.REPLY_TO"));
+		ex.getIn().removeHeader("rabbitmq.REPLY_TO");
+		log.debug("Sending response with routing key "+ex.getIn().getHeader("rabbitmq.ROUTING_KEY"));
 	}
 
 }

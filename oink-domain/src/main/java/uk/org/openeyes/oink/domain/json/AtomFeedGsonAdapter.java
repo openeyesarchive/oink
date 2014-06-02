@@ -54,7 +54,7 @@ public class AtomFeedGsonAdapter implements JsonSerializer<AtomFeed>,
 			String element = os.toString();
 			
 			// Bug - Fhir Java Implementation serializes empty strings as NULL
-			element = element.replaceAll("null", "\"\"");
+			//element = element.replaceAll("null", "\"\"");
 			
 			JsonObject ob = new JsonObject();
 			com.google.gson.JsonParser gsonParser = new com.google.gson.JsonParser();

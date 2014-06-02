@@ -35,6 +35,8 @@ import org.ops4j.pax.exam.TestContainer;
 import org.ops4j.pax.exam.options.MavenArtifactUrlReference;
 import org.ops4j.pax.exam.options.MavenUrlReference;
 import org.ops4j.pax.exam.spi.PaxExamRuntime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Message;
@@ -56,6 +58,8 @@ public class ITFacadeToHl7v2 {
 
 	private static Properties hl7Props;
 	private static Properties facadeProps;
+	
+	private static final Logger log = LoggerFactory.getLogger(ITFacadeToHl7v2.class);
 
 	private static TestContainer examContainer;
 
@@ -82,12 +86,14 @@ public class ITFacadeToHl7v2 {
 	@Test
 	public void testPatientQueryIsPossibleUsingMockedHl7Server()
 			throws Exception {
+		
+		Thread.sleep(45000);
 
 		// Mock an HL7 Server
 		Hl7Server hl7Server = new Hl7Server(5678, false);
 
 		final Message searchResults = Hl7Helper
-				.loadHl7Message("/example-messages/hl7v2/ADR-A19.txt");
+				.loadHl7Message("/example-messages/hl7v2/ADR-A19-mod.txt");
 		hl7Server.setMessageHandler("QRY", "A19", new ReceivingApplication() {
 
 			@Override
@@ -95,6 +101,7 @@ public class ITFacadeToHl7v2 {
 					Map<String, Object> metadata)
 					throws ReceivingApplicationException, HL7Exception {
 				// Always return search results
+				log.debug("Returning search results");
 				return searchResults;
 			}
 
