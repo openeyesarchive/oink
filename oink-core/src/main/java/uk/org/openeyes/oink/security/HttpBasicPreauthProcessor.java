@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
-package uk.org.openeyes.oink.http;
+package uk.org.openeyes.oink.security;
 
 import javax.security.auth.Subject;
 
@@ -25,16 +25,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 
-import uk.org.openeyes.oink.security.SecurityException;
-
 /**
- * A {@link Processor}-like bean that prepares a request for Spring Security inspection.
+ * A {@link Processor}-like bean that prepares a request for Spring Security
+ * authentication using information from the HTTP Basic Header.
  * 
  * @author Oliver Wilkie
  */
-public class HttpBasicAuthenticator {
-	
-	private Logger logger = LoggerFactory.getLogger(HttpBasicAuthenticator.class);
+public class HttpBasicPreauthProcessor {
+
+	private Logger logger = LoggerFactory
+			.getLogger(HttpBasicPreauthProcessor.class);
 
 	public void extractAuthenticationDetailsFromHttp(Exchange exchange)
 			throws SecurityException {
@@ -67,7 +67,7 @@ public class HttpBasicAuthenticator {
 
 		// place the Subject in the In message
 		exchange.getIn().setHeader(Exchange.AUTHENTICATION, subject);
-		
+
 		logger.debug("Found HttpBasic Authentication header");
 
 		// Spring security will intercept this and authenticate

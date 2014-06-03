@@ -26,26 +26,17 @@
 				<to
 					uri="log:GeneralError?level=ERROR&amp;showAll=true&amp;multiline=true" />
 			</onException>
-			<choice>
-				<!-- Enable Conformance -->
-				<when>
-					<simple>${header.CamelHttpPath} == ''</simple>
-					<bean ref="conformanceService" />
-				</when>
-				<otherwise>
-					<bean ref="oinkHttpConverter" method="buildOinkRequest" />
-					<bean ref="validator" method="validateRequest" />
-					<removeHeaders pattern="*" />
-					<bean ref="rabbitProcessor" method="setRabbitRouteHeaders" />
-					<bean ref="synchRabbitProcessor" method="prepare" />
-					<log message="Sending request with routing key ${header.rabbitmq.ROUTING_KEY} and exchange ${header.rabbitmq.EXCHANGE_NAME}"/>
-					<to
-						uri="rabbitmq://{{rabbit.host}}:{{rabbit.port}}/{{rabbit.defaultExchange}}?vhost={{rabbit.vhost}}&amp;username={{rabbit.username}}&amp;password={{rabbit.password}}&amp;autoDelete=false" />
-					<bean ref="synchRabbitProcessor" method="waitForResponse" />
-					<removeHeaders pattern="*" />
-					<bean ref="oinkHttpConverter" method="buildHttpResponse" />
-				</otherwise>
-			</choice>
+			<bean ref="oinkHttpConverter" method="buildOinkRequest" />
+			<bean ref="validator" method="validateRequest" />
+			<removeHeaders pattern="*" />
+			<bean ref="rabbitProcessor" method="setRabbitRouteHeaders" />
+			<bean ref="synchRabbitProcessor" method="prepare" />
+			<log message="Sending request with routing key ${header.rabbitmq.ROUTING_KEY} and exchange ${header.rabbitmq.EXCHANGE_NAME}"/>
+			<to
+				uri="rabbitmq://{{rabbit.host}}:{{rabbit.port}}/{{rabbit.defaultExchange}}?vhost={{rabbit.vhost}}&amp;username={{rabbit.username}}&amp;password={{rabbit.password}}&amp;autoDelete=false" />
+			<bean ref="synchRabbitProcessor" method="waitForResponse" />
+			<removeHeaders pattern="*" />
+			<bean ref="oinkHttpConverter" method="buildHttpResponse" />
 		</route>
 
 		<!-- Facade response router -->

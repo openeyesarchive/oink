@@ -19,7 +19,7 @@ import uk.org.openeyes.oink.domain.HttpMethod;
 import uk.org.openeyes.oink.domain.OINKRequestMessage;
 import uk.org.openeyes.oink.domain.OINKResponseMessage;
 import uk.org.openeyes.oink.exception.OinkException;
-import uk.org.openeyes.oink.fhir.FhirConverter;
+import uk.org.openeyes.oink.fhir.BundleParser;
 import uk.org.openeyes.oink.xml.XmlTransformer;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.validation.MessageValidator;
@@ -39,14 +39,14 @@ public abstract class Hl7v2Processor {
 			.getLogger(Hl7v2Processor.class);
 
 	private org.springframework.core.io.Resource resource;
-	private MessageConverter hl7v2Converter;
-	private FhirConverter fhirConverter;
+	private Hl7v2XmlConverter hl7v2Converter;
+	private BundleParser fhirConverter;
 	private ValidationContext hl7v2ValidationContext;
 	private MessageValidator hl7v2Validator;
 
 	public Hl7v2Processor() {
-		hl7v2Converter = new MessageConverter();
-		fhirConverter = new FhirConverter();
+		hl7v2Converter = new Hl7v2XmlConverter();
+		fhirConverter = new BundleParser();
 		hl7v2ValidationContext = new DefaultValidationWithoutTN(); // default
 																	// validation
 																	// rules

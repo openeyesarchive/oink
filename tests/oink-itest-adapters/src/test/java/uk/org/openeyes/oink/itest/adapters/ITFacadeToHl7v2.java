@@ -42,7 +42,7 @@ import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.protocol.ReceivingApplication;
 import ca.uhn.hl7v2.protocol.ReceivingApplicationException;
-import uk.org.openeyes.oink.fhir.FhirConverter;
+import uk.org.openeyes.oink.fhir.BundleParser;
 import uk.org.openeyes.oink.it.ITSupport;
 import uk.org.openeyes.oink.test.Hl7Helper;
 import uk.org.openeyes.oink.test.Hl7Server;
@@ -135,7 +135,7 @@ public class ITFacadeToHl7v2 {
 
 		assertNotNull(json);
 
-		FhirConverter conv = new FhirConverter();
+		BundleParser conv = new BundleParser();
 		AtomFeed response = conv.fromJsonOrXml(json);
 
 		assertNotEquals(0, response.getEntryList().size());

@@ -19,10 +19,16 @@ package uk.org.openeyes.oink.facade;
 import uk.org.openeyes.oink.domain.HttpMethod;
 import uk.org.openeyes.oink.rabbit.RabbitRoute;
 
+/**
+ * 
+ * When given a requested path and HTTP verb, returns the matching Rabbit Route
+ * 
+ * @author Oliver Wilkie
+ */
 public interface RoutingService {
-	
+
 	public RabbitRoute getRouting(String path, HttpMethod method);
-	
+
 	public String getReplyRoutingKey(String path, HttpMethod method);
 
 }

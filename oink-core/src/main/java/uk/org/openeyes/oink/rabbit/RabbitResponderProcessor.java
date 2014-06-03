@@ -14,32 +14,25 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
-package uk.org.openeyes.oink.messaging;
+package uk.org.openeyes.oink.rabbit;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
+import org.apache.camel.Exchange;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import org.apache.camel.Converter;
-import org.hl7.fhir.instance.formats.JsonComposer;
-import org.hl7.fhir.instance.formats.JsonParser;
-import org.hl7.fhir.instance.model.Resource;
-
-@Converter
-public class FhirResourceConverter {
-
-	@Converter
-	public static String toJsonString(Resource body) throws Exception {
-		JsonComposer composer = new JsonComposer();
-		ByteArrayOutputStream os = new ByteArrayOutputStream();
-		composer.compose(os, body, false);
-		return os.toString("UTF-8");
-	}
+public class RabbitResponderProcessor {
 	
-	@Converter
-	public static Resource fromJsonString(String string) throws Exception {
-		JsonParser parser = new JsonParser();
-		ByteArrayInputStream is = new ByteArrayInputStream(string.getBytes());
-		return parser.parse(is);
-	}
+	private final Logger log = LoggerFactory.getLogger(RabbitResponderProcessor.class);
 	
+	public void prepareHeaders(Exchange ex) {
+		String replyTo = (String) ex.getIn().getHeader("rabbitmq.REPLY_TO");
+		ex.getIn().removeHeader("rabbitmq.REPLY_TO");
+		if (replyTo == null || replyTo.isEmpty()) {
+			log.warn("No replyTo routingKey found. No response will be sent");
+		} else {
+			log.debug("Replying to routingKey:"+replyTo);
+		}
+		ex.getIn().setHeader("rabbitmq.ROUTING_KEY", replyTo);
+	}
+
 }

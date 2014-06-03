@@ -15,12 +15,12 @@
        http://www.springframework.org/schema/osgi-compendium http://www.springframework.org/schema/osgi-compendium/spring-osgi-compendium.xsd
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
-	<bean id="oinkHttpConverter" class="uk.org.openeyes.oink.http.OinkHttpConverter">
+	<bean id="oinkHttpConverter" class="uk.org.openeyes.oink.http.OinkMessageHttpProcessor">
 	</bean>
 
-	<bean id="httpFilterStrategy" class="uk.org.openeyes.oink.http.HttpFilterStrategy" />
+	<bean id="httpFilterStrategy" class="uk.org.openeyes.oink.rabbit.NoRabbitHeadersFilterStrategy" />
 
-	<bean id="rabbitResponder" class="uk.org.openeyes.oink.rabbit.RabbitResponder" />
+	<bean id="rabbitResponder" class="uk.org.openeyes.oink.rabbit.RabbitResponderProcessor" />
 
 
 	<bean id="rabbitRpcErrorProcessor" class="uk.org.openeyes.oink.rabbit.OinkRPCExceptionProcessor" />

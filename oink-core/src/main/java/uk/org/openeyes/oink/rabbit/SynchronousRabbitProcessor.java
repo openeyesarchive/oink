@@ -21,6 +21,11 @@ import java.util.UUID;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 
+/**
+ * Facilitates Synchronous RPC Rabbit messaging in a Camel Context.
+ * 
+ * @author Oliver Wilkie
+ */
 public class SynchronousRabbitProcessor {
 
 	private int timeOut;

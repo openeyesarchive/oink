@@ -52,7 +52,7 @@ import ca.uhn.fhir.model.dstu.resource.Patient;
 import ca.uhn.fhir.rest.client.HttpBasicAuthInterceptor;
 import ca.uhn.fhir.rest.client.IGenericClient;
 import ca.uhn.fhir.rest.client.IRestfulClientFactory;
-import uk.org.openeyes.oink.fhir.FhirConverter;
+import uk.org.openeyes.oink.fhir.BundleParser;
 import uk.org.openeyes.oink.it.ITSupport;
 
 /**
@@ -197,7 +197,7 @@ public class ITFacadeToProxy {
 		
 		assertNotNull(json);
 	
-		FhirConverter conv = new FhirConverter();
+		BundleParser conv = new BundleParser();
 		AtomFeed response = conv.fromJsonOrXml(json);
 		
 		assertNotEquals(0, response.getEntryList().size());	

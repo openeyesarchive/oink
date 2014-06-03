@@ -7,7 +7,7 @@ import org.apache.camel.Predicate;
 /**
  * 
  * A predicate that evaluates to true if the message in the exchange expects a
- * response
+ * response over Rabbit
  * 
  * @author Oliver Wilkie
  */
@@ -15,7 +15,7 @@ public class IsRabbitRPC implements Predicate, Expression {
 
 	@Override
 	public boolean matches(Exchange ex) {
-		return ex.getIn().getHeader("rabbitmq.ROUTING_KEY") != null && ex.getIn().getHeader("rabbitmq.ROUTING_KEY") != null;
+		return ex.getIn().getHeader("rabbitmq.REPLY_TO") != null;
 	}
 
 	@Override

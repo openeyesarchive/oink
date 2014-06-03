@@ -17,9 +17,16 @@
 package uk.org.openeyes.oink.messaging;
 
 import uk.org.openeyes.oink.domain.FhirBody;
+import uk.org.openeyes.oink.domain.OINKMessage;
 import uk.org.openeyes.oink.domain.OINKRequestMessage;
 import uk.org.openeyes.oink.http.InvalidFhirRequestException;
 
+/**
+ * Validates the attributes of an {@link OINKMessage}.
+ * For instance, checking the REST verb is compatible with the FHIR body (if present).
+ * 
+ * @author Oliver Wilkie
+ */
 public class OinkMessageValidator {
 	
 	public void validateRequest(OINKRequestMessage message) throws Exception {

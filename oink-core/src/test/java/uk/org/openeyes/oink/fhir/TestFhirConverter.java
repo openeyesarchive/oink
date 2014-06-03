@@ -13,7 +13,7 @@ public class TestFhirConverter {
 	@Test
 	public void testCanParsePractionerSearchResultsFromOpenEyes() throws Exception {
 		
-		FhirConverter conv = new FhirConverter();
+		BundleParser conv = new BundleParser();
 		InputStream is = getClass().getResourceAsStream("/example-messages/fhir/practitionerSearchResults.json");
 		StringWriter writer = new StringWriter();
 		IOUtils.copy(is, writer);

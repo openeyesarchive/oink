@@ -16,14 +16,9 @@
  *******************************************************************************/
 package uk.org.openeyes.oink.http;
 
-import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.ObjectOutput;
-import java.io.ObjectOutputStream;
-import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 import java.util.List;
@@ -43,20 +38,19 @@ import org.slf4j.LoggerFactory;
 
 import uk.org.openeyes.oink.domain.FhirBody;
 import uk.org.openeyes.oink.domain.HttpMethod;
+import uk.org.openeyes.oink.domain.OINKMessage;
 import uk.org.openeyes.oink.domain.OINKRequestMessage;
 import uk.org.openeyes.oink.domain.OINKResponseMessage;
 
 /**
- * Builds an {@link OINKRequestMessage} from an Http Consumer (i.e. Camel Jetty
- * Component). It also has methods for converting the contents of an
- * {@link OINKResponseMessage} into the format able to be handled by an Http
- * Processor.
+ * Converts {@link OINKMessage} exchange messages to/from HTTP REST exchange messages.
  * 
+ * @author Oliver Wilkie
  */
-public class OinkHttpConverter {
+public class OinkMessageHttpProcessor {
 
 	private static final Logger logger = LoggerFactory
-			.getLogger(OinkHttpConverter.class);
+			.getLogger(OinkMessageHttpProcessor.class);
 
 	public OINKResponseMessage buildOinkResponse(
 			@Headers Map<String, Object> headers, @Body String body)

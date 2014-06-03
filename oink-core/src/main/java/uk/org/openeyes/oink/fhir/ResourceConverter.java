@@ -14,30 +14,32 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
-package uk.org.openeyes.oink.facade;
+package uk.org.openeyes.oink.fhir;
 
-import org.hl7.fhir.instance.model.Conformance;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 
-/**
- * 
- * Builds the FHIR Conformance Model for a Facade Route
- * 
- * TODO
- * 
- * @author Oliver Wilkie
- */
-public class ConformanceService {
+import org.apache.camel.Converter;
+import org.hl7.fhir.instance.formats.JsonComposer;
+import org.hl7.fhir.instance.formats.JsonParser;
+import org.hl7.fhir.instance.model.Resource;
 
-	private final RoutingService routingService;
+@Converter
+public class ResourceConverter {
 
-	public ConformanceService(RoutingService service) {
-		this.routingService = service;
+	@Converter
+	public static String toJsonString(Resource body) throws Exception {
+		JsonComposer composer = new JsonComposer();
+		ByteArrayOutputStream os = new ByteArrayOutputStream();
+		composer.compose(os, body, false);
+		return os.toString("UTF-8");
 	}
-
-	public Conformance generateConformance() {
-
-		Conformance c = new Conformance();
-		return c;
+	
+	@Converter
+	public static Resource fromJsonString(String string) throws Exception {
+		JsonParser parser = new JsonParser();
+		ByteArrayInputStream is = new ByteArrayInputStream(string.getBytes());
+		return parser.parse(is);
 	}
-
+	
 }

@@ -24,7 +24,7 @@ public class TestOinkHttpConverter {
 	@Test
 	public void testReadFhirBody() throws Exception {
 
-		OinkHttpConverter conv = new OinkHttpConverter();
+		OinkMessageHttpProcessor conv = new OinkMessageHttpProcessor();
 
 		InputStream is = TestOinkHttpConverter.class
 				.getResourceAsStream("/example-messages/fhir/searchResults.json");
@@ -35,7 +35,7 @@ public class TestOinkHttpConverter {
 
 	@Test
 	public void testCanHandleEmptySearchResults() throws Exception {
-		OinkHttpConverter conv = new OinkHttpConverter();
+		OinkMessageHttpProcessor conv = new OinkMessageHttpProcessor();
 
 		InputStream inputStream = this.getClass().getResourceAsStream(
 				"/example-messages/fhir/noSearchResults.json");

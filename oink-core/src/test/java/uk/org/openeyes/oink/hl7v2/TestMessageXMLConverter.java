@@ -18,7 +18,7 @@ public class TestMessageXMLConverter extends Hl7TestSupport {
 	@Test
 	public void testCanDecodeSampleA01MessageFromXml() throws IOException, HL7Exception {
 		String xml = loadResourceAsString("/example-messages/hl7v2/A01.XML");
-		MessageConverter converter = new MessageConverter();
+		Hl7v2XmlConverter converter = new Hl7v2XmlConverter();
 		Message m = converter.fromXml(xml);
 		Assert.assertTrue(m instanceof ADT_A01);
 	}
@@ -26,7 +26,7 @@ public class TestMessageXMLConverter extends Hl7TestSupport {
 	@Test
 	public void testCanLoadExampleA19Result() throws Exception {
 		Message msg = loadMessage("/example-messages/hl7v2/ADR-A19-mod.txt");
-		MessageConverter conv = new MessageConverter();
+		Hl7v2XmlConverter conv = new Hl7v2XmlConverter();
 		String xml = conv.toXml(msg);
 	}
 	
@@ -35,7 +35,7 @@ public class TestMessageXMLConverter extends Hl7TestSupport {
 	public void convertPipeToXml() throws HL7Exception, IOException {
 		String message = "ADR-A19";
 		Message msg = loadMessage("/example-messages/hl7v2/"+message+".txt");
-		MessageConverter conv = new MessageConverter();
+		Hl7v2XmlConverter conv = new Hl7v2XmlConverter();
 		String xml = conv.toXml(msg);
 		PrintWriter out = new PrintWriter("/Users/Oli/"+message+".xml");
 		out.print(xml);
@@ -45,7 +45,7 @@ public class TestMessageXMLConverter extends Hl7TestSupport {
 	@Test
 	public void testEncodingAndDecodingTheSameXMLMessageProducesTheSameOutput() throws IOException, HL7Exception, SAXException {
 		String expectedXml = loadResourceAsString("/example-messages/hl7v2/A01.XML");
-		MessageConverter converter = new MessageConverter();
+		Hl7v2XmlConverter converter = new Hl7v2XmlConverter();
 		Message m = converter.fromXml(expectedXml);
 		Assert.assertTrue(m instanceof ADT_A01);
 		String gotXml = converter.toXml(m);

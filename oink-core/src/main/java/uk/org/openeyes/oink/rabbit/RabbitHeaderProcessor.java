@@ -28,11 +28,11 @@ import uk.org.openeyes.oink.facade.RoutingService;
  * Prepares an OINKRequestMessage for sending over a rabbit broker.
  * @author Oliver Wilkie
  */
-public class RabbitProcessor {
+public class RabbitHeaderProcessor {
 	
 	private RoutingService rabbitRoutingService;
 	
-	public RabbitProcessor(RoutingService service) {
+	public RabbitHeaderProcessor(RoutingService service) {
 		this.rabbitRoutingService = service;
 	}
 	

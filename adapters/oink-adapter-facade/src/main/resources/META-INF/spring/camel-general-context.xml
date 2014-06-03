@@ -15,15 +15,8 @@
        http://www.springframework.org/schema/osgi-compendium http://www.springframework.org/schema/osgi-compendium/spring-osgi-compendium.xsd
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
-	<bean id="authenticator" class="uk.org.openeyes.oink.http.HttpBasicAuthenticator" />
 
-	<bean id="identityService" class="uk.org.openeyes.oink.security.SimpleIdentityService" />
-
-	<bean id="conformanceService" class="uk.org.openeyes.oink.facade.ConformanceService">
-		<constructor-arg ref="routingService" />
-	</bean>
-
-	<bean id="oinkHttpConverter" class="uk.org.openeyes.oink.http.OinkHttpConverter">
+	<bean id="oinkHttpConverter" class="uk.org.openeyes.oink.http.OinkMessageHttpProcessor">
 	</bean>
 
 	<bean id="validator" class="uk.org.openeyes.oink.messaging.OinkMessageValidator" />
@@ -38,7 +31,7 @@
 	
 	<bean id="routingService" factory-bean="routingServiceFactory" factory-method="createInstance"/>
 
-	<bean id="rabbitProcessor" class="uk.org.openeyes.oink.rabbit.RabbitProcessor">
+	<bean id="rabbitProcessor" class="uk.org.openeyes.oink.rabbit.RabbitHeaderProcessor">
 		<constructor-arg ref="routingService" />
 	</bean>
 

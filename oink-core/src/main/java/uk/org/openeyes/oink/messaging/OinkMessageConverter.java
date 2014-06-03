@@ -22,6 +22,7 @@ import org.apache.commons.lang3.SerializationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import uk.org.openeyes.oink.domain.OINKMessage;
 import uk.org.openeyes.oink.domain.OINKRequestMessage;
 import uk.org.openeyes.oink.domain.OINKResponseMessage;
 import uk.org.openeyes.oink.domain.json.OinkRequestMessageJsonConverter;
@@ -29,8 +30,7 @@ import uk.org.openeyes.oink.domain.json.OinkResponseMessageJsonConverter;
 
 /**
  * A custom Camel {@link TypeConverter} for converting
- * {@link OINKRequestMessage} and {@link OINKResponseMessage} into byte arrays
- * and strings.
+ * {@link OINKMessage} objects to/from byte arrays and JSON strings
  * 
  * @author Oliver Wilkie
  */

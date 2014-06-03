@@ -14,16 +14,22 @@ import org.xmlpull.v1.XmlPullParserException;
 
 import uk.org.openeyes.oink.exception.OinkException;
 
+/**
+ * 
+ * Parses Bundle/AtomFeeds from JSON or XML input streams.
+ * 
+ * @author Oliver Wilkie
+ */
 @Converter
-public class FhirConverter {
+public class BundleParser {
 
 	private final JsonParser jsonParser;
 	private final XmlParser xmlParser;
 
 	private static final Logger log = LoggerFactory
-			.getLogger(FhirConverter.class);
+			.getLogger(BundleParser.class);
 
-	public FhirConverter() {
+	public BundleParser() {
 		xmlParser = new XmlParser();
 		jsonParser = new JsonParser();
 	}
