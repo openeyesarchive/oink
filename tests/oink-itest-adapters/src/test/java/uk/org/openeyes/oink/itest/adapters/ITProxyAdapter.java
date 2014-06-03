@@ -386,7 +386,7 @@ public class ITProxyAdapter {
 	}
 
 	@Test
-	public void testCreateDeletePatient() throws Exception {
+	public void testCreatePatient() throws Exception {
 
 		Thread.sleep(10000);
 

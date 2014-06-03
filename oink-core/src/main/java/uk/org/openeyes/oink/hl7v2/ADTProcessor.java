@@ -1,8 +1,9 @@
 package uk.org.openeyes.oink.hl7v2;
 
-import java.rmi.server.Operation;
 import java.util.Iterator;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -10,11 +11,9 @@ import org.apache.camel.ProducerTemplate;
 import org.hl7.fhir.instance.model.Address;
 import org.hl7.fhir.instance.model.AtomEntry;
 import org.hl7.fhir.instance.model.AtomFeed;
-import org.hl7.fhir.instance.model.CodeableConcept;
 import org.hl7.fhir.instance.model.Contact;
 import org.hl7.fhir.instance.model.HumanName;
 import org.hl7.fhir.instance.model.Identifier;
-import org.hl7.fhir.instance.model.OperationOutcome;
 import org.hl7.fhir.instance.model.Organization;
 import org.hl7.fhir.instance.model.Patient;
 import org.hl7.fhir.instance.model.Practitioner;
@@ -23,7 +22,6 @@ import org.hl7.fhir.instance.model.ResourceReference;
 import org.hl7.fhir.instance.model.ResourceType;
 import org.hl7.fhir.instance.model.Contact.ContactSystem;
 import org.hl7.fhir.instance.model.HumanName.NameUse;
-import org.hl7.fhir.instance.model.Patient.ContactComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,6 +31,11 @@ import uk.org.openeyes.oink.domain.OINKRequestMessage;
 import uk.org.openeyes.oink.domain.OINKResponseMessage;
 import uk.org.openeyes.oink.exception.OinkException;
 
+/**
+ * An extension of the {@link Hl7v2Processor} for processing ADT messages
+ * containing Patient Information from a remote HL7v2 server.
+ * 
+ */
 public class ADTProcessor extends Hl7v2Processor {
 
 	private final static Logger log = LoggerFactory
@@ -75,13 +78,15 @@ public class ADTProcessor extends Hl7v2Processor {
 						.getResource();
 				String absoluteUrl = postResourceAndReferencedResources(
 						practitioner, bundle, ex);
-				resourceRef.setReferenceSimple(absoluteUrl);
+				String relativeUrl = extractResourceRelativeUrlFromLocation(absoluteUrl, "Practitioner");
+				resourceRef.setReferenceSimple(relativeUrl);
 			} else if (resource.getResource().getResourceType()
 					.equals(ResourceType.Organization)) {
 				Organization org = (Organization) resource.getResource();
 				String absoluteUrl = postResourceAndReferencedResources(org,
 						bundle, ex);
-				resourceRef.setReferenceSimple(absoluteUrl);
+				String relativeUrl = extractResourceRelativeUrlFromLocation(absoluteUrl, "Organization");
+				resourceRef.setReferenceSimple(relativeUrl);				
 			} else {
 				log.error("A care provider was referenced which isn't a Practitioner or an Organization");
 				throw new OinkException();
@@ -97,7 +102,9 @@ public class ADTProcessor extends Hl7v2Processor {
 				Organization org = (Organization) resource.getResource();
 				String absoluteUrl = postResourceAndReferencedResources(org,
 						bundle, ex);
-				managingOrgRef.setReferenceSimple(absoluteUrl);
+				String relativeUrl = extractResourceRelativeUrlFromLocation(absoluteUrl, "Organization");
+				managingOrgRef.setReferenceSimple(relativeUrl);
+				log.debug("Patient's managing org set to "+managingOrgRef.getReferenceSimple());
 			} else {
 				log.error("A Managing Organization was referenced which isn't an Organization");
 			}
@@ -106,7 +113,7 @@ public class ADTProcessor extends Hl7v2Processor {
 		// OpenEyes QUICKFIX: Set Family use to usual
 		for (HumanName name : p.getName()) {
 			if (name.getUseSimple() == null) {
-				log.warn("Manually forcing patient's name use to be usual");				
+				log.warn("Manually forcing patient's name use to be usual");
 				name.setUseSimple(NameUse.usual);
 			}
 		}
@@ -114,7 +121,7 @@ public class ADTProcessor extends Hl7v2Processor {
 		// OpenEyes QUICKFIX: Set Phone system
 		for (Contact contact : p.getTelecom()) {
 			if (contact.getSystemSimple() == null) {
-				log.warn("Manually forcing patient's phone syste to be phone");
+				log.warn("Manually forcing patient's phone system to be phone");
 				contact.setSystemSimple(ContactSystem.phone);
 			}
 		}
@@ -145,16 +152,28 @@ public class ADTProcessor extends Hl7v2Processor {
 		}
 
 		// OpenEyes QUICKFIX: Remove managingOrgRefs
-		log.warn("Manually removing Managing Org Ref");
+		log.warn("Manually moving ManagingOrgRef to CareProvider (OpenEyes does not support ManagingOrg)");
+		p.getCareProvider().add(p.getManagingOrganization());
 		p.setManagingOrganization(null);
 
 		// OpenEyes QUICKFIX: Remove careProviderRefs
-		log.warn("Manually removing Care Providers");
-		p.getCareProvider().clear();
+		//log.warn("Manually removing Care Providers");
+		//p.getCareProvider().clear();
 
 		// POST Patient
 		String location = postResource(p, ex);
 		return location;
+	}
+	
+	public static String extractResourceRelativeUrlFromLocation(String location, String resource) {
+		log.debug("Extracting relative URL from "+location);
+		Pattern p = Pattern.compile("(.*)?/("+resource+"/[^/]+)(/.*)?");
+		Matcher m = p.matcher(location);
+		boolean b = m.matches();
+		if (!b) {
+			log.warn("No matches found");
+		}
+		return m.group(2);
 	}
 
 	/**
