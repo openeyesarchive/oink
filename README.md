@@ -24,7 +24,7 @@ mvn test
 ```
 
 ### Integration Tests
-Integration tests are located within tests folder and can be run specifically using the command `mvn verify` or by doing a standard `mvn clean install`. 
+Integration tests are located within tests folder and can be run specifically using the command `mvn verify` or by doing a standard `mvn clean install`. Integration tests significantly extend build time.
 
 To override the default properties used in the integration tests for your own environment use a command like this..
 
@@ -41,8 +41,12 @@ At present there are four property files required for the integration tests
 * it.facadeToHl7v2.config (rabbitMQ settings, facade mappings, facade server settings)
 * it.facadeToProxy.config (rabbitMQ settings, facade mappings, facade server settings)
 
-## Using
+## Runtime Configuration
+Each adapter loads settings inside OSGi through the [Configuration Admin Service](http://felix.apache.org/documentation/subprojects/apache-felix-config-admin.html) through the following PIDs
 
+* uk.org.openeyes.oink.proxy   (for Proxy Adapter)
+* uk.org.openeyes.oink.facade  (for Facade Adapter)
+* uk.org.openeyes.oink.hl7v2   (for Hl7v2 Adapter)
 
 ### Notable Dependancies
 - [FHIR Java Implementation](http://www.hl7.org/implement/standards/fhir/downloads.html)

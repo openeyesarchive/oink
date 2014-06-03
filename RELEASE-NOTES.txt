@@ -1,16 +1,28 @@
 OINK Interoperability Toolkit 0.3
 =================================
 
+Whats New
+----------
+
+* A new HL7v2 Adapter that takes A01,A05,A28,A31 HL7v2.4 messages and maps them to Patient POSTs. The Adapter also supports Patient Query searchs in the 'other direction'.
+* Extensive improvements to the Integration Tests which test inter-adapter behaviour when deployed on OSGi containers, including lifecycle management of RabbitMQ Test instances.
+* Integration Tests now optionally reliant on externalized adapter property files if the default 'develop' ones aren't usable.
+* First version to be tested against real OpenEyes REST Api
+
+
 Known Issues
 ------------
 
-* Has a SNAPSHOT dependency on FHIR Implementation.
+* Not tested against real external HL7v2 Server
 * OINK Kar does not contain Camel dependencies.
 * OINK Custom Distribution cannot install oink adapters when offline and no maven local repository is present.
 
 
 OINK Interoperability Toolkit 0.2
 =================================
+
+Whats New
+----------
 
 This is a major update for OINK that rewrites the project as OSGI-compatible Camel Routes. This update contains many bug fixes, dependency updates and improvements.
 
