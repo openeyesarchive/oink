@@ -17,6 +17,14 @@
 
 	<osgix:cm-properties id="propertiesSource"
 		persistent-id="uk.org.openeyes.oink.facade" />
+	
+	<bean id="adapterService" class="uk.org.openeyes.oink.infrastructure.SimpleAdapterStatusService"/>	
+		
+	<osgi:service ref="adapterService" interface="uk.org.openeyes.oink.infrastructure.AdapterStatusService">
+		<osgi:service-properties>
+			<entry key="adapter" value="oink-adapter-facade"/>
+		</osgi:service-properties>
+	</osgi:service>
 
 	<bean id="bridgePropertyPlaceholder"
 		class="org.apache.camel.spring.spi.BridgePropertyPlaceholderConfigurer">
