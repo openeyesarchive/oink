@@ -4,12 +4,12 @@
 	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>uk.org.openeyes.oink</groupId>
-		<artifactId>tests</artifactId>
+		<groupId>uk.org.openeyes.oink.tests</groupId>
+		<artifactId>single-box</artifactId>
 		<version>0.3-SNAPSHOT</version>
 	</parent>
 	<artifactId>oink-itest-shared</artifactId>
-	<name>Oink :: Integration Tests :: Shared</name>
+	<name>Oink :: Integration Tests :: Single Box :: Shared</name>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
