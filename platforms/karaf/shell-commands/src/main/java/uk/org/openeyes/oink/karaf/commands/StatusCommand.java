@@ -45,7 +45,7 @@ public class StatusCommand extends OsgiCommandSupport {
 			throw new IllegalArgumentException("Adapter name not recognised");
 		}
 		System.out.println(isActive ? "Active" : "Not Active");
-		return isActive ? 1 : 0;
+		return isActive ? 0 : 1;
 	}
 
 	private boolean isAlive(AdapterStatusService service) {

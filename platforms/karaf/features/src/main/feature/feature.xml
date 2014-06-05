@@ -6,7 +6,7 @@
 	<repository>mvn:org.apache.camel.karaf/apache-camel/${camel.version}/xml/features</repository>
 	<repository>mvn:org.ops4j.pax.web/pax-web-features/3.1.0/xml/features</repository>
 
-	<feature name='oink-commands' version='${project.version}' resolver='(obr)' start-level="60">
+	<feature name='oink-commands' version='${project.version}' resolver='(obr)' start-level="50">
 		<feature version='${project.version}'>oink-core</feature>
 		<bundle>mvn:uk.org.openeyes.oink.karaf/shell-commands/${project.version}</bundle>
 	</feature>
