@@ -46,10 +46,7 @@
     <configuration>
       <filesets>
         <fileset>
-          <directory>vagrant</directory>
-          <includes>
-            <include>**/*</include>
-          </includes>
+          <directory>test-workspace</directory>
         </fileset>
       </filesets>
     </configuration>
