@@ -50,7 +50,10 @@ popd
 ####################################
 pushd .
 
-cp ../target/distro-0.3-SNAPSHOT.tar.gz vagrant/vfs
+mkdir -p vagrant
+cp -R ../src/test/vagrant/** vagrant
+
+mkdir -p vagrant/vfs ; cp ../target/distro-0.3-SNAPSHOT.tar.gz vagrant/vfs
 cd vagrant
 
 vagrant up
