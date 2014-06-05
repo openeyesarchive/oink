@@ -10,12 +10,14 @@ sudo mkdir -p /opt/oink
 sudo chown -R `whoami` /opt/oink
 
 mkdir -p /opt/oink/settings
-pushd /opt/oink
+pushd .
+cd /opt/oink
 cp /vagrant/vfs/distro-*.tar.gz .
 tar -zxvf distro-*.tar.gz
 
 # Start Karaf
-pushd distro-*
+pushd .
+cd distro-*
 ./bin/start
 
 #Wait for it to start
