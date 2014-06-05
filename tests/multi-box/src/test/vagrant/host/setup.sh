@@ -32,6 +32,7 @@ cd workspace
 vagrant destroy --force
 
 # Start OpenEyes and prepare box
+vagrant up
 cd bin
 ./prep.sh
 
