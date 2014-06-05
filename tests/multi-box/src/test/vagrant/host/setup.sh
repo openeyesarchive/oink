@@ -9,14 +9,14 @@ set -e
 ###################################
 # Set up test working directory
 ###################################
-
+pushd .
 mkdir -p test-workspace
-pushd test-workspace
+cd test-workspace
 
 ###################################
 ## Set up and start the OpenEyes VM
 ###################################
-pushd
+pushd .
 
 rm -Rf OpenEyes
 rm -Rf workspace
@@ -32,25 +32,26 @@ cd workspace
 vagrant destroy --force
 
 # Start OpenEyes and prepare box
-vagrant up
 cd bin
 ./prep.sh
 
 # Allow admin user access to API
 
-SQL_STATEMENT = "insert into authassignment (itemname, userid) values ('API access', 1);"
-vagrant ssh -c "/usr/bin/mysql mysql -u openeyes -poe_test openeyes -e \"$SQL_STATEMENT\""
+SQL_STATEMENT="insert into authassignment (itemname, userid) values ('API access', 1);"
+vagrant ssh -c "/usr/bin/mysql -u openeyes -poe_test openeyes -e \"$SQL_STATEMENT\""
 
 popd
 
 ####################################
 ## Set up and start the two Oink VMs
 ####################################
+pushd .
+
 mkdir -p vagrant
 cp -R ../src/test/vagrant/** vagrant
 
 mkdir -p vagrant/vfs ; cp ../target/distro-0.3-SNAPSHOT.tar.gz vagrant/vfs
-pushd vagrant
+cd vagrant
 
 vagrant up endpoint1
 
