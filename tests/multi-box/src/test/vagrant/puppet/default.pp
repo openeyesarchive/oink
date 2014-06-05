@@ -15,4 +15,12 @@ node default {
 		require => Package['openjdk-7-jdk']
 	}
 
+	# RabbitMQ
+	include '::rabbitmq'
+
+	exec { 'setup' :
+         require => [Service['rabbitmq-server'], File['/etc/profile.d/set_java_home.sh']],
+         command =>  "/vagrant/guests/${endpoint}/setup.sh",
+         path => '/usr/bin:/sbin:/bin'}
+
 }
