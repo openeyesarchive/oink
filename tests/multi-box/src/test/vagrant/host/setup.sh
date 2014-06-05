@@ -18,6 +18,9 @@ cd test-workspace
 ###################################
 pushd .
 
+OE_VAGRANT_MODE='bdd'
+export OE_VAGRANT_MODE
+
 rm -Rf OpenEyes
 rm -Rf workspace
 git clone git@github.com:openeyes/OpenEyes.git
@@ -37,7 +40,6 @@ cd bin
 ./prep.sh
 
 # Allow admin user access to API
-
 SQL_STATEMENT="insert into authassignment (itemname, userid) values ('API access', 1);"
 vagrant ssh -c "/usr/bin/mysql -u openeyes -poe_test openeyes -e \"$SQL_STATEMENT\""
 
@@ -54,10 +56,10 @@ cp -R ../src/test/vagrant/** vagrant
 mkdir -p vagrant/vfs ; cp ../target/distro-0.3-SNAPSHOT.tar.gz vagrant/vfs
 cd vagrant
 
-vagrant up endpoint1
-
-vagrant up endpoint2
+vagrant up
 
 popd
 
 popd
+
+echo "COMPLETE"
