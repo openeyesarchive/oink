@@ -11,7 +11,7 @@ node default {
 
 	file { "/etc/profile.d/set_java_home.sh":
 		ensure => present,
-		content => "JAVA_HOME=$(readlink -f /usr/bin/java | sed \"s:bin/java::\")",
+		content => "JAVA_HOME=/usr/lib/jvm/java-7-openjdk-amd64",
 		require => Package['openjdk-7-jdk']
 	}
 
