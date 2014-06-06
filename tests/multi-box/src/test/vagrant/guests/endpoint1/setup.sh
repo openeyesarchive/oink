@@ -1,6 +1,14 @@
 #!/bin/bash
 
-# Configure RabbitMQ User
+# Delete RabbitMQ guest
+sudo rabbitmqctl add_user guest
+
+# Configure RabbitMQ oinkadmin
+sudo rabbitmqctl add_user oinkadmin Test1571
+sudo rabbitmqctl set_permissions -p / oinkadmin ".*" ".*" ".*"
+sudo rabbitmqctl set_user_tags oinkadmin administrator
+
+# Configure RabbitMQ endpoint
 sudo rabbitmqctl add_user oinkendpoint1 Test1571
 sudo rabbitmqctl set_permissions -p / oinkendpoint1 ".*" ".*" ".*"
 sudo rabbitmqctl set_user_tags oinkendpoint1 management
@@ -11,7 +19,7 @@ sudo rabbitmq-plugins enable rabbitmq_shovel
 sudo rabbitmq-plugins enable rabbitmq_shovel_management
 sudo service rabbitmq-server restart
 
-sudo rabbitmqctl set_parameter shovel "oink_out_shovel" '{"src-uri": "amqp://oinkendpoint1:Test1571@10.0.115.2:5672/", "src-queue": "pas.hl7v2.in", "dest-uri": "amqp://oinkendpoint2:Test1571@10.0.115.3:5672/", "dest-exchange": "test"}'
+sudo rabbitmqctl set_parameter shovel "oink_out_shovel" '{"src-uri": "amqp://oinkendpoint1:Test1571@10.0.115.2", "src-queue": "pas.hl7v2.in", "dest-uri": "amqp://oinkendpoint2:Test1571@10.0.115.3", "dest-exchange": "test"}'
 
 # Move oink to correct location
 sudo mkdir -p /opt/oink

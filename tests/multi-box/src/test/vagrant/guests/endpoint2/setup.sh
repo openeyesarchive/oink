@@ -1,6 +1,14 @@
 #!/bin/bash
 
-# Configure RabbitMQ User
+# Delete RabbitMQ guest
+sudo rabbitmqctl add_user guest
+
+# Configure RabbitMQ oinkadmin
+sudo rabbitmqctl add_user oinkadmin Test1571
+sudo rabbitmqctl set_permissions -p / oinkadmin ".*" ".*" ".*"
+sudo rabbitmqctl set_user_tags oinkadmin administrator
+
+# Configure RabbitMQ endpoint
 sudo rabbitmqctl add_user oinkendpoint2 Test1571
 sudo rabbitmqctl set_permissions -p / oinkendpoint2 ".*" ".*" ".*"
 sudo rabbitmqctl set_user_tags oinkendpoint2 management
@@ -11,9 +19,9 @@ sudo rabbitmq-plugins enable rabbitmq_shovel
 sudo rabbitmq-plugins enable rabbitmq_shovel_management
 sudo service rabbitmq-server restart
 
-sudo rabbitmqctl set_parameter shovel "oink_facade_response_shovel" '{"src-uri": "amqp://oinkendpoint2:Test1571@10.0.115.3:5672/", "src-queue": "openeyes.facade.response", "dest-uri": "amqp://oinkendpoint1:Test1571@10.0.115.2:5672/", "dest-exchange": "test"}'
+sudo rabbitmqctl set_parameter shovel "oink_facade_response_shovel" '{"src-uri": "amqp://oinkendpoint2:Test1571@10.0.115.3", "src-queue": "openeyes.facade.response", "dest-uri": "amqp://oinkendpoint1:Test1571@10.0.115.2", "dest-exchange": "test"}'
 
-sudo rabbitmqctl set_parameter shovel "oink_proxy_in_shovel" '{"src-uri": "amqp://oinkendpoint2:Test1571@10.0.115.3:5672/", "src-queue": "openeyes.proxy.in", "dest-uri": "amqp://oinkendpoint1:Test1571@10.0.115.2:5672/", "dest-exchange": "test"}'
+sudo rabbitmqctl set_parameter shovel "oink_proxy_in_shovel" '{"src-uri": "amqp://oinkendpoint2:Test1571@10.0.115.3", "src-queue": "openeyes.proxy.in", "dest-uri": "amqp://oinkendpoint1:Test1571@10.0.115.2", "dest-exchange": "test"}'
 
 # Move oink to correct location
 sudo mkdir -p /opt/oink
