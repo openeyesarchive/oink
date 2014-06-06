@@ -25,10 +25,10 @@ echo "Attempting to connect to karaf"
 ./bin/client -r 10 -d 3 "echo"
 
 #Enable facade
-./bin/client "oink:enable oink-adapter-facade"
+./bin/client "oink:enable oink-adapter-facade /vagrant/guests/endpoint1/facade.properties"
 
 #Enable proxy
-./bin/client "oink:enable oink-adapter-proxy"
+./bin/client "oink:enable oink-adapter-proxy /vagrant/guests/endpoint1/proxy.properties"
 
 popd
 

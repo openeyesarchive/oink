@@ -10,6 +10,7 @@ set -e
 # Set up test working directory
 ###################################
 pushd .
+echo "Starting OpenEyes VM"
 mkdir -p test-workspace
 cd test-workspace
 
@@ -42,12 +43,13 @@ cd bin
 # Allow admin user access to API
 SQL_STATEMENT="insert into authassignment (itemname, userid) values ('API access', 1);"
 vagrant ssh -c "/usr/bin/mysql -u openeyes -poe_test openeyes -e \"$SQL_STATEMENT\""
-
+echo "Finished loading OpenEyes VM"
 popd
 
 ####################################
 ## Set up and start the two Oink VMs
 ####################################
+echo "Starting OINK VMs"
 pushd .
 
 mkdir -p vagrant
@@ -59,6 +61,8 @@ cd vagrant
 vagrant up
 
 popd
+echo "Finished loading OINK VMs"
+
 
 popd
 
