@@ -4,8 +4,6 @@
 # Starts three virtual machines needed for tests.
 # 
 
-set -e
-
 ###################################
 # Set up test working directory
 ###################################
