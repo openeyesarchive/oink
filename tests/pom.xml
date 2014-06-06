@@ -25,46 +25,8 @@
 		</dependency>
 	</dependencies>
 
-	<profiles>
-		<profile>
-			<id>develop</id>
-			<activation>
-				<activeByDefault>true</activeByDefault>
-			</activation>
-			<properties>
-				<it.proxy.config>${basedir}/../oink-itest-shared/src/test/resources/proxy.properties</it.proxy.config>
-				<it.hl7v2.config>${basedir}/../oink-itest-shared/src/test/resources/hl7v2.properties</it.hl7v2.config>
-				<it.facadeToHl7v2.config>${basedir}/../oink-itest-shared/src/test/resources/facade-ToHl7.properties</it.facadeToHl7v2.config>
-				<it.facadeToProxy.config>${basedir}/../oink-itest-shared/src/test/resources/facade.properties</it.facadeToProxy.config>
-			</properties>
-		</profile>
-	</profiles>
-
 	<build>
 		<plugins>
-
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-failsafe-plugin</artifactId>
-				<version>2.17</version>
-				<configuration>
-					<systemProperties>
-						<it.facadeToHl7v2.config>${it.facadeToHl7v2.config}</it.facadeToHl7v2.config>
-						<it.facadeToProxy.config>${it.facadeToProxy.config}</it.facadeToProxy.config>
-						<it.hl7v2.config>${it.hl7v2.config}</it.hl7v2.config>
-						<it.proxy.config>${it.proxy.config}</it.proxy.config>
-					</systemProperties>
-				</configuration>
-				<executions>
-					<execution>
-						<goals>
-							<goal>integration-test</goal>
-							<goal>verify</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-
 			<plugin>
 				<groupId>org.apache.felix</groupId>
 				<artifactId>maven-bundle-plugin</artifactId>
