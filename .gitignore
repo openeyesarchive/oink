@@ -15,3 +15,4 @@ release.properties
 derby.log
 maven-metadata-local.xml
 .vagrant
+**/test-workspace
