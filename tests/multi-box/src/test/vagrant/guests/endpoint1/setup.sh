@@ -1,7 +1,7 @@
-./#!/bin/bash
+#!/bin/bash
 
 # Delete RabbitMQ guest
-sudo rabbitmqctl add_user guest
+sudo rabbitmqctl delete_user guest
 
 # Configure RabbitMQ oinkadmin
 sudo rabbitmqctl add_user oinkadmin Test1571
@@ -20,6 +20,7 @@ sudo rabbitmq-plugins enable rabbitmq_shovel_management
 sudo service rabbitmq-server restart
 
 sudo rabbitmqctl set_parameter shovel "oink_out_shovel" '{"src-uri": "amqp://oinkendpoint1:Test1571@10.0.115.2", "src-queue": "pas.hl7v2.in", "dest-uri": "amqp://oinkendpoint2:Test1571@10.0.115.3", "dest-exchange": "test"}'
+sudo rabbitmqctl set_parameter shovel "oink_out_shovel" '{"src-uri": "amqp://oinkendpoint1:Test1571@10.0.115.2", "src-queue": "pas.hl7v2.response", "dest-uri": "amqp://oinkendpoint2:Test1571@10.0.115.3", "dest-exchange": "test"}'
 
 # Move oink to correct location
 sudo mkdir -p /opt/oink
@@ -34,7 +35,11 @@ tar -zxvf distro-*.tar.gz
 # Start Karaf
 pushd .
 cd distro-*
-export JAVA_HOME=$JAVA_HOME
+touch bin/setenv
+echo "export JAVA_HOME=/usr/lib/jvm/java-7-openjdk-amd64" >> bin/setenv
+echo "export JAVA_MIN_MEM=512M" >> bin/setenv
+echo "export JAVA_MAX_MEM=1024M" >> bin/setenv
+echo "export JAVA_PERM_MEM=512M" >> bin/setenv
 sudo ./bin/start
 
 #Wait for it to start
