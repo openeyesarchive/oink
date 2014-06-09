@@ -30,7 +30,7 @@ Vagrant.configure("2") do |config|
             puppet.manifest_file  = "default.pp"
             puppet.module_path    = "puppet/modules"
             puppet.facter         = { 'endpoint' => 'endpoint1' }
-            #puppet.options = "--verbose --debug"
+            puppet.options = "--verbose --debug"
         end
     end
 	
@@ -59,7 +59,7 @@ Vagrant.configure("2") do |config|
             puppet.manifest_file  = "default.pp"
             puppet.module_path    = "puppet/modules"
             puppet.facter         = { 'endpoint' => 'endpoint2' }
-            #puppet.options = "--verbose --debug"
+            puppet.options = "--verbose --debug"
         end
     end
 end
