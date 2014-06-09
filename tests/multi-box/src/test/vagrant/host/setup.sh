@@ -34,13 +34,13 @@ cd workspace
 vagrant destroy --force
 
 # Start OpenEyes and prepare box
-#vagrant up
-#cd bin
-#./prep.sh
+vagrant up
+cd bin
+./prep.sh
 
 # Allow admin user access to API
-#SQL_STATEMENT="insert into authassignment (itemname, userid) values ('API access', 1);"
-#vagrant ssh -c "/usr/bin/mysql -u openeyes -poe_test openeyes -e \"$SQL_STATEMENT\""
+SQL_STATEMENT="insert into authassignment (itemname, userid) values ('API access', 1);"
+vagrant ssh -c "/usr/bin/mysql -u openeyes -poe_test openeyes -e \"$SQL_STATEMENT\""
 echo "Finished loading OpenEyes VM"
 popd
 
@@ -60,7 +60,6 @@ vagrant up
 
 popd
 echo "Finished loading OINK VMs"
-
 
 popd
 

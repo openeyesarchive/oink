@@ -140,35 +140,6 @@
 	<build>
 		<plugins>
 
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>exec-maven-plugin</artifactId>
-				<version>1.1</version>
-				<executions>
-					<execution>
-						<id>start-rabbit</id>
-						<phase>pre-integration-test</phase>
-						<goals>
-							<goal>exec</goal>
-						</goals>
-						<configuration>
-							<executable>../oink-itest-shared/src/main/resources/config/startRabbit.sh</executable>
-						</configuration>
-					</execution>
-					<execution>
-						<id>stop-rabbit</id>
-						<phase>post-integration-test</phase>
-						<goals>
-							<goal>exec</goal>
-						</goals>
-						<configuration>
-							<executable>../oink-itest-shared/src/main/resources/config/stopRabbit.sh</executable>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-
-
 			<!-- generate dependencies versions -->
 			<plugin>
 				<groupId>org.apache.servicemix.tooling</groupId>
