@@ -22,7 +22,7 @@ node default {
 	}
 
 	exec { 'setup' :
-         require => [Service['rabbitmq-server'], File['/etc/profile.d/set_java_home.sh']],
+         require => [Class['rabbitmq'], File['/etc/profile.d/set_java_home.sh']],
          command =>  "/vagrant/guests/${endpoint}/setup.sh",
          logoutput => true,
          path => '/usr/bin:/sbin:/bin'}
