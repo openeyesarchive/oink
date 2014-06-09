@@ -15,9 +15,17 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.apache.commons.io.output.ByteArrayOutputStream;
 
-public class XmlTransformer {
+import uk.org.openeyes.oink.exception.OinkException;
 
-	public static String transform(String inputXml, InputStream xslIs) throws TransformerFactoryConfigurationError, TransformerException, UnsupportedEncodingException {
+public class XmlTransformer {
+	
+	TransformerFactory factory;
+	
+	public XmlTransformer() {
+		factory = TransformerFactory.newInstance();
+	}
+
+	public String transform(String inputXml, InputStream xslIs) throws TransformerFactoryConfigurationError, TransformerException, UnsupportedEncodingException, OinkException {
 
 		Source xslSource = new StreamSource(xslIs);
 
@@ -27,10 +35,13 @@ public class XmlTransformer {
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
 		Result outputXmlResult = new StreamResult(os);
 
-		Transformer transformer = TransformerFactory.newInstance()
-				.newTransformer(xslSource);
-		transformer.transform(inputXmlSource, outputXmlResult);
+		Transformer transformer = factory.newTransformer(xslSource);
 		
+		if (transformer == null) {
+			throw new OinkException("Failed to transform XML using XSL");
+		}
+		
+		transformer.transform(inputXmlSource, outputXmlResult);
 		return os.toString("UTF-8");
 	}
 

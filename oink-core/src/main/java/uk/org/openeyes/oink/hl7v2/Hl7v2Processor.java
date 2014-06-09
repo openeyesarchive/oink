@@ -1,6 +1,8 @@
 package uk.org.openeyes.oink.hl7v2;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Iterator;
 import java.util.List;
 
@@ -8,6 +10,7 @@ import org.apache.camel.Body;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
+import org.apache.commons.io.IOUtils;
 import org.hl7.fhir.instance.model.AtomEntry;
 import org.hl7.fhir.instance.model.AtomFeed;
 import org.hl7.fhir.instance.model.Identifier;
@@ -38,8 +41,9 @@ public abstract class Hl7v2Processor {
 	private static final Logger log = LoggerFactory
 			.getLogger(Hl7v2Processor.class);
 
-	private org.springframework.core.io.Resource resource;
+	private byte[] xsl;
 	private Hl7v2XmlConverter hl7v2Converter;
+	private XmlTransformer transformer;
 	private BundleParser fhirConverter;
 	private ValidationContext hl7v2ValidationContext;
 	private MessageValidator hl7v2Validator;
@@ -55,6 +59,7 @@ public abstract class Hl7v2Processor {
 																	// US phone
 																	// numbers
 		hl7v2Validator = new MessageValidator(hl7v2ValidationContext, true);
+		transformer = new XmlTransformer();
 	}
 
 	public void setXsltPath(org.springframework.core.io.Resource xslFile)
@@ -64,7 +69,12 @@ public abstract class Hl7v2Processor {
 			throw new IllegalArgumentException("Resource not found "
 					+ xslFile.getDescription());
 		}
-		this.resource = xslFile;
+		xsl = IOUtils.toByteArray(xslFile.getInputStream());
+		if (xsl == null || xsl.length == 0) {
+			log.error("Xsl not found");
+			throw new IllegalArgumentException("Resource invalid "
+					+ xslFile.getDescription());
+		}
 	}
 
 	public void process(@Body Message message, Exchange ex) throws Exception {
@@ -75,15 +85,17 @@ public abstract class Hl7v2Processor {
 		// Convert to HL7v2 XML format
 		String hl7Xml = hl7v2Converter.toXml(message);
 		
-		if (!resource.exists()) {
-			String s = "No XLS transform found for this converter";
+		if (hl7Xml == null) {
+			String s = "Hl7 message could not be written in XML format (needed for conversion)";
 			log.error(s);
 			throw new OinkException(s);
-		}
+		}		
 		
+		InputStream xslIs = new ByteArrayInputStream(xsl);
+
 		// Map to FHIR XML format
-		String fhirXml = XmlTransformer.transform(hl7Xml,
-				resource.getInputStream());
+		String fhirXml = transformer.transform(hl7Xml,
+				xslIs);
 		
 		// Bug Fix -- Remove empty tags (valid transform shouldnt have them anyway)
 		fhirXml = fhirXml.replaceAll("<[a-zA-Z0-9]*/>", "");

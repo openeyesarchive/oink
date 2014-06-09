@@ -11,6 +11,7 @@ import org.apache.commons.io.IOUtils;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import uk.org.openeyes.oink.exception.OinkException;
 import static org.junit.Assert.*;
 
 public class TestXmlTransformer {
@@ -18,7 +19,7 @@ public class TestXmlTransformer {
 	
 	@Ignore
 	@Test
-	public void testSimpleTransform() throws IOException, TransformerFactoryConfigurationError, TransformerException {
+	public void testSimpleTransform() throws IOException, TransformerFactoryConfigurationError, TransformerException, OinkException {
 
 		String inputXml = getResourceAsString("/example-messages/hl7v2/A28-3.xml");
 		InputStream xsl = TestXmlTransformer.class.getResourceAsStream("/uk/org/openeyes/oink/hl7v2/A28.xsl");
