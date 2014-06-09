@@ -22,7 +22,7 @@ public class XmlTransformer {
 	TransformerFactory factory;
 	
 	public XmlTransformer() {
-		factory = TransformerFactory.newInstance();
+		factory = new net.sf.saxon.TransformerFactoryImpl();
 	}
 
 	public String transform(String inputXml, InputStream xslIs) throws TransformerFactoryConfigurationError, TransformerException, UnsupportedEncodingException, OinkException {

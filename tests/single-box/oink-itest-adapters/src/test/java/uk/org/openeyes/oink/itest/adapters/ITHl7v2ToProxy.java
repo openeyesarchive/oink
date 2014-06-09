@@ -76,7 +76,7 @@ public class ITHl7v2ToProxy {
 	public void before() throws InterruptedException {
 		// Even though the bundles have started, the spring dm contexts may not
 		// be started yet so we must wait
-		Thread.sleep(15000);
+		Thread.sleep(30000);
 	}
 
 	@Test
