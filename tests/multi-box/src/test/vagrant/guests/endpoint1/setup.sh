@@ -1,4 +1,4 @@
-#!/bin/bash
+./#!/bin/bash
 
 # Delete RabbitMQ guest
 sudo rabbitmqctl add_user guest
@@ -35,11 +35,11 @@ tar -zxvf distro-*.tar.gz
 pushd .
 cd distro-*
 export JAVA_HOME=$JAVA_HOME
-./bin/start
+sudo ./bin/start
 
 #Wait for it to start
 echo "Attempting to connect to karaf"
-./bin/client -r 20 -d 6 "echo"
+./bin/client -r 100 -d 6 "echo"
 
 # Enable facade
 ./bin/client "oink:enable oink-adapter-facade /vagrant/guests/endpoint1/facade.properties"

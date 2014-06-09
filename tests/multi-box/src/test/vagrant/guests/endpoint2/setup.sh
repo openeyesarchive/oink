@@ -37,11 +37,11 @@ tar -zxvf distro-*.tar.gz
 pushd .
 cd distro-*
 export JAVA_HOME=$JAVA_HOME
-./bin/start
+sudo ./bin/start
 
 # Wait for it to start
 echo "Attempting to connect to karaf"
-./bin/client -r 20 -d 6 "echo"
+./bin/client -r 100 -d 6 "echo"
 
 # Enable hl7v2
 ./bin/client "oink:enable oink-adapter-hl7v2 /vagrant/guests/endpoint2/hl7v2.properties"
