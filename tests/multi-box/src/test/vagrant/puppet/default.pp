@@ -16,7 +16,10 @@ node default {
 	}
 
 	# RabbitMQ
-	include '::rabbitmq'
+	class { 'rabbitmq':
+	  service_manage    => true,
+	  port              => '5672',
+	}
 
 	exec { 'setup' :
          require => [Service['rabbitmq-server'], File['/etc/profile.d/set_java_home.sh']],
