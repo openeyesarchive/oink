@@ -46,7 +46,7 @@ sudo ./bin/start
 
 # Wait for Bundles to load
 echo "Waiting for 60secs to allow Karaf to start all startupBundles"
-sleep 60
+sleep 3m
 
 # Wait for it to start
 echo "Attempting to connect to karaf"
