@@ -26,39 +26,7 @@
 			<version>${karaf.version}</version>
 			<type>xml</type>
 			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.karaf.features</groupId>
-			<artifactId>spring</artifactId>
-			<classifier>features</classifier>
-			<version>${karaf.version}</version>
-			<type>xml</type>
-			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.karaf.features</groupId>
-			<artifactId>enterprise</artifactId>
-			<classifier>features</classifier>
-			<version>${karaf.version}</version>
-			<type>xml</type>
-			<scope>runtime</scope>
-		</dependency>	
-		<dependency>
-			<groupId>org.apache.cxf.karaf</groupId>
-			<artifactId>apache-cxf</artifactId>
-			<classifier>features</classifier>
-			<version>2.7.10</version>
-			<type>xml</type>
-			<scope>runtime</scope>
-		</dependency>	
-		<dependency>
-			<groupId>org.apache.jclouds.karaf</groupId>
-			<artifactId>jclouds-karaf</artifactId>
-			<classifier>features</classifier>
-			<version>1.6.2-incubating</version>
-			<type>xml</type>
-			<scope>runtime</scope>
-		</dependency>				
+		</dependency>			
  		<dependency>
 			<groupId>uk.org.openeyes.oink.karaf</groupId>
 			<artifactId>oink-features</artifactId>
@@ -78,8 +46,6 @@
                 <extensions>true</extensions>
                 <configuration>
                     <installedFeatures>
-                    	<feature>webconsole</feature>
-                        <feature>wrapper</feature>
                         <feature>oink-core</feature>
                         <feature>oink-domain</feature>
                         <feature>oink-adapter-facade</feature>
@@ -87,23 +53,8 @@
                         <feature>oink-adapter-hl7v2</feature>
                     </installedFeatures>
                     <bootFeatures>
-                        <feature>wrap</feature>
-                        <feature>aries-blueprint</feature>
-                        <feature>shell</feature>
-                        <feature>shell-compat</feature>
-                        <feature>jaas</feature>
-                        <feature>ssh</feature>
-                        <feature>management</feature>
-                        <feature>bundle</feature>
-                        <feature>config</feature>
-                        <feature>deployer</feature>
-                        <feature>diagnostic</feature>
-                        <feature>instance</feature>
-                        <feature>kar</feature>
-                        <feature>log</feature>
-                        <feature>package</feature>
-                        <feature>service</feature>
-                        <feature>system</feature>
+                    	<feature>standard</feature>
+                    	<feature>management</feature>
                         <feature>obr</feature>
                         <feature>oink-commands</feature>
                     </bootFeatures>
