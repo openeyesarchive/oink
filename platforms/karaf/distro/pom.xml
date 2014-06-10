@@ -29,10 +29,9 @@
 		</dependency>			
  		<dependency>
 			<groupId>uk.org.openeyes.oink.karaf</groupId>
-			<artifactId>oink-features</artifactId>
+			<artifactId>kar</artifactId>
 			<version>${project.version}</version>
-			<classifier>features</classifier>
-			<type>xml</type>
+			<type>kar</type>
 			<scope>runtime</scope>
 		</dependency>
 
@@ -46,8 +45,8 @@
                 <extensions>true</extensions>
                 <configuration>
                     <installedFeatures>
+                    	<feature>oink-domain</feature>
                         <feature>oink-core</feature>
-                        <feature>oink-domain</feature>
                         <feature>oink-adapter-facade</feature>
                         <feature>oink-adapter-proxy</feature>
                         <feature>oink-adapter-hl7v2</feature>
