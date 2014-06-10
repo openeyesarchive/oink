@@ -43,6 +43,10 @@ echo "export JAVA_PERM_MEM=512M" >> bin/setenv
 echo "karaf.delay.console=true" >> etc/system.properties
 sudo ./bin/start
 
+# Wait for Bundles to load
+echo "Waiting for 60secs to allow Karaf to start all startupBundles"
+sleep 60
+
 #Wait for it to start
 echo "Attempting to connect to karaf"
 ./bin/client -r 100 -d 6 "echo"
