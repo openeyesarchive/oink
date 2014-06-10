@@ -10,8 +10,7 @@ Vagrant.configure("2") do |config|
     #------------------------------------------------------------------------------------
     config.vm.define "endpoint1" do |endpoint1|
 
-        endpoint1.vm.box = "precise64"
-        endpoint1.vm.box_url = "http://files.vagrantup.com/precise64.box"
+        endpoint1.vm.box = "hashicorp/precise64"
 
         endpoint1.vm.provider "virtualbox" do |v|
             v.customize ["modifyvm", :id, "--memory", 1024]
@@ -38,8 +37,8 @@ Vagrant.configure("2") do |config|
     #------------------------------------------------------------------------------------
     config.vm.define "endpoint2" do |endpoint2|
     
-        endpoint2.vm.box = "precise64"
-        endpoint2.vm.box_url = "http://files.vagrantup.com/precise64.box"
+        endpoint2.vm.box = "hashicorp/precise64"
+        
         endpoint2.vm.network "private_network", ip: "10.0.115.3"
 
         endpoint2.vm.provider "virtualbox" do |v|
