@@ -167,16 +167,6 @@ public class OinkKarafITSupport {
 		MavenArtifactUrlReference karafUrl = maven()
 				.groupId("uk.org.openeyes.oink.karaf").artifactId("distro")
 				.version(asInProject()).type("tar.gz");
-
-		MavenUrlReference oinkFeaturesRepo = maven()
-				.groupId("uk.org.openeyes.oink.karaf")
-				.artifactId("oink-features").version(asInProject()).type("xml")
-				.classifier("features");
-
-		MavenUrlReference itSupportClasses = maven()
-				.groupId("uk.org.openeyes.oink")
-				.artifactId("oink-itest-shared")
-				.version(asInProject()).classifier("tests");
 		
 		String proxyConfig = System.getProperty("it.proxy.config");
 		String hl7v2Config = System.getProperty("it.hl7v2.config");

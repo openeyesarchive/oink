@@ -13,8 +13,14 @@
 	<packaging>bundle</packaging>
 
 	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<log4j.version>1.2.17</log4j.version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<rabbit.start.script>${basedir}/../oink-itest-shared/src/main/resources/config/startRabbit.sh</rabbit.start.script>
+		<rabbit.stop.script>${basedir}/../oink-itest-shared/src/main/resources/config/stopRabbit.sh</rabbit.stop.script>
+		<it.proxy.config>${basedir}/../oink-itest-shared/src/test/resources/proxy.properties</it.proxy.config>
+		<it.hl7v2.config>${basedir}/../oink-itest-shared/src/test/resources/hl7v2.properties</it.hl7v2.config>
+		<it.facadeToHl7v2.config>${basedir}/../oink-itest-shared/src/test/resources/facade-ToHl7.properties</it.facadeToHl7v2.config>
+		<it.facadeToProxy.config>${basedir}/../oink-itest-shared/src/test/resources/facade.properties</it.facadeToProxy.config>
 	</properties>
 	<dependencies>
 
@@ -144,6 +150,7 @@
 			<plugin>
 				<groupId>org.apache.servicemix.tooling</groupId>
 				<artifactId>depends-maven-plugin</artifactId>
+				<version>1.2</version>
 				<executions>
 					<execution>
 						<id>generate-depends-file</id>

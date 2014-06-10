@@ -21,10 +21,12 @@
 		<profile>
 			<id>develop</id>
 			<properties>
-				<it.proxy.config>${basedir}/../oink-itest-shared/src/test/resources/proxy.properties</it.proxy.config>
-				<it.hl7v2.config>${basedir}/../oink-itest-shared/src/test/resources/hl7v2.properties</it.hl7v2.config>
-				<it.facadeToHl7v2.config>${basedir}/../oink-itest-shared/src/test/resources/facade-ToHl7.properties</it.facadeToHl7v2.config>
-				<it.facadeToProxy.config>${basedir}/../oink-itest-shared/src/test/resources/facade.properties</it.facadeToProxy.config>
+				<it.proxy.config>${basedir}/oink-itest-shared/src/test/resources/proxy.properties</it.proxy.config>
+				<it.hl7v2.config>${basedir}/oink-itest-shared/src/test/resources/hl7v2.properties</it.hl7v2.config>
+				<it.facadeToHl7v2.config>${basedir}/oink-itest-shared/src/test/resources/facade-ToHl7.properties</it.facadeToHl7v2.config>
+				<it.facadeToProxy.config>${basedir}/oink-itest-shared/src/test/resources/facade.properties</it.facadeToProxy.config>
+				<rabbit.start.script>${basedir}/oink-itest-shared/src/main/resources/config/startRabbit.sh</rabbit.start.script>
+				<rabbit.stop.script>${basedir}/oink-itest-shared/src/main/resources/config/stopRabbit.sh</rabbit.stop.script>
 			</properties>
 			<build>
 				<plugins>
@@ -40,7 +42,7 @@
 									<goal>exec</goal>
 								</goals>
 								<configuration>
-									<executable>${basedir}/../oink-itest-shared/src/main/resources/config/startRabbit.sh</executable>
+									<executable>${rabbit.start.script}</executable>
 								</configuration>
 							</execution>
 							<execution>
@@ -50,7 +52,7 @@
 									<goal>exec</goal>
 								</goals>
 								<configuration>
-									<executable>${basedir}/../oink-itest-shared/src/main/resources/config/stopRabbit.sh</executable>
+									<executable>${rabbit.stop.script}</executable>
 								</configuration>
 							</execution>					
 						</executions>
