@@ -60,7 +60,8 @@ while [ $OUTPUT -ne 0 ] && [ $ATTEMPTS -lt 6 ]; do
         OUTPUT=$(./bin/client -r 100 -d 6 "oink:status oink-adapter-hl7v2" | tail -1)
         echo "Attempt $ATTEMPTS had status $OUTPUT"
 done
-if [ $OUTPUT -ne 0 ] then
+if [ $OUTPUT -ne 0 ] 
+then
         echo "oink-adapter-hl7v2 did not start. Check logs"
 fi
 

@@ -58,7 +58,8 @@ while [ $OUTPUT -ne 0 ] && [ $ATTEMPTS -lt 6 ]; do
         OUTPUT=$(./bin/client -r 100 -d 6 "oink:status oink-adapter-facade" | tail -1)
         echo "Attempt $ATTEMPTS had status $OUTPUT"
 done
-if [ $OUTPUT -ne 0 ] then
+if [ $OUTPUT -ne 0 ] 
+then
         echo "oink-adapter-facade did not start. Check logs"
 fi
 
@@ -74,7 +75,8 @@ while [ $OUTPUT -ne 0 ] && [ $ATTEMPTS -lt 6 ]; do
         OUTPUT=$(./bin/client -r 100 -d 6 "oink:status oink-adapter-proxy" | tail -1)
         echo "Attempt $ATTEMPTS had status $OUTPUT"
 done
-if [ $OUTPUT -ne 0 ] then
+if [ $OUTPUT -ne 0 ] 
+then
         echo "oink-adapter-proxy did not start. Check logs"
 fi
 
