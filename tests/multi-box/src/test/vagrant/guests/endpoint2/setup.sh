@@ -50,6 +50,20 @@ echo "Attempting to connect to karaf"
 # Enable hl7v2
 ./bin/client "oink:enable oink-adapter-hl7v2 /vagrant/guests/endpoint2/hl7v2.properties"
 
+# Wait for hl7v2
+# Wait for proxy to start
+ATTEMPTS=1
+OUTPUT=1
+while [ $OUTPUT -ne 0 ] && [ $ATTEMPTS -lt 6 ]; do
+        sleep 10
+        ((ATTEMPTS++))
+        OUTPUT=$(./bin/client -r 100 -d 6 "oink:status oink-adapter-hl7v2" | tail -1)
+        echo "Attempt $ATTEMPTS had status $OUTPUT"
+done
+if [ $OUTPUT -ne 0 ] then
+        echo "oink-adapter-hl7v2 did not start. Check logs"
+fi
+
 popd
 
 popd

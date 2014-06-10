@@ -49,8 +49,34 @@ echo "Attempting to connect to karaf"
 # Enable facade
 ./bin/client "oink:enable oink-adapter-facade /vagrant/guests/endpoint1/facade.properties"
 
+# Wait for facade to start
+ATTEMPTS=1
+OUTPUT=1
+while [ $OUTPUT -ne 0 ] && [ $ATTEMPTS -lt 6 ]; do
+        sleep 10
+        ((ATTEMPTS++))
+        OUTPUT=$(./bin/client -r 100 -d 6 "oink:status oink-adapter-facade" | tail -1)
+        echo "Attempt $ATTEMPTS had status $OUTPUT"
+done
+if [ $OUTPUT -ne 0 ] then
+        echo "oink-adapter-facade did not start. Check logs"
+fi
+
 # Enable proxy
 ./bin/client "oink:enable oink-adapter-proxy /vagrant/guests/endpoint1/proxy.properties"
+
+# Wait for proxy to start
+ATTEMPTS=1
+OUTPUT=1
+while [ $OUTPUT -ne 0 ] && [ $ATTEMPTS -lt 6 ]; do
+        sleep 10
+        ((ATTEMPTS++))
+        OUTPUT=$(./bin/client -r 100 -d 6 "oink:status oink-adapter-proxy" | tail -1)
+        echo "Attempt $ATTEMPTS had status $OUTPUT"
+done
+if [ $OUTPUT -ne 0 ] then
+        echo "oink-adapter-proxy did not start. Check logs"
+fi
 
 popd
 
