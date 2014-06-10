@@ -26,15 +26,15 @@
 			<version>${karaf.version}</version>
 			<type>xml</type>
 			<scope>runtime</scope>
-		</dependency>			
+		</dependency>	
  		<dependency>
 			<groupId>uk.org.openeyes.oink.karaf</groupId>
-			<artifactId>kar</artifactId>
+			<artifactId>oink-features</artifactId>
 			<version>${project.version}</version>
-			<type>kar</type>
+			<classifier>features</classifier>
+			<type>xml</type>
 			<scope>runtime</scope>
-		</dependency>
-
+		</dependency>				
 	</dependencies>
 
 	<build>
