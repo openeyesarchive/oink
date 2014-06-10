@@ -104,6 +104,7 @@
                         <feature>package</feature>
                         <feature>service</feature>
                         <feature>system</feature>
+                        <feature>obr</feature>
                         <feature>oink-commands</feature>
                     </bootFeatures>
                 </configuration>
