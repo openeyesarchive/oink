@@ -41,6 +41,7 @@ echo "export JAVA_HOME=/usr/lib/jvm/java-7-openjdk-amd64" >> bin/setenv
 echo "export JAVA_MIN_MEM=512M" >> bin/setenv
 echo "export JAVA_MAX_MEM=1024M" >> bin/setenv
 echo "export JAVA_PERM_MEM=512M" >> bin/setenv
+echo "karaf.delay.console=true" >> etc/system.properties
 sudo ./bin/start
 
 # Wait for it to start
