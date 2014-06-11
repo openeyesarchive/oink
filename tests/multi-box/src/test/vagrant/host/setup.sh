@@ -1,4 +1,4 @@
-#!/bin/env bash
+#!/usr/bin/env bash
 #
 #
 # Starts three virtual machines needed for tests.
