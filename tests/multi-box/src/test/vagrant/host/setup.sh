@@ -35,7 +35,7 @@ vagrant destroy --force
 
 # Start OpenEyes and prepare box
 vagrant up
-sed -i '1s@.*@#!/usr/bin/env sh@g' bin/prep.sh
+sed -i '1s@.*@#!/usr/bin/env bash@g' bin/prep.sh
 ./bin/prep.sh
 
 # Allow admin user access to API
