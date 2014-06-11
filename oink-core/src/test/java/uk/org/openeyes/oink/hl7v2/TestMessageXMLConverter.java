@@ -17,7 +17,7 @@ public class TestMessageXMLConverter extends Hl7TestSupport {
 
 	@Test
 	public void testCanDecodeSampleA01MessageFromXml() throws IOException, HL7Exception {
-		String xml = loadResourceAsString("/example-messages/hl7v2/A01.XML");
+		String xml = loadResourceAsString("/example-messages/hl7v2/A01.xml");
 		Hl7v2XmlConverter converter = new Hl7v2XmlConverter();
 		Message m = converter.fromXml(xml);
 		Assert.assertTrue(m instanceof ADT_A01);
@@ -44,7 +44,7 @@ public class TestMessageXMLConverter extends Hl7TestSupport {
 	
 	@Test
 	public void testEncodingAndDecodingTheSameXMLMessageProducesTheSameOutput() throws IOException, HL7Exception, SAXException {
-		String expectedXml = loadResourceAsString("/example-messages/hl7v2/A01.XML");
+		String expectedXml = loadResourceAsString("/example-messages/hl7v2/A01.xml");
 		Hl7v2XmlConverter converter = new Hl7v2XmlConverter();
 		Message m = converter.fromXml(expectedXml);
 		Assert.assertTrue(m instanceof ADT_A01);
