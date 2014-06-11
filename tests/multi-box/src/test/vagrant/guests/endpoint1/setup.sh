@@ -26,7 +26,6 @@ sudo rabbitmqctl set_parameter shovel "oink_out_shovel" '{"src-uri": "amqp://oin
 sudo mkdir -p /opt/oink
 sudo chown -R `whoami` /opt/oink
 
-mkdir -p /opt/oink/settings
 pushd .
 cd /opt/oink
 cp /vagrant/vfs/distro-*.tar.gz .
@@ -41,6 +40,8 @@ echo "export JAVA_MIN_MEM=512M" >> bin/setenv
 echo "export JAVA_MAX_MEM=1024M" >> bin/setenv
 echo "export JAVA_PERM_MEM=512M" >> bin/setenv
 echo "karaf.delay.console=true" >> etc/system.properties
+sudo sed -i -e 's@^log4j\.appender\.out\.file.*@log4j\.appender\.out\.file=/vagrant/guests/endpoint1/karaf.log@g' etc/org.ops4j.pax.logging.cfg
+
 sudo ./bin/start
 
 # Wait for Bundles to load
