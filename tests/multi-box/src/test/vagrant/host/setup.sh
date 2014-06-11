@@ -35,8 +35,7 @@ vagrant destroy --force
 
 # Start OpenEyes and prepare box
 vagrant up
-cd bin
-./prep.sh
+./bin/prep.sh
 
 # Allow admin user access to API
 SQL_STATEMENT="insert into authassignment (itemname, userid) values ('API access', 1);"
