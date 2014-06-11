@@ -45,8 +45,8 @@ echo "karaf.delay.console=true" >> etc/system.properties
 sudo ./bin/start
 
 # Wait for Bundles to load
-echo "Waiting for 60secs to allow Karaf to start all startupBundles"
-sleep 3m
+echo "Waiting for 120secs to allow Karaf to start all startupBundles"
+sleep 2m
 
 # Wait for it to start
 echo "Attempting to connect to karaf"
