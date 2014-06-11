@@ -5,8 +5,10 @@ import static org.junit.Assert.*;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringWriter;
 import java.util.Properties;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpException;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpRequestInterceptor;
@@ -21,12 +23,14 @@ import ca.uhn.fhir.rest.client.HttpBasicAuthInterceptor;
 import ca.uhn.fhir.rest.client.IGenericClient;
 import ca.uhn.fhir.rest.client.IRestfulClientFactory;
 import ca.uhn.hl7v2.DefaultHapiContext;
+import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.HapiContext;
 import ca.uhn.hl7v2.app.Connection;
 import ca.uhn.hl7v2.app.Initiator;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.v24.message.ACK;
-import uk.org.openeyes.oink.test.Hl7Helper;
+import ca.uhn.hl7v2.parser.Parser;
+import ca.uhn.hl7v2.validation.impl.NoValidation;
 
 /**
  * 
@@ -53,7 +57,7 @@ public class ITHl7v2ToOpenEyes {
 			throws Exception {
 
 		// Load example A01
-		Message exampleA01 = Hl7Helper.loadHl7Message("/example-messages/hl7v2/A01-mod.txt");
+		Message exampleA01 = loadHl7Message("/example-messages/hl7v2/A01-mod.txt");
 
 		// Post A01
 		testMessageCanBePostedAndAcceptedByOink(exampleA01);
@@ -68,7 +72,6 @@ public class ITHl7v2ToOpenEyes {
 						.value("Test")).execute();
 		
 		assertEquals(1, searchResults.getEntries().size());
-
 	}
 
 	@Test
@@ -76,7 +79,7 @@ public class ITHl7v2ToOpenEyes {
 			throws Exception {
 
 		// Load example A05
-		Message exampleA05 = Hl7Helper.loadHl7Message("/example-messages/hl7v2/A05-mod.txt");
+		Message exampleA05 = loadHl7Message("/example-messages/hl7v2/A05-mod.txt");
 
 		// Post A01
 		testMessageCanBePostedAndAcceptedByOink(exampleA05);
@@ -99,7 +102,7 @@ public class ITHl7v2ToOpenEyes {
 			throws Exception {
 
 		// Load example A28
-		Message exampleA28 = Hl7Helper.loadHl7Message("/example-messages/hl7v2/A28-2-mod.txt");
+		Message exampleA28 = loadHl7Message("/example-messages/hl7v2/A28-2-mod.txt");
 
 		// Post A28
 		testMessageCanBePostedAndAcceptedByOink(exampleA28);
@@ -122,7 +125,7 @@ public class ITHl7v2ToOpenEyes {
 			throws Exception {
 
 		// Load example A31
-		Message exampleA31 = Hl7Helper.loadHl7Message("/example-messages/hl7v2/A31-2-mod.txt");
+		Message exampleA31 = loadHl7Message("/example-messages/hl7v2/A31-2-mod.txt");
 
 		// Post A31
 		testMessageCanBePostedAndAcceptedByOink(exampleA31);
@@ -189,6 +192,19 @@ public class ITHl7v2ToOpenEyes {
 				+ proxyUri);
 		
 		return client;
+	}
+	
+	public static Message loadHl7Message(String path) throws IOException, HL7Exception {
+		InputStream is = ITHl7v2ToOpenEyes.class.getResourceAsStream(path);
+		StringWriter writer = new StringWriter();
+		IOUtils.copy(is, writer);
+		String message = writer.toString();
+		HapiContext context = new DefaultHapiContext();
+		context.setValidationContext(new NoValidation());
+		Parser p = context.getGenericParser();
+		Message adt = p.parse(message);
+		context.close();
+		return adt;
 	}
 
 }
