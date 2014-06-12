@@ -6,13 +6,10 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.ops4j.pax.exam.CoreOptions.maven;
-import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
-import static org.ops4j.pax.exam.CoreOptions.wrappedBundle;
 import static org.ops4j.pax.exam.MavenUtils.asInProject;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.configureConsole;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.features;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.karafDistributionConfiguration;
-import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.keepRuntimeFolder;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.logLevel;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.editConfigurationFilePut;
 
@@ -20,7 +17,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Dictionary;
+import java.util.Hashtable;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 
 import javax.inject.Inject;
@@ -30,7 +30,6 @@ import org.apache.karaf.features.FeaturesService;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.karaf.options.LogLevelOption.LogLevel;
 import org.ops4j.pax.exam.options.MavenArtifactUrlReference;
-import org.ops4j.pax.exam.options.MavenUrlReference;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.cm.ConfigurationAdmin;
@@ -106,7 +105,7 @@ public class OinkKarafITSupport {
 		// Place cfg
 		org.osgi.service.cm.Configuration c = configurationAdmin.getConfiguration("uk.org.openeyes.oink."+adapterSuffix);
 		assertNull("Existing configuration found",c.getProperties());
-		c.update(properties);
+		c.update(convertToDictionary(properties));
 		
 		// Prepare listener
 		ContextListener listener = new ContextListener();
@@ -124,6 +123,14 @@ public class OinkKarafITSupport {
 		
 		assertFalse("Context failed to start",listener.getContextFailed());
 	}		
+	
+	public static Dictionary<String, Object> convertToDictionary(Properties props) {
+		Dictionary<String, Object> d = new Hashtable<String, Object>();
+		for (Entry<Object, Object> entry : props.entrySet()) {
+			d.put((String) entry.getKey(), entry.getValue());
+		}
+		return d;
+	}
 	
 	public static File getPropertyFileBySystemProperty(String systemProperty) {
 		String path = System.getProperty(systemProperty);

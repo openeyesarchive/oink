@@ -16,19 +16,11 @@
  *******************************************************************************/
 package uk.org.openeyes.oink.itest.karaf;
 
-import static org.ops4j.pax.exam.CoreOptions.*;
-import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.*;
-import static org.ops4j.pax.exam.MavenUtils.asInProject;
-
-import java.io.File;
-
 import javax.inject.Inject;
 
-import org.ops4j.pax.exam.karaf.options.LogLevelOption.LogLevel;
-import org.ops4j.pax.exam.options.MavenArtifactUrlReference;
-import org.ops4j.pax.exam.options.MavenUrlReference;
 import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
 import org.ops4j.pax.exam.spi.reactors.PerClass;
+import org.ops4j.pax.exam.spi.reactors.ReactorManager;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Configuration;

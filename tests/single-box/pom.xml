@@ -7,27 +7,19 @@
 		<groupId>uk.org.openeyes.oink</groupId>
 		<version>0.3-SNAPSHOT</version>
 	</parent>
-	<groupId>uk.org.openeyes.oink.tests</groupId>	
+	<groupId>uk.org.openeyes.oink.tests</groupId>
 	<artifactId>single-box</artifactId>
-	<modules>
-		<module>oink-itest-karaf</module>
-		<module>oink-itest-adapters</module>
-		<module>oink-itest-shared</module>
-	</modules>
-	<packaging>pom</packaging>
 	<name>Oink :: Integration Tests :: Single Box</name>
 
 	<profiles>
 		<profile>
-			<id>develop</id>
+			<id>testing</id>
 			<properties>
-				<it.proxy.config>${basedir}/oink-itest-shared/src/test/resources/proxy.properties</it.proxy.config>
-				<it.hl7v2.config>${basedir}/oink-itest-shared/src/test/resources/hl7v2.properties</it.hl7v2.config>
-				<it.facadeToHl7v2.config>${basedir}/oink-itest-shared/src/test/resources/facade-ToHl7.properties</it.facadeToHl7v2.config>
-				<it.facadeToProxy.config>${basedir}/oink-itest-shared/src/test/resources/facade.properties</it.facadeToProxy.config>
-				<rabbit.start.script>${basedir}/oink-itest-shared/src/main/resources/config/startRabbit.sh</rabbit.start.script>
-				<rabbit.stop.script>${basedir}/oink-itest-shared/src/main/resources/config/stopRabbit.sh</rabbit.stop.script>
-			</properties>
+				<it.proxy.config>${basedir}/src/test/resources/proxy.properties</it.proxy.config>
+				<it.hl7v2.config>${basedir}/src/test/resources/hl7v2.properties</it.hl7v2.config>
+				<it.facadeToHl7v2.config>${basedir}/src/test/resources/facade-ToHl7.properties</it.facadeToHl7v2.config>
+				<it.facadeToProxy.config>${basedir}/src/test/resources/facade.properties</it.facadeToProxy.config>
+			</properties>			
 			<build>
 				<plugins>
 					<plugin>
@@ -36,27 +28,28 @@
 						<version>1.1</version>
 						<executions>
 							<execution>
-								<id>start-rabbit</id>
+								<id>start-vms</id>
 								<phase>pre-integration-test</phase>
 								<goals>
 									<goal>exec</goal>
 								</goals>
 								<configuration>
-									<executable>${rabbit.start.script}</executable>
+									<executable>src/test/vagrant/host/setup.sh</executable>
 								</configuration>
 							</execution>
 							<execution>
-								<id>stop-rabbit</id>
+								<id>stop-vms</id>
 								<phase>post-integration-test</phase>
 								<goals>
 									<goal>exec</goal>
 								</goals>
 								<configuration>
-									<executable>${rabbit.stop.script}</executable>
+									<executable>src/test/vagrant/host/tearDown.sh</executable>
 								</configuration>
-							</execution>					
+							</execution>
 						</executions>
 					</plugin>
+
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-failsafe-plugin</artifactId>
@@ -77,18 +70,191 @@
 								</goals>
 							</execution>
 						</executions>
-					</plugin>					
+					</plugin>
+
+					<plugin>
+						<artifactId>maven-clean-plugin</artifactId>
+						<version>2.5</version>
+						<configuration>
+							<filesets>
+								<fileset>
+									<directory>test-workspace</directory>
+								</fileset>
+							</filesets>
+						</configuration>
+					</plugin>
 				</plugins>
 			</build>
 		</profile>
 	</profiles>
 
+	<dependencies>
+
+		<dependency>
+			<groupId>uk.org.openeyes.oink.tests</groupId>
+			<artifactId>oink-itest-shared</artifactId>
+			<version>${project.version}</version>
+			<scope>test</scope>
+			<type>test-jar</type>
+		</dependency>
+
+		<!-- Pax Exam -->
+		<dependency>
+			<groupId>org.ops4j.pax.exam</groupId>
+			<artifactId>pax-exam-container-karaf</artifactId>
+			<version>3.5.0</version>
+			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>commons-codec</groupId>
+					<artifactId>commons-codec</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.ops4j.pax.exam</groupId>
+			<artifactId>pax-exam-junit4</artifactId>
+			<version>3.5.0</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.ops4j.pax.exam</groupId>
+			<artifactId>pax-exam-link-mvn</artifactId>
+			<version>3.5.0</version>
+			<scope>test</scope>
+		</dependency>
+
+		<!-- OINK Distro dependency -->
+		<dependency>
+			<groupId>uk.org.openeyes.oink.karaf</groupId>
+			<artifactId>distro</artifactId>
+			<version>${project.version}</version>
+			<type>tar.gz</type>
+			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<artifactId>*</artifactId>
+					<groupId>*</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>uk.org.openeyes.oink.karaf</groupId>
+			<artifactId>oink-features</artifactId>
+			<version>${project.version}</version>
+			<scope>test</scope>
+			<type>xml</type>
+			<classifier>features</classifier>
+		</dependency>
+
+		<dependency>
+			<groupId>uk.org.openeyes.oink.adapters</groupId>
+			<artifactId>oink-adapter-proxy</artifactId>
+			<version>${project.version}</version>
+			<type>test-jar</type>
+			<scope>test</scope>
+		</dependency>
+
+
+		<dependency>
+			<groupId>org.ops4j.pax.swissbox</groupId>
+			<artifactId>pax-swissbox-tinybundles</artifactId>
+			<version>1.3.2</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>javax.inject</groupId>
+			<artifactId>javax.inject</artifactId>
+			<version>1</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.felix</groupId>
+			<artifactId>org.apache.felix.configadmin</artifactId>
+			<version>1.8.0</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.osgi</groupId>
+			<artifactId>org.osgi.core</artifactId>
+			<version>${osgi.version}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.osgi</groupId>
+			<artifactId>spring-osgi-core</artifactId>
+			<version>1.2.1</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>uk.org.openeyes.oink.karaf</groupId>
+			<artifactId>shell-commands</artifactId>
+			<version>${project.version}</version>
+			<type>bundle</type>
+			<scope>test</scope>
+		</dependency>
+
+
+
+		<!-- test and logging -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>${junit.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>1.7.7</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>ca.uhn.hapi</groupId>
+			<artifactId>hapi-base</artifactId>
+			<version>2.2</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>ca.uhn.hapi.fhir</groupId>
+			<artifactId>hapi-fhir-base</artifactId>
+			<version>0.3</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>commons-httpclient</groupId>
+			<artifactId>commons-httpclient</artifactId>
+			<version>3.1</version>
+		</dependency>
+	</dependencies>
 	<build>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.felix</groupId>
 				<artifactId>maven-bundle-plugin</artifactId>
 				<extensions>true</extensions>
+			</plugin>
+			
+			<!-- generate dependencies versions -->
+			<plugin>
+				<groupId>org.apache.servicemix.tooling</groupId>
+				<artifactId>depends-maven-plugin</artifactId>
+				<version>1.2</version>
+				<executions>
+					<execution>
+						<id>generate-depends-file</id>
+						<goals>
+							<goal>generate-depends-file</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>
