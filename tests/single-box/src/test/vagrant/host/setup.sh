@@ -17,9 +17,6 @@ cd test-workspace
 ###################################
 pushd .
 
-OE_VAGRANT_MODE='bdd'
-export OE_VAGRANT_MODE
-
 rm -Rf OpenEyes
 rm -Rf workspace
 git clone git@github.com:openeyes/OpenEyes.git
@@ -34,6 +31,9 @@ cd workspace
 vagrant destroy --force
 
 # Start OpenEyes and prepare box
+
+export OE_VAGRANT_MODE='bdd'
+export OE_VAGRANT_IP=10.0.115.1
 vagrant up
 sed -i -e '1s@.*@#!/usr/bin/env bash@g' bin/prep.sh
 ./bin/prep.sh

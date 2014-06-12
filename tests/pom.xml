@@ -15,15 +15,6 @@
     <module>single-box</module>
   </modules>
 
-	<dependencies>
-		<dependency>
-			<groupId>uk.org.openeyes.oink</groupId>
-			<artifactId>oink-core</artifactId>
-			<version>${project.version}</version>
-			<scope>test</scope>
-			<type>test-jar</type>
-		</dependency>
-	</dependencies>
 
 	<build>
 		<plugins>

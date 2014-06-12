@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory;
 
 import uk.org.openeyes.oink.domain.OINKRequestMessage;
 import uk.org.openeyes.oink.domain.OINKResponseMessage;
-import uk.org.openeyes.oink.domain.json.OinkRequestMessageJsonConverter;
 import uk.org.openeyes.oink.messaging.OinkMessageConverter;
 
 import com.rabbitmq.client.Channel;
@@ -42,10 +41,12 @@ public class RabbitClient {
 
 	public byte[] sendAndRecieve(byte[] message, String routingKey,
 			String exchange) throws Exception {
+		log.debug("Sending message to direct exchange:"+exchange+" with routing key:"+routingKey);
 		Connection connection = factory.newConnection();
 		Channel channel = connection.createChannel();
 		channel.exchangeDeclare(exchange, "direct", true, false, null);
 		String replyQueueName = channel.queueDeclare().getQueue();
+		log.debug("Reply queue name is "+replyQueueName);
 		channel.queueBind(replyQueueName, exchange, replyQueueName);
 		QueueingConsumer consumer = new QueueingConsumer(channel);
 		channel.basicConsume(replyQueueName, true, consumer);
@@ -55,7 +56,7 @@ public class RabbitClient {
 
 		channel.basicPublish(exchange, routingKey, props, message);
 		log.debug("Waiting for delivery");
-		QueueingConsumer.Delivery delivery = consumer.nextDelivery(10000);
+		QueueingConsumer.Delivery delivery = consumer.nextDelivery(20000);
 		connection.close();
 		if (delivery == null
 				|| !delivery.getProperties().getCorrelationId()

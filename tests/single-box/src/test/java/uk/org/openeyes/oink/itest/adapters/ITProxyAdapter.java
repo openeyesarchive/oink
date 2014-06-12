@@ -3,6 +3,7 @@ package uk.org.openeyes.oink.itest.adapters;
 import static org.ops4j.pax.exam.CoreOptions.maven;
 import static org.ops4j.pax.exam.MavenUtils.asInProject;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.features;
+import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.keepRuntimeFolder;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.karafDistributionConfiguration;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.logLevel;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.replaceConfigurationFile;
@@ -67,7 +68,7 @@ public class ITProxyAdapter {
 		examContainer.start();
 
 		// TODO Fix - For some reason a large wait is required
-		Thread.sleep(45000);
+		Thread.sleep(120000);
 	}
 
 	@AfterClass
@@ -448,18 +449,18 @@ public class ITProxyAdapter {
 				// It is really nice if the container sticks around after the
 				// test so you can check the contents
 				// of the data directory when things go wrong.
-				//keepRuntimeFolder(),
 				// Don't bother with local console output as it just ends up
 				// cluttering the logs
 				// configureConsole().ignoreLocalConsole(),
 				// Force the log level to INFO so we have more details during
 				// the test. It defaults to WARN.
-				logLevel(LogLevel.INFO),
 				// Provision the example feature exercised by this test
-				features(oinkFeaturesRepo, "oink-adapter-proxy"),
 				replaceConfigurationFile(
 						"etc/uk.org.openeyes.oink.proxy.cfg",
 						ITSupport.getPropertyFileBySystemProperty("it.proxy.config")),
+				features(oinkFeaturesRepo, "oink-adapter-proxy"),
+				replaceConfigurationFile("etc/org.ops4j.pax.logging.cfg",
+								new File("src/test/resources/log4j.properties")),
 
 		// Remember that the test executes in another process. If you
 		// want to

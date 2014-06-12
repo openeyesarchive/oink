@@ -30,7 +30,9 @@
 			</onException>
 			<log loggingLevel="DEBUG" message="Proxy adapter received OinkRequestMessage"/>
 			<bean ref="oinkHttpConverter" method="buildHttpRequest" />
+			<log loggingLevel="DEBUG" message="Proxy adapter about to perform OinkRequestMessage against {{proxy.uri}}"/>			
 			<to uri="http4://{{proxy.uri}}?throwExceptionOnFailure=false&amp;headerFilterStrategy=httpFilterStrategy&amp;authUsername={{proxy.username}}&amp;authPassword={{proxy.password}}&amp;httpClient.cookiePolicy=ignoreCookies&amp;authenticationPreemptive=true"/>
+			<log loggingLevel="DEBUG" message="Proxy adapter received a response from the proxied service"/>			
 			<convertBodyTo type="java.lang.String" charset="utf-8" />
 			<bean ref="oinkHttpConverter" method="buildOinkResponse" />
 			<bean ref="rabbitResponder" method="prepareHeaders"/>
