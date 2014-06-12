@@ -33,7 +33,7 @@ vagrant destroy --force
 # Start OpenEyes and prepare box
 
 export OE_VAGRANT_MODE='bdd'
-export OE_VAGRANT_IP=10.0.115.1
+export OE_VAGRANT_IP=10.0.115.3
 vagrant up
 sed -i -e '1s@.*@#!/usr/bin/env bash@g' bin/prep.sh
 ./bin/prep.sh
