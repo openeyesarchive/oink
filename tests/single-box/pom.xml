@@ -19,7 +19,7 @@
 				<it.hl7v2.config>${basedir}/src/test/resources/hl7v2.properties</it.hl7v2.config>
 				<it.facadeToHl7v2.config>${basedir}/src/test/resources/facade-toHl7.properties</it.facadeToHl7v2.config>
 				<it.facadeToProxy.config>${basedir}/src/test/resources/facade.properties</it.facadeToProxy.config>
-			</properties>			
+			</properties>
 			<build>
 				<plugins>
 					<plugin>
@@ -131,6 +131,32 @@
 		</dependency>
 
 		<dependency>
+			<groupId>uk.org.openeyes.oink</groupId>
+			<artifactId>oink-domain</artifactId>
+			<version>${project.version}</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>commons-logging</artifactId>
+					<groupId>commons-logging</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>uk.org.openeyes.oink</groupId>
+			<artifactId>distro</artifactId>
+			<version>${project.version}</version>
+			<type>tar.gz</type>
+			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<artifactId>*</artifactId>
+					<groupId>*</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
 			<groupId>uk.org.openeyes.oink.karaf</groupId>
 			<artifactId>oink-features</artifactId>
 			<version>${project.version}</version>
@@ -150,7 +176,7 @@
 					<artifactId>*</artifactId>
 					<groupId>*</groupId>
 				</exclusion>
-			</exclusions>			
+			</exclusions>
 		</dependency>
 
 
@@ -186,6 +212,20 @@
 			<groupId>org.springframework.osgi</groupId>
 			<artifactId>spring-osgi-core</artifactId>
 			<version>1.2.1</version>
+			<scope>test</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.apache.karaf.shell</groupId>
+			<artifactId>org.apache.karaf.shell.console</artifactId>
+			<version>${karaf.version}</version>
+			<scope>test</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.apache.karaf.features</groupId>
+			<artifactId>org.apache.karaf.features.core</artifactId>
+			<version>${karaf.version}</version>
 			<scope>test</scope>
 		</dependency>
 
@@ -224,6 +264,13 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
+			<groupId>ca.uhn.hapi</groupId>
+			<artifactId>hapi-structures-v24</artifactId>
+			<version>2.2</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
 			<groupId>ca.uhn.hapi.fhir</groupId>
 			<artifactId>hapi-fhir-base</artifactId>
 			<version>0.3</version>
@@ -242,7 +289,7 @@
 				<artifactId>maven-bundle-plugin</artifactId>
 				<extensions>true</extensions>
 			</plugin>
-			
+
 			<!-- generate dependencies versions -->
 			<plugin>
 				<groupId>org.apache.servicemix.tooling</groupId>
