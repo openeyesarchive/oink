@@ -143,7 +143,7 @@
 		</dependency>
 
 		<dependency>
-			<groupId>uk.org.openeyes.oink</groupId>
+			<groupId>uk.org.openeyes.oink.karaf</groupId>
 			<artifactId>distro</artifactId>
 			<version>${project.version}</version>
 			<type>tar.gz</type>
