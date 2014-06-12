@@ -89,15 +89,6 @@
 	</profiles>
 
 	<dependencies>
-
-		<dependency>
-			<groupId>uk.org.openeyes.oink.tests</groupId>
-			<artifactId>oink-itest-shared</artifactId>
-			<version>${project.version}</version>
-			<scope>test</scope>
-			<type>test-jar</type>
-		</dependency>
-
 		<!-- Pax Exam -->
 		<dependency>
 			<groupId>org.ops4j.pax.exam</groupId>
@@ -154,6 +145,12 @@
 			<version>${project.version}</version>
 			<type>test-jar</type>
 			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<artifactId>*</artifactId>
+					<groupId>*</groupId>
+				</exclusion>
+			</exclusions>			
 		</dependency>
 
 
@@ -193,14 +190,18 @@
 		</dependency>
 
 		<dependency>
-			<groupId>uk.org.openeyes.oink.karaf</groupId>
-			<artifactId>shell-commands</artifactId>
+			<groupId>uk.org.openeyes.oink</groupId>
+			<artifactId>oink-core</artifactId>
 			<version>${project.version}</version>
-			<type>bundle</type>
+			<type>test-jar</type>
 			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
-
-
 
 		<!-- test and logging -->
 		<dependency>
