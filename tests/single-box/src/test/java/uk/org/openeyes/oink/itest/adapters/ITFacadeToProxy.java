@@ -240,7 +240,7 @@ public class ITFacadeToProxy {
 		assertNotNull(resourceId);
 		
 		URIBuilder builder2 = new URIBuilder(facadeUri);
-		URI uri2 = builder2.setPath(builder.getPath()+"/Practitioner/"+resourceId).setParameter("_profile", "http://openeyes.org.uk/fhir/1.7.0/profile/Practitioner/Gp").build();
+		URI uri2 = builder2.setPath(builder2.getPath()+"/Practitioner/"+resourceId).setParameter("_profile", "http://openeyes.org.uk/fhir/1.7.0/profile/Practitioner/Gp").build();
 		
 		HttpDelete httpDelete = new HttpDelete(uri2);
 		CloseableHttpResponse response2 = httpclient.execute(httpDelete);
