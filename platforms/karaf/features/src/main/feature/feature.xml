@@ -28,8 +28,8 @@
 		<bundle>wrap:mvn:xpp3/xpp3/1.1.3.4.O</bundle>
 		<bundle>wrap:mvn:junit/junit/4.11</bundle>
 		<bundle>wrap:mvn:org.hamcrest/hamcrest-core/1.3</bundle>
-		<bundle>wrap:mvn:org.apache.httpcomponents/httpclient/4.2.3</bundle>
-		<bundle>wrap:mvn:org.apache.httpcomponents/httpcore/4.2.2</bundle>
+		<bundle>mvn:org.apache.httpcomponents/httpcore-osgi/4.2.2</bundle>
+    	<bundle>mvn:org.apache.httpcomponents/httpclient-osgi/4.2.3</bundle>
 		<bundle>wrap:mvn:org.jdom/jdom/1.1.3</bundle>
 		<bundle>mvn:com.google.code.gson/gson/2.2.4</bundle>
 	</feature>
