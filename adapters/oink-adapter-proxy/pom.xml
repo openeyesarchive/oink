@@ -61,6 +61,11 @@
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
+			<artifactId>jcl-over-slf4j</artifactId>
+			<version>${slf4j.version}</version>
+		</dependency>		
+		<dependency>
+			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
 			<version>1.7.6</version>
 		</dependency>
@@ -78,12 +83,6 @@
 			<scope>test</scope>
 			<type>test-jar</type>
 		</dependency>		
-		<dependency>
-			<groupId>commons-logging</groupId>
-			<artifactId>commons-logging</artifactId>
-			<version>1.1.1</version>
-			<scope>test</scope>
-		</dependency>
 		<dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-test-spring</artifactId>
@@ -134,7 +133,15 @@
 				<artifactId>camel-maven-plugin</artifactId>
 				<version>${camel.version}</version>
 				<configuration>
-					<fileApplicationContextUri>src/main/resources/spring-plain/camel-non-osgi-context.xml</fileApplicationContextUri>
+					<fileApplicationContextUri>
+						src/main/resources/spring-plain/camel-non-osgi-context.xml
+					</fileApplicationContextUri>
+					<systemProperties>
+						<systemProperty>
+							<key>propertiesSrc</key>
+							<value>${config}</value>
+						</systemProperty>
+					</systemProperties>
 				</configuration>
 			</plugin>
 

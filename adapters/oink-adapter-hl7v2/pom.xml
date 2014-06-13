@@ -186,6 +186,12 @@
 					<fileApplicationContextUri>
 						src/main/resources/META-INF/spring-plain/camel-non-osgi-context.xml
 					</fileApplicationContextUri>
+					<systemProperties>
+						<systemProperty>
+							<key>propertiesSrc</key>
+							<value>${config}</value>
+						</systemProperty>
+					</systemProperties>
 				</configuration>
 			</plugin>
 

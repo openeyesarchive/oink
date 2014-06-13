@@ -13,7 +13,7 @@
 	</bean>
 	
 	<bean id="propertiesSource" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
-		<property name="location" value="classpath:facade.properties"/>
+		<property name="location" value="file:${propertiesSrc}"/>
 	</bean>
 	
 	<import resource="classpath:META-INF/spring/camel-general-context.xml" />
