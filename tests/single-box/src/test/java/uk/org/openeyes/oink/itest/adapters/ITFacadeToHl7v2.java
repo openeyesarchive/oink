@@ -80,7 +80,7 @@ public class ITFacadeToHl7v2 {
 
 	@AfterClass
 	public static void tearDown() {
-		if (examContainer == null) {
+		if (examContainer != null) {
 			examContainer.stop();
 		}
 	}
