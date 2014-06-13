@@ -49,7 +49,7 @@ public class OinkMessageConverter {
 	}
 
 	@Converter
-	public byte[] toByteArray(OINKRequestMessage message, Exchange exchange) {
+	public byte[] toByteArray(OINKRequestMessage message) {
 		String json = toJsonString(message);
 		return SerializationUtils.serialize(json);
 	}

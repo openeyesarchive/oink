@@ -178,8 +178,8 @@ public class ITFacadeToProxy {
 	public void testGetPractitioners() throws Exception {
 		String facadeUri = (String) facadeProps.get("facade.uri");
 		
-		URIBuilder builder = new URIBuilder();
-		URI uri = builder.setScheme("http").setHost("localhost").setPort(8899).setPath("/oink/Practitioner").setParameter("_profile", "http://openeyes.org.uk/fhir/1.7.0/profile/Practitioner/Gp").build();
+		URIBuilder builder = new URIBuilder(facadeUri);
+		URI uri = builder.setPath(builder.getPath()+"/Practitioner").setParameter("_profile", "http://openeyes.org.uk/fhir/1.7.0/profile/Practitioner/Gp").build();
 				
 		CloseableHttpClient httpclient = HttpClients.createDefault();
 		HttpGet httpGet = new HttpGet(uri);
@@ -207,8 +207,8 @@ public class ITFacadeToProxy {
 	public void testCreateAndDeletePractitioners() throws Exception {
 		String facadeUri = (String) facadeProps.get("facade.uri");
 		
-		URIBuilder builder = new URIBuilder();
-		URI uri = builder.setScheme("http").setHost("localhost").setPort(8899).setPath("/oink/Practitioner").setParameter("_profile", "http://openeyes.org.uk/fhir/1.7.0/profile/Practitioner/Gp").build();
+		URIBuilder builder = new URIBuilder(facadeUri);
+		URI uri = builder.setPath(builder.getPath()+"/Practitioner").setParameter("_profile", "http://openeyes.org.uk/fhir/1.7.0/profile/Practitioner/Gp").build();
 		
 		System.out.println(uri.toString());
 		
