@@ -323,4 +323,5 @@
 			</plugins>
 		</pluginManagement>
 	</build>
+	<description>Local testing of OINK using virtual machines for OpenEyes and RabbitMQ</description>
 </project>

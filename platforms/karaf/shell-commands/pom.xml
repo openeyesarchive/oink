@@ -26,6 +26,7 @@
         <version>0.3-SNAPSHOT</version>
     </parent>
 
+    <groupId>uk.org.openeyes.oink.karaf</groupId>
     <artifactId>shell-commands</artifactId>
     <packaging>bundle</packaging>
 
@@ -104,6 +105,4 @@
             </plugin>
         </plugins>
     </build>
-
-    <groupId>uk.org.openeyes.oink.karaf</groupId>
 </project>

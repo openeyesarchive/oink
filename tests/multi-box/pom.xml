@@ -160,4 +160,5 @@
 		</profile>
 	</profiles>
 
+	<description>Black Box testing of OINK using virtual machines for two OINK endpoint instances, an OpenEyes instance and RabbitMQ instance.</description>
 </project>
