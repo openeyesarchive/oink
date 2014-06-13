@@ -239,9 +239,8 @@ public class ITFacadeToProxy {
 		String resourceId = extractResourceIdFromUri(locationHeader);
 		assertNotNull(resourceId);
 		
-		URIBuilder builder2 = new URIBuilder();
-		URI uri2 = builder2.setScheme("http").setHost("localhost").setPort(8899).setPath("/oink/Practitioner/"+resourceId).setParameter("_profile", "http://openeyes.org.uk/fhir/1.7.0/profile/Practitioner/Gp").build();
-		
+		URIBuilder builder2 = new URIBuilder(facadeUri);
+		URI uri2 = builder2.setPath(builder.getPath()+"/Practitioner/"+resourceId).setParameter("_profile", "http://openeyes.org.uk/fhir/1.7.0/profile/Practitioner/Gp").build();
 		
 		HttpDelete httpDelete = new HttpDelete(uri2);
 		CloseableHttpResponse response2 = httpclient.execute(httpDelete);
