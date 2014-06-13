@@ -108,6 +108,9 @@
 			<setHeader headerName="rabbitmq.REPLY_TO">
 				<simple>{{rabbit.outboundResponseRoutingKey}}</simple>
 			</setHeader>
+			<setHeader headerName="rabbitmq.CONTENT_TYPE">
+				<constant>application/json</constant>
+			</setHeader>			
 			<bean ref="synchRabbitProcessor" method="prepare" />
 			<to
 				uri="rabbitmq://{{rabbit.host}}:{{rabbit.port}}/{{rabbit.defaultExchange}}?vhost={{rabbit.vhost}}&amp;username={{rabbit.username}}&amp;password={{rabbit.password}}&amp;autoDelete=false" />
@@ -147,6 +150,9 @@
 				uri="mina2:tcp://{{remote.host}}:{{remote.port}}?sync=true&amp;codec=#hl7codec" />
 			<unmarshal ref="hl7dataformat" />
 			<bean ref="a19Processor" method="process" />
+			<setHeader headerName="rabbitmq.CONTENT_TYPE">
+				<constant>application/json</constant>
+			</setHeader>				
 			<to
 				uri="rabbitmq://{{rabbit.host}}:{{rabbit.port}}/{{rabbit.defaultExchange}}?vhost={{rabbit.vhost}}&amp;username={{rabbit.username}}&amp;password={{rabbit.password}}&amp;autoDelete=false" />
 		</route>

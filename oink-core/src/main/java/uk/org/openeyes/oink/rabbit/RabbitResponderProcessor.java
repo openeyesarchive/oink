@@ -33,6 +33,7 @@ public class RabbitResponderProcessor {
 			log.debug("Replying to routingKey:"+replyTo);
 		}
 		ex.getIn().setHeader("rabbitmq.ROUTING_KEY", replyTo);
+		ex.getIn().setHeader("rabbitMQ.CONTENT_TYPE", "application/json");
 	}
 
 }

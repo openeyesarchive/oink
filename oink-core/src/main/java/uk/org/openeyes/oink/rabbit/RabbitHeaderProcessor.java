@@ -47,6 +47,7 @@ public class RabbitHeaderProcessor {
 		headers.clear();
 		headers.put("rabbitmq.ROUTING_KEY", mappedRoute.getRoutingKey());
 		headers.put("rabbitmq.EXCHANGE_NAME", mappedRoute.getExchange());
+		headers.put("rabbitmq.CONTENT_TYPE", "application/json");
 		
 		String replyRoutingKey = rabbitRoutingService.getReplyRoutingKey(message.getResourcePath(), message.getMethod());
 		if (replyRoutingKey != null && !replyRoutingKey.isEmpty()) {

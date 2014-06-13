@@ -52,6 +52,7 @@ public class OinkRPCExceptionProcessor implements Processor {
 		exchange.getOut().setHeader("rabbitmq.ROUTING_KEY", replyToHeader);
 		exchange.getOut().setHeader("rabbitmq.CORRELATIONID",
 				exchange.getIn().getHeader("rabbitmq.CORRELATIONID"));
+		exchange.getOut().setHeader("rabbitmq.CONTENT_TYPE", "application/json");
 	}
 
 }

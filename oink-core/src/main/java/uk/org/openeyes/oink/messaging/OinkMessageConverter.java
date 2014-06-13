@@ -17,6 +17,7 @@
 package uk.org.openeyes.oink.messaging;
 
 import org.apache.camel.Converter;
+import org.apache.camel.Exchange;
 import org.apache.camel.TypeConverter;
 import org.apache.commons.lang3.SerializationUtils;
 import org.slf4j.Logger;
@@ -48,7 +49,7 @@ public class OinkMessageConverter {
 	}
 
 	@Converter
-	public byte[] toByteArray(OINKRequestMessage message) {
+	public byte[] toByteArray(OINKRequestMessage message, Exchange exchange) {
 		String json = toJsonString(message);
 		return SerializationUtils.serialize(json);
 	}
