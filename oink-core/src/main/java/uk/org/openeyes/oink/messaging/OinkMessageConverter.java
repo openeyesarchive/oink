@@ -16,6 +16,8 @@
  *******************************************************************************/
 package uk.org.openeyes.oink.messaging;
 
+import java.io.UnsupportedEncodingException;
+
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
 import org.apache.camel.TypeConverter;
@@ -49,14 +51,14 @@ public class OinkMessageConverter {
 	}
 
 	@Converter
-	public byte[] toByteArray(OINKRequestMessage message) {
+	public byte[] toByteArray(OINKRequestMessage message) throws UnsupportedEncodingException {
 		String json = toJsonString(message);
-		return SerializationUtils.serialize(json);
+		return json.getBytes("UTF-8");
 	}
 
 	@Converter
-	public OINKRequestMessage fromByteArray(byte[] message) {
-		String json = (String) SerializationUtils.deserialize(message);
+	public OINKRequestMessage fromByteArray(byte[] message) throws UnsupportedEncodingException {
+		String json = new String(message,"UTF-8");
 		return requestMessageFromJsonString(json);
 	}
 
@@ -81,15 +83,14 @@ public class OinkMessageConverter {
 	}
 
 	@Converter
-	public byte[] toByteArray(OINKResponseMessage message) {
+	public byte[] toByteArray(OINKResponseMessage message) throws UnsupportedEncodingException {
 		String json = toJsonString(message);
-		return SerializationUtils.serialize(json);
+		return json.getBytes("UTF-8");
 	}
 
 	@Converter
-	public OINKResponseMessage responseMessageFromByteArray(byte[] message) {
-		String json = (String) SerializationUtils.deserialize(message);
-		log.debug("Message is: "+json);
+	public OINKResponseMessage responseMessageFromByteArray(byte[] message) throws UnsupportedEncodingException {
+		String json = new String(message, "UTF-8");
 		return responseMessageFromJsonString(json);
 	}
 
