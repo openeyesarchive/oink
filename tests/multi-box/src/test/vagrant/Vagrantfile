@@ -46,6 +46,7 @@ Vagrant.configure("2") do |config|
         end
 
         endpoint2.vm.network "forwarded_port", guest: 15672, host: 35672
+        endpoint2.vm.network "forwarded_port", guest: 5252, host: 35252
 
         endpoint2.vm.provision :shell do |shell|
             shell.inline = "mkdir -p /etc/puppet/modules;
