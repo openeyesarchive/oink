@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>uk.org.openeyes.oink</groupId>
 	<artifactId>oink</artifactId>
-	<version>0.3</version>
+	<version>0.4-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>OINK Parent</name>
 	<description>The OINK Project</description>
@@ -36,7 +36,7 @@
 		<connection>scm:git:git://github.com/openeyes/oink.git</connection>
 		<developerConnection>scm:git:git@github.com:openeyes/oink.git</developerConnection>
 		<url>https://github.com/openeyes/oink.git</url>
-		<tag>oink-0.3</tag>
+		<tag>HEAD</tag>
 	</scm>
 	<dependencyManagement>
 		<dependencies>
