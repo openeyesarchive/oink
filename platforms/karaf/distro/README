@@ -17,3 +17,5 @@ Running
 =========
 
 See normal Karaf documentation http://karaf.apache.org/manual/latest/
+
+To install and enable an OINK adapter follow the instructions in the README for that adapter.
