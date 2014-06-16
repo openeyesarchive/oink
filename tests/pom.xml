@@ -4,7 +4,7 @@
 	<parent>
 		<artifactId>oink</artifactId>
 		<groupId>uk.org.openeyes.oink</groupId>
-		<version>0.3</version>
+		<version>0.3-SNAPSHOT</version>
 	</parent>
 	<artifactId>tests</artifactId>
 	<packaging>pom</packaging>
