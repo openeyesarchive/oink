@@ -2,6 +2,7 @@
 #
 #
 # Starts three virtual machines needed for tests.
+# Requires OINK_VERSION to be set.
 # 
 
 ###################################
@@ -53,7 +54,7 @@ pushd .
 mkdir -p vagrant
 cp -R ../src/test/vagrant/** vagrant
 
-mkdir -p vagrant/vfs ; cp ../target/distro-0.3-SNAPSHOT.tar.gz vagrant/vfs
+mkdir -p vagrant/vfs ; cp ../target/distro-$OINK_VERSION.tar.gz vagrant/vfs
 cd vagrant
 
 vagrant up

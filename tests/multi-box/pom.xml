@@ -115,6 +115,9 @@
 								</goals>
 								<configuration>
 									<executable>src/test/vagrant/host/setup.sh</executable>
+									<environmentVariables>
+										<OINK_VERSION>${project.version}</OINK_VERSION>
+									</environmentVariables>
 								</configuration>
 							</execution>
 							<execution>
