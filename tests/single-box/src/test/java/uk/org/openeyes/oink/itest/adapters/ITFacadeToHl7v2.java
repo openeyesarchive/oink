@@ -108,7 +108,7 @@ public class ITFacadeToHl7v2 {
 		Thread.sleep(45000);
 
 		// Mock an HL7 Server
-		Hl7Server hl7Server = new Hl7Server(5678, false);
+		Hl7Server hl7Server = new Hl7Server(Integer.parseInt(hl7Props.getProperty("remote.port")), false);
 
 		final Message searchResults = Hl7Helper
 				.loadHl7Message("/example-messages/hl7v2/ADR-A19-mod.txt");
