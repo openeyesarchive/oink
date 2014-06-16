@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>uk.org.openeyes.oink</groupId>
 		<artifactId>oink</artifactId>
-		<version>0.3-SNAPSHOT</version>
+		<version>0.3</version>
 	</parent>
 	<artifactId>oink-domain</artifactId>
 	<name>OINK Domain</name>
