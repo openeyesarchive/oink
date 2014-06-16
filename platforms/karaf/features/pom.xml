@@ -17,7 +17,7 @@
 	<parent>
 		<artifactId>karaf</artifactId>
 		<groupId>uk.org.openeyes.oink</groupId>
-		<version>0.3-SNAPSHOT</version>
+		<version>0.3</version>
 	</parent>
 
 	<groupId>uk.org.openeyes.oink.karaf</groupId>
