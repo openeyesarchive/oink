@@ -113,7 +113,7 @@ public class ADTProcessor extends Hl7v2Processor {
 		// OpenEyes QUICKFIX: Set Family use to usual
 		for (HumanName name : p.getName()) {
 			if (name.getUseSimple() == null) {
-				log.warn("Manually forcing patient's name use to be usual");
+				log.warn("OINK-43 Manually forcing patient's name use to be usual");
 				name.setUseSimple(NameUse.usual);
 			}
 		}
@@ -121,14 +121,14 @@ public class ADTProcessor extends Hl7v2Processor {
 		// OpenEyes QUICKFIX: Set Phone system
 		for (Contact contact : p.getTelecom()) {
 			if (contact.getSystemSimple() == null) {
-				log.warn("Manually forcing patient's phone system to be phone");
+				log.warn("OINK-44 Manually forcing patient's phone system to be phone");
 				contact.setSystemSimple(ContactSystem.phone);
 			}
 		}
 
 		// OpenEyes QUICKFIX: Set Country to United Kingdom
 		for (Address address : p.getAddress()) {
-			log.warn("Manually forcing patient's addresses to be United Kingdom");
+			log.warn("OINK-45 Manually forcing patient's addresses to be United Kingdom");
 			address.setCountrySimple("United Kingdom");
 		}
 
@@ -136,7 +136,7 @@ public class ADTProcessor extends Hl7v2Processor {
 		String nhsNumberIdentifierSystem = "http://www.datadictionary.nhs.uk/data_dictionary/attributes/n/nhs/nhs_number_de.asp";
 		for (Identifier id : p.getIdentifier()) {
 			if (id.getSystemSimple().contains("NHS")) {
-				log.warn("Manually replacing Patient identifier system NHS with "
+				log.warn("OINK-46 Manually replacing Patient identifier system NHS with "
 						+ nhsNumberIdentifierSystem);
 				id.setSystemSimple(nhsNumberIdentifierSystem);
 			}
@@ -145,20 +145,16 @@ public class ADTProcessor extends Hl7v2Processor {
 		// OpenEyes QUICKFIX: Set Hospital Value
 		for (Identifier id : p.getIdentifier()) {
 			if (id.getSystemSimple().contains("PAS")) {
-				log.warn("Manually forcing Hospital Number identifier to work with Openeyes");
+				log.warn("OINK-47 Manually forcing Hospital Number identifier to work with Openeyes");
 				id.setSystem(null);
 				id.setLabelSimple("Hospital Number");
 			}
 		}
 
 		// OpenEyes QUICKFIX: Remove managingOrgRefs
-		log.warn("Manually moving ManagingOrgRef to CareProvider (OpenEyes does not support ManagingOrg)");
+		log.warn("OINK-48 Manually moving ManagingOrgRef to CareProvider (OpenEyes does not support ManagingOrg)");
 		p.getCareProvider().add(p.getManagingOrganization());
 		p.setManagingOrganization(null);
-
-		// OpenEyes QUICKFIX: Remove careProviderRefs
-		//log.warn("Manually removing Care Providers");
-		//p.getCareProvider().clear();
 
 		// POST Patient
 		String location = postResource(p, ex);
