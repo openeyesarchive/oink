@@ -45,6 +45,7 @@ import uk.org.openeyes.oink.hl7v2.ADTProcessor;
 import uk.org.openeyes.oink.hl7v2.Hl7v2Processor;
 import uk.org.openeyes.oink.messaging.OinkMessageConverter;
 import uk.org.openeyes.oink.test.Hl7Helper;
+import uk.org.openeyes.oink.test.RabbitTestUtils;
 
 /**
  * 
@@ -86,7 +87,7 @@ public class TestHl7v2ToRabbitRouteWithoutProcessors extends Hl7TestSupport {
 		Properties props = new Properties();
 		InputStream is = TestHl7v2ToRabbitRoute.class.getResourceAsStream("/hl7v2-test.properties");
 		props.load(is);
-		Assume.assumeTrue("No RabbitMQ Connection detected", Hl7TestSupport.isRabbitMQAvailable(props));
+		Assume.assumeTrue("No RabbitMQ Connection detected", RabbitTestUtils.isRabbitMQAvailable(props));
 	}
 
 	@Before

@@ -47,6 +47,7 @@ import uk.org.openeyes.oink.messaging.OinkMessageConverter;
 import uk.org.openeyes.oink.proxy.test.support.RabbitClient;
 import uk.org.openeyes.oink.test.Hl7Helper;
 import uk.org.openeyes.oink.test.Hl7Server;
+import uk.org.openeyes.oink.test.RabbitTestUtils;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration()
@@ -60,7 +61,7 @@ public class TestRabbitToHl7v2Route extends Hl7TestSupport {
 		Properties props = new Properties();
 		InputStream is = TestHl7v2ToRabbitRoute.class.getResourceAsStream("/hl7v2-test.properties");
 		props.load(is);
-		Assume.assumeTrue("No RabbitMQ Connection detected", Hl7TestSupport.isRabbitMQAvailable(props));
+		Assume.assumeTrue("No RabbitMQ Connection detected", RabbitTestUtils.isRabbitMQAvailable(props));
 	}
 	
 	@Before

@@ -133,26 +133,6 @@ public abstract class Hl7TestSupport {
 		return channel;
 	}
 	
-	protected static boolean isRabbitMQAvailable(Properties props) {
-		ConnectionFactory factory = initRabbit(props.getProperty("rabbit.host"),
-				Integer.parseInt(props.getProperty("rabbit.port")),
-				props.getProperty("rabbit.username"), props.getProperty("rabbit.password"),
-				props.getProperty("rabbit.vhost"));
-		Connection conn = null;
-		try {
-			conn = factory.newConnection();
-			return conn.isOpen();
-		} catch (Exception e) {
-			return false;
-		} finally {
-			if (conn != null) {
-				try {
-					conn.close();
-				} catch (IOException e) {}
-			}
-		}
-	}
-
 	protected static ConnectionFactory initRabbit(String host, int port,
 			String uname, String pwd, String vhost) {
 		ConnectionFactory factory = new ConnectionFactory();

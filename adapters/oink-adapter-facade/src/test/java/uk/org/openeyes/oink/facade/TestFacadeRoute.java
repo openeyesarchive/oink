@@ -36,6 +36,7 @@ import org.hl7.fhir.instance.formats.JsonComposer;
 import org.hl7.fhir.instance.formats.JsonParser;
 import org.hl7.fhir.instance.formats.ParserBase.ResourceOrFeed;
 import org.junit.Assert;
+import org.junit.Assume;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
@@ -49,6 +50,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import uk.org.openeyes.oink.domain.FhirBody;
 import uk.org.openeyes.oink.domain.OINKRequestMessage;
 import uk.org.openeyes.oink.domain.OINKResponseMessage;
+import uk.org.openeyes.oink.test.RabbitTestUtils;
 
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.BasicProperties;
@@ -61,7 +63,7 @@ import com.rabbitmq.client.ShutdownSignalException;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:camel-context-test.xml" })
-public class ITFacadeRoute {
+public class TestFacadeRoute {
 
 	private static Properties testProperties;
 
@@ -78,9 +80,12 @@ public class ITFacadeRoute {
 	public static void setUp() throws IOException {
 		// Load properties
 		testProperties = new Properties();
-		InputStream is = ITFacadeRoute.class
+		InputStream is = TestFacadeRoute.class
 				.getResourceAsStream("/facade-test.properties");
 		testProperties.load(is);
+		
+		// Only run if RabbitMQ is available
+		Assume.assumeTrue("No RabbitMQ Connection detected", RabbitTestUtils.isRabbitMQAvailable(testProperties));
 
 		// Prepare RabbitMQ Client
 		factory = new ConnectionFactory();
@@ -233,7 +238,7 @@ public class ITFacadeRoute {
 	}
 	
 	private static FhirBody buildFhirBodyFromResource(String resourcePath) throws Exception {
-		InputStream is = ITFacadeRoute.class.getResourceAsStream(resourcePath);
+		InputStream is = TestFacadeRoute.class.getResourceAsStream(resourcePath);
 		FhirBody body = null;
 		JsonParser parser = new JsonParser();
 		ResourceOrFeed res = parser.parseGeneral(is);
