@@ -165,9 +165,9 @@ public class ITHl7v2ToRabbitRouteWithoutProcessors extends Hl7ITSupport {
 		// Check mocks
 		verify(a01Processor, never()).process(any(Message.class),
 				any(Exchange.class));
-		verify(a05Processor, never()).process(any(Message.class),
+		verify(a28Processor, never()).process(any(Message.class),
 				any(Exchange.class));
-		verify(a28Processor).process(any(Message.class), any(Exchange.class));
+		verify(a05Processor).process(any(Message.class), any(Exchange.class));
 		verify(a31Processor, never()).process(any(Message.class),
 				any(Exchange.class));
 
@@ -190,11 +190,11 @@ public class ITHl7v2ToRabbitRouteWithoutProcessors extends Hl7ITSupport {
 		// Check mocks
 		verify(a01Processor, never()).process(any(Message.class),
 				any(Exchange.class));
-		verify(a05Processor, never()).process(any(Message.class),
+		verify(a31Processor, never()).process(any(Message.class),
 				any(Exchange.class));
 		verify(a28Processor, never()).process(any(Message.class),
 				any(Exchange.class));
-		verify(a31Processor).process(any(Message.class), any(Exchange.class));
+		verify(a05Processor).process(any(Message.class), any(Exchange.class));
 	}
 
 	private void testRouteFilter(Message m,
