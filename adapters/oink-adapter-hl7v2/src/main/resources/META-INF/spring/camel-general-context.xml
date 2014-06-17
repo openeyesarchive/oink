@@ -51,8 +51,12 @@
 	</bean>
 
 	<bean id="rabbitRpcErrorProcessor" class="uk.org.openeyes.oink.rabbit.OinkRPCExceptionProcessor" />
+	
+	<bean id="rabbitHl7ErrorProcessor" class="uk.org.openeyes.oink.hl7v2.Hl7ExceptionProcessor"/>
 
 	<bean id="isRabbitRPC" class="uk.org.openeyes.oink.rabbit.IsRabbitRPC" />
+	
+	<bean id="unsupportedException" class="uk.org.openeyes.oink.hl7v2.UnsupportedHl7v2MessageException"/>
 
 	<camelContext xmlns="http://camel.apache.org/schema/spring">
 
@@ -66,11 +70,7 @@
 				<handled>
 					<constant>true</constant>
 				</handled>
-				<to
-					uri="log:GeneralError?level=ERROR&amp;showAll=true&amp;multiline=true" />
-				<transform>
-					<ref>ackError</ref> <!-- auto-generates negative ack because of exception in Exchange -->
-				</transform>
+				<process ref="rabbitHl7ErrorProcessor"/>
 			</onException>
 			<choice>
 				<when>
@@ -82,9 +82,7 @@
 					<bean ref="a05Processor" />
 				</when>
 				<otherwise>
-					<transform>
-						<ref>ackRejected</ref>
-					</transform>
+					<throwException ref="unsupportedException"/>
 					<stop />
 				</otherwise>
 			</choice>
@@ -94,8 +92,6 @@
 		</route>
 
 		<!-- Send transformed HL7v2 message out to OINK -->
-
-
 		<!-- rabbit outgoing gateway -->
 		<route id="rabbit-rpc">
 			<from uri="direct:rabbit-rpc" />
@@ -125,6 +121,15 @@
 			<recipientList>
 				<simple>seda:${headers.rabbitmq.CORRELATIONID}</simple>
 			</recipientList>
+		</route>
+		
+		<!-- dead letter route -->
+		<route id="hl7-consumer-dead-letter">
+			<from uri="direct:hl7-consumer-dead-letter"/>
+			<setHeader headerName="rabbitmq.ROUTING_KEY">
+				<constant>{{rabbit.deadLetterRoutingKey}}</constant>
+			</setHeader>
+			<to uri="rabbitmq://{{rabbit.host}}:{{rabbit.port}}/{{rabbit.defaultExchange}}?vhost={{rabbit.vhost}}&amp;username={{rabbit.username}}&amp;password={{rabbit.password}}&amp;autoDelete=false"/>
 		</route>
 
 		<!-- Accept incoming OINK request for Patient Search -->
