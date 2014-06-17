@@ -10,12 +10,6 @@
 
 	<import resource="classpath:META-INF/spring-plain/camel-non-osgi-context.xml" />
 
-	<mockito:mock id="a28Processor" class="uk.org.openeyes.oink.hl7v2.A28Processor" />
-
-	<mockito:mock id="a31Processor" class="uk.org.openeyes.oink.hl7v2.A31Processor" />
-
-	<mockito:mock id="a40Processor" class="uk.org.openeyes.oink.hl7v2.A40Processor" />
-
 	<bean id="bridgePropertyPlaceholder"
 		class="org.apache.camel.spring.spi.BridgePropertyPlaceholderConfigurer">
 		<property name="location" value="classpath:hl7v2-test.properties" />

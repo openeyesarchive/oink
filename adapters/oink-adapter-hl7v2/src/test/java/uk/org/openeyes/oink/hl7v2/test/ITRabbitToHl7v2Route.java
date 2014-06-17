@@ -92,7 +92,7 @@ public class ITRabbitToHl7v2Route extends Hl7ITSupport {
 					Map<String, Object> theMetadata)
 					throws ReceivingApplicationException, HL7Exception {
 				try {
-					Message m = Hl7Helper.loadHl7Message("/example-messages/oinkrequestmessages/ADR-A19.json");
+					Message m = Hl7Helper.loadHl7Message("/example-messages/hl7v2/ADR-A19.txt");
 					return m;
 				} catch (IOException e) {
 					throw new HL7Exception(e);
