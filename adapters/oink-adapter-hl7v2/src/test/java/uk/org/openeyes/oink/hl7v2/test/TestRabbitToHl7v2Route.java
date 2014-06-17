@@ -50,7 +50,7 @@ import uk.org.openeyes.oink.test.Hl7Server;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration()
-public class TestRabbitToHl7v2Route extends Hl7ITSupport {
+public class TestRabbitToHl7v2Route extends Hl7TestSupport {
 
 	@Autowired
 	CamelContext ctx;
@@ -60,7 +60,7 @@ public class TestRabbitToHl7v2Route extends Hl7ITSupport {
 		Properties props = new Properties();
 		InputStream is = TestHl7v2ToRabbitRoute.class.getResourceAsStream("/hl7v2-test.properties");
 		props.load(is);
-		Assume.assumeTrue("No RabbitMQ Connection detected", Hl7ITSupport.isRabbitMQAvailable(props));
+		Assume.assumeTrue("No RabbitMQ Connection detected", Hl7TestSupport.isRabbitMQAvailable(props));
 	}
 	
 	@Before

@@ -51,9 +51,9 @@ import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.parser.Parser;
 import ca.uhn.hl7v2.validation.impl.NoValidation;
 
-public abstract class Hl7ITSupport {
+public abstract class Hl7TestSupport {
 	
-	private static final Logger log = LoggerFactory.getLogger(Hl7ITSupport.class);
+	private static final Logger log = LoggerFactory.getLogger(Hl7TestSupport.class);
 
 	private Properties properties;
 	
@@ -108,7 +108,7 @@ public abstract class Hl7ITSupport {
 	}
 	
 	public static String loadResourceAsString(String resourcePath) throws IOException {
-		InputStream is = Hl7ITSupport.class.getResourceAsStream(resourcePath);
+		InputStream is = Hl7TestSupport.class.getResourceAsStream(resourcePath);
 		StringWriter writer = new StringWriter();
 		IOUtils.copy(is, writer, "UTF-8");
 		return writer.toString();

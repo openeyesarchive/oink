@@ -35,14 +35,14 @@ import ca.uhn.hl7v2.llp.LLPException;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration()
-public class TestHl7v2ToRabbitRoute extends Hl7ITSupport {
+public class TestHl7v2ToRabbitRoute extends Hl7TestSupport {
 	
 	@BeforeClass
 	public static void before() throws IOException {
 		Properties props = new Properties();
 		InputStream is = TestHl7v2ToRabbitRoute.class.getResourceAsStream("/hl7v2-test.properties");
 		props.load(is);
-		Assume.assumeTrue("No RabbitMQ Connection detected", Hl7ITSupport.isRabbitMQAvailable(props));
+		Assume.assumeTrue("No RabbitMQ Connection detected", Hl7TestSupport.isRabbitMQAvailable(props));
 	}
 	
 	@Before

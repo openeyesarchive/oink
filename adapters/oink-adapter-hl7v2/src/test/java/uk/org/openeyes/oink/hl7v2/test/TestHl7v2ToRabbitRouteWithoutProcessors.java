@@ -61,7 +61,7 @@ import uk.org.openeyes.oink.test.Hl7Helper;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration()
-public class TestHl7v2ToRabbitRouteWithoutProcessors extends Hl7ITSupport {
+public class TestHl7v2ToRabbitRouteWithoutProcessors extends Hl7TestSupport {
 
 	@Qualifier("a01Processor")
 	@Autowired
@@ -86,7 +86,7 @@ public class TestHl7v2ToRabbitRouteWithoutProcessors extends Hl7ITSupport {
 		Properties props = new Properties();
 		InputStream is = TestHl7v2ToRabbitRoute.class.getResourceAsStream("/hl7v2-test.properties");
 		props.load(is);
-		Assume.assumeTrue("No RabbitMQ Connection detected", Hl7ITSupport.isRabbitMQAvailable(props));
+		Assume.assumeTrue("No RabbitMQ Connection detected", Hl7TestSupport.isRabbitMQAvailable(props));
 	}
 
 	@Before
