@@ -101,6 +101,10 @@ public class TestProxyRoute {
 		OINKRequestMessage request = new OINKRequestMessage();
 		request.setResourcePath(resourcePath);
 		request.setMethod(HttpMethod.valueOf(method));
+		
+		// Set Response from mock downstream Server
+		server.setResponse(200, null, "application/json+fhir");
+		server.start();
 
 		// Send Oink request over rabbit
 		Connection connection = factory.newConnection();
@@ -129,9 +133,11 @@ public class TestProxyRoute {
 		assertNotNull(delivery);
 		byte[] responseBody = delivery.getBody();
 		
+		server.stop();
+		
 		OinkMessageConverter conv = new OinkMessageConverter();
 		OINKResponseMessage message = conv.responseMessageFromByteArray(responseBody);
-		
+		assertEquals(200, message.getStatus());
 	}
 	
 	@Ignore
