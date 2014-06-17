@@ -50,7 +50,7 @@ import ca.uhn.hl7v2.app.Initiator;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.v24.message.ACK;
 import uk.org.openeyes.oink.it.ITSupport;
-import uk.org.openeyes.oink.test.Hl7Helper;
+import uk.org.openeyes.oink.test.Hl7TestUtils;
 
 /**
  * 
@@ -100,7 +100,7 @@ public class ITHl7v2ToProxy {
 			throws Exception {
 
 		// Load example A01
-		Message exampleA01 = Hl7Helper.loadHl7Message("/example-messages/hl7v2/A01-mod.txt");
+		Message exampleA01 = Hl7TestUtils.loadHl7Message("/example-messages/hl7v2/A01-mod.txt");
 
 		// Post A01
 		testMessageCanBePostedAndAcceptedByOink(exampleA01);
@@ -125,7 +125,7 @@ public class ITHl7v2ToProxy {
 			throws Exception {
 
 		// Load example A05
-		Message exampleA05 = Hl7Helper.loadHl7Message("/example-messages/hl7v2/A05-mod.txt");
+		Message exampleA05 = Hl7TestUtils.loadHl7Message("/example-messages/hl7v2/A05-mod.txt");
 
 		// Post A01
 		testMessageCanBePostedAndAcceptedByOink(exampleA05);
@@ -150,7 +150,7 @@ public class ITHl7v2ToProxy {
 			throws Exception {
 
 		// Load example A28
-		Message exampleA28 = Hl7Helper.loadHl7Message("/example-messages/hl7v2/A28-2-mod.txt");
+		Message exampleA28 = Hl7TestUtils.loadHl7Message("/example-messages/hl7v2/A28-2-mod.txt");
 
 		// Post A28
 		testMessageCanBePostedAndAcceptedByOink(exampleA28);
@@ -175,7 +175,7 @@ public class ITHl7v2ToProxy {
 			throws Exception {
 
 		// Load example A31
-		Message exampleA31 = Hl7Helper.loadHl7Message("/example-messages/hl7v2/A31-2-mod.txt");
+		Message exampleA31 = Hl7TestUtils.loadHl7Message("/example-messages/hl7v2/A31-2-mod.txt");
 
 		// Post A31
 		testMessageCanBePostedAndAcceptedByOink(exampleA31);

@@ -25,23 +25,34 @@ import org.apache.commons.io.IOUtils;
 import ca.uhn.hl7v2.DefaultHapiContext;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.HapiContext;
+import ca.uhn.hl7v2.app.Connection;
+import ca.uhn.hl7v2.app.Initiator;
+import ca.uhn.hl7v2.llp.LLPException;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.parser.Parser;
 import ca.uhn.hl7v2.validation.impl.NoValidation;
 
-public class Hl7Helper {
+public class Hl7TestUtils {
+	
+	public static Message sendTCP(Message message, String host, int port) throws HL7Exception, LLPException, IOException {
+		HapiContext context = new DefaultHapiContext();
+		Connection hl7v2Conn = context.newClient(host, port,
+				false);
+		Initiator initiator = hl7v2Conn.getInitiator();
+		Message response = initiator.sendAndReceive(message);
+		hl7v2Conn.close();
+		return response;
+	}
 	
 	public static Message loadHl7Message(String path) throws IOException, HL7Exception {
-		InputStream is = Hl7Helper.class.getResourceAsStream(path);
+		InputStream is = Hl7TestUtils.class.getResourceAsStream(path);
 		StringWriter writer = new StringWriter();
 		IOUtils.copy(is, writer);
 		String message = writer.toString();
 		HapiContext context = new DefaultHapiContext();
-
 		context.setValidationContext(new NoValidation());
 		Parser p = context.getGenericParser();
 		Message adt = p.parse(message);
 		return adt;
 	}
-
 }

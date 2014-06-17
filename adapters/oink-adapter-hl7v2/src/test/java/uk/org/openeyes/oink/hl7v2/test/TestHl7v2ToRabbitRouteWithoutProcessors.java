@@ -44,7 +44,7 @@ import uk.org.openeyes.oink.domain.OINKRequestMessage;
 import uk.org.openeyes.oink.hl7v2.ADTProcessor;
 import uk.org.openeyes.oink.hl7v2.Hl7v2Processor;
 import uk.org.openeyes.oink.messaging.OinkMessageConverter;
-import uk.org.openeyes.oink.test.Hl7Helper;
+import uk.org.openeyes.oink.test.Hl7TestUtils;
 import uk.org.openeyes.oink.test.RabbitTestUtils;
 
 /**
@@ -104,7 +104,7 @@ public class TestHl7v2ToRabbitRouteWithoutProcessors extends Hl7TestSupport {
 	public void testA01MessageRoutesOntoRabbit() throws Exception {
 
 		// Choose a message to send
-		Message m = Hl7Helper.loadHl7Message("/example-messages/hl7v2/A01.txt");
+		Message m = Hl7TestUtils.loadHl7Message("/example-messages/hl7v2/A01.txt");
 
 		// Prepare mocks
 		String oinkJson = loadResourceAsString("/example-messages/oinkrequestmessages/A01.json");
@@ -130,7 +130,7 @@ public class TestHl7v2ToRabbitRouteWithoutProcessors extends Hl7TestSupport {
 	public void testA05MessageRoutesOntoRabbit() throws Exception {
 
 		// Choose a message to send
-		Message m = Hl7Helper.loadHl7Message("/example-messages/hl7v2/A05.txt");
+		Message m = Hl7TestUtils.loadHl7Message("/example-messages/hl7v2/A05.txt");
 
 		// Prepare mocks
 		String oinkJson = loadResourceAsString("/example-messages/oinkrequestmessages/A05.json");
@@ -154,7 +154,7 @@ public class TestHl7v2ToRabbitRouteWithoutProcessors extends Hl7TestSupport {
 	public void testA28MessageRoutesOntoRabbit() throws Exception {
 
 		// Choose a message to send
-		Message m = Hl7Helper.loadHl7Message("/example-messages/hl7v2/A28-1.txt");
+		Message m = Hl7TestUtils.loadHl7Message("/example-messages/hl7v2/A28-1.txt");
 
 		// Prepare mocks
 		String oinkJson = loadResourceAsString("/example-messages/oinkrequestmessages/A28-1.json");
@@ -179,7 +179,7 @@ public class TestHl7v2ToRabbitRouteWithoutProcessors extends Hl7TestSupport {
 	public void testA31MessageRoutesOntoRabbit() throws Exception {
 
 		// Choose a message to send
-		Message m = Hl7Helper.loadHl7Message("/example-messages/hl7v2/A31-2.txt");
+		Message m = Hl7TestUtils.loadHl7Message("/example-messages/hl7v2/A31-2.txt");
 
 		// Prepare mocks
 		String oinkJson = loadResourceAsString("/example-messages/oinkrequestmessages/A31-2.json");
@@ -220,7 +220,7 @@ public class TestHl7v2ToRabbitRouteWithoutProcessors extends Hl7TestSupport {
 				getProperty("rabbit.outboundRoutingKey"));
 
 		// Choose a message to send
-		Message m = Hl7Helper.loadHl7Message("/example-messages/hl7v2/A40-1.txt");
+		Message m = Hl7TestUtils.loadHl7Message("/example-messages/hl7v2/A40-1.txt");
 
 		// Send message
 		String host = getProperty("hl7v2.host");

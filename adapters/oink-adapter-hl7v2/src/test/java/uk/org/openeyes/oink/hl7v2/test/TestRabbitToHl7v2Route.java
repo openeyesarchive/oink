@@ -45,7 +45,7 @@ import uk.org.openeyes.oink.domain.OINKRequestMessage;
 import uk.org.openeyes.oink.domain.OINKResponseMessage;
 import uk.org.openeyes.oink.messaging.OinkMessageConverter;
 import uk.org.openeyes.oink.proxy.test.support.RabbitClient;
-import uk.org.openeyes.oink.test.Hl7Helper;
+import uk.org.openeyes.oink.test.Hl7TestUtils;
 import uk.org.openeyes.oink.test.Hl7Server;
 import uk.org.openeyes.oink.test.RabbitTestUtils;
 
@@ -92,7 +92,7 @@ public class TestRabbitToHl7v2Route extends Hl7TestSupport {
 					Map<String, Object> theMetadata)
 					throws ReceivingApplicationException, HL7Exception {
 				try {
-					Message m = Hl7Helper.loadHl7Message("/example-messages/hl7v2/ADR-A19.txt");
+					Message m = Hl7TestUtils.loadHl7Message("/example-messages/hl7v2/ADR-A19.txt");
 					return m;
 				} catch (IOException e) {
 					throw new HL7Exception(e);

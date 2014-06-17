@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
-package uk.org.openeyes.oink.proxy.test.support;
+package uk.org.openeyes.oink.test;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

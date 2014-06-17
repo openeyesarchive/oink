@@ -31,9 +31,9 @@ import org.slf4j.LoggerFactory;
 
 import uk.org.openeyes.oink.domain.OINKRequestMessage;
 import uk.org.openeyes.oink.messaging.OinkMessageConverter;
-import uk.org.openeyes.oink.proxy.test.support.RabbitServer;
 import uk.org.openeyes.oink.test.Hl7Client;
-import uk.org.openeyes.oink.test.Hl7Helper;
+import uk.org.openeyes.oink.test.Hl7TestUtils;
+import uk.org.openeyes.oink.test.RabbitServer;
 
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
@@ -59,7 +59,7 @@ public abstract class Hl7TestSupport {
 	
 	public void testIncomingMessageIsProcessedAndRouted(String hl7msgPath, String oinkmsgPath) throws HL7Exception, IOException, LLPException, InterruptedException, JSONException {
 		// Choose a message to send
-		Message m = Hl7Helper.loadHl7Message(hl7msgPath);
+		Message m = Hl7TestUtils.loadHl7Message(hl7msgPath);
 		
 		// Prepare RabbitServer
 		RabbitServer server = new RabbitServer(getProperty("rabbit.host"),
