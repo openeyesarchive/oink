@@ -11,7 +11,7 @@
        http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
        http://www.openeyes.org.uk/schema/oink http://www.openeyes.org.uk/schema/oink/oink-1.0.xsd">
 
-	<spring-security:authentication-manager
+<!-- 	<spring-security:authentication-manager
 		id="authenticationManager">
 		<spring-security:authentication-provider>
 			<spring-security:user-service>
@@ -34,5 +34,5 @@
 	<authorizationPolicy id="user"
 		accessDecisionManager="accessDecisionManager" access="ROLE_USER"
 		xmlns="http://camel.apache.org/schema/spring-security" />
-
+ -->
 </beans>

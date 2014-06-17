@@ -15,12 +15,20 @@
        http://www.springframework.org/schema/osgi-compendium http://www.springframework.org/schema/osgi-compendium/spring-osgi-compendium.xsd
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
-	<osgix:cm-properties id="osgiProps"
+	<osgix:cm-properties id="propertiesSource"
 		persistent-id="uk.org.openeyes.oink.facade" />
+	
+	<bean id="adapterService" class="uk.org.openeyes.oink.infrastructure.SimpleAdapterStatusService"/>	
+		
+	<osgi:service ref="adapterService" interface="uk.org.openeyes.oink.infrastructure.AdapterStatusService">
+		<osgi:service-properties>
+			<entry key="adapter" value="oink-adapter-facade"/>
+		</osgi:service-properties>
+	</osgi:service>
 
 	<bean id="bridgePropertyPlaceholder"
 		class="org.apache.camel.spring.spi.BridgePropertyPlaceholderConfigurer">
-		<property name="properties" ref="osgiProps" />
+		<property name="properties" ref="propertiesSource" />
 	</bean>
 
 </beans>

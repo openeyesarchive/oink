@@ -15,15 +15,8 @@
        http://www.springframework.org/schema/osgi-compendium http://www.springframework.org/schema/osgi-compendium/spring-osgi-compendium.xsd
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
-	<bean id="authenticator" class="uk.org.openeyes.oink.http.HttpBasicAuthenticator" />
 
-	<bean id="identityService" class="uk.org.openeyes.oink.security.SimpleIdentityService" />
-
-	<bean id="conformanceService" class="uk.org.openeyes.oink.facade.ConformanceService">
-		<constructor-arg ref="routingService" />
-	</bean>
-
-	<bean id="oinkHttpConverter" class="uk.org.openeyes.oink.http.OinkHttpConverter">
+	<bean id="oinkHttpConverter" class="uk.org.openeyes.oink.http.OinkMessageHttpProcessor">
 	</bean>
 
 	<bean id="validator" class="uk.org.openeyes.oink.messaging.OinkMessageValidator" />
@@ -32,19 +25,13 @@
 		<constructor-arg value="5000" />
 	</bean>
 
-	<bean id="routingService" class="uk.org.openeyes.oink.facade.FacadeRoutingService">
-		<constructor-arg>
-			<oink:facadeRabbitMapper>
-				<oink:mapping resource="Patient" method="POST"
-					exchange="test" route="siteB" />
-				<oink:mapping resource="Practitioner" method="POST"
-					exchange="test" route="siteBTimeout" />
-			</oink:facadeRabbitMapper>
-		</constructor-arg>
-		<constructor-arg value="${rabbit.responseRoutingKey}" />
+	<bean id="routingServiceFactory" class="uk.org.openeyes.oink.facade.FacadeRoutingServiceFactory">	
+		<constructor-arg ref="propertiesSource"/>
 	</bean>
+	
+	<bean id="routingService" factory-bean="routingServiceFactory" factory-method="createInstance"/>
 
-	<bean id="rabbitProcessor" class="uk.org.openeyes.oink.rabbit.RabbitProcessor">
+	<bean id="rabbitProcessor" class="uk.org.openeyes.oink.rabbit.RabbitHeaderProcessor">
 		<constructor-arg ref="routingService" />
 	</bean>
 

@@ -18,6 +18,16 @@
 	<osgix:cm-properties id="osgiProps"
 		persistent-id="uk.org.openeyes.oink.proxy" />
 
+	<bean id="adapterService"
+		class="uk.org.openeyes.oink.infrastructure.SimpleAdapterStatusService" />
+
+	<osgi:service ref="adapterService"
+		interface="uk.org.openeyes.oink.infrastructure.AdapterStatusService">
+		<osgi:service-properties>
+			<entry key="adapter" value="oink-adapter-proxy" />
+		</osgi:service-properties>
+	</osgi:service>
+
 	<bean id="bridgePropertyPlaceholder"
 		class="org.apache.camel.spring.spi.BridgePropertyPlaceholderConfigurer">
 		<property name="properties" ref="osgiProps" />

@@ -1,0 +1,53 @@
+OINK Hl7v2 Adapter
+===================
+
+A bi-directional OINK HL7v2 Adapter. Recieves OINKRequestMessages from a Rabbit Queue, 
+processes them against an HL7v2 server endpoint and sends response back as OINKResponseMessage.
+
+Also recieves HL7v2 messages from an HL7v2 and converts them to OINKRequestMessages.
+
+It can be run using Maven.
+
+Running outside OSGi container
+================================
+
+To run the example using Maven type
+
+	mvn:camel:run -Dconfig=<configuration file path>
+		
+To stop the example hit ctrl+c
+
+Running inside OSGi container
+=============================
+
+You will need to compile and install this example first:
+ 	
+ 	mvn compile install
+
+If using the OINK custom Apache Karaf you can enable this example from the shell
+
+	oink:enable oink-adapter-hl7v2 <configuration file path>
+	oink:status oink-adapter-hl7v2
+
+If using standard Apache Karaf you can install this adapter by setting config 
+file ${karaf.Basedir}/etc/uk.org.openeyes.oink.hl7v2.cfg, then from the shell:
+
+	feature:addurl mvn:uk.org.openeyes.oink/oink-features/<oink version>/xml/features
+	feature:install oink-adapter-hl7v2
+
+Example Configuration File
+===========================
+
+remote.host=10.0.2.2	# The remote HL7v2 TCP Server
+remote.port=5678		# The remote HL7v2 TCP Server Port
+hl7v2.host=0.0.0.0		# The local HL7v2 TCP Server (for receiving)
+hl7v2.port=5252			# The local HL7v2 TCP Port
+rabbit.host=10.0.115.2
+rabbit.port=5672
+rabbit.vhost=/
+rabbit.username=oinkendpoint1
+rabbit.password=Test1571
+rabbit.defaultExchange=test
+rabbit.outboundRoutingKey=openeyes.proxy.in 	# The routing key for PAS --> OpenEyes
+rabbit.inboundRoutingKey=pas.hl7v2.in 			# The routing key for OpenEyes messages --> PAS
+rabbit.outboundResponseRoutingKey=pas.hl7v2.response # The reply routing key for PAS --> OpenEyes

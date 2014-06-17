@@ -1,180 +1,107 @@
+/*******************************************************************************
+ * OINK - Copyright (c) 2014 OpenEyes Foundation
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *******************************************************************************/
 package uk.org.openeyes.oink.messaging;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.reflect.Type;
+import java.io.UnsupportedEncodingException;
 
 import org.apache.camel.Converter;
+import org.apache.camel.Exchange;
 import org.apache.camel.TypeConverter;
-import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.commons.lang3.SerializationUtils;
-import org.hl7.fhir.instance.formats.JsonComposer;
-import org.hl7.fhir.instance.formats.JsonParser;
-import org.hl7.fhir.instance.formats.ParserBase.ResourceOrFeed;
-import org.hl7.fhir.instance.model.AtomFeed;
-import org.hl7.fhir.instance.model.Resource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
-
+import uk.org.openeyes.oink.domain.OINKMessage;
 import uk.org.openeyes.oink.domain.OINKRequestMessage;
 import uk.org.openeyes.oink.domain.OINKResponseMessage;
+import uk.org.openeyes.oink.domain.json.OinkRequestMessageJsonConverter;
+import uk.org.openeyes.oink.domain.json.OinkResponseMessageJsonConverter;
 
 /**
  * A custom Camel {@link TypeConverter} for converting
- * {@link OINKRequestMessage} and {@link OINKResponseMessage} into byte arrays
- * and strings.
+ * {@link OINKMessage} objects to/from byte arrays and JSON strings
  * 
  * @author Oliver Wilkie
  */
 @Converter
 public class OinkMessageConverter {
+	
+	private static final Logger log = LoggerFactory.getLogger(OinkMessageConverter.class);
 
-	private final Gson gson;
+	OinkRequestMessageJsonConverter reqConv;
+	OinkResponseMessageJsonConverter respConv;
 
 	public OinkMessageConverter() {
-		GsonBuilder gsonBuilder = new GsonBuilder();
-		gsonBuilder.registerTypeAdapter(AtomFeed.class,
-				new AtomFeedGsonAdapter());
-		gsonBuilder.registerTypeAdapter(Resource.class,
-				new ResourceGsonAdapter());
-		gson = gsonBuilder.create();
+		reqConv = new OinkRequestMessageJsonConverter();
+		respConv = new OinkResponseMessageJsonConverter();
 	}
 
 	@Converter
-	public byte[] toByteArray(OINKRequestMessage message) {
+	public byte[] toByteArray(OINKRequestMessage message) throws UnsupportedEncodingException {
 		String json = toJsonString(message);
-		return SerializationUtils.serialize(json);
+		return json.getBytes("UTF-8");
 	}
 
 	@Converter
-	public OINKRequestMessage fromByteArray(byte[] message) {
-		String json = (String) SerializationUtils.deserialize(message);
+	public OINKRequestMessage fromByteArray(byte[] message) throws UnsupportedEncodingException {
+		String json = new String(message,"UTF-8");
 		return requestMessageFromJsonString(json);
 	}
 
 	@Converter
 	public String toJsonString(OINKRequestMessage message) {
-		return gson.toJson(message);
+		return reqConv.toJsonString(message);
+	}
+	
+	@Converter
+	public OINKRequestMessage fromJsonString(String s) {
+		return requestMessageFromJsonString(s);
+	}
+	
+	@Converter
+	public OINKResponseMessage responseFromJsonString(String s) {
+		return responseMessageFromJsonString(s);
 	}
 
 	@Converter
 	public OINKRequestMessage requestMessageFromJsonString(String message) {
-		return gson.fromJson(message, OINKRequestMessage.class);
+		return reqConv.fromJsonString(message);
 	}
 
 	@Converter
-	public byte[] toByteArray(OINKResponseMessage message) {
+	public byte[] toByteArray(OINKResponseMessage message) throws UnsupportedEncodingException {
 		String json = toJsonString(message);
-		return SerializationUtils.serialize(json);
+		return json.getBytes("UTF-8");
 	}
 
 	@Converter
-	public OINKResponseMessage responseMessageFromByteArray(byte[] message) {
-		String json = (String) SerializationUtils.deserialize(message);
+	public OINKResponseMessage responseMessageFromByteArray(byte[] message) throws UnsupportedEncodingException {
+		String json = new String(message, "UTF-8");
 		return responseMessageFromJsonString(json);
 	}
 
 	@Converter
 	public String toJsonString(OINKResponseMessage message) {
-		return gson.toJson(message);
+		return respConv.toJsonString(message);
 	}
 
 	@Converter
 	public OINKResponseMessage responseMessageFromJsonString(String message) {
-		return gson.fromJson(message, OINKResponseMessage.class);
-	}
-
-	private class ResourceGsonAdapter implements JsonSerializer<Resource>,
-			JsonDeserializer<Resource> {
-
-		@Override
-		public Resource deserialize(JsonElement json, Type typeOfT,
-				JsonDeserializationContext context) throws JsonParseException {
-
-			JsonParser parser = new JsonParser();
-			String jsonString = json.toString();
-			InputStream is = new ByteArrayInputStream(jsonString.getBytes());
-			try {
-				ResourceOrFeed resourceOrFeed = parser.parseGeneral(is);
-				return resourceOrFeed.getResource();
-			} catch (Exception e) {
-				throw new JsonParseException("Invalid Resource structure: "
-						+ e.getMessage());
-			} finally {
-				try {
-					is.close();
-				} catch (IOException e) {
-				}
-			}
-		}
-
-		@Override
-		public JsonElement serialize(Resource src, Type typeOfSrc,
-				JsonSerializationContext context) {
-			JsonComposer composer = new JsonComposer();
-			ByteArrayOutputStream os = new ByteArrayOutputStream();
-			try {
-				composer.compose(os, src, false);
-				String element = os.toString();
-				JsonObject ob = new JsonObject();
-				com.google.gson.JsonParser gsonParser = new com.google.gson.JsonParser();
-				return gsonParser.parse(element);
-			} catch (Exception e) {
-				return null;
-			}
-		}
-
-	}
-
-	private class AtomFeedGsonAdapter implements JsonSerializer<AtomFeed>,
-			JsonDeserializer<AtomFeed> {
-
-		@Override
-		public AtomFeed deserialize(JsonElement json, Type typeOfT,
-				JsonDeserializationContext context) throws JsonParseException {
-
-			JsonParser parser = new JsonParser();
-			String jsonString = json.toString();
-			InputStream is = new ByteArrayInputStream(jsonString.getBytes());
-			try {
-				ResourceOrFeed resourceOrFeed = parser.parseGeneral(is);
-				return resourceOrFeed.getFeed();
-			} catch (Exception e) {
-				throw new JsonParseException("Invalid AtomFeed structure: "
-						+ e.getMessage());
-			} finally {
-				try {
-					is.close();
-				} catch (IOException e) {
-				}
-			}
-		}
-
-		@Override
-		public JsonElement serialize(AtomFeed src, Type typeOfSrc,
-				JsonSerializationContext context) {
-			JsonComposer composer = new JsonComposer();
-			ByteArrayOutputStream os = new ByteArrayOutputStream();
-			try {
-				composer.compose(os, src, false);
-				String element = os.toString();
-				JsonObject ob = new JsonObject();
-				com.google.gson.JsonParser gsonParser = new com.google.gson.JsonParser();
-				return gsonParser.parse(element);
-			} catch (Exception e) {
-				return null;
-			}
-		}
-
+		return respConv.fromJsonString(message);
 	}
 
 }

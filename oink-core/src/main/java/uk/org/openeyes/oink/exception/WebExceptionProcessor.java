@@ -1,3 +1,19 @@
+/*******************************************************************************
+ * OINK - Copyright (c) 2014 OpenEyes Foundation
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *******************************************************************************/
 package uk.org.openeyes.oink.exception;
 
 import org.apache.camel.CamelAuthorizationException;
@@ -30,9 +46,9 @@ public class WebExceptionProcessor implements Processor {
 
 		int errorCode = DEFAULT_ERROR_CODE;
 
-		if (e.getClass().isAnnotationPresent(HttpStatusCode.class)) {
-			HttpStatusCode statusCode = e.getClass().getAnnotation(
-					HttpStatusCode.class);
+		if (e.getClass().isAnnotationPresent(OinkExceptionStatusCode.class)) {
+			OinkExceptionStatusCode statusCode = e.getClass().getAnnotation(
+					OinkExceptionStatusCode.class);
 			errorCode = statusCode.value();
 			logger.info("Setting HTTP Response Code to " + errorCode
 					+ " due to exception: " + e.getClass().getName());

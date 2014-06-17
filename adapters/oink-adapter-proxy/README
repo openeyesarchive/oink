@@ -1,4 +1,4 @@
-Proxy Example
+OINK Proxy Adapter
 ===================
 
 A route serving as an OINK Proxy. Recieves OINKRequestMessages from a Rabbit Queue, 
@@ -32,5 +32,19 @@ If using the OINK custom Apache Karaf you can enable this example from the shell
 If using standard Apache Karaf you can install this adapter by setting config 
 file ${karaf.Basedir}/etc/uk.org.openeyes.oink.proxy.cfg then from the shell:
 
-	feature:addurl mvn:uk.org.openeyes.oink/oink-features/<camel version>/xml/features
-	feature:install camel-adapter-proxy
+	feature:addurl mvn:uk.org.openeyes.oink/oink-features/<oink version>/xml/features
+	feature:install oink-adapter-proxy
+
+Example Configuration File
+===========================
+
+proxy.username=admin
+proxy.password=admin
+proxy.uri=10.0.2.2:8888/api
+rabbit.host=localhost
+rabbit.port=5672
+rabbit.vhost=/
+rabbit.username=oinkendpoint1
+rabbit.password=Test1571
+rabbit.defaultExchange=test
+rabbit.routingKey=openeyes.proxy.in

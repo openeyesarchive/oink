@@ -1,17 +1,15 @@
 Facade Adapter
 ===================
 
-A route serving as an OINK Facade. It can be run using Maven.
+A camel serving as an OINK Facade. It can be run using Maven.
 
 Running outside OSGi container
 ================================
 
 To run the adapter using Maven type
 
-	mvn:camel:run
-	
-Note that method uses the settings found in facade.properties in src/main/resources
-	
+	mvn:camel:run -Dconfig=PATH_TO_FACADE_CONFIG_FILE
+		
 To stop the adapter hit ctrl+c
 
 Running inside OSGi container
@@ -23,12 +21,44 @@ You will need to compile and install this adapter first:
 
 If using the OINK custom Apache Karaf you can enable this adapter from the shell
 
-	feature:repo-refresh
-	oink:enable oink-adapter-facade <configuration file path>
+	oink:enable oink-adapter-facade PATH_TO_FACADE_CONFIG_FILE
+	oink:status oink-adapter-facade
 
 If using standard Apache Karaf you can install this adapter by setting config 
 file ${karaf.Basedir}/etc/uk.org.openeyes.oink.facade.cfg then from the shell:
 
-	feature:addurl mvn:uk.org.openeyes.oink/oink-features/<camel version>/xml/features
-	feature:install camel-adapter-facade
-	
+	feature:addurl mvn:uk.org.openeyes.oink/oink-features/<oink version>/xml/features
+	feature:install oink-adapter-facade
+
+Example Configuration File
+============================
+
+facade.uri=http://0.0.0.0:80/oink
+rabbit.host=localhost
+rabbit.port=5672
+rabbit.vhost=/
+rabbit.username=oinkendpoint1
+rabbit.password=Test1571
+rabbit.defaultExchange=test
+rabbit.responseRoutingKey=openeyes.facade.response
+facade.mapping.1.routingKey=pas.hl7v2.in	
+
+Facade mappings
+---------------
+facade.mapping.1.routingKey (Mandatory) The rabbit routing key
+facade.mapping.1.service    (Optional) 	Used to distinguish different end-systems.
+										If missing, defaults to root service.
+facade.mapping.1.resource   (Optional) 	E.g. Patient, Practitioner or Organization
+										Must be a valid FHIR Resource  name
+										If missing, assumes all FHIR Resources
+facade.mapping.1.method	 	(Optional) 	GET, POST or PUT etc
+										If missing, assumes all Methods
+facade.mapping.2....
+facade.mapping.3....
+
+For example to map <facade.uri>/silverlink/Patient GET to routingKey silverlink.patient.in
+facade.mapping.1.routingKey=silverlink.patient.in
+facade.mapping.1.service=silverlink
+facade.mapping.1.resource=Patient
+facade.mapping.1.method=GET
+

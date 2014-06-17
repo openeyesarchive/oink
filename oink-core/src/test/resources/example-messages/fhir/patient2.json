@@ -1,0 +1,54 @@
+{
+    "identifier": [
+        {
+            "use": "official",
+            "label": "NHS Number",
+            "system": "http://www.datadictionary.nhs.uk/data_dictionary/attributes/n/nhs/nhs_number_de.asp",
+            "value": "1053991375"
+        },
+        {
+            "label": "Hospital Number",
+            "value": "1007914"
+        }
+    ],
+    "name": [
+        {
+            "use": "usual",
+            "family": [
+                "Bray"
+            ],
+            "given": [
+                "Betty"
+            ],
+            "prefix": [
+                "Mrs"
+            ]
+        }
+    ],
+    "telecom": [
+        {
+            "system": "phone",
+            "value": "06422 9531946",
+            "use": "home"
+        }
+    ],
+    "gender": {
+        "coding": [
+            {
+                "system": "http://hl7.org/fhir/v3/AdministrativeGender",
+                "code": "F"
+            }
+        ]
+    },
+    "birthDate": "1970-10-06",
+    "address": [],
+    "careProvider": [
+        {
+            "reference": "Organization/prac-3"
+        },
+        {
+            "reference": "Organization/cb-1"
+        }
+    ],
+    "resourceType": "Patient"
+}

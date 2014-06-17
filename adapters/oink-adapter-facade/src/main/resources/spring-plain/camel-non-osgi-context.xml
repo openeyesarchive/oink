@@ -9,7 +9,11 @@
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 	
 	<bean id="bridgePropertyPlaceholder" class="org.apache.camel.spring.spi.BridgePropertyPlaceholderConfigurer">
-  		<property name="location" value="classpath:facade.properties"/>
+		<property name="properties" ref="propertiesSource" />
+	</bean>
+	
+	<bean id="propertiesSource" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+		<property name="location" value="file:${propertiesSrc}"/>
 	</bean>
 	
 	<import resource="classpath:META-INF/spring/camel-general-context.xml" />

@@ -1,6 +1,13 @@
 #OINK
 The OpenEyes Integration Toolkit for connecting an OpenEyes instance to other healthcare information systems.
 
+## Building
+```
+mvn clean install
+```
+A distributable custom Karaf container containing OINK is available under the *platforms/karaf/distro* module. 
+
+
 ##Testing
 OpenEyes has a CI Jenkins server that monitors the health of this repository.
 
@@ -12,29 +19,21 @@ mvn test
 ```
 
 ### Integration Tests
-Integration tests are located within tests folder and can be run using the command `mvn verify`. 
+Integration tests are located within tests folder and can be run specifically using the command `mvn verify testing` or by doing a standard `mvn clean install -Ptesting`. Integration tests significantly extend build time.
 
-To override the default properties used in the integration tests for your own environment use a command like this..
 
-```
-mvn verify -Dfacade.test.properties=file:{pathToFacadePropertiesFile} -proxy.test.properties=file:{pathToProxyPropertiesFile} etc
-```
+## Runtime Configuration
+Each adapter loads settings inside OSGi through the [Configuration Admin Service](http://felix.apache.org/documentation/subprojects/apache-felix-config-admin.html) through the following PIDs
 
-## Using
-A 1.0 OINK release is not possible until all of its dependancies are also officially released. In the meantime you can build and run OINK in its current 0.x version.
+* uk.org.openeyes.oink.proxy   (for Proxy Adapter)
+* uk.org.openeyes.oink.facade  (for Facade Adapter)
+* uk.org.openeyes.oink.hl7v2   (for Hl7v2 Adapter)
 
-### Current Dependancies
-- [FHIR Java Implementation](http://www.hl7.org/implement/standards/fhir/downloads.html) - Latest snapshot manually installed to local Maven repo. Alternatively configure your local repo to scan the Sonatype Snapshots Repo
+See the README for each adapter for more configuration instructions.
 
-```
-		<dependency>
-			<groupId>me.fhir</groupId>
-			<artifactId>fhir-0.81</artifactId>
-			<version>${fhir.version}</version>
-		</dependency>
-```
-
-NB. Properties ${} are set in parent POM
+### Notable Dependancies
+- [FHIR Java Implementation](http://www.hl7.org/implement/standards/fhir/downloads.html)
+- [Vagrant](vagrantup.com) (for running Integration Tests)
 
 
 ### How to use OINK

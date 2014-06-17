@@ -1,3 +1,5 @@
+.dump
+id_file
 .DS_Store
 id_file
 .settings
@@ -12,3 +14,5 @@ pom.xml.next
 release.properties
 derby.log
 maven-metadata-local.xml
+.vagrant
+**/test-workspace

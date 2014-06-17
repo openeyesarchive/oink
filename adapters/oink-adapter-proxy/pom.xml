@@ -6,7 +6,7 @@
 	<parent>
 		<artifactId>oink-adapters</artifactId>
 		<groupId>uk.org.openeyes.oink</groupId>
-		<version>0.2</version>
+		<version>0.3</version>
 	</parent>
 
 	<groupId>uk.org.openeyes.oink.adapters</groupId>
@@ -44,6 +44,12 @@
 		<dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-http4</artifactId>
+			<exclusions>
+				<exclusion>
+					<artifactId>commons-logging</artifactId>
+					<groupId>commons-logging</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<!-- logging -->
@@ -52,6 +58,11 @@
 			<artifactId>slf4j-api</artifactId>
 			<version>1.7.6</version>
 		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>jcl-over-slf4j</artifactId>
+			<version>${slf4j.version}</version>
+		</dependency>		
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
@@ -64,6 +75,13 @@
 		</dependency>
 
 		<!-- testing -->
+		<dependency>
+			<groupId>uk.org.openeyes.oink</groupId>
+			<artifactId>oink-core</artifactId>
+			<version>${project.version}</version>
+			<scope>test</scope>
+			<type>test-jar</type>
+		</dependency>		
 		<dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-test-spring</artifactId>
@@ -95,13 +113,34 @@
 				</configuration>
 			</plugin>
 
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.3.2</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>test-jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
 			<!-- allows the route to be ran via 'mvn camel:run' -->
 			<plugin>
 				<groupId>org.apache.camel</groupId>
 				<artifactId>camel-maven-plugin</artifactId>
 				<version>${camel.version}</version>
 				<configuration>
-					<fileApplicationContextUri>src/main/resources/spring-plain/camel-non-osgi-context.xml</fileApplicationContextUri>
+					<fileApplicationContextUri>
+						src/main/resources/spring-plain/camel-non-osgi-context.xml
+					</fileApplicationContextUri>
+					<systemProperties>
+						<systemProperty>
+							<key>propertiesSrc</key>
+							<value>${config}</value>
+						</systemProperty>
+					</systemProperties>
 				</configuration>
 			</plugin>
 

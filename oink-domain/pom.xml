@@ -4,17 +4,25 @@
 	<parent>
 		<groupId>uk.org.openeyes.oink</groupId>
 		<artifactId>oink</artifactId>
-		<version>0.2</version>
+		<version>0.3</version>
 	</parent>
 	<artifactId>oink-domain</artifactId>
 	<name>OINK Domain</name>
+	<packaging>bundle</packaging>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>me.fhir</groupId>
-			<artifactId>fhir-0.12</artifactId>
+			<artifactId>fhir-dstu1</artifactId>
+			<version>0.0.81.2489</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+			<version>2.2.4</version>
 		</dependency>
 
 		<dependency>
@@ -43,5 +51,4 @@
 			</plugin>
 		</plugins>
 	</build>
-	<packaging>bundle</packaging>
 </project>

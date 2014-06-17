@@ -1,3 +1,19 @@
+/*******************************************************************************
+ * OINK - Copyright (c) 2014 OpenEyes Foundation
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *******************************************************************************/
 package uk.org.openeyes.oink.facade;
 
 import java.io.ByteArrayOutputStream;
@@ -51,7 +67,7 @@ public class ITFacadeRoute {
 
 	private static ConnectionFactory factory;
 
-	private final static String THIRD_PARTY_QUEUE_NAME = "siteB";
+	private final static String THIRD_PARTY_QUEUE_NAME = "openeyes.in";
 	
 	private volatile AssertionError thirdPartyAssertionError; 
 
@@ -81,72 +97,6 @@ public class ITFacadeRoute {
 	public void before() {
 		thirdPartyAssertionError = null;
 	}
-
-	@Test
-	@DirtiesContext
-	public void testRequestFailsOnMissingAuthenticationHeader()
-			throws HttpException, IOException {
-
-		// Prepare request
-		HttpClient client = new HttpClient();
-		HttpMethod method = new GetMethod(
-				testProperties.getProperty("facade.uri") + "/Patient");
-
-		client.executeMethod(method);
-		byte[] responseBody = method.getResponseBody();
-		method.releaseConnection();
-
-		Assert.assertEquals(HttpStatus.SC_UNAUTHORIZED, method.getStatusCode());
-	}
-
-	@Test
-	@DirtiesContext
-	public void testRequestFailsOnInvalidCredentials() throws HttpException,
-			IOException {
-
-		// Prepare request
-		HttpClient client = new HttpClient();
-
-		HttpMethod method = new GetMethod(
-				testProperties.getProperty("facade.uri") + "/Patient");
-		UsernamePasswordCredentials creds = new UsernamePasswordCredentials(
-				"wrongusernameandformat",
-				testProperties.getProperty("testUser.password"));
-
-		method.addRequestHeader("Authorization",
-				BasicScheme.authenticate(creds, "US-ASCII"));
-		client.executeMethod(method);
-		byte[] responseBody = method.getResponseBody();
-		method.releaseConnection();
-
-		Assert.assertEquals(HttpStatus.SC_UNAUTHORIZED, method.getStatusCode());
-	}
-
-	@Test
-	@DirtiesContext
-	public void testAuthenticationCanSucceed() throws HttpException,
-			IOException {
-
-		// Prepare request
-		HttpClient client = new HttpClient();
-
-		HttpMethod method = new GetMethod(
-				testProperties.getProperty("facade.uri") + "/Patient");
-
-		UsernamePasswordCredentials creds = new UsernamePasswordCredentials(
-				testProperties.getProperty("testUser.username"),
-				testProperties.getProperty("testUser.password"));
-
-		method.addRequestHeader("Authorization",
-				BasicScheme.authenticate(creds, "US-ASCII"));
-
-		client.executeMethod(method);
-		byte[] responseBody = method.getResponseBody();
-		method.releaseConnection();
-
-		Assert.assertNotEquals(HttpStatus.SC_UNAUTHORIZED,
-				method.getStatusCode());
-	}
 	
 	@Test
 	@DirtiesContext
@@ -170,7 +120,7 @@ public class ITFacadeRoute {
 					ByteArrayOutputStream os = new ByteArrayOutputStream();
 					composer.compose(os, incoming.getBody().getResource(), false);
 					String receivedJson = os.toString();
-					String expectedJson = IOUtils.toString(this.getClass().getResourceAsStream("/patient.json"));
+					String expectedJson = IOUtils.toString(this.getClass().getResourceAsStream("/example-messages/fhir/patient.json"));
 					Assert.assertEquals(expectedJson, receivedJson);
 				} catch (Exception e) {
 					Assert.assertTrue(false);
@@ -197,17 +147,10 @@ public class ITFacadeRoute {
 
 		PostMethod method = new PostMethod(
 				testProperties.getProperty("facade.uri") + "/Patient");
-
-		UsernamePasswordCredentials creds = new UsernamePasswordCredentials(
-				testProperties.getProperty("testUser.username"),
-				testProperties.getProperty("testUser.password"));
-
-		method.addRequestHeader("Authorization",
-				BasicScheme.authenticate(creds, "US-ASCII"));
 		
 		method.addRequestHeader("Content-Type", "application/json+fhir");
 
-		InputStream is = this.getClass().getResourceAsStream("/patient.json");
+		InputStream is = this.getClass().getResourceAsStream("/example-messages/fhir/patient.json");
 		method.setRequestEntity(new InputStreamRequestEntity(is));
 		client.executeMethod(method);
 		thirdp.close();
@@ -252,7 +195,7 @@ public class ITFacadeRoute {
 		// Specify what the third party service should return
 		OINKResponseMessage mockResponse = new OINKResponseMessage();
 		mockResponse.setStatus(200);
-		mockResponse.setBody(buildFhirBodyFromResource("/patient.json"));
+		mockResponse.setBody(buildFhirBodyFromResource("/example-messages/fhir/patient.json"));
 
 		// Start the third party service
 		SimulatedThirdParty thirdp = new SimulatedThirdParty(v, mockResponse);
@@ -267,13 +210,6 @@ public class ITFacadeRoute {
 
 		HttpMethod method = new GetMethod(
 				testProperties.getProperty("facade.uri") + "/Patient/2342452");
-
-		UsernamePasswordCredentials creds = new UsernamePasswordCredentials(
-				testProperties.getProperty("testUser.username"),
-				testProperties.getProperty("testUser.password"));
-
-		method.addRequestHeader("Authorization",
-				BasicScheme.authenticate(creds, "US-ASCII"));
 
 		client.executeMethod(method);
 		thirdp.close();
@@ -293,7 +229,7 @@ public class ITFacadeRoute {
 		
 		Assert.assertEquals(HttpStatus.SC_OK, responseCode);
 		Assert.assertEquals("application/json+fhir", responseContentType);
-		Assert.assertEquals(IOUtils.toString(this.getClass().getResourceAsStream("/patient.json"),"UTF-8"), responseJson);
+		Assert.assertEquals(IOUtils.toString(this.getClass().getResourceAsStream("/example-messages/fhir/patient.json"),"UTF-8"), responseJson);
 	}
 	
 	private static FhirBody buildFhirBodyFromResource(String resourcePath) throws Exception {

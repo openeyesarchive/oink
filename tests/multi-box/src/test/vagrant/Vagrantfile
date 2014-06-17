@@ -1,0 +1,63 @@
+Vagrant.configure("2") do |config|
+
+	vagrant_version = Vagrant::VERSION.sub(/^v/, '')
+	if vagrant_version < "1.3.0"
+		abort(sprintf("You need to have at least v1.3.0 of vagrant installed. You are currently using v%s", vagrant_version));
+	end
+    
+    #------------------------------------------------------------------------------------
+    # endpoint1
+    #------------------------------------------------------------------------------------
+    config.vm.define "endpoint1" do |endpoint1|
+
+        endpoint1.vm.box = "hashicorp/precise64"
+
+        endpoint1.vm.provider "virtualbox" do |v|
+            v.customize ["modifyvm", :id, "--memory", 1024]
+        end
+
+        endpoint1.vm.network "forwarded_port", guest: 15672, host: 25672
+        endpoint1.vm.network "private_network", ip: "10.0.115.2"
+
+        endpoint1.vm.provision :shell do |shell|
+            shell.inline = "mkdir -p /etc/puppet/modules;
+                            puppet module install puppetlabs-rabbitmq;"
+        end
+
+        endpoint1.vm.provision :puppet do |puppet|
+            puppet.manifests_path = "puppet"
+            puppet.manifest_file  = "default.pp"
+            puppet.facter         = { 'endpoint' => 'endpoint1' }
+            puppet.options = "--verbose --debug"
+        end
+    end
+	
+    #------------------------------------------------------------------------------------
+    # endpoint2
+    #------------------------------------------------------------------------------------
+    config.vm.define "endpoint2" do |endpoint2|
+    
+        endpoint2.vm.box = "hashicorp/precise64"
+        
+        endpoint2.vm.network "private_network", ip: "10.0.115.3"
+
+        endpoint2.vm.provider "virtualbox" do |v|
+            v.customize ["modifyvm", :id, "--memory", 1024]
+        end
+
+        endpoint2.vm.network "forwarded_port", guest: 15672, host: 35672
+        endpoint2.vm.network "forwarded_port", guest: 5252, host: 35252
+
+        endpoint2.vm.provision :shell do |shell|
+            shell.inline = "mkdir -p /etc/puppet/modules;
+                            puppet module install puppetlabs-rabbitmq;"
+        end
+
+        endpoint2.vm.provision :puppet do |puppet|
+            puppet.manifests_path = "puppet"
+            puppet.manifest_file  = "default.pp"
+            puppet.facter         = { 'endpoint' => 'endpoint2' }
+            puppet.options = "--verbose --debug"
+        end
+    end
+end

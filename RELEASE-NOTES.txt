@@ -1,5 +1,36 @@
+OINK Interoperability Toolkit 0.3
+=================================
+
+New System Requirements
+-----------------------
+
+Host needs Vagrant (vagrantup.com) installed to perform integration tests.
+
+Whats New
+----------
+
+* A new HL7v2 Adapter that takes A01,A05,A28,A31 HL7v2.4 messages and maps them to Patient POSTs. The Adapter also supports Patient Query searchs in the 'other direction'.
+* A new Karaf command, oink:status which reports if an adapter has started or not.
+* Extensive improvements to the Integration Tests which test inter-adapter behaviour when deployed on OSGi containers, including the use of multiple VMs.
+* Integration Tests now utilising Vagrant to simulate running oink adapters on separate machines.
+* First version to be tested against real OpenEyes REST Api
+
+
+Known Issues
+------------
+
+* Not tested against real external HL7v2 Server
+* OINK Kar does not contain Camel dependencies.
+* OINK Custom Distribution cannot install oink adapters when offline and no maven local repository is present.
+* Vagrant VMs are slow to initialise. Runtime on OpenEyes CI Server is ~30mins for integration testsing.
+* Spurious Karaf log warning messages from Swissbox during feature installation. Will be fixed in later versions of Karaf
+
+
 OINK Interoperability Toolkit 0.2
 =================================
+
+Whats New
+----------
 
 This is a major update for OINK that rewrites the project as OSGI-compatible Camel Routes. This update contains many bug fixes, dependency updates and improvements.
 

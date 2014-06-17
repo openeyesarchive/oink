@@ -4,13 +4,14 @@
   <parent>
         <artifactId>oink</artifactId>
         <groupId>uk.org.openeyes.oink</groupId>
-        <version>0.2</version>
+        <version>0.3</version>
     </parent>
   <groupId>uk.org.openeyes.oink</groupId>
   <artifactId>oink-adapters</artifactId>
   <packaging>pom</packaging>
   <name>OINK :: Adapters</name>
   <modules>
+    <module>oink-adapter-hl7v2</module>
     <module>oink-adapter-facade</module>
     <module>oink-adapter-proxy</module>
   </modules>
