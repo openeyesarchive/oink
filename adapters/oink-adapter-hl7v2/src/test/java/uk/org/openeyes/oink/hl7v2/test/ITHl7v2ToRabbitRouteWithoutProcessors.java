@@ -211,7 +211,7 @@ public class ITHl7v2ToRabbitRouteWithoutProcessors extends Hl7ITSupport {
 	}
 
 	@Test
-	public void testA04MessageDoesNotRouteOntoRabbit() throws Exception {
+	public void testA40MessageDoesNotRouteOntoRabbit() throws Exception {
 		// Init Rabbit listener
 		Channel c = getChannel(rabbitFactory);
 		String queueName = setupRabbitQueue(c,
@@ -219,7 +219,7 @@ public class ITHl7v2ToRabbitRouteWithoutProcessors extends Hl7ITSupport {
 				getProperty("rabbit.outboundRoutingKey"));
 
 		// Choose a message to send
-		Message m = Hl7Helper.loadHl7Message("/example-messages/hl7v2/A04.txt");
+		Message m = Hl7Helper.loadHl7Message("/example-messages/hl7v2/A40-1.txt");
 
 		// Send message
 		String host = getProperty("hl7v2.host");
