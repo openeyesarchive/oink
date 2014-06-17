@@ -24,12 +24,10 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.camel.CamelContext;
-import org.hl7.fhir.instance.model.AtomEntry;
-import org.hl7.fhir.instance.model.AtomFeed;
-import org.hl7.fhir.instance.model.Patient;
 import org.junit.Assume;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,7 +50,7 @@ import uk.org.openeyes.oink.test.Hl7Server;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration()
-public class ITRabbitToHl7v2Route extends Hl7ITSupport {
+public class TestRabbitToHl7v2Route extends Hl7ITSupport {
 
 	@Autowired
 	CamelContext ctx;
@@ -70,6 +68,7 @@ public class ITRabbitToHl7v2Route extends Hl7ITSupport {
 		setProperties("/hl7v2-test.properties");
 	}
 
+	@Ignore
 	@Test
 	public void testAnIncomingPatientSearchByHSIDNumberIsMapped()
 			throws Exception {
