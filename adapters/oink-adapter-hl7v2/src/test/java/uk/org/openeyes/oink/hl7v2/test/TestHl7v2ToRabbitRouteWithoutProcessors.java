@@ -61,7 +61,7 @@ import uk.org.openeyes.oink.test.Hl7Helper;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration()
-public class ITHl7v2ToRabbitRouteWithoutProcessors extends Hl7ITSupport {
+public class TestHl7v2ToRabbitRouteWithoutProcessors extends Hl7ITSupport {
 
 	@Qualifier("a01Processor")
 	@Autowired
