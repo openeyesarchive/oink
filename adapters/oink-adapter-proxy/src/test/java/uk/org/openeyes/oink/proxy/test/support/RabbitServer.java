@@ -67,10 +67,9 @@ public class RabbitServer implements Runnable {
 	public void run() {
 		try {
 			log.info("RabbitServer started");
-
 			Connection connection = factory.newConnection();
 			Channel channel = connection.createChannel();
-			channel.exchangeDeclare(exchange, "direct",true,true,null);
+			channel.exchangeDeclare(exchange, "direct",true,false,null);
 			String queueName = channel.queueDeclare().getQueue();
 			channel.queueBind(queueName, exchange, routingKey);
 			QueueingConsumer consumer = new QueueingConsumer(channel);

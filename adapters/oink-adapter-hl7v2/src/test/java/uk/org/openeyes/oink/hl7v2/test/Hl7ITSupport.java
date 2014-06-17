@@ -96,6 +96,12 @@ public abstract class Hl7ITSupport {
 		InputStream is = getClass().getResourceAsStream(path);
 		properties.load(is);
 	}
+	
+	protected Properties getProperties() {
+		return properties;
+	}
+	
+	
 
 	protected String getProperty(String key) {
 		return properties.getProperty(key);
@@ -125,6 +131,26 @@ public abstract class Hl7ITSupport {
 		Connection connection = factory.newConnection();
 		Channel channel = connection.createChannel();
 		return channel;
+	}
+	
+	protected static boolean isRabbitMQAvailable(Properties props) {
+		ConnectionFactory factory = initRabbit(props.getProperty("rabbit.host"),
+				Integer.parseInt(props.getProperty("rabbit.port")),
+				props.getProperty("rabbit.username"), props.getProperty("rabbit.password"),
+				props.getProperty("rabbit.vhost"));
+		Connection conn = null;
+		try {
+			conn = factory.newConnection();
+			return conn.isOpen();
+		} catch (Exception e) {
+			return false;
+		} finally {
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (IOException e) {}
+			}
+		}
 	}
 
 	protected static ConnectionFactory initRabbit(String host, int port,

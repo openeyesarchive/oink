@@ -17,9 +17,14 @@
 package uk.org.openeyes.oink.hl7v2.test;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
 
 import org.json.JSONException;
+import org.junit.Assume;
 import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -30,28 +35,40 @@ import ca.uhn.hl7v2.llp.LLPException;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration()
-public class ITHl7v2ToRabbitRoute extends Hl7ITSupport {
+public class TestHl7v2ToRabbitRoute extends Hl7ITSupport {
+	
+	@BeforeClass
+	public static void before() throws IOException {
+		Properties props = new Properties();
+		InputStream is = TestHl7v2ToRabbitRoute.class.getResourceAsStream("/hl7v2-test.properties");
+		props.load(is);
+		Assume.assumeTrue("No RabbitMQ Connection detected", Hl7ITSupport.isRabbitMQAvailable(props));
+	}
 	
 	@Before
 	public void setUp() throws IOException {
 		setProperties("/hl7v2-test.properties");
 	}
 	
+	@Ignore
 	@Test
 	public void testIncomingA28IsProcessedAndRouted() throws HL7Exception, IOException, LLPException, InterruptedException, JSONException {
-		testIncomingMessageIsProcessedAndRouted("/hl7v2/A28-1.txt", "/oinkrequestmessages/A28-1.json");
+		testIncomingMessageIsProcessedAndRouted("/example-messages/hl7v2/A28-1.txt", "/example-messages/oinkrequestmessages/A28-1.json");
 	}
 	
+	@Ignore
 	@Test
 	public void testIncomingA01IsProcessedAndRouted() throws HL7Exception, IOException, LLPException, InterruptedException, JSONException {
 		testIncomingMessageIsProcessedAndRouted("/hl7v2/A01.txt", "/oinkrequestmessages/A01.json");
 	}
 
+	@Ignore
 	@Test
 	public void testIncomingA05IsProcessedAndRouted() throws HL7Exception, IOException, LLPException, InterruptedException, JSONException {
 		testIncomingMessageIsProcessedAndRouted("/hl7v2/A05.txt", "/oinkrequestmessages/A05.json");
 	}
 
+	@Ignore
 	@Test
 	public void testIncomingA31IsProcessedAndRouted() throws HL7Exception, IOException, LLPException, InterruptedException, JSONException {
 		testIncomingMessageIsProcessedAndRouted("/hl7v2/A31-2.txt", "/oinkrequestmessages/A31-2.json");
