@@ -152,7 +152,7 @@
 
 		<dependency>
 			<groupId>uk.org.openeyes.oink.adapters</groupId>
-			<artifactId>oink-adapter-proxy</artifactId>
+			<artifactId>oink-adapter-hl7v2</artifactId>
 			<version>${project.version}</version>
 			<type>test-jar</type>
 			<scope>test</scope>

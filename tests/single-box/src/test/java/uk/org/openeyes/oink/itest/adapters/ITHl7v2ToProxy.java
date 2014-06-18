@@ -49,8 +49,8 @@ import ca.uhn.hl7v2.app.Connection;
 import ca.uhn.hl7v2.app.Initiator;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.v24.message.ACK;
+import uk.org.openeyes.oink.hl7v2.test.Hl7TestUtils;
 import uk.org.openeyes.oink.it.ITSupport;
-import uk.org.openeyes.oink.test.Hl7TestUtils;
 
 /**
  * 

@@ -31,8 +31,6 @@ import org.slf4j.LoggerFactory;
 
 import uk.org.openeyes.oink.domain.OINKRequestMessage;
 import uk.org.openeyes.oink.messaging.OinkMessageConverter;
-import uk.org.openeyes.oink.test.Hl7Client;
-import uk.org.openeyes.oink.test.Hl7TestUtils;
 import uk.org.openeyes.oink.test.RabbitServer;
 
 import com.rabbitmq.client.Channel;

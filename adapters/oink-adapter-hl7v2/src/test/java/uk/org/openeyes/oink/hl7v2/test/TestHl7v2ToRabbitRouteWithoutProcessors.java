@@ -44,7 +44,6 @@ import uk.org.openeyes.oink.domain.OINKRequestMessage;
 import uk.org.openeyes.oink.hl7v2.ADTProcessor;
 import uk.org.openeyes.oink.hl7v2.Hl7v2Processor;
 import uk.org.openeyes.oink.messaging.OinkMessageConverter;
-import uk.org.openeyes.oink.test.Hl7TestUtils;
 import uk.org.openeyes.oink.test.RabbitTestUtils;
 
 /**

@@ -59,9 +59,9 @@ import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.protocol.ReceivingApplication;
 import ca.uhn.hl7v2.protocol.ReceivingApplicationException;
 import uk.org.openeyes.oink.fhir.BundleParser;
+import uk.org.openeyes.oink.hl7v2.test.Hl7Server;
+import uk.org.openeyes.oink.hl7v2.test.Hl7TestUtils;
 import uk.org.openeyes.oink.it.ITSupport;
-import uk.org.openeyes.oink.test.Hl7TestUtils;
-import uk.org.openeyes.oink.test.Hl7Server;
 
 /**
  * 

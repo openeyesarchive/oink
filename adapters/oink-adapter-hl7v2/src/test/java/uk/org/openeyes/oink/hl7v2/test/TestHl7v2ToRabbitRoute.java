@@ -40,7 +40,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import uk.org.openeyes.oink.test.Hl7TestUtils;
 import uk.org.openeyes.oink.test.RabbitServer;
 import uk.org.openeyes.oink.test.RabbitTestUtils;
 import ca.uhn.hl7v2.HL7Exception;

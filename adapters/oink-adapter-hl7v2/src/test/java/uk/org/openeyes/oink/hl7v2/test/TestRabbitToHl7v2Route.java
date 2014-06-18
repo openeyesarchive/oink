@@ -44,9 +44,7 @@ import uk.org.openeyes.oink.domain.HttpMethod;
 import uk.org.openeyes.oink.domain.OINKRequestMessage;
 import uk.org.openeyes.oink.domain.OINKResponseMessage;
 import uk.org.openeyes.oink.messaging.OinkMessageConverter;
-import uk.org.openeyes.oink.proxy.test.support.RabbitClient;
-import uk.org.openeyes.oink.test.Hl7TestUtils;
-import uk.org.openeyes.oink.test.Hl7Server;
+import uk.org.openeyes.oink.test.RabbitClient;
 import uk.org.openeyes.oink.test.RabbitTestUtils;
 
 @RunWith(SpringJUnit4ClassRunner.class)

@@ -21,8 +21,6 @@ import java.nio.charset.Charset;
 import java.util.GregorianCalendar;
 import java.util.List;
 
-import net.wimpi.telnetd.io.terminal.xterm;
-
 import org.apache.camel.Exchange;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;

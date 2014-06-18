@@ -60,7 +60,7 @@ import uk.org.openeyes.oink.domain.HttpMethod;
 import uk.org.openeyes.oink.domain.OINKRequestMessage;
 import uk.org.openeyes.oink.domain.OINKResponseMessage;
 import uk.org.openeyes.oink.it.ITSupport;
-import uk.org.openeyes.oink.proxy.test.support.RabbitClient;
+import uk.org.openeyes.oink.test.RabbitClient;
 
 /*
  * Tests the behaviour of the proxy adapter when deployed on the custom Karaf distro
