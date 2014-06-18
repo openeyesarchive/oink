@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
-package uk.org.openeyes.oink.proxy.test.support;
+package uk.org.openeyes.oink.test;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,10 +67,9 @@ public class RabbitServer implements Runnable {
 	public void run() {
 		try {
 			log.info("RabbitServer started");
-
 			Connection connection = factory.newConnection();
 			Channel channel = connection.createChannel();
-			channel.exchangeDeclare(exchange, "direct",true,true,null);
+			channel.exchangeDeclare(exchange, "direct",true,false,null);
 			String queueName = channel.queueDeclare().getQueue();
 			channel.queueBind(queueName, exchange, routingKey);
 			QueueingConsumer consumer = new QueueingConsumer(channel);

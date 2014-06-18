@@ -31,9 +31,9 @@ import org.slf4j.LoggerFactory;
 
 import uk.org.openeyes.oink.domain.OINKRequestMessage;
 import uk.org.openeyes.oink.messaging.OinkMessageConverter;
-import uk.org.openeyes.oink.proxy.test.support.RabbitServer;
 import uk.org.openeyes.oink.test.Hl7Client;
-import uk.org.openeyes.oink.test.Hl7Helper;
+import uk.org.openeyes.oink.test.Hl7TestUtils;
+import uk.org.openeyes.oink.test.RabbitServer;
 
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
@@ -51,15 +51,15 @@ import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.parser.Parser;
 import ca.uhn.hl7v2.validation.impl.NoValidation;
 
-public abstract class Hl7ITSupport {
+public abstract class Hl7TestSupport {
 	
-	private static final Logger log = LoggerFactory.getLogger(Hl7ITSupport.class);
+	private static final Logger log = LoggerFactory.getLogger(Hl7TestSupport.class);
 
 	private Properties properties;
 	
 	public void testIncomingMessageIsProcessedAndRouted(String hl7msgPath, String oinkmsgPath) throws HL7Exception, IOException, LLPException, InterruptedException, JSONException {
 		// Choose a message to send
-		Message m = Hl7Helper.loadHl7Message(hl7msgPath);
+		Message m = Hl7TestUtils.loadHl7Message(hl7msgPath);
 		
 		// Prepare RabbitServer
 		RabbitServer server = new RabbitServer(getProperty("rabbit.host"),
@@ -96,13 +96,19 @@ public abstract class Hl7ITSupport {
 		InputStream is = getClass().getResourceAsStream(path);
 		properties.load(is);
 	}
+	
+	protected Properties getProperties() {
+		return properties;
+	}
+	
+	
 
 	protected String getProperty(String key) {
 		return properties.getProperty(key);
 	}
 	
 	public static String loadResourceAsString(String resourcePath) throws IOException {
-		InputStream is = Hl7ITSupport.class.getResourceAsStream(resourcePath);
+		InputStream is = Hl7TestSupport.class.getResourceAsStream(resourcePath);
 		StringWriter writer = new StringWriter();
 		IOUtils.copy(is, writer, "UTF-8");
 		return writer.toString();
@@ -126,7 +132,7 @@ public abstract class Hl7ITSupport {
 		Channel channel = connection.createChannel();
 		return channel;
 	}
-
+	
 	protected static ConnectionFactory initRabbit(String host, int port,
 			String uname, String pwd, String vhost) {
 		ConnectionFactory factory = new ConnectionFactory();

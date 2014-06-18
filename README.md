@@ -17,6 +17,7 @@ OpenEyes has a CI Jenkins server that monitors the health of this repository.
 ```
 mvn test
 ```
+Note some unit tests will be ignored if a RabbitMQ broker is not detected.
 
 ### Integration Tests
 Integration tests are located within tests folder and can be run specifically using the command `mvn verify testing` or by doing a standard `mvn clean install -Ptesting`. Integration tests significantly extend build time.

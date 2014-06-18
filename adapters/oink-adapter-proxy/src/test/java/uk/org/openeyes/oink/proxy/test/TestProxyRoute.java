@@ -28,6 +28,7 @@ import static org.junit.Assert.*;
 
 import org.hl7.fhir.instance.formats.JsonParser;
 import org.hl7.fhir.instance.formats.ParserBase.ResourceOrFeed;
+import org.junit.Assume;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
@@ -42,6 +43,7 @@ import uk.org.openeyes.oink.domain.HttpMethod;
 import uk.org.openeyes.oink.domain.OINKRequestMessage;
 import uk.org.openeyes.oink.domain.OINKResponseMessage;
 import uk.org.openeyes.oink.messaging.OinkMessageConverter;
+import uk.org.openeyes.oink.test.RabbitTestUtils;
 
 import com.rabbitmq.client.AMQP.BasicProperties;
 import com.rabbitmq.client.Channel;
@@ -51,7 +53,7 @@ import com.rabbitmq.client.QueueingConsumer;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:camel-context-test.xml" })
-public class ITProxyRoute {
+public class TestProxyRoute {
 
 	private static Properties testProperties;
 	private static ConnectionFactory factory;
@@ -65,9 +67,12 @@ public class ITProxyRoute {
 	public static void setUp() throws IOException {
 		// Load properties
 		testProperties = new Properties();
-		InputStream is = ITProxyRoute.class
+		InputStream is = TestProxyRoute.class
 				.getResourceAsStream("/proxy-test.properties");
 		testProperties.load(is);
+		
+		// Only run if RabbitMQ is available
+		Assume.assumeTrue("No RabbitMQ Connection detected", RabbitTestUtils.isRabbitMQAvailable(testProperties));
 
 		// Prepare RabbitMQ Client
 		factory = new ConnectionFactory();
@@ -96,6 +101,10 @@ public class ITProxyRoute {
 		OINKRequestMessage request = new OINKRequestMessage();
 		request.setResourcePath(resourcePath);
 		request.setMethod(HttpMethod.valueOf(method));
+		
+		// Set Response from mock downstream Server
+		server.setResponse(200, null, "application/json+fhir");
+		server.start();
 
 		// Send Oink request over rabbit
 		Connection connection = factory.newConnection();
@@ -124,9 +133,11 @@ public class ITProxyRoute {
 		assertNotNull(delivery);
 		byte[] responseBody = delivery.getBody();
 		
+		server.stop();
+		
 		OinkMessageConverter conv = new OinkMessageConverter();
 		OINKResponseMessage message = conv.responseMessageFromByteArray(responseBody);
-		
+		assertEquals(200, message.getStatus());
 	}
 	
 	@Ignore
@@ -134,7 +145,7 @@ public class ITProxyRoute {
 	public void testGetRequestGetsProxied() throws Exception {
 		
 		// Mock endpoint server
-		InputStream is = ITProxyRoute.class.getResourceAsStream("/example-messages/fhir/patient.json");
+		InputStream is = TestProxyRoute.class.getResourceAsStream("/example-messages/fhir/patient.json");
 		StringWriter writer = new StringWriter();
 		IOUtils.copy(is, writer);
 		String jsonPatient = writer.toString();
@@ -235,7 +246,7 @@ public class ITProxyRoute {
 		// Assert mocked server receives request intact
 		String requestBodyReceivedByServer = server.getRequestBody();
 		StringWriter writer = new StringWriter();
-		IOUtils.copy(ITProxyRoute.class.getResourceAsStream("/example-messages/fhir/patient.json"), writer);
+		IOUtils.copy(TestProxyRoute.class.getResourceAsStream("/example-messages/fhir/patient.json"), writer);
 		String expectedBodyReceivedByServer = writer.toString();
 		assertEquals(expectedBodyReceivedByServer, requestBodyReceivedByServer);
 
@@ -254,7 +265,7 @@ public class ITProxyRoute {
 
 	
 	private static FhirBody buildFhirBodyFromResource(String resourcePath) throws Exception {
-		InputStream is = ITProxyRoute.class.getResourceAsStream(resourcePath);
+		InputStream is = TestProxyRoute.class.getResourceAsStream(resourcePath);
 		FhirBody body = null;
 		JsonParser parser = new JsonParser();
 		ResourceOrFeed res = parser.parseGeneral(is);

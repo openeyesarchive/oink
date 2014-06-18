@@ -20,9 +20,13 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
 
 import org.apache.camel.Exchange;
+import org.junit.Assume;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +44,8 @@ import uk.org.openeyes.oink.domain.OINKRequestMessage;
 import uk.org.openeyes.oink.hl7v2.ADTProcessor;
 import uk.org.openeyes.oink.hl7v2.Hl7v2Processor;
 import uk.org.openeyes.oink.messaging.OinkMessageConverter;
-import uk.org.openeyes.oink.test.Hl7Helper;
+import uk.org.openeyes.oink.test.Hl7TestUtils;
+import uk.org.openeyes.oink.test.RabbitTestUtils;
 
 /**
  * 
@@ -57,7 +62,7 @@ import uk.org.openeyes.oink.test.Hl7Helper;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration()
-public class ITHl7v2ToRabbitRouteWithoutProcessors extends Hl7ITSupport {
+public class TestHl7v2ToRabbitRouteWithoutProcessors extends Hl7TestSupport {
 
 	@Qualifier("a01Processor")
 	@Autowired
@@ -76,6 +81,14 @@ public class ITHl7v2ToRabbitRouteWithoutProcessors extends Hl7ITSupport {
 	ADTProcessor a31Processor;
 
 	ConnectionFactory rabbitFactory;
+	
+	@BeforeClass
+	public static void before() throws IOException {
+		Properties props = new Properties();
+		InputStream is = TestHl7v2ToRabbitRoute.class.getResourceAsStream("/hl7v2-test.properties");
+		props.load(is);
+		Assume.assumeTrue("No RabbitMQ Connection detected", RabbitTestUtils.isRabbitMQAvailable(props));
+	}
 
 	@Before
 	public void setUp() throws IOException {
@@ -91,10 +104,10 @@ public class ITHl7v2ToRabbitRouteWithoutProcessors extends Hl7ITSupport {
 	public void testA01MessageRoutesOntoRabbit() throws Exception {
 
 		// Choose a message to send
-		Message m = Hl7Helper.loadHl7Message("/hl7v2/A01.txt");
+		Message m = Hl7TestUtils.loadHl7Message("/example-messages/hl7v2/A01.txt");
 
 		// Prepare mocks
-		String oinkJson = loadResourceAsString("/oinkrequestmessages/A01.json");
+		String oinkJson = loadResourceAsString("/example-messages/oinkrequestmessages/A01.json");
 		OinkMessageConverter conv = new OinkMessageConverter();
 		OINKRequestMessage mockRequest = conv.fromJsonString(oinkJson);
 
@@ -117,10 +130,10 @@ public class ITHl7v2ToRabbitRouteWithoutProcessors extends Hl7ITSupport {
 	public void testA05MessageRoutesOntoRabbit() throws Exception {
 
 		// Choose a message to send
-		Message m = Hl7Helper.loadHl7Message("/hl7v2/A05.txt");
+		Message m = Hl7TestUtils.loadHl7Message("/example-messages/hl7v2/A05.txt");
 
 		// Prepare mocks
-		String oinkJson = loadResourceAsString("/oinkrequestmessages/A05.json");
+		String oinkJson = loadResourceAsString("/example-messages/oinkrequestmessages/A05.json");
 		OinkMessageConverter conv = new OinkMessageConverter();
 		OINKRequestMessage mockRequest = conv.fromJsonString(oinkJson);
 
@@ -141,10 +154,10 @@ public class ITHl7v2ToRabbitRouteWithoutProcessors extends Hl7ITSupport {
 	public void testA28MessageRoutesOntoRabbit() throws Exception {
 
 		// Choose a message to send
-		Message m = Hl7Helper.loadHl7Message("/hl7v2/A28-1.txt");
+		Message m = Hl7TestUtils.loadHl7Message("/example-messages/hl7v2/A28-1.txt");
 
 		// Prepare mocks
-		String oinkJson = loadResourceAsString("/oinkrequestmessages/A28-1.json");
+		String oinkJson = loadResourceAsString("/example-messages/oinkrequestmessages/A28-1.json");
 		OinkMessageConverter conv = new OinkMessageConverter();
 		OINKRequestMessage mockRequest = conv.fromJsonString(oinkJson);
 
@@ -153,9 +166,9 @@ public class ITHl7v2ToRabbitRouteWithoutProcessors extends Hl7ITSupport {
 		// Check mocks
 		verify(a01Processor, never()).process(any(Message.class),
 				any(Exchange.class));
-		verify(a05Processor, never()).process(any(Message.class),
+		verify(a28Processor, never()).process(any(Message.class),
 				any(Exchange.class));
-		verify(a28Processor).process(any(Message.class), any(Exchange.class));
+		verify(a05Processor).process(any(Message.class), any(Exchange.class));
 		verify(a31Processor, never()).process(any(Message.class),
 				any(Exchange.class));
 
@@ -166,10 +179,10 @@ public class ITHl7v2ToRabbitRouteWithoutProcessors extends Hl7ITSupport {
 	public void testA31MessageRoutesOntoRabbit() throws Exception {
 
 		// Choose a message to send
-		Message m = Hl7Helper.loadHl7Message("/hl7v2/A31-2.txt");
+		Message m = Hl7TestUtils.loadHl7Message("/example-messages/hl7v2/A31-2.txt");
 
 		// Prepare mocks
-		String oinkJson = loadResourceAsString("/oinkrequestmessages/A31-2.json");
+		String oinkJson = loadResourceAsString("/example-messages/oinkrequestmessages/A31-2.json");
 		OinkMessageConverter conv = new OinkMessageConverter();
 		OINKRequestMessage mockRequest = conv.fromJsonString(oinkJson);
 
@@ -178,11 +191,11 @@ public class ITHl7v2ToRabbitRouteWithoutProcessors extends Hl7ITSupport {
 		// Check mocks
 		verify(a01Processor, never()).process(any(Message.class),
 				any(Exchange.class));
-		verify(a05Processor, never()).process(any(Message.class),
+		verify(a31Processor, never()).process(any(Message.class),
 				any(Exchange.class));
 		verify(a28Processor, never()).process(any(Message.class),
 				any(Exchange.class));
-		verify(a31Processor).process(any(Message.class), any(Exchange.class));
+		verify(a05Processor).process(any(Message.class), any(Exchange.class));
 	}
 
 	private void testRouteFilter(Message m,
@@ -199,7 +212,7 @@ public class ITHl7v2ToRabbitRouteWithoutProcessors extends Hl7ITSupport {
 	}
 
 	@Test
-	public void testA04MessageDoesNotRouteOntoRabbit() throws Exception {
+	public void testA40MessageDoesNotRouteOntoRabbit() throws Exception {
 		// Init Rabbit listener
 		Channel c = getChannel(rabbitFactory);
 		String queueName = setupRabbitQueue(c,
@@ -207,7 +220,7 @@ public class ITHl7v2ToRabbitRouteWithoutProcessors extends Hl7ITSupport {
 				getProperty("rabbit.outboundRoutingKey"));
 
 		// Choose a message to send
-		Message m = Hl7Helper.loadHl7Message("/hl7v2/A04.txt");
+		Message m = Hl7TestUtils.loadHl7Message("/example-messages/hl7v2/A40-1.txt");
 
 		// Send message
 		String host = getProperty("hl7v2.host");

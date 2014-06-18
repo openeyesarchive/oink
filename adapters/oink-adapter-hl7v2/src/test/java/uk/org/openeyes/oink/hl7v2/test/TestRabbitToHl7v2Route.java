@@ -19,13 +19,15 @@ package uk.org.openeyes.oink.hl7v2.test;
 import static org.junit.Assert.*;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Map;
+import java.util.Properties;
 
 import org.apache.camel.CamelContext;
-import org.hl7.fhir.instance.model.AtomEntry;
-import org.hl7.fhir.instance.model.AtomFeed;
-import org.hl7.fhir.instance.model.Patient;
+import org.junit.Assume;
 import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,21 +45,31 @@ import uk.org.openeyes.oink.domain.OINKRequestMessage;
 import uk.org.openeyes.oink.domain.OINKResponseMessage;
 import uk.org.openeyes.oink.messaging.OinkMessageConverter;
 import uk.org.openeyes.oink.proxy.test.support.RabbitClient;
-import uk.org.openeyes.oink.test.Hl7Helper;
+import uk.org.openeyes.oink.test.Hl7TestUtils;
 import uk.org.openeyes.oink.test.Hl7Server;
+import uk.org.openeyes.oink.test.RabbitTestUtils;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration()
-public class ITRabbitToHl7v2Route extends Hl7ITSupport {
+public class TestRabbitToHl7v2Route extends Hl7TestSupport {
 
 	@Autowired
 	CamelContext ctx;
+	
+	@BeforeClass
+	public static void before() throws IOException {
+		Properties props = new Properties();
+		InputStream is = TestHl7v2ToRabbitRoute.class.getResourceAsStream("/hl7v2-test.properties");
+		props.load(is);
+		Assume.assumeTrue("No RabbitMQ Connection detected", RabbitTestUtils.isRabbitMQAvailable(props));
+	}
 	
 	@Before
 	public void setUp() throws IOException {
 		setProperties("/hl7v2-test.properties");
 	}
 
+	@Ignore
 	@Test
 	public void testAnIncomingPatientSearchByHSIDNumberIsMapped()
 			throws Exception {
@@ -80,7 +92,7 @@ public class ITRabbitToHl7v2Route extends Hl7ITSupport {
 					Map<String, Object> theMetadata)
 					throws ReceivingApplicationException, HL7Exception {
 				try {
-					Message m = Hl7Helper.loadHl7Message("/oinkrequestmessages/ADR-A19.json");
+					Message m = Hl7TestUtils.loadHl7Message("/example-messages/hl7v2/ADR-A19.txt");
 					return m;
 				} catch (IOException e) {
 					throw new HL7Exception(e);
@@ -126,7 +138,7 @@ public class ITRabbitToHl7v2Route extends Hl7ITSupport {
 		assertEquals(200, response.getStatus());
 		
 		// Check contents of the OinkResponseMessage
-		String expectedJson = loadResourceAsString("/oinkrequestmessages/ADR-A19.json");
+		String expectedJson = loadResourceAsString("/example-messages/oinkrequestmessages/ADR-A19.json");
 		assertEquals(expectedJson, conv.toJsonString(response));
 		
 	}
