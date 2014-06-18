@@ -82,8 +82,7 @@ public class Q22K22Processor extends QueryResponseProcessor {
 	@Override
 	public void processResourcesInResponseBundle(AtomFeed bundle, Exchange ex)
 			throws OinkException {
-		// TODO Auto-generated method stub
-		
+		// Do nothing return bundle as is
 	}
 	
 
