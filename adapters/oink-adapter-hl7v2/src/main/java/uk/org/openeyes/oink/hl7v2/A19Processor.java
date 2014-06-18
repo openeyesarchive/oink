@@ -40,7 +40,7 @@ import ca.uhn.hl7v2.model.v24.datatype.XCN;
 import ca.uhn.hl7v2.model.v24.message.QRY_A19;
 import ca.uhn.hl7v2.model.v24.segment.QRD;
 
-public class A19Processor extends Hl7v2Processor {
+public class A19Processor extends QueryResponseProcessor {
 
 	private final static Logger log = LoggerFactory.getLogger(A19Processor.class);
 	
@@ -96,81 +96,9 @@ public class A19Processor extends Hl7v2Processor {
 
 		return msg;
 	}
-	
-	private String getQueryParameterValue(OINKRequestMessage request, String key) {
-		List<NameValuePair> params = URLEncodedUtils.parse(
-				request.getParameters(), Charset.forName("UTF-8"));
-		for (NameValuePair param : params) {
-			if (param.getName().equals(key)) {
-				String value = param.getValue();
-				return value;
-			}
-		}
-		return null;
-	}
-
-	private boolean isSearchByIdentifierNumber(OINKRequestMessage request) {
-		String idvalue = getQueryParameterValue(request, "identifier");
-		return idvalue != null;
-	}
-	
-	private String extractIdentifierValue(OINKRequestMessage request) {
-		String value = getQueryParameterValue(request, "identifier");
-		if (value == null) {
-			return null;
-		}
-		String[] split = value.split("\\|");
-		if (split.length == 2) {
-			String system = split[1];
-			return system;
-		}
-		return null;
-		
-	}		
-	
-	private String extractSystem(OINKRequestMessage request) {
-		String value = getQueryParameterValue(request, "identifier");
-		if (value == null) {
-			return null;
-		}
-		String[] split = value.split("\\|");
-		if (split.length == 2) {
-			String system = split[0];
-			return system;
-		}
-		return null;
-		
-	}	
-	
-	private boolean isSearchByNHSNumber(OINKRequestMessage request) {
-		String idvalue = getQueryParameterValue(request, "identifier");
-		if (idvalue != null) {
-			return idvalue.startsWith("NHS");
-		}
-		return false;
-	}
-	
-	private boolean isSearchByFamilyName(OINKRequestMessage request) {
-		String idvalue = getQueryParameterValue(request, "family");
-		return idvalue != null;	
-	}
-	
-	private String extractNHSNumber(OINKRequestMessage request) {
-		String value = getQueryParameterValue(request, "identifier");
-		if (value == null) {
-			return null;
-		}
-		String[] split = value.split("\\|");
-		if (split.length == 2) {
-			String nhsNumber = split[1];
-			return nhsNumber;
-		}
-		return null;
-		
-	}
 
 	@Override
-	public void processResourcesInBundle(AtomFeed bundle, Exchange ex) {
+	public void processResourcesInResponseBundle(AtomFeed bundle, Exchange ex) {
 		OINKResponseMessage resp = new OINKResponseMessage();
 		resp.setStatus(200);
 		resp.setBody(new FhirBody(bundle));

@@ -120,7 +120,7 @@ public abstract class Hl7v2Processor {
 		AtomFeed bundle = fhirConverter.fromXmlToBundle(fhirXml);
 
 		// Process FHIR bundle entries
-		processResourcesInBundle(bundle, ex);
+		processResourcesInResponseBundle(bundle, ex);
 
 		log.debug("Processed a message..DONE");
 	}
@@ -129,7 +129,7 @@ public abstract class Hl7v2Processor {
 	 * Takes a Bundle and processes its components as individual FHIR Rest
 	 * Resources
 	 */
-	public abstract void processResourcesInBundle(AtomFeed bundle, Exchange ex)
+	public abstract void processResourcesInResponseBundle(AtomFeed bundle, Exchange ex)
 			throws OinkException;
 
 }

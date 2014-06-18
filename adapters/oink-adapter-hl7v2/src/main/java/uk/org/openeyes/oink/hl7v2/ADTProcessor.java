@@ -58,7 +58,7 @@ public class ADTProcessor extends Hl7v2Processor {
 			.getLogger(ADTProcessor.class);
 
 	@Override
-	public void processResourcesInBundle(AtomFeed bundle, Exchange ex)
+	public void processResourcesInResponseBundle(AtomFeed bundle, Exchange ex)
 			throws OinkException {
 
 		// Extract Patient from Bundle
