@@ -31,7 +31,6 @@
 		<module>adapters</module>
 		<module>platforms</module>
 		<module>tests</module>
-		<module>oink-datagen</module>
 	</modules>
 	<scm>
 		<connection>scm:git:git://github.com/openeyes/oink.git</connection>
