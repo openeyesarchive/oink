@@ -27,6 +27,7 @@ import org.apache.camel.Exchange;
 import org.junit.Assume;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,6 +60,7 @@ import uk.org.openeyes.oink.test.RabbitTestUtils;
  * @author Oliver Wilkie
  */
 
+@Ignore
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration()
 public class TestHl7v2ToRabbitRouteWithoutProcessors extends Hl7TestSupport {
