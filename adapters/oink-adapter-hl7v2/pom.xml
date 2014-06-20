@@ -132,8 +132,8 @@
 			<groupId>org.kubek2k</groupId>
 			<artifactId>springockito</artifactId>
 			<scope>test</scope>
-			<version>1.0.10-SNAPSHOT</version>
-		</dependency>
+			<version>1.0.9</version>
+		</dependency>		
 		<dependency>
 			<groupId>org.skyscreamer</groupId>
 			<artifactId>jsonassert</artifactId>

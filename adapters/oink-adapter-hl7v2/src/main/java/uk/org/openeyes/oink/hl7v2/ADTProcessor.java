@@ -78,7 +78,7 @@ public class ADTProcessor extends Hl7v2Processor {
 	private String postResourceAndReferencedResources(Patient p,
 			AtomFeed bundle, Exchange ex) throws OinkException {
 
-		log.debug("Posting Patient and all associated resources if necessary");
+		log.debug("Posting Patient and all associated resources as necessary");
 
 		// Handle Care Providers
 		for (ResourceReference resourceRef : p.getCareProvider()) {

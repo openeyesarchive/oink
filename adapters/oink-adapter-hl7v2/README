@@ -51,4 +51,5 @@ rabbit.defaultExchange=test
 rabbit.outboundRoutingKey=openeyes.proxy.in 	# The routing key for PAS --> OpenEyes
 rabbit.inboundRoutingKey=pas.hl7v2.in 			# The routing key for OpenEyes messages --> PAS
 rabbit.outboundResponseRoutingKey=pas.hl7v2.response # The reply routing key for PAS --> OpenEyes
-rabbit.deadLetterRoutingKey=pas.hl7v2.deadletters 
+rabbit.inboundDeadLetterRoutingKey=pas.hlv2.deadLetters.in
+rabbit.deadLetterRoutingKey=pas.hlv2.deadLetters.out

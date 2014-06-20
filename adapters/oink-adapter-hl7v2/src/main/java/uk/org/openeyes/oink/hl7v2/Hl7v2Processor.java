@@ -94,11 +94,14 @@ public abstract class Hl7v2Processor {
 	}
 
 	public void process(@Body Message message, Exchange ex) throws Exception {
+		
+		log.debug("Processing incoming HL7v2 message of type: "+message.getName());
 
 		// Validate Hl7v2 message
 		hl7v2Validator.validate(message);
 
 		// Convert to HL7v2 XML format
+		log.debug("Converting incoming HL7v2 message to XML format");
 		String hl7Xml = hl7v2Converter.toXml(message);
 		
 		if (hl7Xml == null) {
@@ -110,6 +113,7 @@ public abstract class Hl7v2Processor {
 		InputStream xslIs = new ByteArrayInputStream(xsl);
 
 		// Map to FHIR XML format
+		log.debug("Converting HL7v2 XML to FHIR XML");
 		String fhirXml = transformer.transform(hl7Xml,
 				xslIs);
 		
@@ -117,12 +121,14 @@ public abstract class Hl7v2Processor {
 		fhirXml = fhirXml.replaceAll("<[a-zA-Z0-9]*/>", "");
 
 		// Convert to FHIR Bundle
+		log.debug("Converting FHIR XML to FHIR Bundle");
 		AtomFeed bundle = fhirConverter.fromXmlToBundle(fhirXml);
 
 		// Process FHIR bundle entries
+		log.debug("Processing contents of newly created FHIR Bundle");
 		processResourcesInBundle(bundle, ex);
 
-		log.debug("Processed a message..DONE");
+		log.debug("Finished processing incoming HL7v2 message of type: "+message.getName());
 	}
 
 	/**

@@ -59,12 +59,27 @@
 	<bean id="unsupportedException" class="uk.org.openeyes.oink.hl7v2.UnsupportedHl7v2MessageException"/>
 
 	<camelContext xmlns="http://camel.apache.org/schema/spring">
+	
+		<!-- Accept incoming HL7 messages from TCP -->
+		<route id="hl7-tcp-consumer">
+			<from uri="mina2:tcp://{{hl7v2.host}}:{{hl7v2.port}}?sync=false&amp;codec=#hl7codec" />
+			<unmarshal ref="hl7dataformat" />
+			<to uri="direct:hl7-consumer"/>
+		</route>
+
+		<!-- Accept incoming HL7 messages from Rabbit -->
+		<route id="hl7-rabbit-consumer">
+			<from uri="rabbitmq://{{rabbit.host}}:{{rabbit.port}}/{{rabbit.defaultExchange}}?vhost={{rabbit.vhost}}&amp;username={{rabbit.username}}&amp;password={{rabbit.password}}&amp;routingKey={{rabbit.inboundDeadLetterRoutingKey}}&amp;autoDelete=false" />
+			<convertBodyTo type="java.lang.String"/>
+			<unmarshal ref="hl7dataformat" />
+			<to uri="direct:hl7-consumer"/>						
+		</route>
+
+		<!-- Handle incoming Hl7 messages -->
 
 		<!-- Accept incoming HL7 messages -->
 		<route id="hl7-consumer">
-			<from
-				uri="mina2:tcp://{{hl7v2.host}}:{{hl7v2.port}}?sync=false&amp;codec=#hl7codec" />
-			<unmarshal ref="hl7dataformat" />
+			<from uri="direct:hl7-consumer"/>
 			<onException>
 				<exception>java.lang.Exception</exception>
 				<handled>
