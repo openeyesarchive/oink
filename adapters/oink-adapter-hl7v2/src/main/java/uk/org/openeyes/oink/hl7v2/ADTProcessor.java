@@ -63,6 +63,12 @@ public class ADTProcessor extends Hl7v2Processor {
 
 		// Extract Patient from Bundle
 		Patient patient = extractPatient(bundle);
+		
+		if (patient == null) {
+			final String errorMsg = "No Patient Resource was found inside the generated bundle";
+			log.error(errorMsg);
+			throw new OinkException(errorMsg);
+		}
 
 		String location = postResourceAndReferencedResources(patient, bundle,
 				ex);
