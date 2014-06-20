@@ -1,0 +1,3 @@
+MSH|^~\&|||||20140620150000.955+0100||ADT^A01^ADT_A01|201|P|2.4|
+PID|||086539314144497010744^^^^hosnum~153-199-4953^^^^urn:nhs-uk:identity:nhsno||Cantrel^Alfie^^^Mr||20140609|M|||137 Grange Road^^Lerwick^^ZE3 7KG^Shetland
+PD1|||DOWNS WAY MEDICAL PRACTICE^^G82809^^^^urn:nhs-uk:ods:gpracc|G8234803^MAL^BIGGS^^^DR^^^^^^^urn:nhs-uk:ods:gpc

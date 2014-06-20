@@ -16,8 +16,13 @@
  *******************************************************************************/
 package uk.org.openeyes.oink.hl7v2;
 
+import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
+
+import org.apache.commons.io.IOUtils;
 import org.custommonkey.xmlunit.XMLAssert;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Assert;
@@ -25,6 +30,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
+import uk.org.openeyes.oink.xml.XmlTransformer;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.v24.message.ADT_A01;
@@ -67,6 +73,23 @@ public class TestMessageXMLConverter extends Hl7TestSupport {
 		String gotXml = converter.toXml(m);
 		XMLUnit.setIgnoreWhitespace(true);
 		XMLAssert.assertXMLEqual(expectedXml, gotXml);		
+	}
+	
+	
+	@Test
+	public void testCanHandleGivenPopeMessage() throws Exception {
+		Message msg = loadMessage("/example-messages/hl7v2/A01-2.txt");
+		Hl7v2XmlConverter conv = new Hl7v2XmlConverter();
+		String xml = conv.toXml(msg);
+		
+		InputStream fis = getClass().getResourceAsStream("/uk/org/openeyes/oink/adapter/hl7v2/A01.xsl");
+		byte[] xsl = IOUtils.toByteArray(fis);
+		InputStream xslIs = new ByteArrayInputStream(xsl);
+
+		// Map to FHIR XML format
+		XmlTransformer transformer = new XmlTransformer();
+		String fhirXml = transformer.transform(xml,xslIs);
+
 	}
 	
 }
