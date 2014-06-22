@@ -93,30 +93,5 @@ public class TestHl7v2ToRabbitRoute extends Hl7TestSupport {
 		server.stop();
 		
 	}
-	
-	@Ignore
-	@Test
-	public void testIncomingA28IsProcessedAndRouted() throws HL7Exception, IOException, LLPException, InterruptedException, JSONException {
-		testIncomingMessageIsProcessedAndRouted("/example-messages/hl7v2/A28-1.txt", "/example-messages/oinkrequestmessages/A28-1.json");
-	}
-	
-	@Ignore
-	@Test
-	public void testIncomingA01IsProcessedAndRouted() throws HL7Exception, IOException, LLPException, InterruptedException, JSONException {
-		testIncomingMessageIsProcessedAndRouted("/hl7v2/A01.txt", "/oinkrequestmessages/A01.json");
-	}
-
-	@Ignore
-	@Test
-	public void testIncomingA05IsProcessedAndRouted() throws HL7Exception, IOException, LLPException, InterruptedException, JSONException {
-		testIncomingMessageIsProcessedAndRouted("/hl7v2/A05.txt", "/oinkrequestmessages/A05.json");
-	}
-
-	@Ignore
-	@Test
-	public void testIncomingA31IsProcessedAndRouted() throws HL7Exception, IOException, LLPException, InterruptedException, JSONException {
-		testIncomingMessageIsProcessedAndRouted("/hl7v2/A31-2.txt", "/oinkrequestmessages/A31-2.json");
-	}
-	
 
 }

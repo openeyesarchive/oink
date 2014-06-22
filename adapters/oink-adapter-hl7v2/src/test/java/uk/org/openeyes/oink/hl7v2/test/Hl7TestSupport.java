@@ -55,39 +55,6 @@ public abstract class Hl7TestSupport {
 
 	private Properties properties;
 	
-	public void testIncomingMessageIsProcessedAndRouted(String hl7msgPath, String oinkmsgPath) throws HL7Exception, IOException, LLPException, InterruptedException, JSONException {
-		// Choose a message to send
-		Message m = Hl7TestUtils.loadHl7Message(hl7msgPath);
-		
-		// Prepare RabbitServer
-		RabbitServer server = new RabbitServer(getProperty("rabbit.host"),
-				Integer.parseInt(getProperty("rabbit.port")),
-				getProperty("rabbit.vhost"), getProperty("rabbit.username"),
-				getProperty("rabbit.password"));
-		server.setConsumingDetails(getProperty("rabbit.defaultExchange"), getProperty("rabbit.outboundRoutingKey"));
-		server.start();
-		
-		// Send HL7v2 message
-		String host = getProperty("hl7v2.host");
-		int port = Integer.parseInt(getProperty("hl7v2.port"));
-		Message responseMessage = Hl7Client.send(m, host, port);
-		
-		Thread.sleep(1000);
-		
-		// Check received Rabbit message
-		byte[] receivedMessage = server.getReceivedMessage();
-		server.stop();
-		
-		assertNotNull(receivedMessage);
-		
-		OinkMessageConverter conv = new OinkMessageConverter();
-		
-		OINKRequestMessage request = conv.fromByteArray(receivedMessage);		
-		String expectedJson = loadResourceAsString(oinkmsgPath);
-		String actualJson = conv.toJsonString(request);		
-		JSONAssert.assertEquals(expectedJson,actualJson, false);
-	}
-
 	protected void setProperties(String path) throws IOException {
 		// Load properties
 		properties = new Properties();
