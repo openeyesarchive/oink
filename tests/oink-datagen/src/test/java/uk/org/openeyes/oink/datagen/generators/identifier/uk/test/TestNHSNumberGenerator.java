@@ -57,7 +57,7 @@ public class TestNHSNumberGenerator {
 		
 		for(Identifier i : nos) {
 			logger.debug(i.getValue());
-			assertEquals(NHSNumber.URI, i.getCodeSystem());
+			assertEquals(NHSNumber.getURI(), i.getCodeSystem());
 			assertEquals(12, i.getValue().length());
 		}
 	}

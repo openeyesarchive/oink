@@ -17,9 +17,11 @@
 package uk.org.openeyes.oink.datagen.generators.person.uk;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 import java.util.Random;
 import java.util.UUID;
 
@@ -40,6 +42,23 @@ import uk.org.openeyes.oink.datagen.generators.person.PersonGenerator;
  *
  */
 public class PersonGeneratorImpl implements PersonGenerator {
+	
+	private static String URIHosNum = null;
+	public static String getURIHosnum() {
+		if(URIHosNum == null) {
+			InputStream is = PersonGeneratorImpl.class.getClassLoader().getResourceAsStream("oink-datagen-uk-system-identifiers.properties");
+			Properties p = new Properties();
+			try {
+				p.load(is);
+				is.close();
+				URIHosNum = p.getProperty("oink.datagen.uk.identifiers.mrn");
+			} catch (IOException e) {
+				URIHosNum = "urn:nhs-uk:identity:mrn";
+			}
+		}
+		return URIHosNum;
+	}
+	
 	public List<Person> generate(int quantity) {
 		
 		if(givenNamesMale == null) {
@@ -116,7 +135,7 @@ public class PersonGeneratorImpl implements PersonGenerator {
 			// set hospital number
 			person.setIdentifiers(new ArrayList<Identifier>());
 			String hosNumString = UUID.randomUUID().toString().replaceAll("\\D", "");
-			Identifier hosNum = new Identifier("primary", "hosnum", hosNumString);
+			Identifier hosNum = new Identifier("primary", getURIHosnum(), hosNumString);
 			person.getIdentifiers().add(hosNum);
 			
 			// set NHS no

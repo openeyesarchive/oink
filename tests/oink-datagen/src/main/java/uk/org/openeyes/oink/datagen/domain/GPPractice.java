@@ -16,13 +16,31 @@
  *******************************************************************************/
 package uk.org.openeyes.oink.datagen.domain;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
+
+import uk.org.openeyes.oink.datagen.domain.identifier.NHSNumber;
+
 /**
  * This class represents a GP practice.
  *
  */
 public class GPPractice extends Organisation {
 
-	// TODO - update with real URI on HSCIC advice
-	public static final String URI = "urn:nhs-uk:ods:gpracc";
-	
+	private static String URI = null;
+	public static String getURI() {
+		if(URI == null) {
+			InputStream is = GPPractice.class.getClassLoader().getResourceAsStream("oink-datagen-uk-system-identifiers.properties");
+			Properties p = new Properties();
+			try {
+				p.load(is);
+				is.close();
+				URI = p.getProperty("oink.datagen.uk.identifiers.gppractice");
+			} catch (IOException e) {
+				URI = "urn:nhs-uk:ods:gpracc";
+			}
+		}
+		return URI;
+	}	
 }

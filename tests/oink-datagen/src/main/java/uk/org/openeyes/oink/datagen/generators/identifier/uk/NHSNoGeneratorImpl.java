@@ -62,7 +62,7 @@ public class NHSNoGeneratorImpl implements IdentifierGenerator {
 		
 		List<NHSNumber> nhsNos = generateNHSNo(quantity);
 		for(NHSNumber nhsNo : nhsNos) {
-			nos.add(new Identifier(NHSNumber.URI, nhsNo.toString()));
+			nos.add(new Identifier(NHSNumber.getURI(), nhsNo.toString()));
 		}
 		
 		return nos;

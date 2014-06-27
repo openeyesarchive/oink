@@ -78,7 +78,7 @@ public class PractitionerGeneratorImpl implements PractitionerGenerator {
 		for (NHSPractice np : nps.values()) {
 			GPPractice gpr = new GPPractice();
 			
-			gpr.setIdentifier(new Identifier(GPPractice.URI, np
+			gpr.setIdentifier(new Identifier(GPPractice.getURI(), np
 					.getOrganisationCode()));
 			gpr.setAddress(new Address());
 			gpr.getAddress().setLine1(np.getAddressLine1());
@@ -105,7 +105,7 @@ public class PractitionerGeneratorImpl implements PractitionerGenerator {
 			}
 			
 			GP gp = new GP();
-			gp.setIdentifier(new Identifier(GP.URI, npr
+			gp.setIdentifier(new Identifier(GP.getURI(), npr
 					.getGeneralPractitionerCode()));
 			gp.setAddress(new Address());
 			gp.getAddress().setLine1(npr.getAddressLine1());

@@ -16,13 +16,31 @@
  *******************************************************************************/
 package uk.org.openeyes.oink.datagen.domain.identifier;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
+
 /**
  * This class represents a UK NHS number.
  *
  */
 public class NHSNumber {
 	
-	public static final String URI = "urn:nhs-uk:identity:nhsno";
+	private static String URI = null;
+	public static String getURI() {
+		if(URI == null) {
+			InputStream is = NHSNumber.class.getClassLoader().getResourceAsStream("oink-datagen-uk-system-identifiers.properties");
+			Properties p = new Properties();
+			try {
+				p.load(is);
+				is.close();
+				URI = p.getProperty("oink.datagen.uk.identifiers.nhsno");
+			} catch (IOException e) {
+				URI = "urn:nhs-uk:identity:nhsno";
+			}
+		}
+		return URI;
+	}
 	
 	private int checkNumber;
     private String value;

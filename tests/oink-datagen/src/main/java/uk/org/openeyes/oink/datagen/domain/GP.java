@@ -16,13 +16,29 @@
  *******************************************************************************/
 package uk.org.openeyes.oink.datagen.domain;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
+
 /**
  * This class represents a physician in the UK - a General Practitioner.
  *
  */
 public class GP extends Practitioner {
 
-	// TODO - update with real URI on HSCIC advice
-	public static final String URI = "urn:nhs-uk:ods:gpc";
-
+	private static String URI = null;
+	public static String getURI() {
+		if(URI == null) {
+			InputStream is = GP.class.getClassLoader().getResourceAsStream("oink-datagen-uk-system-identifiers.properties");
+			Properties p = new Properties();
+			try {
+				p.load(is);
+				is.close();
+				URI = p.getProperty("oink.datagen.uk.identifiers.gp");
+			} catch (IOException e) {
+				URI = "urn:nhs-uk:ods:gpc";
+			}
+		}
+		return URI;
+	}	
 }
