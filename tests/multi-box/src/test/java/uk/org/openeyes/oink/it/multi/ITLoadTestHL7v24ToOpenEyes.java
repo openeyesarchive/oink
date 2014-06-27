@@ -38,6 +38,7 @@ import ca.uhn.hl7v2.app.Initiator;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.v24.message.ACK;
 import ca.uhn.hl7v2.model.v24.message.ADT_A01;
+import ca.uhn.hl7v2.model.v24.segment.PID;
 import ca.uhn.hl7v2.parser.Parser;
 import ca.uhn.hl7v2.validation.impl.NoValidation;
 
@@ -70,7 +71,7 @@ public class ITLoadTestHL7v24ToOpenEyes {
 		PersonGenerator g = PersonGeneratorFactory.getInstance("uk");
 
 		int quantity = Integer.parseInt(properties.getProperty("test.quantity",
-				"1000"));
+				"20"));
 		int batchSize = 100;
 
 		MPIImpl mpi = new MPIImpl();
@@ -146,9 +147,7 @@ public class ITLoadTestHL7v24ToOpenEyes {
 				BasicProperties persistentBasic = bob.priority(0)
 						.contentType("text/plain; utf8").build();
 				channel.basicPublish("", queueNameIn, persistentBasic,
-						adtMessageString.getBytes("utf8"));
-                
-                break;
+						adtMessageString.getBytes("utf8"));                
 			}
             
 			logger.debug("{}...", i);
@@ -163,18 +162,12 @@ public class ITLoadTestHL7v24ToOpenEyes {
 			String message = new String(delivery.getBody());
 			messagesConsumer++;
             
-			Message m = p.parse(message);
+            Message m = p.parse(message);
             
-            logger.debug("-------------------------------------------------------------->");
-            logger.debug("-------------------------------------------------------------->");
-            logger.debug(message);
-            logger.debug("===============================================================");
-            logger.debug(m.toString());
-            logger.debug("--------------------------------------------------------------<");
-            logger.debug("--------------------------------------------------------------<");
-
-
-			ACK response = (ACK) initiator.sendAndReceive(m);
+            PID pid = (PID)m.get("PID");
+            logger.debug("[{}] {} - {}", messagesConsumer, pid.getPid3_PatientIdentifierList(0), pid.getPid5_PatientName(0));
+            
+            ACK response = (ACK) initiator.sendAndReceive(m);
 
 			if (!response.getMSA().getAcknowledgementCode().getValue()
 					.equalsIgnoreCase("AA")) {
