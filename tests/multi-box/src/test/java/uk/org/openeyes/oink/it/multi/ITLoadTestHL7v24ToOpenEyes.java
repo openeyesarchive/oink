@@ -122,8 +122,17 @@ public class ITLoadTestHL7v24ToOpenEyes {
 		int pageSize = 100;
 		GetAllContext context = mpi.getRepo().getAllInit();
 
-		logger.debug("Publishing ADT messages ...");
 
+        HapiContext hapiContext = new DefaultHapiContext();
+		hapiContext.setValidationContext(new NoValidation());
+		ca.uhn.hl7v2.app.Connection hl7v2Conn = hapiContext.newClient(
+				(String) properties.get("hl7v2.host"), (Integer) Integer
+						.parseInt(properties.getProperty("hl7v2.port")), false);
+		Initiator initiator = hl7v2Conn.getInitiator();
+        Parser p = hapiContext.getPipeParser();
+
+        logger.debug("Publishing ADT messages ...");
+        
 		for (int i = 0; i < (totalSize / pageSize); i++) {
 
 			List<Person> patients = mpi.getRepo().getAllByPage(context, i,
@@ -131,26 +140,20 @@ public class ITLoadTestHL7v24ToOpenEyes {
 
 			for (Person patient : patients) {
 				ADT_A01 adt = adapter.convert(patient);
-				String adtMessageString = adt.toString();
+                String adtMessageString = p.encode(adt);
 
 				AMQP.BasicProperties.Builder bob = new AMQP.BasicProperties.Builder();
 				BasicProperties persistentBasic = bob.priority(0)
-						.contentType("text/plain; charset=utf8").build();
+						.contentType("text/plain; utf8").build();
 				channel.basicPublish("", queueNameIn, persistentBasic,
-						adtMessageString.getBytes());
+						adtMessageString.getBytes("utf8"));
+                
+                break;
 			}
-
+            
 			logger.debug("{}...", i);
 		}
 
-		HapiContext hapiContext = new DefaultHapiContext();
-		hapiContext.setValidationContext(new NoValidation());
-		ca.uhn.hl7v2.app.Connection hl7v2Conn = hapiContext.newClient(
-				(String) properties.get("hl7v2.host"), (Integer) Integer
-						.parseInt(properties.getProperty("hl7v2.port")), false);
-		Initiator initiator = hl7v2Conn.getInitiator();
-		Parser p = hapiContext.getGenericParser();
-		
 		QueueingConsumer consumer = new QueueingConsumer(channel);
 		channel.basicConsume(queueNameIn, true, consumer);
 
@@ -159,8 +162,17 @@ public class ITLoadTestHL7v24ToOpenEyes {
 			QueueingConsumer.Delivery delivery = consumer.nextDelivery();
 			String message = new String(delivery.getBody());
 			messagesConsumer++;
-
+            
 			Message m = p.parse(message);
+            
+            logger.debug("-------------------------------------------------------------->");
+            logger.debug("-------------------------------------------------------------->");
+            logger.debug(message);
+            logger.debug("===============================================================");
+            logger.debug(m.toString());
+            logger.debug("--------------------------------------------------------------<");
+            logger.debug("--------------------------------------------------------------<");
+
 
 			ACK response = (ACK) initiator.sendAndReceive(m);
 
