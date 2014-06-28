@@ -184,7 +184,7 @@ public class ITLoadTestHL7v24ToOpenEyes {
 
 			DateTime dtNow = new DateTime();
 			Interval interval = new Interval(dtStart, dtNow);
-			double rate = ((double) messagesConsumer)
+			double rate = ((double) messagesProcessed.get())
 					/ (((double) interval.toDurationMillis()) / 1000.0);
 
 			logger.debug("[{}] {} msgs/s {} - {}", messagesProcessed.get(), String.format("%1$,.1f", rate),
@@ -236,6 +236,7 @@ public class ITLoadTestHL7v24ToOpenEyes {
 		mpi.stop();
 
 		logger.info("Patients: {}", totalSize);
+		logger.info("Processed {} messages in {} seconds", messagesProcessed.get(), String.format("%1$,.1f",((double)interval.toDurationMillis()) / 1000.0));
 		logger.info("Rate: {} messages/sec", String.format("%1$,.1f", rate));
 	}
 }
