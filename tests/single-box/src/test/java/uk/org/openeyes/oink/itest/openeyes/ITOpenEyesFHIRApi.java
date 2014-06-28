@@ -45,6 +45,7 @@ import ca.uhn.fhir.model.dstu.composite.HumanNameDt;
 import ca.uhn.fhir.model.dstu.composite.IdentifierDt;
 import ca.uhn.fhir.model.dstu.composite.ResourceReferenceDt;
 import ca.uhn.fhir.model.dstu.resource.Patient;
+import ca.uhn.fhir.model.dstu.resource.Practitioner;
 import ca.uhn.fhir.model.dstu.valueset.AddressUseEnum;
 import ca.uhn.fhir.model.dstu.valueset.AdministrativeGenderCodesEnum;
 import ca.uhn.fhir.model.dstu.valueset.ContactSystemEnum;
@@ -74,7 +75,7 @@ public class ITOpenEyesFHIRApi {
 
 		logger.info("Generating patients...");
 		
-		List<Person> persons = g.generate(10);
+		List<Person> persons = g.generate(100);
 		List<Patient> patients = new ArrayList<Patient>();
 
 		for (Person p : persons) {
@@ -121,12 +122,12 @@ public class ITOpenEyesFHIRApi {
 			addr.setZip(p.getAddresses().get(0).getZipCode());
 			addr.setCountry("United Kingdom");
 
-			ResourceReferenceDt cp = patient.addCareProvider();
+			/*ResourceReferenceDt cp = patient.addCareProvider();
 			cp.setReference("Practitioner/gp-1");
 
 			ResourceReferenceDt ref = new ResourceReferenceDt();
 			ref.setReference("Organization/prac-1");
-			patient.setManagingOrganization(ref);
+			patient.setManagingOrganization(ref);*/
 
 			patients.add(patient);
 		}
