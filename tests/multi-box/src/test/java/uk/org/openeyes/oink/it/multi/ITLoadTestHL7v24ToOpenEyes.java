@@ -20,7 +20,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Properties;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
 
+import org.joda.time.DateTime;
+import org.joda.time.Interval;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -33,8 +39,10 @@ import uk.org.openeyes.oink.datagen.generators.person.PersonGeneratorFactory;
 import uk.org.openeyes.oink.datagen.mocks.mpi.MPIImpl;
 import uk.org.openeyes.oink.datagen.mocks.mpi.MPIRepo.GetAllContext;
 import ca.uhn.hl7v2.DefaultHapiContext;
+import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.HapiContext;
 import ca.uhn.hl7v2.app.Initiator;
+import ca.uhn.hl7v2.llp.LLPException;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.v24.message.ACK;
 import ca.uhn.hl7v2.model.v24.message.ADT_A01;
@@ -105,13 +113,13 @@ public class ITLoadTestHL7v24ToOpenEyes {
 
 		String queueNameIn = properties.getProperty("rabbitmq.routingKey.in",
 				"oink.it.in");
-		String queueNameError = properties.getProperty(
+		final String queueNameError = properties.getProperty(
 				"rabbitmq.routingKey.error", "oink.it.err");
 
 		ConnectionFactory factory = new ConnectionFactory();
 		factory.setUri(connectionString);
 		Connection connection = factory.newConnection();
-		Channel channel = connection.createChannel();
+		final Channel channel = connection.createChannel();
 
 		channel.queueDeclare(queueNameIn, true, false, false, null);
 		channel.queueDeclare(queueNameError, true, false, false, null);
@@ -123,17 +131,17 @@ public class ITLoadTestHL7v24ToOpenEyes {
 		int pageSize = 100;
 		GetAllContext context = mpi.getRepo().getAllInit();
 
-
-        HapiContext hapiContext = new DefaultHapiContext();
+		HapiContext hapiContext = new DefaultHapiContext();
 		hapiContext.setValidationContext(new NoValidation());
 		ca.uhn.hl7v2.app.Connection hl7v2Conn = hapiContext.newClient(
 				(String) properties.get("hl7v2.host"), (Integer) Integer
 						.parseInt(properties.getProperty("hl7v2.port")), false);
-		Initiator initiator = hl7v2Conn.getInitiator();
-        Parser p = hapiContext.getPipeParser();
+		final Initiator initiator = hl7v2Conn.getInitiator();
+		initiator.setTimeout(5, TimeUnit.MINUTES);
+		Parser p = hapiContext.getPipeParser();
 
-        logger.debug("Publishing ADT messages ...");
-        
+		logger.debug("Publishing ADT messages ...");
+
 		for (int i = 0; i < (totalSize / pageSize); i++) {
 
 			List<Person> patients = mpi.getRepo().getAllByPage(context, i,
@@ -141,49 +149,90 @@ public class ITLoadTestHL7v24ToOpenEyes {
 
 			for (Person patient : patients) {
 				ADT_A01 adt = adapter.convert(patient);
-                String adtMessageString = p.encode(adt);
+				String adtMessageString = p.encode(adt);
 
 				AMQP.BasicProperties.Builder bob = new AMQP.BasicProperties.Builder();
 				BasicProperties persistentBasic = bob.priority(0)
 						.contentType("text/plain; utf8").build();
 				channel.basicPublish("", queueNameIn, persistentBasic,
-						adtMessageString.getBytes("utf8"));                
+						adtMessageString.getBytes("utf8"));
 			}
-            
+
 			logger.debug("{}...", i);
 		}
 
 		QueueingConsumer consumer = new QueueingConsumer(channel);
 		channel.basicConsume(queueNameIn, true, consumer);
 
+		int threads = 10;
+		final Semaphore semaphore = new Semaphore(threads);
+		ExecutorService executorService = Executors.newFixedThreadPool(threads);
+
+		DateTime dtStart = new DateTime();
+
 		int messagesConsumer = 0;
 		while (messagesConsumer < totalSize) {
 			QueueingConsumer.Delivery delivery = consumer.nextDelivery();
-			String message = new String(delivery.getBody());
+			final String message = new String(delivery.getBody());
 			messagesConsumer++;
-            
-            Message m = p.parse(message);
-            
-            PID pid = (PID)m.get("PID");
-            logger.debug("[{}] {} - {}", messagesConsumer, pid.getPid3_PatientIdentifierList(0), pid.getPid5_PatientName(0));
-            
-            ACK response = (ACK) initiator.sendAndReceive(m);
 
-			if (!response.getMSA().getAcknowledgementCode().getValue()
-					.equalsIgnoreCase("AA")) {
+			final Message m = p.parse(message);
 
-				AMQP.BasicProperties.Builder bob = new AMQP.BasicProperties.Builder();
-				BasicProperties persistentBasic = bob.priority(0)
-						.contentType("text/plain; charset=utf8").build();
-				channel.basicPublish("", queueNameError, persistentBasic,
-						message.getBytes());
-			}
+			PID pid = (PID) m.get("PID");
+
+			DateTime dtNow = new DateTime();
+			Interval interval = new Interval(dtStart, dtNow);
+			double rate = ((double) messagesConsumer)
+					/ (((double) interval.toDurationMillis()) / 1000.0);
+
+			logger.debug("[{}] {} msgs/s {} - {}", messagesConsumer, String.format("%1$,.1f", rate),
+					pid.getPid3_PatientIdentifierList(0),
+					pid.getPid5_PatientName(0));
+
+			semaphore.acquire();
+			executorService.execute(new Runnable() {
+				public void run() {
+
+					ACK response;
+					try {
+						response = (ACK) initiator.sendAndReceive(m);
+						if (!response.getMSA().getAcknowledgementCode()
+								.getValue().equalsIgnoreCase("AA")) {
+
+							AMQP.BasicProperties.Builder bob = new AMQP.BasicProperties.Builder();
+							BasicProperties persistentBasic = bob.priority(0)
+									.contentType("text/plain; charset=utf8")
+									.build();
+							channel.basicPublish("", queueNameError,
+									persistentBasic, message.getBytes());
+						}
+					} catch (HL7Exception e) {
+						e.printStackTrace();
+					} catch (LLPException e) {
+						e.printStackTrace();
+					} catch (IOException e) {
+						e.printStackTrace();
+					} finally {
+						semaphore.release();
+					}
+				}
+			});
 		}
+
+		executorService.shutdown();
+		executorService.awaitTermination(24, TimeUnit.HOURS);
+		DateTime dtEnd = new DateTime();
+
+		Interval interval = new Interval(dtStart, dtEnd);
+
+		double rate = ((double) messagesConsumer)
+				/ (((double) interval.toDurationMillis()) / 1000.0);
 
 		hapiContext.close();
 
 		mpi.stop();
 
-		logger.debug("Patients: {}", totalSize);
+		logger.info("Patients: {}", totalSize);
+		logger.info("Rate: {} messages/sec", String.format("%1$,.1f", rate));
 	}
 }
