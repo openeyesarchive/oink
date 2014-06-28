@@ -63,10 +63,8 @@ public class PractitionerGeneratorImpl implements PractitionerGenerator {
 
 		for (NHSPracticeMapping mapping : mappings) {
 
-			NHSPractice practice = nps.getOrDefault(
-					mapping.getParentOrganisationCode(), null);
-			NHSPractitioner practitioner = nprs.getOrDefault(
-					mapping.getPractitionerCode(), null);
+			NHSPractice practice = nps.containsKey(mapping.getParentOrganisationCode()) ? nps.get(mapping.getParentOrganisationCode()) : null;
+			NHSPractitioner practitioner = nprs.containsKey(mapping.getPractitionerCode()) ? nprs.get(mapping.getPractitionerCode()) : null;
 
 			if (practice != null && practitioner != null) {
 				practice.getPractioners().add(practitioner);
