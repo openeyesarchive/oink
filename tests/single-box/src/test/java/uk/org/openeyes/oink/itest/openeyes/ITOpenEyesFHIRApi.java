@@ -72,7 +72,9 @@ public class ITOpenEyesFHIRApi {
 
 		PersonGenerator g = PersonGeneratorFactory.getInstance("uk");
 
-		List<Person> persons = g.generate(1000);
+		logger.info("Generating patients...");
+		
+		List<Person> persons = g.generate(10);
 		List<Patient> patients = new ArrayList<Patient>();
 
 		for (Person p : persons) {
@@ -119,15 +121,19 @@ public class ITOpenEyesFHIRApi {
 			addr.setZip(p.getAddresses().get(0).getZipCode());
 			addr.setCountry("United Kingdom");
 
-			patient.addCareProvider().setReference("Organization/prac-1");
+			ResourceReferenceDt cp = patient.addCareProvider();
+			cp.setReference("Practitioner/gp-1");
+
 			ResourceReferenceDt ref = new ResourceReferenceDt();
-			ref.setReference("Organization/gp-1");
+			ref.setReference("Organization/prac-1");
 			patient.setManagingOrganization(ref);
 
 			patients.add(patient);
 		}
 
 		final IGenericClient client = ITSupport.buildHapiClientForProxy(proxyProps);
+
+		logger.info("Starting...");
 
 		int threads = Integer.parseInt(System.getProperty(
 				"oink.it.openeyes.threads", "10"));
@@ -143,8 +149,8 @@ public class ITOpenEyesFHIRApi {
 			executorService.execute(new Runnable() {
 				public void run() {
 					MethodOutcome mo = client.create(patient);
-					String result = mo.getOperationOutcome().getId().getValue();
-					assertEquals("200", result);
+					String result = mo.getOperationOutcome().getIssueFirstRep().getSeverity().getValueAsString();
+					assertEquals("information", result);
 					
 					processed.incrementAndGet();
 					
