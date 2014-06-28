@@ -24,6 +24,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
@@ -164,13 +165,14 @@ public class ITLoadTestHL7v24ToOpenEyes {
 		QueueingConsumer consumer = new QueueingConsumer(channel);
 		channel.basicConsume(queueNameIn, true, consumer);
 
-		int threads = 10;
+		int threads = Integer.parseInt(System.getProperty("oink.it.hl7v24.threads", "10"));
 		final Semaphore semaphore = new Semaphore(threads);
 		ExecutorService executorService = Executors.newFixedThreadPool(threads);
 
 		DateTime dtStart = new DateTime();
 
 		int messagesConsumer = 0;
+		final AtomicInteger messagesProcessed = new AtomicInteger();
 		while (messagesConsumer < totalSize) {
 			QueueingConsumer.Delivery delivery = consumer.nextDelivery();
 			final String message = new String(delivery.getBody());
@@ -185,7 +187,7 @@ public class ITLoadTestHL7v24ToOpenEyes {
 			double rate = ((double) messagesConsumer)
 					/ (((double) interval.toDurationMillis()) / 1000.0);
 
-			logger.debug("[{}] {} msgs/s {} - {}", messagesConsumer, String.format("%1$,.1f", rate),
+			logger.debug("[{}] {} msgs/s {} - {}", messagesProcessed.get(), String.format("%1$,.1f", rate),
 					pid.getPid3_PatientIdentifierList(0),
 					pid.getPid5_PatientName(0));
 
@@ -196,6 +198,7 @@ public class ITLoadTestHL7v24ToOpenEyes {
 					ACK response;
 					try {
 						response = (ACK) initiator.sendAndReceive(m);
+						messagesProcessed.incrementAndGet();
 						if (!response.getMSA().getAcknowledgementCode()
 								.getValue().equalsIgnoreCase("AA")) {
 
@@ -225,7 +228,7 @@ public class ITLoadTestHL7v24ToOpenEyes {
 
 		Interval interval = new Interval(dtStart, dtEnd);
 
-		double rate = ((double) messagesConsumer)
+		double rate = ((double) messagesProcessed.get())
 				/ (((double) interval.toDurationMillis()) / 1000.0);
 
 		hapiContext.close();

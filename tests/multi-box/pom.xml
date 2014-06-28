@@ -60,7 +60,7 @@
 			<version>2.2</version>
 			<scope>test</scope>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>ca.uhn.hapi</groupId>
 			<artifactId>hapi-structures-v24</artifactId>
@@ -81,7 +81,7 @@
 			<version>3.3.3</version>
 			<scope>test</scope>
 		</dependency>
-		
+
 		<!-- SLF4J (Logging) -->
 		<dependency>
 			<groupId>org.slf4j</groupId>
@@ -94,7 +94,7 @@
 			<version>${org.slf4j.version}</version>
 			<scope>test</scope>
 		</dependency>
-		
+
 	</dependencies>
 
 	<build>
@@ -176,6 +176,11 @@
 								</goals>
 							</execution>
 						</executions>
+						<configuration>
+							<systemPropertyVariables>
+								<oink.it.hl7v24.threads>5</oink.it.hl7v24.threads>
+							</systemPropertyVariables>
+						</configuration>
 					</plugin>
 
 					<plugin>
