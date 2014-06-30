@@ -6,6 +6,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ca.uhn.fhir.model.api.ResourceMetadataKeyEnum;
 import ca.uhn.fhir.model.dstu.composite.HumanNameDt;
 import ca.uhn.fhir.model.dstu.composite.IdentifierDt;
@@ -36,6 +39,8 @@ import ca.uhn.fhir.rest.server.exceptions.UnprocessableEntityException;
  * build a fully-functional server.
  */
 public class PatientResourceProvider implements IResourceProvider {
+	
+	Logger logger = LoggerFactory.getLogger(PatientResourceProvider.class);
 
 	/**
 	 * This map has a resource ID as a key, and each key maps to a Deque list containing all versions of the resource with that ID.
@@ -128,6 +133,8 @@ public class PatientResourceProvider implements IResourceProvider {
 		long id = myNextId++;
 
 		addNewVersion(thePatient, id);
+		
+		logger.info("Creating patient id={}, name={}", thePatient.getIdentifierFirstRep().getValueAsQueryToken(), thePatient.getNameFirstRep().getFamilyAsSingleString());
 
 		// Let the caller know the ID of the newly created resource
 		return new MethodOutcome(new IdDt(id));

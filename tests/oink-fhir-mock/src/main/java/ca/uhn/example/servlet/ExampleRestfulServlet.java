@@ -16,7 +16,7 @@ import ca.uhn.fhir.rest.server.RestfulServer;
  * In this example, we are using Servlet 3.0 annotations to define the URL pattern for this servlet, 
  * but we could also define this in a web.xml file.
  */
-@WebServlet(urlPatterns = { "/*" }, displayName = "FHIR Server")
+@WebServlet(urlPatterns = { "/api/*" }, displayName = "FHIR Server")
 public class ExampleRestfulServlet extends RestfulServer {
 
 	private static final long serialVersionUID = 1L;
