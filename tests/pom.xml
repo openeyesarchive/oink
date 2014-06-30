@@ -14,6 +14,7 @@
     <module>multi-box</module>
     <module>single-box</module>
     <module>oink-datagen</module>
+    <module>oink-fhir-mock</module>
   </modules>
 
 
