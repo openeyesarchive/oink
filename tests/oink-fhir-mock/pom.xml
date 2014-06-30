@@ -79,11 +79,11 @@
 					<scanintervalseconds>10</scanintervalseconds>
 
 					<webapp>
-						<contextpath>/</contextpath>
+						<contextpath>/api</contextpath>
 					</webapp>
 					<connectors>
 						<connector implementation="org.eclipse.jetty.server.nio.SelectChannelConnector">
-							<port>8080</port>
+							<port>8888</port>
 						</connector>
 					</connectors>
 				</configuration>
