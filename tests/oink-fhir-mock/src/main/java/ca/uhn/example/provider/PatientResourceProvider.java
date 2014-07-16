@@ -229,6 +229,11 @@ public class PatientResourceProvider implements IResourceProvider {
 	 */
 	@Create()
 	public MethodOutcome updatePatient(@IdParam IdDt theId, @ResourceParam Patient thePatient) {
+		
+		if(theId == null) {
+			return createPatient(thePatient);
+		}
+		
 		validateResource(thePatient);
 
 		Long id;
