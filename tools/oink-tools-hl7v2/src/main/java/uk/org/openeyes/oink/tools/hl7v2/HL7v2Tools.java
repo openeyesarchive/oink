@@ -86,6 +86,10 @@ public class HL7v2Tools {
 				.withType(String.class)
 				.withDescription("Output into folders per message type")
 				.create("outputfolders"));
+		options.addOption(OptionBuilder.hasArg().withArgName("outputformat")
+				.withType(String.class)
+				.withDescription("Output format: pipehat or xml")
+				.create("outputformat"));
 
 		// Path to data
 		String dir = null;
@@ -95,6 +99,7 @@ public class HL7v2Tools {
 		String hl7Trigger = null;
 		String hl7Type = null;
 		boolean outputFolder = false;
+		String outputFormat = "pipehat";
 
 		try {
 			// parse the command line arguments
@@ -120,8 +125,13 @@ public class HL7v2Tools {
 			if (cmdLine.hasOption("trigger")) {
 				hl7Trigger = cmdLine.getOptionValue("trigger");
 			}
+			if (cmdLine.hasOption("outputformat")) {
+				outputFormat = cmdLine.getOptionValue("outputformat");
+			}
 
 			if (!StringUtils.hasText(dir) || !StringUtils.hasText(dirOut)) {
+				logger.error("No output directory specified");
+				
 				// automatically generate the help statement
 				HelpFormatter formatter = new HelpFormatter();
 				formatter.printHelp("HL7v2Tools", options);
@@ -143,6 +153,7 @@ public class HL7v2Tools {
 		logger.info("HL7 Message Type Filter = '{}'", hl7Type);
 		logger.info("HL7 Message Trigger Filter = '{}'", hl7Trigger);
 		logger.info("Output to Folders = {}", outputFolder);
+		logger.info("Output format = {}", outputFormat);
 
 		File fileDirOut = new File(dirOut);
 		fileDirOut.mkdirs();
@@ -271,7 +282,14 @@ public class HL7v2Tools {
 						}
 					}
 
-					String outMessageString = message.encode();
+					String outMessageString = null;
+					
+					if(outputFormat.equalsIgnoreCase("xml")) {
+						outMessageString = message.getParser().getHapiContext()
+						.getXMLParser().encode(message);
+					} else {
+						outMessageString = message.encode();
+					}
 
 					if (logger.isDebugEnabled()) {
 						logger.debug("=================================================");
