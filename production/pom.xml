@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<artifactId>oink</artifactId>
+		<groupId>uk.org.openeyes.oink</groupId>
+		<version>0.4-SNAPSHOT</version>
+	</parent>
+	<groupId>uk.org.openeyes.oink</groupId>
+	<artifactId>production</artifactId>
+	<packaging>pom</packaging>
+	<name>OINK :: Production</name>
+	<description>Production tools for OINK deployments.</description>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>com.github.goldin</groupId>
+				<artifactId>copy-maven-plugin</artifactId>
+				<version>0.2.5</version>
+				<executions>
+					<execution>
+						<id>create-archive</id>
+						<phase>package</phase>
+						<goals>
+							<goal>copy</goal>
+						</goals>
+						<configuration>
+							<resources>
+								<resource>
+									<targetPath>${project.build.directory}</targetPath>
+									<directory>${project.basedir}/src/main/resources</directory>
+									<include>**/*</include>
+									<preservePath>true</preservePath>
+								</resource>
+								<resource>
+									<targetPath>${project.build.directory}/templates</targetPath>
+									<directory>${basedir}/../adapters</directory>
+									<includes>
+										<include>**/production/*.properties</include>
+									</includes>
+								</resource>
+								<resource>
+									<targetPath>${project.build.directory}/production.zip</targetPath>
+									<directory>${project.build.directory}</directory>
+									<pack>true</pack>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+</project>

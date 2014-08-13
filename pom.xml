@@ -32,6 +32,7 @@
 		<module>platforms</module>
 		<module>tests</module>
 		<module>tools</module>
+		<module>production</module>
 	</modules>
 	<scm>
 		<connection>scm:git:git://github.com/openeyes/oink.git</connection>
