@@ -28,21 +28,27 @@
 						<configuration>
 							<resources>
 								<resource>
-									<targetPath>${project.build.directory}</targetPath>
+									<targetPath>${project.build.directory}/staging</targetPath>
 									<directory>${project.basedir}/src/main/resources</directory>
 									<include>**/*</include>
 									<preservePath>true</preservePath>
 								</resource>
 								<resource>
-									<targetPath>${project.build.directory}/templates</targetPath>
-									<directory>${basedir}/../adapters</directory>
+									<targetPath>${project.build.directory}/staging/templates</targetPath>
+									<directory>${project.basedir}/../adapters</directory>
 									<includes>
 										<include>**/production/*.properties</include>
 									</includes>
 								</resource>
 								<resource>
-									<targetPath>${project.build.directory}/production.zip</targetPath>
-									<directory>${project.build.directory}</directory>
+									<targetPath>${project.build.directory}/staging</targetPath>
+									<file>${project.basedir}/../platforms/karaf/distro/target/distro-${project.version}.tar.gz</file>
+									<destFileName>oink-${project.version}.tar.gz</destFileName>
+									<unpack>false</unpack>
+								</resource>
+								<resource>
+									<targetPath>${project.build.directory}/oink-prod-${project.version}.tar.gz</targetPath>
+									<directory>${project.build.directory}/staging</directory>
 									<pack>true</pack>
 								</resource>
 							</resources>

@@ -5,7 +5,7 @@
 
 set -e 
 
-FILE_FILTER="production-*.properties"
+FILE_FILTER_PROPERTIES="production-*.properties *.sh"
 
 declare -A map
 
@@ -61,7 +61,7 @@ fi
 
 # Make sure the output directory exists and start processing settings files
 mkdir -p $2
-for entry in `ls $FILE_FILTER`; do
+for entry in `ls $FILE_FILTER_PROPERTIES`; do
 	findStr $1 $entry $2
 done
 
