@@ -17,7 +17,7 @@
 	<camelContext xmlns="http://camel.apache.org/schema/spring">
 	
 		<route id="proxy-route">
-			<from uri="rabbitmq://{{rabbit.host}}:{{rabbit.port}}/{{rabbit.defaultExchange}}?vhost={{rabbit.vhost}}&amp;username={{rabbit.username}}&amp;password={{rabbit.password}}&amp;routingKey={{rabbit.routingKey}}&amp;autoDelete=false"/>
+			<from uri="rabbitmq://{{rabbit.host}}:{{rabbit.port}}/{{rabbit.defaultExchange}}?vhost={{rabbit.vhost}}&amp;username={{rabbit.username}}&amp;password={{rabbit.password}}&amp;routingKey={{rabbit.routingKey}}&amp;autoDelete=false&amp;threadPoolSize={{rabbit.threadPoolSize}}"/>
 			<onException>
 				<exception>java.lang.Exception</exception>
 				<handled><ref>isRabbitRPC</ref></handled>

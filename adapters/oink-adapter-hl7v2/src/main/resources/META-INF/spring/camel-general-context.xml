@@ -69,7 +69,7 @@
 
 		<!-- Accept incoming HL7 messages from Rabbit -->
 		<route id="hl7-rabbit-consumer">
-			<from uri="rabbitmq://{{rabbit.host}}:{{rabbit.port}}/{{rabbit.defaultExchange}}?vhost={{rabbit.vhost}}&amp;username={{rabbit.username}}&amp;password={{rabbit.password}}&amp;routingKey={{rabbit.inboundDeadLetterRoutingKey}}&amp;autoDelete=false" />
+			<from uri="rabbitmq://{{rabbit.host}}:{{rabbit.port}}/{{rabbit.defaultExchange}}?vhost={{rabbit.vhost}}&amp;username={{rabbit.username}}&amp;password={{rabbit.password}}&amp;routingKey={{rabbit.inboundHL7v2RoutingKey}}&amp;queue={{rabbit.inboundHL7v2QueueName}}&amp;autoDelete=false&amp;threadPoolSize={{rabbit.threadPoolSize}}" />
 			<convertBodyTo type="java.lang.String"/>
 			<unmarshal ref="hl7dataformat" />
 			<to uri="direct:hl7-consumer"/>						

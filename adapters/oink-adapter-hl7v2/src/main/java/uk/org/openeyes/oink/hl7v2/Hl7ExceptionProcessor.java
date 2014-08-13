@@ -32,6 +32,10 @@ public class Hl7ExceptionProcessor implements Processor {
 
 		Exception e = exchange.getProperty(Exchange.EXCEPTION_CAUGHT,
 				Exception.class);
+        
+        if(log.isDebugEnabled()) {
+            log.debug(e.getMessage(), e);
+        }
 		
 		// Send to dead letter queue
 		log.info("Sending message to Dead Letter Queue");
