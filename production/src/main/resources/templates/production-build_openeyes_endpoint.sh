@@ -39,7 +39,7 @@ sudo rabbitmqctl set_parameter shovel "oink_pas_hl7v2_in_shovel" '{"src-uri": "a
 
 sudo rabbitmqctl set_parameter shovel "oink_hl7v2_response_out_shovel" '{"src-uri": "amqp://#OINK_RABBIT_USERNAME#:#OINK_RABBIT_PASSWORD#@#OINK_RABBIT_HOST#:#OINK_RABBIT_PORT#", "src-exchange": "#OINK_RABBIT_DEFAULT_EXCHANGE#", "src-exchange-key": "pas.hl7v2.response", "dest-uri": "amqp://#OINK_RABBIT_USERNAME_DEST#:#OINK_RABBIT_PASSWORD_DEST#@#OINK_RABBIT_HOST_DEST#:#OINK_RABBIT_PORT_DEST#", "dest-exchange": "#OINK_RABBIT_DEFAULT_EXCHANGE_DEST#"}'
 
-pushd
+pushd .
 cd /opt/oink
 
 sudo ./bin/start
@@ -50,10 +50,10 @@ sleep 2m
 
 #Wait for it to start
 echo "Attempting to connect to karaf"
-./bin/client -r 100 -d 6 "echo"
+./bin/client -h 127.0.0.1 -r 100 -d 6 "echo"
 
 # Enable facade
-sudo ./bin/client "oink:enable oink-adapter-facade /opt/oink/settings/facade.properties"
+sudo ./bin/client -h 127.0.0.1 "oink:enable oink-adapter-facade /opt/oink/settings/facade.properties"
 
 # Wait for facade to start
 ATTEMPTS=1
@@ -61,7 +61,7 @@ OUTPUT=1
 while [ $OUTPUT -ne 0 ] && [ $ATTEMPTS -lt 6 ]; do
         sleep 10
         ((ATTEMPTS++))
-        OUTPUT=$(./bin/client -r 100 -d 6 "oink:status oink-adapter-facade" | tail -1)
+        OUTPUT=$(./bin/client -h 127.0.0.1 -r 100 -d 6 "oink:status oink-adapter-facade" | tail -1)
         echo "Attempt $ATTEMPTS had status $OUTPUT"
 done
 if [ $OUTPUT -ne 0 ] 
@@ -70,7 +70,7 @@ then
 fi
 
 # Enable proxy
-./bin/client "oink:enable oink-adapter-proxy /opt/oink/settings/proxy.properties"
+./bin/client -h 127.0.0.1 "oink:enable oink-adapter-proxy /opt/oink/settings/proxy.properties"
 
 # Wait for proxy to start
 ATTEMPTS=1
@@ -78,7 +78,7 @@ OUTPUT=1
 while [ $OUTPUT -ne 0 ] && [ $ATTEMPTS -lt 6 ]; do
         sleep 10
         ((ATTEMPTS++))
-        OUTPUT=$(./bin/client -r 100 -d 6 "oink:status oink-adapter-proxy" | tail -1)
+        OUTPUT=$(./bin/client -h 127.0.0.1 -r 100 -d 6 "oink:status oink-adapter-proxy" | tail -1)
         echo "Attempt $ATTEMPTS had status $OUTPUT"
 done
 if [ $OUTPUT -ne 0 ] 
