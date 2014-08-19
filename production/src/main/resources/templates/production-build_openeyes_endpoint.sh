@@ -16,6 +16,15 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #*******************************************************************************
 
+# Determine Linux distribution
+dist=`grep DISTRIB_ID /etc/*-release | awk -F '=' '{print $2}'`
+
+if [ "$dist" == "Ubuntu" ]; then
+  echo "Linux: Ubuntu"
+else
+  echo "Linux: $dist"
+fi
+
 # Delete RabbitMQ guest
 sudo rabbitmqctl delete_user guest
 
@@ -42,13 +51,27 @@ sudo rabbitmqctl set_parameter shovel "oink_hl7v2_response_out_shovel" '{"src-ur
 pushd .
 cd /opt/oink
 
+# Set JVM memory settings and JAVA_HOME
+touch bin/setenv
+
+if [ "$dist" == "Ubuntu" ]; then
+	echo "export JAVA_HOME=/usr/lib/jvm/java-7-openjdk-amd64" >> bin/setenv
+else
+	echo "export JAVA_HOME=/usr/lib/jvm/jre-1.7.0-openjdk.x86_64" >> bin/setenv
+fi
+
+echo "export JAVA_MIN_MEM=512M" >> bin/setenv
+echo "export JAVA_MAX_MEM=1024M" >> bin/setenv
+echo "export JAVA_PERM_MEM=512M" >> bin/setenv
+echo "karaf.delay.console=true" >> etc/system.properties
+
 sudo ./bin/start
 
 # Wait for Bundles to load
 echo "Waiting for 120secs to allow Karaf to start all startupBundles"
 sleep 2m
 
-#Wait for it to start
+# Wait for it to start
 echo "Attempting to connect to karaf"
 ./bin/client -h 127.0.0.1 -r 100 -d 6 "echo"
 
