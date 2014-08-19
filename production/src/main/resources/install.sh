@@ -13,11 +13,13 @@ SETTINGS_FILE=$2
 sudo cp oink-$OINK_VERSION.tar.gz $TARGET_BASE_DIRECTORY
 pushd .
 
+	mkdir -p $TARGET_BASE_DIRECTORY
 	cd $TARGET_BASE_DIRECTORY
 	
 	sudo rm -f oink
-	sudo mv oink-$OINK_VERSION oink-$OINK_VERSION-$(date -d "today" +"%Y%m%d%H%M")
+	#sudo mv oink-$OINK_VERSION oink-$OINK_VERSION-$(date -d "today" +"%Y%m%d%H%M")
 
+	echo tar -zxf oink-$OINK_VERSION.tar.gz
 	sudo tar -zxf oink-$OINK_VERSION.tar.gz
 	sudo mv distro-$OINK_VERSION oink-$OINK_VERSION
 	sudo ln -s oink-$OINK_VERSION oink
@@ -50,7 +52,7 @@ echo ""
 echo "-------------------------------------------------"
 echo "Build scripts are located in: "
 echo "-------------------------------------------------"
-ls -d -1 /opt/oink-staging/bin/build*
+ls -d -1 $TARGET_BASE_DIRECTORY/oink-staging/bin/build*
 echo "-------------------------------------------------"
 
 echo ""
