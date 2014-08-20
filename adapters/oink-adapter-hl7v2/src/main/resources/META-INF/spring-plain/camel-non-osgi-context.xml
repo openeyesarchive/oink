@@ -8,6 +8,17 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd  
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 	
+	<bean id="customEditorConfigurer"
+		class="org.springframework.beans.factory.config.CustomEditorConfigurer">
+		<property name="customEditors">
+			<map>
+				<entry key="java.util.Map">
+					<bean class="uk.org.openeyes.oink.spring.JSONPropertyEditor" />
+				</entry>
+			</map>
+		</property>
+	</bean>
+	
 	<bean id="bridgePropertyPlaceholder" class="org.apache.camel.spring.spi.BridgePropertyPlaceholderConfigurer">
   		<property name="location" value="file:${propertiesSrc}"/>
 	</bean>

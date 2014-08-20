@@ -28,7 +28,9 @@ import org.hl7.fhir.instance.model.Address;
 import org.hl7.fhir.instance.model.AtomEntry;
 import org.hl7.fhir.instance.model.AtomFeed;
 import org.hl7.fhir.instance.model.Contact;
+import org.hl7.fhir.instance.model.Contact.ContactSystem;
 import org.hl7.fhir.instance.model.HumanName;
+import org.hl7.fhir.instance.model.HumanName.NameUse;
 import org.hl7.fhir.instance.model.Identifier;
 import org.hl7.fhir.instance.model.Organization;
 import org.hl7.fhir.instance.model.Patient;
@@ -36,8 +38,6 @@ import org.hl7.fhir.instance.model.Practitioner;
 import org.hl7.fhir.instance.model.Resource;
 import org.hl7.fhir.instance.model.ResourceReference;
 import org.hl7.fhir.instance.model.ResourceType;
-import org.hl7.fhir.instance.model.Contact.ContactSystem;
-import org.hl7.fhir.instance.model.HumanName.NameUse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -154,25 +154,9 @@ public class ADTProcessor extends Hl7v2Processor {
 			address.setCountrySimple("United Kingdom");
 		}
 
-		// OpenEyes QUICKFIX: Set NHS System identifier
-		String nhsNumberIdentifierSystem = "http://www.datadictionary.nhs.uk/data_dictionary/attributes/n/nhs/nhs_number_de.asp";
-		for (Identifier id : p.getIdentifier()) {
-			if (id.getSystemSimple().contains("NHS")) {
-				log.warn("OINK-46 Manually replacing Patient identifier system NHS with "
-						+ nhsNumberIdentifierSystem);
-				id.setSystemSimple(nhsNumberIdentifierSystem);
-			}
-		}
-
-		// OpenEyes QUICKFIX: Set Hospital Value
-		for (Identifier id : p.getIdentifier()) {
-			if (id.getSystemSimple().contains("PAS")) {
-				log.warn("OINK-47 Manually forcing Hospital Number identifier to work with Openeyes");
-				id.setSystem(null);
-				id.setLabelSimple("Hospital Number");
-			}
-		}
-
+		// Remap patient identifiers
+		remapPatientIdentifiers(p.getIdentifier());
+		
 		// OpenEyes QUICKFIX: Remove managingOrgRefs
 		log.warn("OINK-48 Manually moving ManagingOrgRef to CareProvider (OpenEyes does not support ManagingOrg)");
 		p.getCareProvider().add(p.getManagingOrganization());

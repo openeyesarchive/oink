@@ -19,24 +19,17 @@ package uk.org.openeyes.oink.hl7v2;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.camel.Body;
-import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
-import org.apache.camel.ProducerTemplate;
 import org.apache.commons.io.IOUtils;
-import org.hl7.fhir.instance.model.AtomEntry;
 import org.hl7.fhir.instance.model.AtomFeed;
 import org.hl7.fhir.instance.model.Identifier;
-import org.hl7.fhir.instance.model.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import uk.org.openeyes.oink.domain.HttpMethod;
-import uk.org.openeyes.oink.domain.OINKRequestMessage;
-import uk.org.openeyes.oink.domain.OINKResponseMessage;
 import uk.org.openeyes.oink.exception.OinkException;
 import uk.org.openeyes.oink.fhir.BundleParser;
 import uk.org.openeyes.oink.xml.XmlTransformer;
@@ -63,6 +56,8 @@ public abstract class Hl7v2Processor {
 	private BundleParser fhirConverter;
 	private ValidationContext hl7v2ValidationContext;
 	private MessageValidator hl7v2Validator;
+	
+	private Map<String,String> patientIdentifierMap;
 
 	public Hl7v2Processor() {
 		hl7v2Converter = new Hl7v2XmlConverter();
@@ -137,5 +132,27 @@ public abstract class Hl7v2Processor {
 	 */
 	public abstract void processResourcesInBundle(AtomFeed bundle, Exchange ex)
 			throws OinkException;
+	
+	protected Map<String,String> getPatientIdentifierMap() {
+		return patientIdentifierMap;
+	}
 
+	public void setPatientIdentifierMap(Map<String,String> patientIdentifierMap) {
+		this.patientIdentifierMap = patientIdentifierMap;
+	}
+	
+	protected void remapPatientIdentifiers(List<Identifier> identifiers) {
+		Map<String, String> map = getPatientIdentifierMap();
+		remapIdentifiers(map, identifiers);
+	}
+	
+	protected void remapIdentifiers(Map<String, String> map, List<Identifier> identifiers) {
+		for (Identifier id : identifiers) {
+			for(String key : map.keySet()) {
+				if (id.getSystemSimple().trim().equalsIgnoreCase(key)) {
+					id.setSystemSimple(map.get(key).trim());
+				}
+			}
+		}
+	}
 }

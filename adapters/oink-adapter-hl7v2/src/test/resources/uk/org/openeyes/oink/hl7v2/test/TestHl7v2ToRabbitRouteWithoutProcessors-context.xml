@@ -8,6 +8,17 @@
        http://www.openeyes.org.uk/schema/oink http://www.openeyes.org.uk/schema/oink/oink-1.0.xsd
        http://www.mockito.org/spring/mockito http://www.mockito.org/spring/mockito.xsd">
 
+	<bean id="customEditorConfigurer"
+		class="org.springframework.beans.factory.config.CustomEditorConfigurer">
+		<property name="customEditors">
+			<map>
+				<entry key="java.util.Map">
+					<bean class="uk.org.openeyes.oink.spring.JSONPropertyEditor" />
+				</entry>
+			</map>
+		</property>
+	</bean>
+
 	<import resource="classpath:META-INF/spring/camel-general-context.xml" />
 	
 	<!-- Override processors with Mocked versions -->

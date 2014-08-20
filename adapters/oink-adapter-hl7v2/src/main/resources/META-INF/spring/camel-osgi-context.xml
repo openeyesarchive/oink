@@ -15,6 +15,17 @@
        http://www.springframework.org/schema/osgi-compendium http://www.springframework.org/schema/osgi-compendium/spring-osgi-compendium.xsd
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
+	<bean id="customEditorConfigurer"
+		class="org.springframework.beans.factory.config.CustomEditorConfigurer">
+		<property name="customEditors">
+			<map>
+				<entry key="java.util.Map">
+					<bean class="uk.org.openeyes.oink.spring.JSONPropertyEditor" />
+				</entry>
+			</map>
+		</property>
+	</bean>
+
 	<osgix:cm-properties id="osgiProps"
 		persistent-id="uk.org.openeyes.oink.hl7v2" />
 
