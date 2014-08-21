@@ -31,8 +31,8 @@ import uk.org.openeyes.oink.domain.OINKRequestMessage;
  */
 public class OpenEyesADTProcessor extends ADTProcessor {
 
-	String gpProfile = "http://openeyes.org.uk/fhir/1.7.0/profile/Practitioner/Gp";
-	String practiceProfile = "http://openeyes.org.uk/fhir/1.7.0/profile/Organization/Practice";
+	private String gpProfile = "http://openeyes.org.uk/fhir/profile/Practitioner/Gp";
+	private String practiceProfile = "http://openeyes.org.uk/fhir/profile/Organization/Practice";
 
 	@Override
 	public OINKRequestMessage buildSearchRequestMessage(Resource resource,
@@ -64,4 +64,11 @@ public class OpenEyesADTProcessor extends ADTProcessor {
 		return query;
 	}
 
+	public void setGpProfile(String gpProfile) {
+		this.gpProfile = gpProfile;
+	}
+
+	public void setPracticeProfile(String practiceProfile) {
+		this.practiceProfile = practiceProfile;
+	}
 }

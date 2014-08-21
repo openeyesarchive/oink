@@ -30,7 +30,14 @@
 	<bean id="a01Processor" class="uk.org.openeyes.oink.hl7v2.OpenEyesADTProcessor">
 		<property name="xsltPath"
 			value="classpath:/uk/org/openeyes/oink/adapter/hl7v2/A01.xsl" />
-		<property name="patientIdentifierMap" value="${hl7v2.identifierMap.patient}"/>
+		<property name="patientIdentifierMap" value="${hl7v2.identifierMap.patient:null}"/>
+		<property name="practitionerIdentifierMap" value="${hl7v2.identifierMap.practitioner:null}"/>
+		<property name="organizationIdentifierMap" value="${hl7v2.identifierMap.organization:null}"/>
+		<property name="resolveCareProvider" value="${hl7v2.adtProcessor.resolveCareProvider:true}"/>
+		<property name="resolveManagingOrganization" value="${hl7v2.adtProcessor.resolveManagingOrganization:true}"/>
+		<property name="gpProfile" value="${openeyes.gpProfile:null}"/>
+		<property name="practiceProfile" value="${openeyes.practiceProfile:null}"/>
+		<property name="fixZTags" value="${hl7v2.adtProcessor.fixZTags:true}"/>
 	</bean>
 
 	<bean id="a05Processor" class="uk.org.openeyes.oink.hl7v2.OpenEyesADTProcessor">

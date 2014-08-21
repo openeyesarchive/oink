@@ -16,6 +16,9 @@
  *******************************************************************************/
 package uk.org.openeyes.oink.hl7v2;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.apache.camel.Body;
 
 import ca.uhn.hl7v2.DefaultHapiContext;
@@ -36,6 +39,8 @@ public class Hl7v2XmlConverter {
 
 	private HapiContext context;
 	private XMLParser parser;
+	
+	private boolean fixZTags = true;
 
 	public Hl7v2XmlConverter() {
 		context = new DefaultHapiContext();
@@ -44,6 +49,30 @@ public class Hl7v2XmlConverter {
 	}
 
 	public String toXml(@Body Message message) throws HL7Exception {
+		
+		if(fixZTags) {
+			// Fix invalid Z tags so that they are of the format ZXX
+			
+			String messageString = message.encode();
+
+			Pattern pattern = Pattern.compile("Z\\S+\\|");
+			Matcher matcher = pattern.matcher(messageString);
+
+			StringBuffer sb = new StringBuffer();
+			int z = 0;
+			while (matcher.find()) {
+				z++;
+				matcher.appendReplacement(sb,
+						"Z" + String.format("%02d", z) + "|");
+			}
+			matcher.appendTail(sb);
+			messageString = sb.toString();
+
+			messageString = messageString.replace("\n", "\r");
+			
+			message.parse(messageString);
+		}
+		
 		String messageInXml = parser.encode(message);
 		return messageInXml;
 	}
@@ -52,5 +81,12 @@ public class Hl7v2XmlConverter {
 		Message message = parser.parse(xml);
 		return message;
 	}
+	
+	public boolean isFixZTags() {
+		return fixZTags;
+	}
 
+	public void setFixZTags(boolean fixZTags) {
+		this.fixZTags = fixZTags;
+	}
 }

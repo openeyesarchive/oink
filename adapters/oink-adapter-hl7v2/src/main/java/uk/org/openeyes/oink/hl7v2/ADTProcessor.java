@@ -56,6 +56,9 @@ public class ADTProcessor extends Hl7v2Processor {
 
 	private final static Logger log = LoggerFactory
 			.getLogger(ADTProcessor.class);
+	
+	private boolean resolveCareProvider = true;
+	private boolean resolveManagingOrganization = true;
 
 	@Override
 	public void processResourcesInBundle(AtomFeed bundle, Exchange ex)
@@ -86,49 +89,54 @@ public class ADTProcessor extends Hl7v2Processor {
 
 		log.debug("Posting Patient and all associated resources as necessary");
 
-		// Handle Care Providers
-		for (ResourceReference resourceRef : p.getCareProvider()) {
-			AtomEntry<? extends Resource> resource = bundle.getById(resourceRef
-					.getReferenceSimple());
-			if (resource == null) {
-				log.warn("Couldn't find resource "
-						+ resourceRef.getReferenceSimple() + " in bundle");
-				continue;
-			} else if (resource.getResource().getResourceType()
-					.equals(ResourceType.Practitioner)) {
-				Practitioner practitioner = (Practitioner) resource
-						.getResource();
-				String absoluteUrl = postResourceAndReferencedResources(
-						practitioner, bundle, ex);
-				String relativeUrl = extractResourceRelativeUrlFromLocation(absoluteUrl, "Practitioner");
-				resourceRef.setReferenceSimple(relativeUrl);
-			} else if (resource.getResource().getResourceType()
-					.equals(ResourceType.Organization)) {
-				Organization org = (Organization) resource.getResource();
-				String absoluteUrl = postResourceAndReferencedResources(org,
-						bundle, ex);
-				String relativeUrl = extractResourceRelativeUrlFromLocation(absoluteUrl, "Organization");
-				resourceRef.setReferenceSimple(relativeUrl);				
-			} else {
-				log.error("A care provider was referenced which isn't a Practitioner or an Organization");
-				throw new OinkException();
+		if(resolveCareProvider) {
+			// Handle Care Providers
+			for (ResourceReference resourceRef : p.getCareProvider()) {
+				AtomEntry<? extends Resource> resource = bundle.getById(resourceRef
+						.getReferenceSimple());
+				if (resource == null) {
+					log.warn("Couldn't find resource "
+							+ resourceRef.getReferenceSimple() + " in bundle");
+					continue;
+				} else if (resource.getResource().getResourceType()
+						.equals(ResourceType.Practitioner)) {
+					Practitioner practitioner = (Practitioner) resource
+							.getResource();
+					String absoluteUrl = postResourceAndReferencedResources(
+							practitioner, bundle, ex);
+					String relativeUrl = extractResourceRelativeUrlFromLocation(absoluteUrl, "Practitioner");
+					resourceRef.setReferenceSimple(relativeUrl);
+				} else if (resource.getResource().getResourceType()
+						.equals(ResourceType.Organization)) {
+					Organization org = (Organization) resource.getResource();
+					String absoluteUrl = postResourceAndReferencedResources(org,
+							bundle, ex);
+					String relativeUrl = extractResourceRelativeUrlFromLocation(absoluteUrl, "Organization");
+					resourceRef.setReferenceSimple(relativeUrl);				
+				} else {
+					log.error("A care provider was referenced which isn't a Practitioner or an Organization");
+					throw new OinkException();
+				}
 			}
 		}
-		// Handle Managing Organisation
-		ResourceReference managingOrgRef = p.getManagingOrganization();
-		if (managingOrgRef != null) {
-			AtomEntry<? extends Resource> resource = bundle
-					.getById(managingOrgRef.getReferenceSimple());
-			if (resource.getResource().getResourceType()
-					.equals(ResourceType.Organization)) {
-				Organization org = (Organization) resource.getResource();
-				String absoluteUrl = postResourceAndReferencedResources(org,
-						bundle, ex);
-				String relativeUrl = extractResourceRelativeUrlFromLocation(absoluteUrl, "Organization");
-				managingOrgRef.setReferenceSimple(relativeUrl);
-				log.debug("Patient's managing org set to "+managingOrgRef.getReferenceSimple());
-			} else {
-				log.error("A Managing Organization was referenced which isn't an Organization");
+		
+		if(resolveManagingOrganization) {
+			// Handle Managing Organisation
+			ResourceReference managingOrgRef = p.getManagingOrganization();
+			if (managingOrgRef != null) {
+				AtomEntry<? extends Resource> resource = bundle
+						.getById(managingOrgRef.getReferenceSimple());
+				if (resource.getResource().getResourceType()
+						.equals(ResourceType.Organization)) {
+					Organization org = (Organization) resource.getResource();
+					String absoluteUrl = postResourceAndReferencedResources(org,
+							bundle, ex);
+					String relativeUrl = extractResourceRelativeUrlFromLocation(absoluteUrl, "Organization");
+					managingOrgRef.setReferenceSimple(relativeUrl);
+					log.debug("Patient's managing org set to "+managingOrgRef.getReferenceSimple());
+				} else {
+					log.error("A Managing Organization was referenced which isn't an Organization");
+				}
 			}
 		}
 
@@ -187,15 +195,11 @@ public class ADTProcessor extends Hl7v2Processor {
 	private String postResourceAndReferencedResources(Organization org,
 			AtomFeed bundle, Exchange ex) throws OinkException {
 
-		// Search for organization
+		// Remap identifiers
 		List<Identifier> ids = org.getIdentifier();
+		remapOrganizationIdentifiers(ids);
 
-		// Add identifier systemValue
-		String systemValue = "http://www.datadictionary.nhs.uk/data_dictionary/attributes/o/org/organisation_code_de.asp";
-		log.warn("Manually setting system value for Organization identifier to "
-				+ systemValue);
-		ids.get(0).setSystemSimple(systemValue);
-
+		// Search for organization
 		String location = searchForResourceByIdentifiers(org, ids, ex);
 
 		if (location != null) {
@@ -231,15 +235,12 @@ public class ADTProcessor extends Hl7v2Processor {
 			}
 		}
 
-		// Search for practitioner
+		// Remap identifiers
 		List<Identifier> ids = p.getIdentifier();
+		remapPractitionerIdentifiers(ids);
+		
+		// Search for practitioner
 		String location = searchForResourceByIdentifiers(p, ids, ex);
-
-		// OPENEYES QUICKFIX: Add identifier systemValue
-		String systemValue = "http://www.datadictionary.nhs.uk/data_dictionary/attributes/g/general_medical_practitioner_ppd_code_de.asp";
-		log.warn("Manually setting system value for Practitioner identifier to "
-				+ systemValue);
-		ids.get(0).setSystemSimple(systemValue);
 
 		// OPENEYES QUICKFIX: Add human name . use
 		log.warn("Manually setting use value for Practioner's name");
@@ -385,5 +386,14 @@ public class ADTProcessor extends Hl7v2Processor {
 		query.setBody(new FhirBody(resource));
 		return query;
 	}
+
+	public void setResolveCareProvider(boolean resolveCareProvider) {
+		this.resolveCareProvider = resolveCareProvider;
+	}
+
+	public void setResolveManagingOrganization(boolean resolveManagingOrganization) {
+		this.resolveManagingOrganization = resolveManagingOrganization;
+	}
+
 
 }

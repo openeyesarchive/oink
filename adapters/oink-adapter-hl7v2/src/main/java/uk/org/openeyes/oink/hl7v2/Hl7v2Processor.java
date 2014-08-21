@@ -58,6 +58,10 @@ public abstract class Hl7v2Processor {
 	private MessageValidator hl7v2Validator;
 	
 	private Map<String,String> patientIdentifierMap;
+	private Map<String,String> practitionerIdentifierMap;
+	private Map<String,String> organizationIdentifierMap;
+	
+	
 
 	public Hl7v2Processor() {
 		hl7v2Converter = new Hl7v2XmlConverter();
@@ -133,23 +137,44 @@ public abstract class Hl7v2Processor {
 	public abstract void processResourcesInBundle(AtomFeed bundle, Exchange ex)
 			throws OinkException;
 	
-	protected Map<String,String> getPatientIdentifierMap() {
-		return patientIdentifierMap;
+	public boolean isFixZTags() {
+		return hl7v2Converter.isFixZTags();
 	}
 
+	public void setFixZTags(boolean fixZTags) {
+		hl7v2Converter.setFixZTags(fixZTags);
+	}
+	
 	public void setPatientIdentifierMap(Map<String,String> patientIdentifierMap) {
 		this.patientIdentifierMap = patientIdentifierMap;
 	}
+
+	public void setPractitionerIdentifierMap(
+			Map<String,String> practitionerIdentifierMap) {
+		this.practitionerIdentifierMap = practitionerIdentifierMap;
+	}
+
+	public void setOrganizationIdentifierMap(
+			Map<String,String> organizationIdentifierMap) {
+		this.organizationIdentifierMap = organizationIdentifierMap;
+	}
 	
 	protected void remapPatientIdentifiers(List<Identifier> identifiers) {
-		Map<String, String> map = getPatientIdentifierMap();
-		remapIdentifiers(map, identifiers);
+		remapIdentifiers(patientIdentifierMap, identifiers);
+	}
+	
+	protected void remapOrganizationIdentifiers(List<Identifier> identifiers) {
+		remapIdentifiers(organizationIdentifierMap, identifiers);
+	}
+	
+	protected void remapPractitionerIdentifiers(List<Identifier> identifiers) {
+		remapIdentifiers(practitionerIdentifierMap, identifiers);
 	}
 	
 	protected void remapIdentifiers(Map<String, String> map, List<Identifier> identifiers) {
 		for (Identifier id : identifiers) {
 			for(String key : map.keySet()) {
-				if (id.getSystemSimple().trim().equalsIgnoreCase(key)) {
+				if (id.getSystemSimple().trim().matches(key)) {
 					id.setSystemSimple(map.get(key).trim());
 				}
 			}
