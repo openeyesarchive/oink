@@ -21,40 +21,34 @@ import java.io.InputStream;
 import java.util.Properties;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.EndpointInject;
-import org.apache.camel.component.rabbitmq.RabbitMQEndpoint;
-import org.junit.Assert;
-import org.junit.Assume;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import uk.org.openeyes.oink.test.RabbitServer;
-import uk.org.openeyes.oink.test.RabbitTestUtils;
-import ca.uhn.hl7v2.HL7Exception;
-import ca.uhn.hl7v2.llp.LLPException;
+import uk.org.openeyes.oink.hl7v2.ADTProcessor;
 import ca.uhn.hl7v2.model.Message;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration()
-public class TestHl7v2ToRabbitRoute extends Hl7TestSupport {
+public class TestHl7v2Messages extends Hl7TestSupport {
+
+	private static final Logger log = LoggerFactory.getLogger(TestHl7v2Messages.class);
 	
 	@Autowired
-	private CamelContext ctx;
-	
-	@EndpointInject(uri="rabbitmq:5672/test")
-	private RabbitMQEndpoint endpoint;
+	CamelContext ctx;
 	
 	@BeforeClass
 	public static void before() throws IOException {
 		Properties props = new Properties();
 		InputStream is = TestHl7v2ToRabbitRoute.class.getResourceAsStream("/hl7v2-test.properties");
 		props.load(is);
-		Assume.assumeTrue("No RabbitMQ Connection detected", RabbitTestUtils.isRabbitMQAvailable(props));
 	}
 	
 	@Before
@@ -62,29 +56,19 @@ public class TestHl7v2ToRabbitRoute extends Hl7TestSupport {
 		setProperties("/hl7v2-test.properties");
 	}
 	
+	@Qualifier("a01Processor")
+	@Autowired
+	ADTProcessor a01Processor;
+
 	@Test
-	public void testARejectableMessageIsPlacedOnDeadLetterQueue() throws HL7Exception, IOException, LLPException, InterruptedException {
-		// Load a message that will be rejected
-		Message message = Hl7TestUtils.loadHl7Message("/example-messages/hl7v2/A40-1.txt");
+	public void testIdentifierRemap() throws Exception {
 		
-		// Prepare dead letter queue
-		RabbitServer server = new RabbitServer(getProperty("rabbit.host"),
-				Integer.parseInt(getProperty("rabbit.port")),
-				getProperty("rabbit.vhost"), getProperty("rabbit.username"),
-				getProperty("rabbit.password"));
-		server.setConsumingDetails(getProperty("rabbit.defaultExchange"), getProperty("rabbit.deadLetterRoutingKey"));
-		server.start();
+		log.info("Processing test message...");
 		
-		// Send message to adapter
-		String host = getProperty("hl7v2.host");
-		Integer port = Integer.parseInt(getProperty("hl7v2.port"));
-		Hl7TestUtils.sendTCP(message, host, port);
+		// Choose a message to send
+		Message m = Hl7TestUtils.loadHl7Message("/example-messages/hl7v2/A01-mod.txt");
 		
-		// Assert deadletter endpoint is called
-		byte[] deadLetterMessage = server.getReceivedMessage();
-		Assert.assertNotNull(deadLetterMessage);
-		server.stop();
-		
+		a01Processor.process(m, null);
 	}
 
 }

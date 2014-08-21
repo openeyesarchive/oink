@@ -16,22 +16,21 @@
  *******************************************************************************/
 package uk.org.openeyes.oink.hl7v2.test;
 
-import static org.junit.Assert.assertNotNull;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.util.Properties;
 
 import org.apache.commons.io.IOUtils;
-import org.json.JSONException;
-import org.skyscreamer.jsonassert.JSONAssert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import uk.org.openeyes.oink.domain.OINKRequestMessage;
-import uk.org.openeyes.oink.messaging.OinkMessageConverter;
-import uk.org.openeyes.oink.test.RabbitServer;
+import ca.uhn.hl7v2.DefaultHapiContext;
+import ca.uhn.hl7v2.HL7Exception;
+import ca.uhn.hl7v2.HapiContext;
+import ca.uhn.hl7v2.app.Initiator;
+import ca.uhn.hl7v2.llp.LLPException;
+import ca.uhn.hl7v2.model.Message;
 
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
@@ -40,17 +39,9 @@ import com.rabbitmq.client.ConsumerCancelledException;
 import com.rabbitmq.client.QueueingConsumer;
 import com.rabbitmq.client.ShutdownSignalException;
 
-import ca.uhn.hl7v2.DefaultHapiContext;
-import ca.uhn.hl7v2.HL7Exception;
-import ca.uhn.hl7v2.HapiContext;
-import ca.uhn.hl7v2.app.Initiator;
-import ca.uhn.hl7v2.llp.LLPException;
-import ca.uhn.hl7v2.model.Message;
-import ca.uhn.hl7v2.parser.Parser;
-import ca.uhn.hl7v2.validation.impl.NoValidation;
-
 public abstract class Hl7TestSupport {
 	
+	@SuppressWarnings("unused")
 	private static final Logger log = LoggerFactory.getLogger(Hl7TestSupport.class);
 
 	private Properties properties;
