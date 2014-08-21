@@ -35,7 +35,7 @@ public class RabbitServer implements Runnable {
 	String exchange;
 	String routingKey;
 
-	byte[] receivedMessage;
+	QueueingConsumer.Delivery delivery;
 	
 	boolean stop;
 
@@ -55,7 +55,11 @@ public class RabbitServer implements Runnable {
 	}
 
 	public byte[] getReceivedMessage() {
-		return receivedMessage;
+		return delivery.getBody();
+	}
+	
+	public QueueingConsumer.Delivery getDelivery() {
+		return delivery;
 	}
 	
 	public void start() {
@@ -80,12 +84,12 @@ public class RabbitServer implements Runnable {
 				QueueingConsumer.Delivery delivery = consumer.nextDelivery(1000);
 				if (delivery != null) {
 					log.info("Message received");
-					receivedMessage = delivery.getBody();
+					this.delivery = delivery;
 					stop = true;
 				}
 			}
 			
-			if (receivedMessage == null) {
+			if (delivery == null) {
 				log.warn("RabbitServer stopping before any message was received");
 			}
 

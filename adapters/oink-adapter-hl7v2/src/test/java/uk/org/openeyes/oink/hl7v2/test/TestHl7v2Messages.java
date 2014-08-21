@@ -20,7 +20,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-import org.apache.camel.CamelContext;
+import org.apache.camel.CamelExecutionException;
+import org.apache.camel.EndpointInject;
+import org.apache.camel.component.rabbitmq.RabbitMQEndpoint;
+import org.hl7.fhir.instance.model.Patient;
+import org.hl7.fhir.instance.model.Resource;
+import org.junit.Assert;
+import org.junit.Assume;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -32,23 +38,32 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import uk.org.openeyes.oink.domain.OINKResponseMessage;
+import uk.org.openeyes.oink.domain.json.OinkResponseMessageJsonConverter;
 import uk.org.openeyes.oink.hl7v2.ADTProcessor;
+import uk.org.openeyes.oink.rabbit.SynchronousRabbitTimeoutException;
+import uk.org.openeyes.oink.test.RabbitServer;
+import uk.org.openeyes.oink.test.RabbitTestUtils;
 import ca.uhn.hl7v2.model.Message;
+
+import com.rabbitmq.client.QueueingConsumer.Delivery;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration()
 public class TestHl7v2Messages extends Hl7TestSupport {
 
+	@SuppressWarnings("unused")
 	private static final Logger log = LoggerFactory.getLogger(TestHl7v2Messages.class);
 	
-	@Autowired
-	CamelContext ctx;
-	
+	@EndpointInject(uri="rabbitmq:5672/oink")
+	private RabbitMQEndpoint endpoint;
+
 	@BeforeClass
 	public static void before() throws IOException {
 		Properties props = new Properties();
 		InputStream is = TestHl7v2ToRabbitRoute.class.getResourceAsStream("/hl7v2-test.properties");
 		props.load(is);
+		Assume.assumeTrue("No RabbitMQ Connection detected", RabbitTestUtils.isRabbitMQAvailable(props));
 	}
 	
 	@Before
@@ -62,13 +77,48 @@ public class TestHl7v2Messages extends Hl7TestSupport {
 
 	@Test
 	public void testIdentifierRemap() throws Exception {
+		Patient patient = (Patient)processResource(a01Processor, "/example-messages/hl7v2/A01.txt");
 		
-		log.info("Processing test message...");
+		Assert.assertEquals("Bloggs", patient.getName().get(0).getFamily().get(0).getValue());
+	}
+	
+	protected OINKResponseMessage process(ADTProcessor processor, String testMessageResourceFile) throws Exception {
 		
 		// Choose a message to send
-		Message m = Hl7TestUtils.loadHl7Message("/example-messages/hl7v2/A01-mod.txt");
+		Message m = Hl7TestUtils.loadHl7Message(testMessageResourceFile);
 		
-		a01Processor.process(m, null);
+		// Prepare dead letter queue
+		RabbitServer server = new RabbitServer(getProperty("rabbit.host"),
+				Integer.parseInt(getProperty("rabbit.port")),
+				getProperty("rabbit.vhost"), getProperty("rabbit.username"),
+				getProperty("rabbit.password"));
+		server.setConsumingDetails(getProperty("rabbit.defaultExchange"), getProperty("rabbit.outboundRoutingKey"));
+		server.start();
+		
+		processor.setResolveCareProvider(false);
+		processor.setResolveManagingOrganization(false);
+		try {
+			processor.process(m, endpoint.createExchange());
+		} catch(SynchronousRabbitTimeoutException e) {
+			// ignore this exception as not connected to a remote host
+		} catch(CamelExecutionException e) {
+			// ignore this exception as not connected to a remote host
+		}
+		
+		// Assert message is received
+		Delivery delivery = server.getDelivery();
+		Assert.assertNotNull(delivery.getBody());
+		
+		server.stop();
+		
+		OinkResponseMessageJsonConverter converter = new OinkResponseMessageJsonConverter();
+		OINKResponseMessage response = converter.fromJsonString(new String(delivery.getBody()));
+		
+		return response;
 	}
-
+	
+	protected Resource processResource(ADTProcessor processor, String testMessageResourceFile) throws Exception {
+		OINKResponseMessage r = process(processor, testMessageResourceFile);
+		return r.getBody().getResource();
+	}
 }

@@ -21,6 +21,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.camel.Body;
 import org.apache.camel.Exchange;
@@ -33,6 +35,7 @@ import org.slf4j.LoggerFactory;
 import uk.org.openeyes.oink.exception.OinkException;
 import uk.org.openeyes.oink.fhir.BundleParser;
 import uk.org.openeyes.oink.xml.XmlTransformer;
+import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.validation.MessageValidator;
 import ca.uhn.hl7v2.validation.ValidationContext;
@@ -61,7 +64,7 @@ public abstract class Hl7v2Processor {
 	private Map<String,String> practitionerIdentifierMap;
 	private Map<String,String> organizationIdentifierMap;
 	
-	
+	private boolean fixZTags;
 
 	public Hl7v2Processor() {
 		hl7v2Converter = new Hl7v2XmlConverter();
@@ -95,7 +98,9 @@ public abstract class Hl7v2Processor {
 	public void process(@Body Message message, Exchange ex) throws Exception {
 		
 		log.debug("Processing incoming HL7v2 message of type: "+message.getName());
-
+		
+		fixZTags(message);
+		
 		// Validate Hl7v2 message
 		hl7v2Validator.validate(message);
 
@@ -109,6 +114,9 @@ public abstract class Hl7v2Processor {
 			throw new OinkException(s);
 		}		
 		
+		// Workaround -- change CX.7 to lowercase
+		hl7Xml = hl7Xml.replaceAll("\\>HOME\\<", "\\>home\\<");
+		
 		InputStream xslIs = new ByteArrayInputStream(xsl);
 
 		// Map to FHIR XML format
@@ -118,7 +126,7 @@ public abstract class Hl7v2Processor {
 		
 		// Bug Fix -- Remove empty tags (valid transform shouldnt have them anyway)
 		fhirXml = fhirXml.replaceAll("<[a-zA-Z0-9]*/>", "");
-
+		
 		// Convert to FHIR Bundle
 		log.debug("Converting FHIR XML to FHIR Bundle");
 		AtomFeed bundle = fhirConverter.fromXmlToBundle(fhirXml);
@@ -130,6 +138,37 @@ public abstract class Hl7v2Processor {
 		log.debug("Finished processing incoming HL7v2 message of type: "+message.getName());
 	}
 
+	private void fixZTags(Message message) {
+		
+		if(fixZTags) {
+			
+			// Fix invalid Z tags so that they are of the format ZXX
+			try {
+				String messageString = message.encode();
+
+				Pattern pattern = Pattern.compile("\\rZ\\S+\\|");
+				Matcher matcher = pattern.matcher(messageString);
+	
+				StringBuffer sb = new StringBuffer();
+				int z = 0;
+				while (matcher.find()) {
+					z++;
+					matcher.appendReplacement(sb,
+							"\\rZ" + String.format("%02d", z) + "|");
+				}
+				matcher.appendTail(sb);
+				messageString = sb.toString();
+	
+				messageString = messageString.replace("\n", "\r");
+				
+				message.parse(messageString);
+				
+			} catch (HL7Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
 	/**
 	 * Takes a Bundle and processes its components as individual FHIR Rest
 	 * Resources
@@ -138,11 +177,11 @@ public abstract class Hl7v2Processor {
 			throws OinkException;
 	
 	public boolean isFixZTags() {
-		return hl7v2Converter.isFixZTags();
+		return fixZTags;
 	}
 
 	public void setFixZTags(boolean fixZTags) {
-		hl7v2Converter.setFixZTags(fixZTags);
+		this.fixZTags = fixZTags;
 	}
 	
 	public void setPatientIdentifierMap(Map<String,String> patientIdentifierMap) {

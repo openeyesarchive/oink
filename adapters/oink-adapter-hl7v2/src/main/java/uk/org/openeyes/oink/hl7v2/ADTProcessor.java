@@ -76,7 +76,6 @@ public class ADTProcessor extends Hl7v2Processor {
 		String location = postResourceAndReferencedResources(patient, bundle,
 				ex);
 		log.info("Patient posted to server with url:" + location);
-
 	}
 
 	/**
