@@ -41,7 +41,8 @@ rm -Rf OpenEyes
 rm -Rf workspace
 git clone git@github.com:openeyes/OpenEyes.git
 cd OpenEyes
-git checkout origin/develop
+#git checkout origin/develop
+git checkout feature/salisbury
 
 # Rename OpenEyes to workspace to spoof Vagrant setup for OE
 cd ..

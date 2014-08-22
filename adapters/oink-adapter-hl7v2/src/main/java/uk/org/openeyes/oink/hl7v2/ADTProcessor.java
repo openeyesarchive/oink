@@ -40,6 +40,7 @@ import org.hl7.fhir.instance.model.ResourceReference;
 import org.hl7.fhir.instance.model.ResourceType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.StringUtils;
 
 import uk.org.openeyes.oink.domain.FhirBody;
 import uk.org.openeyes.oink.domain.HttpMethod;
@@ -54,27 +55,24 @@ import uk.org.openeyes.oink.exception.OinkException;
  */
 public class ADTProcessor extends Hl7v2Processor {
 
-	private final static Logger log = LoggerFactory
-			.getLogger(ADTProcessor.class);
-	
+	private final static Logger log = LoggerFactory.getLogger(ADTProcessor.class);
+
 	private boolean resolveCareProvider = true;
 	private boolean resolveManagingOrganization = true;
 
 	@Override
-	public void processResourcesInBundle(AtomFeed bundle, Exchange ex)
-			throws OinkException {
+	public void processResourcesInBundle(AtomFeed bundle, Exchange ex) throws OinkException {
 
 		// Extract Patient from Bundle
 		Patient patient = extractPatient(bundle);
-		
+
 		if (patient == null) {
 			final String errorMsg = "No Patient Resource was found inside the generated bundle";
 			log.error(errorMsg);
 			throw new OinkException(errorMsg);
 		}
 
-		String location = postResourceAndReferencedResources(patient, bundle,
-				ex);
+		String location = postResourceAndReferencedResources(patient, bundle, ex);
 		log.info("Patient posted to server with url:" + location);
 	}
 
@@ -83,56 +81,45 @@ public class ADTProcessor extends Hl7v2Processor {
 	 * resources referenced by the Patient exist in the destination server
 	 * before posting the patient itself.
 	 */
-	private String postResourceAndReferencedResources(Patient p,
-			AtomFeed bundle, Exchange ex) throws OinkException {
+	private String postResourceAndReferencedResources(Patient p, AtomFeed bundle, Exchange ex) throws OinkException {
 
 		log.debug("Posting Patient and all associated resources as necessary");
 
-		if(resolveCareProvider) {
+		if (resolveCareProvider) {
 			// Handle Care Providers
 			for (ResourceReference resourceRef : p.getCareProvider()) {
-				AtomEntry<? extends Resource> resource = bundle.getById(resourceRef
-						.getReferenceSimple());
+				AtomEntry<? extends Resource> resource = bundle.getById(resourceRef.getReferenceSimple());
 				if (resource == null) {
-					log.warn("Couldn't find resource "
-							+ resourceRef.getReferenceSimple() + " in bundle");
+					log.warn("Couldn't find resource " + resourceRef.getReferenceSimple() + " in bundle");
 					continue;
-				} else if (resource.getResource().getResourceType()
-						.equals(ResourceType.Practitioner)) {
-					Practitioner practitioner = (Practitioner) resource
-							.getResource();
-					String absoluteUrl = postResourceAndReferencedResources(
-							practitioner, bundle, ex);
+				} else if (resource.getResource().getResourceType().equals(ResourceType.Practitioner)) {
+					Practitioner practitioner = (Practitioner) resource.getResource();
+					String absoluteUrl = postResourceAndReferencedResources(practitioner, bundle, ex);
 					String relativeUrl = extractResourceRelativeUrlFromLocation(absoluteUrl, "Practitioner");
 					resourceRef.setReferenceSimple(relativeUrl);
-				} else if (resource.getResource().getResourceType()
-						.equals(ResourceType.Organization)) {
+				} else if (resource.getResource().getResourceType().equals(ResourceType.Organization)) {
 					Organization org = (Organization) resource.getResource();
-					String absoluteUrl = postResourceAndReferencedResources(org,
-							bundle, ex);
+					String absoluteUrl = postResourceAndReferencedResources(org, bundle, ex);
 					String relativeUrl = extractResourceRelativeUrlFromLocation(absoluteUrl, "Organization");
-					resourceRef.setReferenceSimple(relativeUrl);				
+					resourceRef.setReferenceSimple(relativeUrl);
 				} else {
 					log.error("A care provider was referenced which isn't a Practitioner or an Organization");
 					throw new OinkException();
 				}
 			}
 		}
-		
-		if(resolveManagingOrganization) {
+
+		if (resolveManagingOrganization) {
 			// Handle Managing Organisation
 			ResourceReference managingOrgRef = p.getManagingOrganization();
 			if (managingOrgRef != null) {
-				AtomEntry<? extends Resource> resource = bundle
-						.getById(managingOrgRef.getReferenceSimple());
-				if (resource.getResource().getResourceType()
-						.equals(ResourceType.Organization)) {
+				AtomEntry<? extends Resource> resource = bundle.getById(managingOrgRef.getReferenceSimple());
+				if (resource.getResource().getResourceType().equals(ResourceType.Organization)) {
 					Organization org = (Organization) resource.getResource();
-					String absoluteUrl = postResourceAndReferencedResources(org,
-							bundle, ex);
+					String absoluteUrl = postResourceAndReferencedResources(org, bundle, ex);
 					String relativeUrl = extractResourceRelativeUrlFromLocation(absoluteUrl, "Organization");
 					managingOrgRef.setReferenceSimple(relativeUrl);
-					log.debug("Patient's managing org set to "+managingOrgRef.getReferenceSimple());
+					log.debug("Patient's managing org set to " + managingOrgRef.getReferenceSimple());
 				} else {
 					log.error("A Managing Organization was referenced which isn't an Organization");
 				}
@@ -163,7 +150,7 @@ public class ADTProcessor extends Hl7v2Processor {
 
 		// Remap patient identifiers
 		remapPatientIdentifiers(p.getIdentifier());
-		
+
 		// OpenEyes QUICKFIX: Remove managingOrgRefs
 		log.warn("OINK-48 Manually moving ManagingOrgRef to CareProvider (OpenEyes does not support ManagingOrg)");
 		p.getCareProvider().add(p.getManagingOrganization());
@@ -173,10 +160,10 @@ public class ADTProcessor extends Hl7v2Processor {
 		String location = postResource(p, ex);
 		return location;
 	}
-	
+
 	public static String extractResourceRelativeUrlFromLocation(String location, String resource) {
-		log.debug("Extracting relative URL from "+location);
-		Pattern p = Pattern.compile("(.*)?/("+resource+"/[^/]+)(/.*)?");
+		log.debug("Extracting relative URL from " + location);
+		Pattern p = Pattern.compile("(.*)?/(" + resource + "/[^/]+)(/.*)?");
 		Matcher m = p.matcher(location);
 		boolean b = m.matches();
 		if (!b) {
@@ -191,12 +178,16 @@ public class ADTProcessor extends Hl7v2Processor {
 	 * 
 	 * @throws OinkException
 	 */
-	private String postResourceAndReferencedResources(Organization org,
-			AtomFeed bundle, Exchange ex) throws OinkException {
+	private String postResourceAndReferencedResources(Organization org, AtomFeed bundle, Exchange ex) throws OinkException {
 
 		// Remap identifiers
 		List<Identifier> ids = org.getIdentifier();
 		remapOrganizationIdentifiers(ids);
+		
+		// Ensure a system code is set when there is only one identifier
+		if(ids.size() == 1 && !StringUtils.hasText(ids.get(0).getSystemSimple())) {
+			setDefaultOrganizationIdentifierSystemType(ids.get(0));
+		}
 
 		// Search for organization
 		String location = searchForResourceByIdentifiers(org, ids, ex);
@@ -217,17 +208,13 @@ public class ADTProcessor extends Hl7v2Processor {
 	 * 
 	 * @throws OinkException
 	 */
-	private String postResourceAndReferencedResources(Practitioner p,
-			AtomFeed bundle, Exchange ex) throws OinkException {
+	private String postResourceAndReferencedResources(Practitioner p, AtomFeed bundle, Exchange ex) throws OinkException {
 		ResourceReference orgRef = p.getOrganization();
 		if (orgRef != null) {
-			AtomEntry<? extends Resource> resource = bundle.getById(orgRef
-					.getReferenceSimple());
-			if (resource.getResource().getResourceType()
-					.equals(ResourceType.Organization)) {
+			AtomEntry<? extends Resource> resource = bundle.getById(orgRef.getReferenceSimple());
+			if (resource.getResource().getResourceType().equals(ResourceType.Organization)) {
 				Organization org = (Organization) resource.getResource();
-				String absoluteUrl = postResourceAndReferencedResources(org,
-						bundle, ex);
+				String absoluteUrl = postResourceAndReferencedResources(org, bundle, ex);
 				orgRef.setReferenceSimple(absoluteUrl);
 			} else {
 				log.error("An Organization was referenced which isn't an Organization");
@@ -238,6 +225,11 @@ public class ADTProcessor extends Hl7v2Processor {
 		List<Identifier> ids = p.getIdentifier();
 		remapPractitionerIdentifiers(ids);
 		
+		// Ensure a system code is set when there is only one identifier
+		if(ids.size() == 1 && !StringUtils.hasText(ids.get(0).getSystemSimple())) {
+			setDefaultPractitionerIdentifierSystemType(ids.get(0));
+		}
+
 		// Search for practitioner
 		String location = searchForResourceByIdentifiers(p, ids, ex);
 
@@ -264,8 +256,7 @@ public class ADTProcessor extends Hl7v2Processor {
 	private Patient extractPatient(AtomFeed bundle) {
 		Patient p = null;
 		for (AtomEntry<? extends Resource> entry : bundle.getEntryList()) {
-			if (entry.getResource().getResourceType()
-					.equals(ResourceType.Patient)) {
+			if (entry.getResource().getResourceType().equals(ResourceType.Patient)) {
 				if (p != null) {
 					log.warn("Multiple patients found in Bundle, using the first one");
 					return p;
@@ -283,20 +274,17 @@ public class ADTProcessor extends Hl7v2Processor {
 	 * 
 	 * @throws OinkException
 	 */
-	public String searchForResourceByIdentifiers(Resource resource,
-			List<Identifier> ids, Exchange ex) throws OinkException {
+	public String searchForResourceByIdentifiers(Resource resource, List<Identifier> ids, Exchange ex) throws OinkException {
 
 		// Build OINKRequestMessage for Query
 		OINKRequestMessage query = buildSearchRequestMessage(resource, ids);
 
 		String resourceName = resource.getResourceType().toString();
-		log.debug("Searching for " + resourceName + " using the message "
-				+ query.toString());
+		log.debug("Searching for " + resourceName + " using the message " + query.toString());
 
 		CamelContext ctx = ex.getContext();
 		ProducerTemplate prod = ctx.createProducerTemplate();
-		OINKResponseMessage resp = prod.requestBody("direct:rabbit-rpc", query,
-				OINKResponseMessage.class);
+		OINKResponseMessage resp = prod.requestBody("direct:rabbit-rpc", query, OINKResponseMessage.class);
 
 		int status = resp.getStatus();
 
@@ -307,22 +295,18 @@ public class ADTProcessor extends Hl7v2Processor {
 			if (bundle == null || bundle.getEntryList().isEmpty()) {
 				return null;
 			} else if (bundle.getEntryList().size() > 1) {
-				throw new OinkException(
-						"Multiple possible entries found for resource. Cannot be trusted to choose a single one.");
+				throw new OinkException("Multiple possible entries found for resource. Cannot be trusted to choose a single one.");
 			} else {
-				AtomEntry<? extends Resource> entry = bundle.getEntryList()
-						.get(0);
+				AtomEntry<? extends Resource> entry = bundle.getEntryList().get(0);
 				return entry.getId();
 			}
 		} else {
-			throw new OinkException("A preliminary search for a resource "
-					+ resourceName + " resulted in status " + status);
+			throw new OinkException("A preliminary search for a resource " + resourceName + " resulted in status " + status);
 		}
 
 	}
 
-	public OINKRequestMessage buildSearchRequestMessage(Resource resource,
-			List<Identifier> ids) {
+	public OINKRequestMessage buildSearchRequestMessage(Resource resource, List<Identifier> ids) {
 		// Build OINKRequestMessage for Query
 		OINKRequestMessage query = new OINKRequestMessage();
 		String resourceName = resource.getResourceType().toString();
@@ -349,27 +333,21 @@ public class ADTProcessor extends Hl7v2Processor {
 		return query;
 	}
 
-	public String postResource(Resource resource, Exchange ex)
-			throws OinkException {
+	public String postResource(Resource resource, Exchange ex) throws OinkException {
 
 		// Build OINKRequestMessage for Query
 		OINKRequestMessage query = buildPostRequestMessage(resource);
 
 		CamelContext ctx = ex.getContext();
 		ProducerTemplate prod = ctx.createProducerTemplate();
-		OINKResponseMessage resp = prod.requestBody("direct:rabbit-rpc", query,
-				OINKResponseMessage.class);
+		OINKResponseMessage resp = prod.requestBody("direct:rabbit-rpc", query, OINKResponseMessage.class);
 
 		int status = resp.getStatus();
 
 		if (status / 100 != 2) {
-			throw new OinkException("Failure to post "
-					+ resource.getResourceType().toString() + ", response was "
-					+ status);
+			throw new OinkException("Failure to post " + resource.getResourceType().toString() + ", response was " + status);
 		} else {
-			log.debug("Resource of type:"
-					+ resource.getResourceType().toString()
-					+ " was posted with status " + status);
+			log.debug("Resource of type:" + resource.getResourceType().toString() + " was posted with status " + status);
 		}
 
 		String location = resp.getLocationHeader();
@@ -393,6 +371,5 @@ public class ADTProcessor extends Hl7v2Processor {
 	public void setResolveManagingOrganization(boolean resolveManagingOrganization) {
 		this.resolveManagingOrganization = resolveManagingOrganization;
 	}
-
 
 }

@@ -114,7 +114,7 @@ public abstract class Hl7v2Processor {
 			throw new OinkException(s);
 		}		
 		
-		// Workaround -- change CX.7 to lowercase
+		// FIXME: workaround - change CX.7 to lowercase
 		hl7Xml = hl7Xml.replaceAll("\\>HOME\\<", "\\>home\\<");
 		
 		InputStream xslIs = new ByteArrayInputStream(xsl);
@@ -124,7 +124,7 @@ public abstract class Hl7v2Processor {
 		String fhirXml = transformer.transform(hl7Xml,
 				xslIs);
 		
-		// Bug Fix -- Remove empty tags (valid transform shouldnt have them anyway)
+		// FIXME: workaround - remove empty tags (valid transform shouldnt have them anyway)
 		fhirXml = fhirXml.replaceAll("<[a-zA-Z0-9]*/>", "");
 		
 		// Convert to FHIR Bundle
@@ -142,6 +142,9 @@ public abstract class Hl7v2Processor {
 		
 		if(fixZTags) {
 			
+			// TODO: find a way to exclude Z-tags from HAPI parsing or to ignore
+			//       them during validation
+
 			// Fix invalid Z tags so that they are of the format ZXX
 			try {
 				String messageString = message.encode();
@@ -206,8 +209,24 @@ public abstract class Hl7v2Processor {
 		remapIdentifiers(organizationIdentifierMap, identifiers);
 	}
 	
+	protected void setDefaultOrganizationIdentifierSystemType(Identifier identifier) {
+		setDefault(organizationIdentifierMap, identifier);
+	}
+	
 	protected void remapPractitionerIdentifiers(List<Identifier> identifiers) {
 		remapIdentifiers(practitionerIdentifierMap, identifiers);
+	}
+	
+	protected void setDefaultPractitionerIdentifierSystemType(Identifier identifier) {
+		setDefault(practitionerIdentifierMap, identifier);
+	}
+	
+	private final String DEFAULT_KEY = "default";
+	
+	private void setDefault(Map<String,String> map, Identifier identifier) {
+		if(map.containsKey(DEFAULT_KEY)) {
+			identifier.setSystemSimple(map.get(DEFAULT_KEY));
+		}
 	}
 	
 	protected void remapIdentifiers(Map<String, String> map, List<Identifier> identifiers) {
