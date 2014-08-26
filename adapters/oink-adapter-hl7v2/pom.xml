@@ -167,15 +167,6 @@
 			</plugin>
 
 
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-resources-plugin</artifactId>
-				<version>2.6</version>
-				<configuration>
-					<encoding>UTF-8</encoding>
-				</configuration>
-			</plugin>
-
 			<!-- allows the route to be run via 'mvn camel:run' -->
 			<plugin>
 				<groupId>org.apache.camel</groupId>
