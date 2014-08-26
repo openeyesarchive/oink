@@ -27,6 +27,7 @@ import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.InputStreamRequestEntity;
 import org.apache.commons.httpclient.methods.PostMethod;
+import org.apache.commons.httpclient.params.HttpMethodParams;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpStatus;
 import org.hl7.fhir.instance.formats.JsonComposer;
@@ -213,7 +214,7 @@ public class TestFacadeRoute {
          * Process REST response
          */
         byte[] responseBody = method.getResponseBody();
-        String responseJson = new String(responseBody);
+        String responseJson = new String(responseBody, "UTF-8");
         int responseCode = method.getStatusCode();
         String responseContentType = method.getResponseHeader("Content-Type").getValue();
         method.releaseConnection();
