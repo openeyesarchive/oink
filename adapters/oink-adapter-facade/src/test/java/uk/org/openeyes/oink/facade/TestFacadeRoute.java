@@ -302,7 +302,8 @@ public class TestFacadeRoute {
                 verifier.isValid(message);
 
                 // Prepare an empty response
-                com.rabbitmq.client.AMQP.BasicProperties replyProps = new AMQP.BasicProperties.Builder().correlationId(props.getCorrelationId()).build();
+                com.rabbitmq.client.AMQP.BasicProperties replyProps = new AMQP.BasicProperties.Builder()
+                    .correlationId(props.getCorrelationId()).contentEncoding("UTF-8").contentType("application/json").build();
 
                 byte[] responseBody = camelCtx.getTypeConverter().convertTo(byte[].class, messageToReplyWith);
 
