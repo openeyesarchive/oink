@@ -16,6 +16,14 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #*******************************************************************************
 
+# Install RabbitMQ
+sudo echo -e "\n\ndeb http://www.rabbitmq.com/debian/ testing main\n" | sudo tee --append /etc/apt/sources.list
+wget http://www.rabbitmq.com/rabbitmq-signing-key-public.asc
+sudo apt-key add rabbitmq-signing-key-public.asc
+rm rabbitmq-signing-key-public.asc
+sudo apt-get -y update
+sudo apt-get -y install rabbitmq-server
+
 # Delete RabbitMQ guest
 sudo rabbitmqctl delete_user guest
 
