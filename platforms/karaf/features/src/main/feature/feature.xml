@@ -59,6 +59,12 @@
 		<!-- end of commons-configuration quickfix -->					
 		<bundle>mvn:commons-collections/commons-collections/3.2.1</bundle>
 		<bundle>mvn:commons-lang/commons-lang/2.6</bundle>
+		
+        <!-- Jackson -->
+        <bundle>mvn:com.fasterxml.jackson.core/jackson-core/2.4.2</bundle>
+		<bundle>mvn:com.fasterxml.jackson.core/jackson-databind/2.4.2</bundle>
+		<bundle>mvn:com.fasterxml.jackson.core/jackson-annotations/2.4.2</bundle>
+		
 		<bundle>mvn:uk.org.openeyes.oink/oink-core/${project.version}</bundle>
 	</feature>
 
