@@ -114,6 +114,8 @@ public class TestHl7v2Messages extends Hl7TestSupport {
 		OinkResponseMessageJsonConverter converter = new OinkResponseMessageJsonConverter();
 		OINKResponseMessage response = converter.fromJsonString(new String(delivery.getBody()));
 		
+		endpoint.getCamelContext().stop();
+		
 		return response;
 	}
 	
