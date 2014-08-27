@@ -16,7 +16,7 @@
  *******************************************************************************/
 package uk.org.openeyes.oink.exception;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -40,8 +40,7 @@ public class TestWebExceptionProcessor {
 	public void testHandlesNoException() throws Exception {
 		CamelContext c = new DefaultCamelContext();
 		Exchange e = new DefaultExchange(c);
-		e.setException(new OinkException() {
-		});
+		e.setException(new OinkException());
 		
 		WebExceptionProcessor webProcessor = new WebExceptionProcessor();
 		webProcessor.process(e);
@@ -53,8 +52,7 @@ public class TestWebExceptionProcessor {
 	public void test() throws Exception {
 		CamelContext c = new DefaultCamelContext();
 		Exchange e = new DefaultExchange(c);
-		e.setProperty(Exchange.EXCEPTION_CAUGHT, new OinkException() {
-		});
+		e.setProperty(Exchange.EXCEPTION_CAUGHT, new OinkException());
 		
 		WebExceptionProcessor webProcessor = new WebExceptionProcessor();
 		webProcessor.process(e);

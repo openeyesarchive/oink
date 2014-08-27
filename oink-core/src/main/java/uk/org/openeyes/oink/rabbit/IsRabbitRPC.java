@@ -34,6 +34,7 @@ public class IsRabbitRPC implements Predicate, Expression {
 		return ex.getIn().getHeader("rabbitmq.REPLY_TO") != null;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T evaluate(Exchange ex, Class<T> type) {
 		Boolean b = new Boolean(matches(ex));

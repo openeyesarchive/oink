@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.io.StringWriter;
 
 import org.apache.commons.io.IOUtils;
+import org.junit.Assert;
 import org.junit.Test;
 
 import uk.org.openeyes.oink.domain.OINKResponseMessage;
@@ -40,6 +41,7 @@ public class TestOinkMessageConverter {
 		
 		OINKResponseMessage resp = conv.responseMessageFromJsonString(theString);
 		
+		Assert.assertNotNull(resp);
 	}
 	
 }

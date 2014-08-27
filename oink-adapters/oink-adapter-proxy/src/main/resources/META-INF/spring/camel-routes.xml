@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camel="http://camel.apache.org/schema/spring"
+	xmlns:osgi="http://www.springframework.org/schema/osgi" xmlns:oink="http://www.openeyes.org.uk/schema/oink" xmlns:spring-security="http://www.springframework.org/schema/security"
+	xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd
+       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd  
+       http://camel.apache.org/schema/spring-security http://camel.apache.org/schema/spring-security/camel-spring-security.xsd
+       http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
+       http://www.openeyes.org.uk/schema/oink http://www.openeyes.org.uk/schema/oink/oink-1.0.xsd">
+
+
+	<bean id="isRabbitRPC" class="uk.org.openeyes.oink.rabbit.IsRabbitRPC" />
+
+	<camelContext xmlns="http://camel.apache.org/schema/spring">
+
+		<route id="proxy-route">
+			<from
+				uri="rabbitmq://{{rabbit.host}}:{{rabbit.port}}/{{rabbit.defaultExchange}}?vhost={{rabbit.vhost}}&amp;username={{rabbit.username}}&amp;password={{rabbit.password}}&amp;routingKey={{rabbit.routingKey}}&amp;autoDelete=false&amp;threadPoolSize={{rabbit.threadPoolSize}}" />
+			<onException>
+				<exception>java.lang.Exception</exception>
+				<handled>
+					<ref>isRabbitRPC</ref>
+				</handled>
+				<process ref="rabbitRpcErrorProcessor" />
+				<to uri="log:GeneralError?level=ERROR&amp;showAll=true&amp;multiline=true" />
+				<when>
+					<header>rabbitmq.ROUTING_KEY</header>
+					<to
+						uri="rabbitmq://{{rabbit.host}}:{{rabbit.port}}/{{rabbit.defaultExchange}}?vhost={{rabbit.vhost}}&amp;username={{rabbit.username}}&amp;password={{rabbit.password}}&amp;autoDelete=false" />
+				</when>
+			</onException>
+			<log loggingLevel="DEBUG" message="Proxy adapter received OinkRequestMessage" />
+			<bean ref="oinkHttpConverter" method="buildHttpRequest" />
+			<log loggingLevel="DEBUG" message="Proxy adapter about to perform OinkRequestMessage against {{proxy.uri}}" />
+			<to
+				uri="http4://{{proxy.uri}}?throwExceptionOnFailure=false&amp;headerFilterStrategy=httpFilterStrategy&amp;authUsername={{proxy.username}}&amp;authPassword={{proxy.password}}&amp;httpClient.cookiePolicy=ignoreCookies&amp;authenticationPreemptive=true" />
+			<log loggingLevel="DEBUG" message="Proxy adapter received a response from the proxied service" />
+			<convertBodyTo type="java.lang.String" charset="utf-8" />
+			<bean ref="oinkHttpConverter" method="buildOinkResponse" />
+			<bean ref="rabbitResponder" method="prepareHeaders" />
+			<log loggingLevel="DEBUG" message="Proxy adapter returning OinkResponseMessage" />
+			<to
+				uri="rabbitmq://{{rabbit.host}}:{{rabbit.port}}/{{rabbit.defaultExchange}}?vhost={{rabbit.vhost}}&amp;username={{rabbit.username}}&amp;password={{rabbit.password}}&amp;autoDelete=false" />
+		</route>
+
+	</camelContext>
+
+</beans>

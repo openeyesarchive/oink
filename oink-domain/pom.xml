@@ -9,16 +9,13 @@
 	<artifactId>oink-domain</artifactId>
 	<name>OINK Domain</name>
 	<packaging>bundle</packaging>
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>me.fhir</groupId>
 			<artifactId>fhir-dstu1</artifactId>
 			<version>0.0.81.2489</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>com.google.code.gson</groupId>
 			<artifactId>gson</artifactId>
@@ -31,7 +28,7 @@
 			<version>${junit.version}</version>
 			<scope>test</scope>
 		</dependency>
-		
+
 	</dependencies>
 	<build>
 		<plugins>

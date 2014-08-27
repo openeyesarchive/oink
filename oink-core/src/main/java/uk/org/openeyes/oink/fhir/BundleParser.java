@@ -21,8 +21,8 @@ import java.io.InputStream;
 
 import org.apache.camel.Converter;
 import org.hl7.fhir.instance.formats.JsonParser;
-import org.hl7.fhir.instance.formats.XmlParser;
 import org.hl7.fhir.instance.formats.ParserBase.ResourceOrFeed;
+import org.hl7.fhir.instance.formats.XmlParser;
 import org.hl7.fhir.instance.model.AtomFeed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

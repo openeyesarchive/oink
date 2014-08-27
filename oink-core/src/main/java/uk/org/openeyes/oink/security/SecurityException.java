@@ -22,6 +22,8 @@ import uk.org.openeyes.oink.exception.OinkExceptionStatusCode;
 @OinkExceptionStatusCode(401)
 public class SecurityException extends OinkException {
 
+	private static final long serialVersionUID = 5249073416072912403L;
+
 	public SecurityException(String m) {
 		super(m);
 	}
