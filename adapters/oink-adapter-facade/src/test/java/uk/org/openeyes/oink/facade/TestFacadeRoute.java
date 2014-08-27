@@ -27,7 +27,6 @@ import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.InputStreamRequestEntity;
 import org.apache.commons.httpclient.methods.PostMethod;
-import org.apache.commons.httpclient.params.HttpMethodParams;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpStatus;
 import org.hl7.fhir.instance.formats.JsonComposer;
@@ -118,7 +117,7 @@ public class TestFacadeRoute {
                     JsonComposer composer = new JsonComposer();
                     ByteArrayOutputStream os = new ByteArrayOutputStream();
                     composer.compose(os, incoming.getBody().getResource(), false);
-                    String receivedJson = os.toString();
+                    String receivedJson = os.toString("UTF-8");
                     String expectedJson = IOUtils.toString(this.getClass().getResourceAsStream("/example-messages/fhir/patient.json"), "UTF-8");
                     Assert.assertEquals(expectedJson, receivedJson);
                 } catch (Exception e) {
@@ -157,7 +156,6 @@ public class TestFacadeRoute {
          * Process REST response
          */
         byte[] responseBody = method.getResponseBody();
-        // String s = method.getResponseBodyAsString();
         int responseCode = method.getStatusCode();
         method.releaseConnection();
 
@@ -224,7 +222,7 @@ public class TestFacadeRoute {
         }
 
         Assert.assertEquals(HttpStatus.SC_OK, responseCode);
-        Assert.assertEquals("application/json+fhir", responseContentType);
+        Assert.assertEquals("application/json+fhir; charset=UTF-8", responseContentType);
         Assert.assertEquals(IOUtils.toString(this.getClass().getResourceAsStream("/example-messages/fhir/patient.json"), "UTF-8"), responseJson);
     }
 
