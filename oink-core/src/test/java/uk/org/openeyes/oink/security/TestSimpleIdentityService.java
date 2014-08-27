@@ -57,7 +57,6 @@ public class TestSimpleIdentityService {
 		Subject s = new Subject();
 		
 		String organisation = identityService.getOrganisation(s);
-		
 		assertNull(organisation);
 	}
 
@@ -68,7 +67,7 @@ public class TestSimpleIdentityService {
 		Subject s = null;
 		
 		String organisation = identityService.getOrganisation(s);
-		Assert.assertFalse(StringUtils.isEmpty(organisation));
+		assertNull(organisation);
 	}
 	
 	@Test
