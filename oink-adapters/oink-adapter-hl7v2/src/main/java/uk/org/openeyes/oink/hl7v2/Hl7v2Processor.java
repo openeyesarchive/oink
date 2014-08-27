@@ -31,16 +31,20 @@ import javax.xml.transform.TransformerFactoryConfigurationError;
 import org.apache.camel.Body;
 import org.apache.camel.Exchange;
 import org.apache.commons.io.IOUtils;
+import org.hl7.fhir.instance.model.AtomEntry;
 import org.hl7.fhir.instance.model.AtomFeed;
 import org.hl7.fhir.instance.model.Identifier;
+import org.hl7.fhir.instance.model.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import uk.org.openeyes.oink.exception.OinkException;
 import uk.org.openeyes.oink.fhir.BundleParser;
+import uk.org.openeyes.oink.fhir.ResourceConverter;
 import uk.org.openeyes.oink.xml.XmlTransformer;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Message;
+import ca.uhn.hl7v2.model.v24.segment.PID;
 import ca.uhn.hl7v2.validation.MessageValidator;
 import ca.uhn.hl7v2.validation.ValidationContext;
 import ca.uhn.hl7v2.validation.impl.DefaultValidationWithoutTN;
@@ -113,10 +117,19 @@ public abstract class Hl7v2Processor {
 		// Convert to FHIR Bundle
 		log.debug("Converting FHIR XML to FHIR Bundle");
 		AtomFeed bundle = fhirConverter.fromXmlToBundle(fhirXml);
-
+		
 		// Process FHIR bundle entries
 		log.debug("Processing contents of newly created FHIR Bundle");
 		processResourcesInBundle(bundle, ex, processorContext);
+		
+		if(log.isDebugEnabled()) {
+			log.debug("FHIR bundle ================>");
+			for(AtomEntry<? extends Resource> e : bundle.getEntryList()) {
+				String json = ResourceConverter.toJsonString(e.getResource());
+				log.debug("resource --------------->\n{}\n<--------------- resource", json);
+			}
+			log.debug("<================ FHIR bundle");
+		}
 
 		log.debug("Finished processing incoming HL7v2 message of type: "+message.getName());
 	}
@@ -128,10 +141,24 @@ public abstract class Hl7v2Processor {
 		
 		// Validate Hl7v2 message
 		hl7v2Validator.validate(message);
+		
+		// FIXME: workaround - add PID1.2 to PID1.3, so NHS number is in identifiers
+		PID pid = (PID)message.get("PID");
+		int rep = pid.getPid3_PatientIdentifierListReps();
+		pid.getPid3_PatientIdentifierList(rep).getCx1_ID().setValue(pid.getPid2_PatientID().getCx1_ID().getValue());
+		pid.getPid3_PatientIdentifierList(rep).getCx5_IdentifierTypeCode().setValue(pid.getPid2_PatientID().getCx5_IdentifierTypeCode().getValue());
+		
+		if(log.isDebugEnabled()) {
+			log.debug("HL7v2 ================>\n{}\n<================", message.encode().replace("\r", "\n"));
+		}
 
 		// Convert to HL7v2 XML format
 		log.debug("Converting incoming HL7v2 message to XML format");
 		String hl7Xml = hl7v2Converter.toXml(message);
+
+		if(log.isDebugEnabled()) {
+			log.debug("HL7v2 ================>\n{}\n<================", hl7Xml);
+		}
 		
 		if (hl7Xml == null) {
 			String s = "Hl7 message could not be written in XML format (needed for conversion)";

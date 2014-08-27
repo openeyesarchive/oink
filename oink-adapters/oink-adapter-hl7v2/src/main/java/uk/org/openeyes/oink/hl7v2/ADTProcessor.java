@@ -352,9 +352,12 @@ public class ADTProcessor extends Hl7v2Processor {
 		OINKRequestMessage query = buildPostRequestMessage(resource);
 		
 		if(processorContext != null) {
+			log.debug("Keeping OINKRequestMessage in ProcessorContext");
 			processorContext.addToContextHistory(query);
 		}
 
+		String location = null;
+		
 		if(ex != null) {
 			CamelContext ctx = ex.getContext();
 			ProducerTemplate prod = ctx.createProducerTemplate();
@@ -368,11 +371,14 @@ public class ADTProcessor extends Hl7v2Processor {
 				log.debug("Resource of type:" + resource.getResourceType().toString() + " was posted with status " + status);
 			}
 	
-			String location = resp.getLocationHeader();
-			return location;
+			location = resp.getLocationHeader();
+		}
+
+		if(location == null) {
+			location = "urn:openeyes.org.uk.primitives.null";
 		}
 		
-		return "urn:openeyes.org.uk.primitives.null";
+		return location;
 	}
 
 	public OINKRequestMessage buildPostRequestMessage(Resource resource) {
