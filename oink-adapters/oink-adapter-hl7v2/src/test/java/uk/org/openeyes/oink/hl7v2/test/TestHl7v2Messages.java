@@ -41,6 +41,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import uk.org.openeyes.oink.domain.OINKResponseMessage;
 import uk.org.openeyes.oink.domain.json.OinkResponseMessageJsonConverter;
 import uk.org.openeyes.oink.hl7v2.ADTProcessor;
+import uk.org.openeyes.oink.hl7v2.ProcessorContext;
 import uk.org.openeyes.oink.rabbit.SynchronousRabbitTimeoutException;
 import uk.org.openeyes.oink.test.RabbitServer;
 import uk.org.openeyes.oink.test.RabbitTestUtils;
@@ -63,7 +64,7 @@ public class TestHl7v2Messages extends Hl7TestSupport {
 		Properties props = new Properties();
 		InputStream is = TestHl7v2ToRabbitRoute.class.getResourceAsStream("/hl7v2-test.properties");
 		props.load(is);
-		Assume.assumeTrue("No RabbitMQ Connection detected", RabbitTestUtils.isRabbitMQAvailable(props));
+		//Assume.assumeTrue("No RabbitMQ Connection detected", RabbitTestUtils.isRabbitMQAvailable(props));
 	}
 	
 	@Before
@@ -79,6 +80,8 @@ public class TestHl7v2Messages extends Hl7TestSupport {
 	public void testIdentifierRemap() throws Exception {
 		Patient patient = (Patient)processResource(a01Processor, "/example-messages/hl7v2/A01.txt");
 		
+		log.info(patient.toString());
+		
 		Assert.assertEquals("Bloggs", patient.getName().get(0).getFamily().get(0).getValue());
 	}
 	
@@ -87,7 +90,21 @@ public class TestHl7v2Messages extends Hl7TestSupport {
 		// Choose a message to send
 		Message m = Hl7TestUtils.loadHl7Message(testMessageResourceFile);
 		
-		// Prepare dead letter queue
+		processor.setResolveCareProvider(false);
+		processor.setResolveManagingOrganization(false);
+		
+		ProcessorContext processorContext = new ProcessorContext();
+		processor.doProcess(m, null, processorContext);
+		
+		for(Object o : processorContext.getContextHistory()) {
+			if(o instanceof OINKResponseMessage) {
+				return (OINKResponseMessage)o;
+			}
+		}
+		
+		return null;
+		
+		/*// Prepare dead letter queue
 		RabbitServer server = new RabbitServer(getProperty("rabbit.host"),
 				Integer.parseInt(getProperty("rabbit.port")),
 				getProperty("rabbit.vhost"), getProperty("rabbit.username"),
@@ -116,7 +133,7 @@ public class TestHl7v2Messages extends Hl7TestSupport {
 		
 		endpoint.getCamelContext().stop();
 		
-		return response;
+		return response;*/
 	}
 	
 	protected Resource processResource(ADTProcessor processor, String testMessageResourceFile) throws Exception {

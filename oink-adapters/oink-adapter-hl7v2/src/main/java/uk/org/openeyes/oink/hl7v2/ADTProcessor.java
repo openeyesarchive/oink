@@ -61,7 +61,7 @@ public class ADTProcessor extends Hl7v2Processor {
 	private boolean resolveManagingOrganization = true;
 
 	@Override
-	public void processResourcesInBundle(AtomFeed bundle, Exchange ex) throws OinkException {
+	public void processResourcesInBundle(AtomFeed bundle, Exchange ex, ProcessorContext processorContext) throws OinkException {
 
 		// Extract Patient from Bundle
 		Patient patient = extractPatient(bundle);
@@ -72,7 +72,7 @@ public class ADTProcessor extends Hl7v2Processor {
 			throw new OinkException(errorMsg);
 		}
 
-		String location = postResourceAndReferencedResources(patient, bundle, ex);
+		String location = postResourceAndReferencedResources(patient, bundle, ex, processorContext);
 		log.info("Patient posted to server with url:" + location);
 	}
 
@@ -81,7 +81,7 @@ public class ADTProcessor extends Hl7v2Processor {
 	 * resources referenced by the Patient exist in the destination server
 	 * before posting the patient itself.
 	 */
-	private String postResourceAndReferencedResources(Patient p, AtomFeed bundle, Exchange ex) throws OinkException {
+	private String postResourceAndReferencedResources(Patient p, AtomFeed bundle, Exchange ex, ProcessorContext processorContext) throws OinkException {
 
 		log.debug("Posting Patient and all associated resources as necessary");
 
@@ -94,12 +94,12 @@ public class ADTProcessor extends Hl7v2Processor {
 					continue;
 				} else if (resource.getResource().getResourceType().equals(ResourceType.Practitioner)) {
 					Practitioner practitioner = (Practitioner) resource.getResource();
-					String absoluteUrl = postResourceAndReferencedResources(practitioner, bundle, ex);
+					String absoluteUrl = postResourceAndReferencedResources(practitioner, bundle, ex, processorContext);
 					String relativeUrl = extractResourceRelativeUrlFromLocation(absoluteUrl, "Practitioner");
 					resourceRef.setReferenceSimple(relativeUrl);
 				} else if (resource.getResource().getResourceType().equals(ResourceType.Organization)) {
 					Organization org = (Organization) resource.getResource();
-					String absoluteUrl = postResourceAndReferencedResources(org, bundle, ex);
+					String absoluteUrl = postResourceAndReferencedResources(org, bundle, ex, processorContext);
 					String relativeUrl = extractResourceRelativeUrlFromLocation(absoluteUrl, "Organization");
 					resourceRef.setReferenceSimple(relativeUrl);
 				} else {
@@ -119,7 +119,7 @@ public class ADTProcessor extends Hl7v2Processor {
 				AtomEntry<? extends Resource> resource = bundle.getById(managingOrgRef.getReferenceSimple());
 				if (resource.getResource().getResourceType().equals(ResourceType.Organization)) {
 					Organization org = (Organization) resource.getResource();
-					String absoluteUrl = postResourceAndReferencedResources(org, bundle, ex);
+					String absoluteUrl = postResourceAndReferencedResources(org, bundle, ex, processorContext);
 					String relativeUrl = extractResourceRelativeUrlFromLocation(absoluteUrl, "Organization");
 					managingOrgRef.setReferenceSimple(relativeUrl);
 					log.debug("Patient's managing org set to " + managingOrgRef.getReferenceSimple());
@@ -132,6 +132,15 @@ public class ADTProcessor extends Hl7v2Processor {
 			p.setManagingOrganization(null);
 		}
 
+		// Adjust resource before posting
+		preProcessResource(p);
+
+		// POST Patient
+		String location = postResource(p, ex, processorContext);
+		return location;
+	}
+
+	private void preProcessResource(Patient p) {
 		// OpenEyes QUICKFIX: Set Family use to usual
 		for (HumanName name : p.getName()) {
 			if (name.getUseSimple() == null) {
@@ -163,10 +172,6 @@ public class ADTProcessor extends Hl7v2Processor {
 			p.getCareProvider().add(p.getManagingOrganization());
 			p.setManagingOrganization(null);
 		}
-
-		// POST Patient
-		String location = postResource(p, ex);
-		return location;
 	}
 
 	public static String extractResourceRelativeUrlFromLocation(String location, String resource) {
@@ -186,7 +191,7 @@ public class ADTProcessor extends Hl7v2Processor {
 	 * 
 	 * @throws OinkException
 	 */
-	private String postResourceAndReferencedResources(Organization org, AtomFeed bundle, Exchange ex) throws OinkException {
+	private String postResourceAndReferencedResources(Organization org, AtomFeed bundle, Exchange ex, ProcessorContext processorContext) throws OinkException {
 
 		// Remap identifiers
 		List<Identifier> ids = org.getIdentifier();
@@ -205,7 +210,7 @@ public class ADTProcessor extends Hl7v2Processor {
 		}
 
 		// Else. Post organization
-		return postResource(org, ex);
+		return postResource(org, ex, processorContext);
 
 	}
 
@@ -216,13 +221,13 @@ public class ADTProcessor extends Hl7v2Processor {
 	 * 
 	 * @throws OinkException
 	 */
-	private String postResourceAndReferencedResources(Practitioner p, AtomFeed bundle, Exchange ex) throws OinkException {
+	private String postResourceAndReferencedResources(Practitioner p, AtomFeed bundle, Exchange ex, ProcessorContext processorContext) throws OinkException {
 		ResourceReference orgRef = p.getOrganization();
 		if (orgRef != null) {
 			AtomEntry<? extends Resource> resource = bundle.getById(orgRef.getReferenceSimple());
 			if (resource.getResource().getResourceType().equals(ResourceType.Organization)) {
 				Organization org = (Organization) resource.getResource();
-				String absoluteUrl = postResourceAndReferencedResources(org, bundle, ex);
+				String absoluteUrl = postResourceAndReferencedResources(org, bundle, ex, processorContext);
 				orgRef.setReferenceSimple(absoluteUrl);
 			} else {
 				log.error("An Organization was referenced which isn't an Organization");
@@ -254,7 +259,7 @@ public class ADTProcessor extends Hl7v2Processor {
 		}
 
 		// Else. Post practitioner
-		return postResource(p, ex);
+		return postResource(p, ex, processorContext);
 	}
 
 	/**
@@ -341,25 +346,33 @@ public class ADTProcessor extends Hl7v2Processor {
 		return query;
 	}
 
-	public String postResource(Resource resource, Exchange ex) throws OinkException {
+	public String postResource(Resource resource, Exchange ex, ProcessorContext processorContext) throws OinkException {
 
 		// Build OINKRequestMessage for Query
 		OINKRequestMessage query = buildPostRequestMessage(resource);
-
-		CamelContext ctx = ex.getContext();
-		ProducerTemplate prod = ctx.createProducerTemplate();
-		OINKResponseMessage resp = prod.requestBody("direct:rabbit-rpc", query, OINKResponseMessage.class);
-
-		int status = resp.getStatus();
-
-		if (status / 100 != 2) {
-			throw new OinkException("Failure to post " + resource.getResourceType().toString() + ", response was " + status);
-		} else {
-			log.debug("Resource of type:" + resource.getResourceType().toString() + " was posted with status " + status);
+		
+		if(processorContext != null) {
+			processorContext.addToContextHistory(query);
 		}
 
-		String location = resp.getLocationHeader();
-		return location;
+		if(ex != null) {
+			CamelContext ctx = ex.getContext();
+			ProducerTemplate prod = ctx.createProducerTemplate();
+			OINKResponseMessage resp = prod.requestBody("direct:rabbit-rpc", query, OINKResponseMessage.class);
+	
+			int status = resp.getStatus();
+	
+			if (status / 100 != 2) {
+				throw new OinkException("Failure to post " + resource.getResourceType().toString() + ", response was " + status);
+			} else {
+				log.debug("Resource of type:" + resource.getResourceType().toString() + " was posted with status " + status);
+			}
+	
+			String location = resp.getLocationHeader();
+			return location;
+		}
+		
+		return "urn:openeyes.org.uk.primitives.null";
 	}
 
 	public OINKRequestMessage buildPostRequestMessage(Resource resource) {

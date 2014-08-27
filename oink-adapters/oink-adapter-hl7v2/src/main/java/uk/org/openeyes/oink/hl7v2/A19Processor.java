@@ -170,8 +170,13 @@ public class A19Processor extends Hl7v2Processor {
 	}
 
 	@Override
-	public void processResourcesInBundle(AtomFeed bundle, Exchange ex) {
+	public void processResourcesInBundle(AtomFeed bundle, Exchange ex, ProcessorContext processorContext) {
 		OINKResponseMessage resp = new OINKResponseMessage();
+		
+		if(processorContext != null) {
+			processorContext.addToContextHistory(resp);
+		}
+		
 		resp.setStatus(200);
 		resp.setBody(new FhirBody(bundle));
 		ex.getIn().setBody(resp);	

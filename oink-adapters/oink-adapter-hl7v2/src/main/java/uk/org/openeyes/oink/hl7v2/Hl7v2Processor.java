@@ -19,10 +19,14 @@ package uk.org.openeyes.oink.hl7v2;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactoryConfigurationError;
 
 import org.apache.camel.Body;
 import org.apache.camel.Exchange;
@@ -99,6 +103,27 @@ public abstract class Hl7v2Processor {
 		
 		log.debug("Processing incoming HL7v2 message of type: "+message.getName());
 		
+		doProcess(message, ex, null);
+	}
+
+	public void doProcess(@Body Message message, Exchange ex, ProcessorContext processorContext) throws Exception {
+		
+		String fhirXml = preProcess(message);
+		
+		// Convert to FHIR Bundle
+		log.debug("Converting FHIR XML to FHIR Bundle");
+		AtomFeed bundle = fhirConverter.fromXmlToBundle(fhirXml);
+
+		// Process FHIR bundle entries
+		log.debug("Processing contents of newly created FHIR Bundle");
+		processResourcesInBundle(bundle, ex, processorContext);
+
+		log.debug("Finished processing incoming HL7v2 message of type: "+message.getName());
+	}
+
+	public String preProcess(Message message) throws HL7Exception,
+			OinkException, TransformerFactoryConfigurationError,
+			TransformerException, UnsupportedEncodingException {
 		fixZTags(message);
 		
 		// Validate Hl7v2 message
@@ -126,16 +151,7 @@ public abstract class Hl7v2Processor {
 		
 		// FIXME: workaround - remove empty tags (valid transform shouldnt have them anyway)
 		fhirXml = fhirXml.replaceAll("<[a-zA-Z0-9]*/>", "");
-		
-		// Convert to FHIR Bundle
-		log.debug("Converting FHIR XML to FHIR Bundle");
-		AtomFeed bundle = fhirConverter.fromXmlToBundle(fhirXml);
-
-		// Process FHIR bundle entries
-		log.debug("Processing contents of newly created FHIR Bundle");
-		processResourcesInBundle(bundle, ex);
-
-		log.debug("Finished processing incoming HL7v2 message of type: "+message.getName());
+		return fhirXml;
 	}
 
 	private void fixZTags(Message message) {
@@ -176,7 +192,7 @@ public abstract class Hl7v2Processor {
 	 * Takes a Bundle and processes its components as individual FHIR Rest
 	 * Resources
 	 */
-	public abstract void processResourcesInBundle(AtomFeed bundle, Exchange ex)
+	public abstract void processResourcesInBundle(AtomFeed bundle, Exchange ex, ProcessorContext processorContext)
 			throws OinkException;
 	
 	public boolean isFixZTags() {
