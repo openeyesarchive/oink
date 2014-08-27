@@ -53,12 +53,12 @@ sudo chown -R `whoami` /opt/oink
 
 pushd .
 cd /opt/oink
-cp /vagrant/vfs/distro-*.tar.gz .
-tar -zxvf distro-*.tar.gz
+cp /vagrant/vfs/oink-platforms-karaf-distro-*.tar.gz .
+tar -zxvf oink-platforms-karaf-distro-*.tar.gz
 
 # Start Karaf
 pushd .
-cd distro-*
+cd oink-platforms-karaf-distro-*
 touch bin/setenv
 echo "export JAVA_HOME=/usr/lib/jvm/java-7-openjdk-amd64" >> bin/setenv
 echo "export JAVA_MIN_MEM=512M" >> bin/setenv
