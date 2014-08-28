@@ -48,12 +48,9 @@ git checkout feature/salisbury
 cd ..
 mv OpenEyes workspace
 
-# Configure FHIR settings
+# Copy OE config settings
 mkdir openeyes-config
 cp -R ../src/test/openeyes-config/** openeyes-config
-cd openeyes-config
-sed -e "/'specialty_codes' => array(130, 'SUP')/ r fhirsettings.php"  ../workspace/protected/config/local/common.php
-cd ..
 
 cd workspace
 vagrant destroy --force
@@ -68,6 +65,12 @@ SQL_STATEMENT="insert into authassignment (itemname, userid) values ('API access
 vagrant ssh -c "/usr/bin/mysql -u openeyes -poe_test openeyes -e \"$SQL_STATEMENT\""
 echo "Finished loading OpenEyes VM"
 popd
+
+# Set FHIR settings
+cd workspace/openeyes-config
+sed -e "/'specialty_codes' => array(130, 'SUP')/ r fhirsettings.php"  ../workspace/protected/config/local/common.php
+cd ..
+
 
 ####################################
 ## Set up and start the two Oink VMs
