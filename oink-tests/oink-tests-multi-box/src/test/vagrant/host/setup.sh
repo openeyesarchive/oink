@@ -63,13 +63,14 @@ sed -i '1s@.*@#!/usr/bin/env bash@g' bin/prep.sh
 # Allow admin user access to API
 SQL_STATEMENT="insert into authassignment (itemname, userid) values ('API access', 1);"
 vagrant ssh -c "/usr/bin/mysql -u openeyes -poe_test openeyes -e \"$SQL_STATEMENT\""
-echo "Finished loading OpenEyes VM"
-popd
 
 # Set FHIR settings
-cd workspace/openeyes-config
+cd openeyes-config
 sed -e "/'specialty_codes' => array(130, 'SUP')/ r fhirsettings.php"  ../workspace/protected/config/local/common.php
 cd ..
+
+echo "Finished loading OpenEyes VM"
+popd
 
 
 ####################################
