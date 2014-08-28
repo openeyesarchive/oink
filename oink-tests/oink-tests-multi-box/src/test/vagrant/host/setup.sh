@@ -66,7 +66,7 @@ vagrant ssh -c "/usr/bin/mysql -u openeyes -poe_test openeyes -e \"$SQL_STATEMEN
 
 # Set FHIR settings
 cd ../openeyes-config
-sed -e "/'specialty_codes' => array(130, 'SUP')/ r fhirsettings.php"  ../workspace/protected/config/local/common.php
+sed -e "/'specialty_sort' => array(130, 'SUP'),/ r fhirsettings.php"  ../workspace/protected/config/local/common.php
 cd ..
 
 echo "Finished loading OpenEyes VM"
