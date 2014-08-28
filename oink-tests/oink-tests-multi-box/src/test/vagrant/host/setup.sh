@@ -65,7 +65,7 @@ SQL_STATEMENT="insert into authassignment (itemname, userid) values ('API access
 vagrant ssh -c "/usr/bin/mysql -u openeyes -poe_test openeyes -e \"$SQL_STATEMENT\""
 
 # Set FHIR settings
-cd openeyes-config
+cd ../openeyes-config
 sed -e "/'specialty_codes' => array(130, 'SUP')/ r fhirsettings.php"  ../workspace/protected/config/local/common.php
 cd ..
 
