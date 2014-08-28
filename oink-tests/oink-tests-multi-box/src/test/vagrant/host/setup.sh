@@ -48,6 +48,13 @@ git checkout feature/salisbury
 cd ..
 mv OpenEyes workspace
 
+# Configure FHIR settings
+mkdir openeyes-config
+cp -R ../src/test/openeyes-config/** openeyes-config
+cd openeyes-config
+sed -e "/'specialty_codes' => array(130, 'SUP')/ r fhirsettings.php"  ../workspace/protected/config/local/common.php
+cd ..
+
 cd workspace
 vagrant destroy --force
 
