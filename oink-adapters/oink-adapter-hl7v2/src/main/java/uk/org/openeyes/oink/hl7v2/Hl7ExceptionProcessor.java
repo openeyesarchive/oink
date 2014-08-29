@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ca.uhn.hl7v2.model.Message;
+import ca.uhn.hl7v2.parser.PipeParser;
 
 /**
  * 
@@ -23,6 +24,8 @@ public class Hl7ExceptionProcessor implements Processor {
 	
 	private final AckExpression ackError = new AckExpression(AckCode.AE);
 	private final AckExpression ackRejected = new AckExpression(AckCode.AR);
+	
+	private final PipeParser pipeParser = new PipeParser();
 	
 	@Override
 	public void process(Exchange exchange) throws Exception {
@@ -46,11 +49,19 @@ public class Hl7ExceptionProcessor implements Processor {
 		}
 		if(headers.containsKey("rabbitmq.EXCHANGE_NAME")) {
 			headers.remove("rabbitmq.EXCHANGE_NAME");
-		}*/
+		}
+		prodTemplate.sendBodyAndHeaders("direct:hl7-consumer-dead-letter", exchange.getIn().getBody(), headers);*/
+		
+		String s = null;
+		if(exchange.getIn().getBody() instanceof Message) {
+			Message message = exchange.getIn().getBody(Message.class);
+			s = pipeParser.encode(message); // TODO What encoding should this be?
+		} else {
+			s = new String((byte[])exchange.getIn().getBody());
+		}
 		
 		ProducerTemplate prodTemplate = exchange.getContext().createProducerTemplate();
-		//prodTemplate.sendBodyAndHeaders("direct:hl7-consumer-dead-letter", exchange.getIn().getBody(), headers);
-		prodTemplate.sendBody("direct:hl7-consumer-dead-letter", exchange.getIn().getBody());
+		prodTemplate.sendBody("direct:hl7-consumer-dead-letter", s);
 		
 		// Prepare response for Hl7
 		log.info("Sending response to upstream Hl7 Server");
