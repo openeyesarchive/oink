@@ -74,7 +74,7 @@ public class ITLoadTestHL7v24ToOpenEyes {
 	}
 
 	@Test
-	public void test() throws Exception {
+	public void testWithRandomData() throws Exception {
 
 		PersonToHL7v24PIDAdapter adapter = new PersonToHL7v24PIDAdapter();
 		PersonGenerator g = PersonGeneratorFactory.getInstance("uk");

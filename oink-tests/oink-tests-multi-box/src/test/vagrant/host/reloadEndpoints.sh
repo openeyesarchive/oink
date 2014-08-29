@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #*******************************************************************************
 # OINK - Copyright (c) 2014 OpenEyes Foundation
 #
@@ -17,22 +17,35 @@
 #*******************************************************************************
 #
 #
-# Tears down three virtual machines needed for tests.
+# Restarts the OINK endpoints.
 #
+# Requires OINK_VERSION to be set.
 # Run this script from "oink/oink-tests/oink-tests-multi-box/src".
 # 
 
-set -e
-
+###################################
+# Stop endpoints
+###################################
 pushd .
-cd test-workspace/workspace
-vagrant destroy --force
-
-popd
-pushd .
+echo "Stopping endpoints"
 cd test-workspace/vagrant
 vagrant destroy --force
 
+###################################
+## Copy new build in
+###################################
+echo "Copying OINK distro into VFS"
+cd ..
+cp ../target/oink-platforms-karaf-distro-$OINK_VERSION.tar.gz vagrant/vfs
+
+###################################
+# Start endpoints
+###################################
+echo "Starting endpoints"
+cd vagrant
+vagrant up
+
 popd
+echo "Finished loading OINK VMs"
 
 echo "COMPLETE"

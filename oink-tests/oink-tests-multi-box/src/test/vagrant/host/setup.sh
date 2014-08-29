@@ -18,7 +18,9 @@
 #
 #
 # Starts three virtual machines needed for tests.
+#
 # Requires OINK_VERSION to be set.
+# Run this script from "oink/oink-tests/oink-tests-multi-box/src".
 # 
 
 ###################################
