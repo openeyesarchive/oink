@@ -73,6 +73,8 @@ public abstract class Hl7v2Processor {
 	private Map<String,String> organizationIdentifierMap;
 	
 	private boolean fixZTags;
+	
+	private ProcessorContext processorContext;	
 
 	public Hl7v2Processor() {
 		hl7v2Converter = new Hl7v2XmlConverter();
@@ -105,22 +107,23 @@ public abstract class Hl7v2Processor {
 
 	public void process(@Body Message message, Exchange ex) throws Exception {
 		
-		log.debug("Processing incoming HL7v2 message of type: "+message.getName());
-		
-		doProcess(message, ex, null);
-	}
-
-	public void doProcess(@Body Message message, Exchange ex, ProcessorContext processorContext) throws Exception {
+		if(log.isDebugEnabled()) {
+			log.debug("Processing incoming HL7v2 message of type: {}", message.getName());
+		}
 		
 		String fhirXml = createFhirXml(message);
 		
 		// Convert to FHIR Bundle
-		log.debug("Converting FHIR XML to FHIR Bundle");
+		if(log.isDebugEnabled()) {
+			log.debug("Converting FHIR XML to FHIR Bundle");
+		}
 		AtomFeed bundle = fhirConverter.fromXmlToBundle(fhirXml);
 		
 		// Process FHIR bundle entries
-		log.debug("Processing contents of newly created FHIR Bundle");
-		processResourcesInBundle(bundle, ex, processorContext);
+		if(log.isDebugEnabled()) {
+			log.debug("Processing contents of newly created FHIR Bundle");
+		}
+		processResourcesInBundle(bundle, ex, getProcessorContext());
 		
 		if(log.isDebugEnabled()) {
 			log.debug("FHIR bundle ================>");
@@ -129,9 +132,8 @@ public abstract class Hl7v2Processor {
 				log.debug("resource --------------->\n{}\n<--------------- resource", json);
 			}
 			log.debug("<================ FHIR bundle");
+			log.debug("Finished processing incoming HL7v2 message of type: {}", message.getName());
 		}
-
-		log.debug("Finished processing incoming HL7v2 message of type: "+message.getName());
 	}
 
 	public String createFhirXml(Message message) throws HL7Exception,
@@ -224,7 +226,7 @@ public abstract class Hl7v2Processor {
 	 * Takes a Bundle and processes its components as individual FHIR Rest
 	 * Resources
 	 */
-	public abstract void processResourcesInBundle(AtomFeed bundle, Exchange ex, ProcessorContext processorContext)
+	protected abstract void processResourcesInBundle(AtomFeed bundle, Exchange ex, ProcessorContext processorContext)
 			throws OinkException;
 	
 	public boolean isFixZTags() {
@@ -285,5 +287,13 @@ public abstract class Hl7v2Processor {
 				}
 			}
 		}
+	}
+
+	public ProcessorContext getProcessorContext() {
+		return processorContext;
+	}
+
+	public void setProcessorContext(ProcessorContext processorContext) {
+		this.processorContext = processorContext;
 	}
 }

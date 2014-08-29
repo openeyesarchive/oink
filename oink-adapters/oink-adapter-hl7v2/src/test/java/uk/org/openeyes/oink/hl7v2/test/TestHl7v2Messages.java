@@ -92,7 +92,8 @@ public class TestHl7v2Messages extends Hl7TestSupport {
 		processor.setResolveManagingOrganization(false);
 		
 		ProcessorContext processorContext = new ProcessorContext();
-		processor.doProcess(m, null, processorContext);
+		processor.setProcessorContext(processorContext);
+		processor.process(m, null);
 		
 		OINKResponseMessage response = null;
 		
