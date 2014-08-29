@@ -112,7 +112,7 @@ public abstract class Hl7v2Processor {
 
 	public void doProcess(@Body Message message, Exchange ex, ProcessorContext processorContext) throws Exception {
 		
-		String fhirXml = preProcess(message);
+		String fhirXml = createFhirXml(message);
 		
 		// Convert to FHIR Bundle
 		log.debug("Converting FHIR XML to FHIR Bundle");
@@ -134,7 +134,7 @@ public abstract class Hl7v2Processor {
 		log.debug("Finished processing incoming HL7v2 message of type: "+message.getName());
 	}
 
-	public String preProcess(Message message) throws HL7Exception,
+	public String createFhirXml(Message message) throws HL7Exception,
 			OinkException, TransformerFactoryConfigurationError,
 			TransformerException, UnsupportedEncodingException {
 		fixZTags(message);
