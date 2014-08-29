@@ -1,7 +1,5 @@
 package uk.org.openeyes.oink.hl7v2;
 
-import java.util.Map;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
@@ -40,17 +38,19 @@ public class Hl7ExceptionProcessor implements Processor {
 		// Send to dead letter queue
 		log.info("Sending message to Dead Letter Queue");
 		
-		Map<String, Object> headers = exchange.getIn().getHeaders();
+		// TODO: add back sending of headers
+		/*Map<String, Object> headers = exchange.getIn().getHeaders();
 
 		if(headers.containsKey("rabbitmq.ROUTING_KEY")) {
 			headers.remove("rabbitmq.ROUTING_KEY");
 		}
 		if(headers.containsKey("rabbitmq.EXCHANGE_NAME")) {
 			headers.remove("rabbitmq.EXCHANGE_NAME");
-		}
+		}*/
 		
 		ProducerTemplate prodTemplate = exchange.getContext().createProducerTemplate();
-		prodTemplate.sendBodyAndHeaders("direct:hl7-consumer-dead-letter", exchange.getIn().getBody(), headers);
+		//prodTemplate.sendBodyAndHeaders("direct:hl7-consumer-dead-letter", exchange.getIn().getBody(), headers);
+		prodTemplate.sendBody("direct:hl7-consumer-dead-letter", exchange.getIn().getBody());
 		
 		// Prepare response for Hl7
 		log.info("Sending response to upstream Hl7 Server");
