@@ -34,6 +34,7 @@ public class Hl7ExceptionProcessor implements Processor {
         
         if(log.isDebugEnabled()) {
             log.debug(e.getMessage(), e);
+        	log.debug("Stack trace: {}", e.getStackTrace().toString());
         }
 		
 		// Send to dead letter queue

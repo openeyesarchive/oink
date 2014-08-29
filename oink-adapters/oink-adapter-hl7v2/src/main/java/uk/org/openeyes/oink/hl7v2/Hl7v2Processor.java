@@ -173,12 +173,17 @@ public abstract class Hl7v2Processor {
 
 		// Map to FHIR XML format
 		log.debug("Converting HL7v2 XML to FHIR XML");
-		String fhirXml = transformer.transform(hl7Xml,
-				xslIs);
-		
-		// FIXME: workaround - remove empty tags (valid transform shouldnt have them anyway)
-		fhirXml = fhirXml.replaceAll("<[a-zA-Z0-9]*/>", "");
-		return fhirXml;
+		try {
+			String fhirXml = transformer.transform(hl7Xml,
+					xslIs);
+			
+			// FIXME: workaround - remove empty tags (valid transform shouldnt have them anyway)
+			fhirXml = fhirXml.replaceAll("<[a-zA-Z0-9]*/>", "");
+			return fhirXml;
+		} catch(TransformerException e) {
+			log.error("XML transform failed: {}", e.getMessageAndLocation());
+			throw new OinkException("XML transform failed: " + e.getMessageAndLocation());
+		}
 	}
 
 	private void fixZTags(Message message) {
