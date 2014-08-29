@@ -74,6 +74,13 @@ cd ..
 echo "Finished loading OpenEyes VM"
 popd
 
+pushd .
+
+echo "Forcing branch to feature/salisbury..."
+cd workspace
+git checkout feature/salisbury
+
+popd
 
 ####################################
 ## Set up and start the two Oink VMs
