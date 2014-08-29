@@ -90,7 +90,7 @@ public abstract class Hl7v2Processor {
 		transformer = new XmlTransformer();
 	}
 
-	protected void setXsltPath(org.springframework.core.io.Resource xslFile)
+	public void setXsltPath(org.springframework.core.io.Resource xslFile)
 			throws IOException {
 		if (!xslFile.exists()) {
 			log.error("Xsl not found");
