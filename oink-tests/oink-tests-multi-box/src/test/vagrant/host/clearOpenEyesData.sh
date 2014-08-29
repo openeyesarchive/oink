@@ -23,7 +23,7 @@
 # 
 
 pushd .
-cd test-workspace/vagrant/workspace
+cd test-workspace/workspace
 vagrant destroy --force
 
 echo "Clearing database..."
