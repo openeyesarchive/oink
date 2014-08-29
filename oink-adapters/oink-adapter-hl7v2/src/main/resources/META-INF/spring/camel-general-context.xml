@@ -151,13 +151,13 @@
 				<constant>{{rabbit.deadLetterRoutingKey}}</constant>
 			</setHeader>
 			<to
-				uri="rabbitmq://{{rabbit.host}}:{{rabbit.port}}/{{rabbit.defaultExchange}}?vhost={{rabbit.vhost}}&amp;username={{rabbit.username}}&amp;password={{rabbit.password}}&amp;autoDelete=false" />
+				uri="rabbitmq://{{rabbit.host}}:{{rabbit.port}}/{{rabbit.defaultExchange}}?vhost={{rabbit.vhost}}&amp;username={{rabbit.username}}&amp;password={{rabbit.password}}&amp;autoDelete=false&amp;queue={{rabbit.deadLetterRoutingKey}}&amp;routingKey={{rabbit.deadLetterRoutingKey}}" />
 		</route>
 
 		<!-- Accept incoming OINK request for Patient Search -->
 		<route id="rabbit-consumer">
 			<from
-				uri="rabbitmq://{{rabbit.host}}:{{rabbit.port}}/{{rabbit.defaultExchange}}?vhost={{rabbit.vhost}}&amp;username={{rabbit.username}}&amp;password={{rabbit.password}}&amp;routingKey={{rabbit.inboundRoutingKey}}&amp;autoDelete=false" />
+				uri="rabbitmq://{{rabbit.host}}:{{rabbit.port}}/{{rabbit.defaultExchange}}?vhost={{rabbit.vhost}}&amp;username={{rabbit.username}}&amp;password={{rabbit.password}}&amp;queue={{rabbit.inboundRoutingKey}}&amp;routingKey={{rabbit.inboundRoutingKey}}&amp;autoDelete=false" />
 			<onException>
 				<exception>java.lang.Exception</exception>
 				<handled>

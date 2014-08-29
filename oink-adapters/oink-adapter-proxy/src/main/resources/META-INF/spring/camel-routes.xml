@@ -16,7 +16,7 @@
 
 		<route id="proxy-route">
 			<from
-				uri="rabbitmq://{{rabbit.host}}:{{rabbit.port}}/{{rabbit.defaultExchange}}?vhost={{rabbit.vhost}}&amp;username={{rabbit.username}}&amp;password={{rabbit.password}}&amp;routingKey={{rabbit.routingKey}}&amp;autoDelete=false&amp;threadPoolSize={{rabbit.threadPoolSize}}" />
+				uri="rabbitmq://{{rabbit.host}}:{{rabbit.port}}/{{rabbit.defaultExchange}}?vhost={{rabbit.vhost}}&amp;username={{rabbit.username}}&amp;password={{rabbit.password}}&amp;queue={{rabbit.routingKey}}&amp;routingKey={{rabbit.routingKey}}&amp;autoDelete=false&amp;threadPoolSize={{rabbit.threadPoolSize}}" />
 			<onException>
 				<exception>java.lang.Exception</exception>
 				<handled>
