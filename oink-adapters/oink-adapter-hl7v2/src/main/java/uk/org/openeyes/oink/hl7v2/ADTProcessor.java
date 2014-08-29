@@ -157,12 +157,6 @@ public class ADTProcessor extends Hl7v2Processor {
 			}
 		}
 
-		// OpenEyes QUICKFIX: Set Country to United Kingdom
-		for (Address address : p.getAddress()) {
-			log.warn("OINK-45 Manually forcing patient's addresses to be United Kingdom");
-			address.setCountrySimple("United Kingdom");
-		}
-
 		// Remap patient identifiers
 		remapPatientIdentifiers(p.getIdentifier());
 
