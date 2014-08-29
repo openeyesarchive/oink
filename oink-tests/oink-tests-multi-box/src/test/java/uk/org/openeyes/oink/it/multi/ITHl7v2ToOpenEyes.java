@@ -215,11 +215,11 @@ public class ITHl7v2ToOpenEyes {
 		StringWriter writer = new StringWriter();
 		IOUtils.copy(is, writer);
 		String message = writer.toString();
+		@SuppressWarnings("resource")
 		HapiContext context = new DefaultHapiContext();
 		context.setValidationContext(new NoValidation());
 		Parser p = context.getGenericParser();
 		Message adt = p.parse(message);
-		context.close();
 		return adt;
 	}
 
