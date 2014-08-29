@@ -43,8 +43,8 @@ sudo rabbitmq-plugins enable rabbitmq_shovel
 sudo rabbitmq-plugins enable rabbitmq_shovel_management
 sudo service rabbitmq-server restart
 
-sudo rabbitmqctl set_parameter shovel "oink_out_shovel" '{"src-uri": "amqp://oinkendpoint1:Test1571@10.0.115.2", "src-exchange": "oink", "src-exchange-key": "pas.hl7v2.in", "dest-uri": "amqp://oinkendpoint2:Test1571@10.0.115.3", "dest-exchange": "oink"}'
-sudo rabbitmqctl set_parameter shovel "oink_out_shovel" '{"src-uri": "amqp://oinkendpoint1:Test1571@10.0.115.2", "src-exchange": "oink", "src-exchange-key": "pas.hl7v2.response", "dest-uri": "amqp://oinkendpoint2:Test1571@10.0.115.3", "dest-exchange": "oink"}'
+sudo rabbitmqctl set_parameter shovel "oink_facade_out_shovel" '{"src-uri": "amqp://oinkendpoint1:Test1571@10.0.115.2", "src-exchange": "oink", "src-exchange-key": "direct.hl7v2.in", "dest-uri": "amqp://oinkendpoint2:Test1571@10.0.115.3", "dest-exchange": "oink"}'
+sudo rabbitmqctl set_parameter shovel "oink_proxy_out_shovel" '{"src-uri": "amqp://oinkendpoint1:Test1571@10.0.115.2", "src-exchange": "oink", "src-exchange-key": "hl7v2.adapter.response", "dest-uri": "amqp://oinkendpoint2:Test1571@10.0.115.3", "dest-exchange": "oink"}'
 
 # Move oink to correct location
 sudo mkdir -p /opt/oink

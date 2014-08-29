@@ -47,6 +47,10 @@ sudo rabbitmqctl set_parameter shovel "oink_facade_response_shovel" '{"src-uri":
 
 sudo rabbitmqctl set_parameter shovel "oink_proxy_in_shovel" '{"src-uri": "amqp://oinkendpoint2:Test1571@10.0.115.3", "src-exchange": "oink", "src-exchange-key": "openeyes.proxy.in", "dest-uri": "amqp://oinkendpoint1:Test1571@10.0.115.2", "dest-exchange": "oink"}'
 
+wget http://hg.rabbitmq.com/rabbitmq-management/raw-file/rabbitmq_v3_3_5/bin/rabbitmqadmin
+chmod a+x rabbitmqadmin
+./rabbitmqadmin -u oinkadmin -p Test1571 declare queue name=hl7v2.adapter.deadLetters.out durable=true
+
 # Move oink to correct location
 sudo mkdir -p /opt/oink
 sudo chown -R `whoami` /opt/oink

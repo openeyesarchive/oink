@@ -51,6 +51,10 @@ sudo rabbitmqctl set_parameter shovel "oink_facade_response_shovel" '{"src-uri":
 pushd .
 cd /opt/oink
 
+wget http://hg.rabbitmq.com/rabbitmq-management/raw-file/rabbitmq_v3_3_5/bin/rabbitmqadmin
+chmod a+x rabbitmqadmin
+./rabbitmqadmin -u #OINK_RABBIT_USERNAME# -p #OINK_RABBIT_PASSWORD# declare queue name=hl7v2.adapter.deadLetters.out durable=true
+
 # Set JVM memory settings and JAVA_HOME
 touch bin/setenv
 

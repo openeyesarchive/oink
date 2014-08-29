@@ -37,7 +37,7 @@ pushd .
 
 	echo tar -zxf oink-$OINK_VERSION.tar.gz
 	sudo tar -zxf oink-$OINK_VERSION.tar.gz
-	sudo mv distro-$OINK_VERSION oink-$OINK_VERSION
+	sudo mv oink-platforms-karaf-distro-$OINK_VERSION oink-$OINK_VERSION
 	sudo ln -s oink-$OINK_VERSION oink
 	sudo chown `whoami` oink
 	sudo chown `whoami` oink-$OINK_VERSION

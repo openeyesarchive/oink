@@ -44,9 +44,11 @@ sudo rabbitmq-plugins enable rabbitmq_shovel
 sudo rabbitmq-plugins enable rabbitmq_shovel_management
 sudo service rabbitmq-server restart
 
-sudo rabbitmqctl set_parameter shovel "oink_pas_hl7v2_in_shovel" '{"src-uri": "amqp://#OINK_RABBIT_USERNAME#:#OINK_RABBIT_PASSWORD#@#OINK_RABBIT_HOST#:#OINK_RABBIT_PORT#", "src-exchange": "#OINK_RABBIT_DEFAULT_EXCHANGE#", "src-exchange-key": "pas.hl7v2.in", "dest-uri": "amqp://#OINK_RABBIT_USERNAME_DEST#:#OINK_RABBIT_PASSWORD_DEST#@#OINK_RABBIT_HOST_DEST#:#OINK_RABBIT_PORT_DEST#", "dest-exchange": "#OINK_RABBIT_DEFAULT_EXCHANGE_DEST#"}'
+sudo rabbitmqctl set_parameter shovel "oink_pas_hl7v2_in_shovel" '{"src-uri": "amqp://#OINK_RABBIT_USERNAME#:#OINK_RABBIT_PASSWORD#@#OINK_RABBIT_HOST#:#OINK_RABBIT_PORT#", "src-exchange": "#OINK_RABBIT_DEFAULT_EXCHANGE#", "src-exchange-key": "direct.hl7v2.in", "dest-uri": "amqp://#OINK_RABBIT_USERNAME_DEST#:#OINK_RABBIT_PASSWORD_DEST#@#OINK_RABBIT_HOST_DEST#:#OINK_RABBIT_PORT_DEST#", "dest-exchange": "#OINK_RABBIT_DEFAULT_EXCHANGE_DEST#"}'
 
-sudo rabbitmqctl set_parameter shovel "oink_hl7v2_response_out_shovel" '{"src-uri": "amqp://#OINK_RABBIT_USERNAME#:#OINK_RABBIT_PASSWORD#@#OINK_RABBIT_HOST#:#OINK_RABBIT_PORT#", "src-exchange": "#OINK_RABBIT_DEFAULT_EXCHANGE#", "src-exchange-key": "pas.hl7v2.response", "dest-uri": "amqp://#OINK_RABBIT_USERNAME_DEST#:#OINK_RABBIT_PASSWORD_DEST#@#OINK_RABBIT_HOST_DEST#:#OINK_RABBIT_PORT_DEST#", "dest-exchange": "#OINK_RABBIT_DEFAULT_EXCHANGE_DEST#"}'
+sudo rabbitmqctl set_parameter shovel "oink_hl7v2_response_out_shovel" '{"src-uri": "amqp://#OINK_RABBIT_USERNAME#:#OINK_RABBIT_PASSWORD#@#OINK_RABBIT_HOST#:#OINK_RABBIT_PORT#", "src-exchange": "#OINK_RABBIT_DEFAULT_EXCHANGE#", "src-exchange-key": "hl7v2.adapter.response", "dest-uri": "amqp://#OINK_RABBIT_USERNAME_DEST#:#OINK_RABBIT_PASSWORD_DEST#@#OINK_RABBIT_HOST_DEST#:#OINK_RABBIT_PORT_DEST#", "dest-exchange": "#OINK_RABBIT_DEFAULT_EXCHANGE_DEST#"}'
+
+
 
 pushd .
 cd /opt/oink
