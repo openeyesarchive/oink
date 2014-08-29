@@ -19,7 +19,7 @@
 #
 # Tears down three virtual machines needed for tests.
 #
-# Run this script from "oink/oink-tests/oink-tests-multi-box/src".
+# Run this script from "oink/oink-tests/oink-tests-multi-box/".
 # 
 
 set -e

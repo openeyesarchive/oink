@@ -20,7 +20,7 @@
 # Restarts the OINK endpoints.
 #
 # Requires OINK_VERSION to be set.
-# Run this script from "oink/oink-tests/oink-tests-multi-box/src".
+# Run this script from "oink/oink-tests/oink-tests-multi-box/".
 # 
 
 ###################################
