@@ -123,7 +123,6 @@ public abstract class Hl7v2Processor {
 		if(log.isDebugEnabled()) {
 			log.debug("Processing contents of newly created FHIR Bundle");
 		}
-		processResourcesInBundle(bundle, ex, getProcessorContext());
 		
 		if(log.isDebugEnabled()) {
 			log.debug("FHIR bundle ================>");
@@ -132,8 +131,10 @@ public abstract class Hl7v2Processor {
 				log.debug("resource --------------->\n{}\n<--------------- resource", json);
 			}
 			log.debug("<================ FHIR bundle");
-			log.debug("Finished processing incoming HL7v2 message of type: {}", message.getName());
 		}
+		
+		processResourcesInBundle(bundle, ex, getProcessorContext());
+		log.debug("Finished processing incoming HL7v2 message of type: {}", message.getName());
 	}
 
 	protected String createFhirXml(Message message) throws HL7Exception,
@@ -252,11 +253,11 @@ public abstract class Hl7v2Processor {
 	}
 	
 	protected void remapPatientIdentifiers(List<Identifier> identifiers) {
-		remapIdentifiers(patientIdentifierMap, identifiers);
+		remapIdentifiers(patientIdentifierMap, identifiers, "patient");
 	}
 	
 	protected void remapOrganizationIdentifiers(List<Identifier> identifiers) {
-		remapIdentifiers(organizationIdentifierMap, identifiers);
+		remapIdentifiers(organizationIdentifierMap, identifiers, "organization");
 	}
 	
 	protected void setDefaultOrganizationIdentifierSystemType(Identifier identifier) {
@@ -264,7 +265,7 @@ public abstract class Hl7v2Processor {
 	}
 	
 	protected void remapPractitionerIdentifiers(List<Identifier> identifiers) {
-		remapIdentifiers(practitionerIdentifierMap, identifiers);
+		remapIdentifiers(practitionerIdentifierMap, identifiers, "practitioner");
 	}
 	
 	protected void setDefaultPractitionerIdentifierSystemType(Identifier identifier) {
@@ -279,7 +280,15 @@ public abstract class Hl7v2Processor {
 		}
 	}
 	
-	protected void remapIdentifiers(Map<String, String> map, List<Identifier> identifiers) {
+	protected void remapIdentifiers(Map<String, String> map, List<Identifier> identifiers, String identifierType) {
+		if(map == null) {
+			log.warn("Identifiers for '{}' is not set, please check your configuration file", identifierType);
+			return;
+		}
+		if(identifiers == null) {
+			return;
+		}
+		
 		for (Identifier id : identifiers) {
 			for(String key : map.keySet()) {
 				if (id.getSystemSimple().trim().matches(key)) {
