@@ -24,7 +24,6 @@
 
 pushd .
 cd test-workspace/workspace
-vagrant destroy --force
 
 echo "Clearing database..."
 vagrant ssh -c "/vagrant/bin/load-testdata.sh"
