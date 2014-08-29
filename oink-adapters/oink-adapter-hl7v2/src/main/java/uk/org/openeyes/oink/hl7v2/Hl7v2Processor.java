@@ -90,7 +90,7 @@ public abstract class Hl7v2Processor {
 		transformer = new XmlTransformer();
 	}
 
-	public void setXsltPath(org.springframework.core.io.Resource xslFile)
+	protected void setXsltPath(org.springframework.core.io.Resource xslFile)
 			throws IOException {
 		if (!xslFile.exists()) {
 			log.error("Xsl not found");
@@ -136,7 +136,7 @@ public abstract class Hl7v2Processor {
 		}
 	}
 
-	public String createFhirXml(Message message) throws HL7Exception,
+	protected String createFhirXml(Message message) throws HL7Exception,
 			OinkException, TransformerFactoryConfigurationError,
 			TransformerException, UnsupportedEncodingException {
 		fixZTags(message);

@@ -35,7 +35,7 @@ public class OpenEyesADTProcessor extends ADTProcessor {
 	private String practiceProfile = "http://openeyes.org.uk/fhir/profile/Organization/Practice";
 
 	@Override
-	public OINKRequestMessage buildSearchRequestMessage(Resource resource,
+	protected OINKRequestMessage buildSearchRequestMessage(Resource resource,
 			List<Identifier> ids) {
 		OINKRequestMessage query = super.buildSearchRequestMessage(resource,
 				ids);
@@ -52,7 +52,7 @@ public class OpenEyesADTProcessor extends ADTProcessor {
 	}
 
 	@Override
-	public OINKRequestMessage buildPostRequestMessage(Resource resource) {
+	protected OINKRequestMessage buildPostRequestMessage(Resource resource) {
 		OINKRequestMessage query = super.buildPostRequestMessage(resource);
 
 		if (resource.getResourceType().toString().equals("Organization")) {

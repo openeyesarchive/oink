@@ -60,7 +60,7 @@ public class ADTProcessor extends Hl7v2Processor {
 	private boolean resolveManagingOrganization = true;
 
 	@Override
-	public void processResourcesInBundle(AtomFeed bundle, Exchange ex, ProcessorContext processorContext) throws OinkException {
+	protected void processResourcesInBundle(AtomFeed bundle, Exchange ex, ProcessorContext processorContext) throws OinkException {
 
 		// Extract Patient from Bundle
 		Patient patient = extractPatient(bundle);
@@ -280,7 +280,7 @@ public class ADTProcessor extends Hl7v2Processor {
 	 * 
 	 * @throws OinkException
 	 */
-	public String searchForResourceByIdentifiers(Resource resource, List<Identifier> ids, Exchange ex) throws OinkException {
+	protected String searchForResourceByIdentifiers(Resource resource, List<Identifier> ids, Exchange ex) throws OinkException {
 
 		// Build OINKRequestMessage for Query
 		OINKRequestMessage query = buildSearchRequestMessage(resource, ids);
@@ -312,7 +312,7 @@ public class ADTProcessor extends Hl7v2Processor {
 
 	}
 
-	public OINKRequestMessage buildSearchRequestMessage(Resource resource, List<Identifier> ids) {
+	protected OINKRequestMessage buildSearchRequestMessage(Resource resource, List<Identifier> ids) {
 		// Build OINKRequestMessage for Query
 		OINKRequestMessage query = new OINKRequestMessage();
 		String resourceName = resource.getResourceType().toString();
@@ -339,7 +339,7 @@ public class ADTProcessor extends Hl7v2Processor {
 		return query;
 	}
 
-	public String postResource(Resource resource, Exchange ex, ProcessorContext processorContext) throws OinkException {
+	private String postResource(Resource resource, Exchange ex, ProcessorContext processorContext) throws OinkException {
 
 		// Build OINKRequestMessage for Query
 		OINKRequestMessage query = buildPostRequestMessage(resource);
@@ -374,7 +374,7 @@ public class ADTProcessor extends Hl7v2Processor {
 		return location;
 	}
 
-	public OINKRequestMessage buildPostRequestMessage(Resource resource) {
+	protected OINKRequestMessage buildPostRequestMessage(Resource resource) {
 		// Build OINKRequestMessage for Query
 		OINKRequestMessage query = new OINKRequestMessage();
 		String resourceName = resource.getResourceType().toString();
