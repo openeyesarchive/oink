@@ -163,6 +163,8 @@ public class ITHl7v2ToOpenEyes {
 			throws Exception {
 		// Send message and get ACK response
 		HapiContext context = new DefaultHapiContext();
+		
+		
 		Connection hl7v2Conn = context.newClient(
 				(String) properties.get("hl7v2.host"),
 				(Integer) Integer.parseInt(properties.getProperty("hl7v2.port")),
@@ -218,7 +220,7 @@ public class ITHl7v2ToOpenEyes {
 		@SuppressWarnings("resource")
 		HapiContext context = new DefaultHapiContext();
 		context.setValidationContext(new NoValidation());
-		Parser p = context.getGenericParser();
+		Parser p = context.getPipeParser();
 		Message adt = p.parse(message);
 		return adt;
 	}
