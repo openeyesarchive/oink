@@ -32,6 +32,8 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.protocol.HttpContext;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.model.api.Bundle;
@@ -56,6 +58,9 @@ import ca.uhn.hl7v2.validation.impl.NoValidation;
  * @author Oliver Wilkie
  */
 public class ITHl7v2ToOpenEyes {
+	
+	private static Logger logger = LoggerFactory
+			.getLogger(ITHl7v2ToOpenEyes.class);
 
 	private static Properties properties;
 	private static IGenericClient openeyesClient;
@@ -217,6 +222,7 @@ public class ITHl7v2ToOpenEyes {
 		StringWriter writer = new StringWriter();
 		IOUtils.copy(is, writer);
 		String message = writer.toString();
+		logger.info(message.replace("\r", "\n"));
 		@SuppressWarnings("resource")
 		HapiContext context = new DefaultHapiContext();
 		context.setValidationContext(new NoValidation());
