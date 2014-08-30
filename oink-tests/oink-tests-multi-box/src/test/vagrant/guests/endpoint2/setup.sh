@@ -50,6 +50,7 @@ sudo rabbitmqctl set_parameter shovel "oink_proxy_in_shovel" '{"src-uri": "amqp:
 wget http://hg.rabbitmq.com/rabbitmq-management/raw-file/rabbitmq_v3_3_5/bin/rabbitmqadmin
 chmod a+x rabbitmqadmin
 ./rabbitmqadmin -u oinkadmin -p Test1571 declare queue name=hl7v2.adapter.deadLetters.out durable=true
+./rabbitmqadmin -u oinkadmin -p Test1571 declare binding source=oink routing_key=hl7v2.adapter.deadLetters.out destination=hl7v2.adapter.deadLetters.out
 
 # Move oink to correct location
 sudo mkdir -p /opt/oink

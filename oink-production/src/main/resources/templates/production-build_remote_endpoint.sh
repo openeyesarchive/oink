@@ -54,6 +54,7 @@ cd /opt/oink
 wget http://hg.rabbitmq.com/rabbitmq-management/raw-file/rabbitmq_v3_3_5/bin/rabbitmqadmin
 chmod a+x rabbitmqadmin
 ./rabbitmqadmin -u #OINK_RABBIT_USERNAME# -p #OINK_RABBIT_PASSWORD# declare queue name=hl7v2.adapter.deadLetters.out durable=true
+./rabbitmqadmin -u #OINK_RABBIT_USERNAME# -p #OINK_RABBIT_PASSWORD# declare binding source=oink routing_key=hl7v2.adapter.deadLetters.out destination=hl7v2.adapter.deadLetters.out
 
 # Set JVM memory settings and JAVA_HOME
 touch bin/setenv

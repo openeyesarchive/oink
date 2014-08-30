@@ -78,7 +78,7 @@ public class ITHl7v2ToOpenEyes {
 			throws Exception {
 
 		// Load example A01
-		Message exampleA01 = loadHl7Message("/example-messages/hl7v2/A01-mod.txt");
+		Message exampleA01 = loadHl7Message("/example-messages/hl7v2/A01.txt");
 
 		// Post A01
 		testMessageCanBePostedAndAcceptedByOink(exampleA01);
