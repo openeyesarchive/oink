@@ -19,9 +19,7 @@ package uk.org.openeyes.oink.messaging;
 import java.io.UnsupportedEncodingException;
 
 import org.apache.camel.Converter;
-import org.apache.camel.Exchange;
 import org.apache.camel.TypeConverter;
-import org.apache.commons.lang3.SerializationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,6 +38,7 @@ import uk.org.openeyes.oink.domain.json.OinkResponseMessageJsonConverter;
 @Converter
 public class OinkMessageConverter {
 	
+	@SuppressWarnings("unused")
 	private static final Logger log = LoggerFactory.getLogger(OinkMessageConverter.class);
 
 	OinkRequestMessageJsonConverter reqConv;

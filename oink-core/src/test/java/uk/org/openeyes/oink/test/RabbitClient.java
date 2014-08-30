@@ -23,11 +23,11 @@ import uk.org.openeyes.oink.domain.OINKRequestMessage;
 import uk.org.openeyes.oink.domain.OINKResponseMessage;
 import uk.org.openeyes.oink.messaging.OinkMessageConverter;
 
+import com.rabbitmq.client.AMQP.BasicProperties;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.QueueingConsumer;
-import com.rabbitmq.client.AMQP.BasicProperties;
 
 public class RabbitClient {
 
@@ -84,5 +84,23 @@ public class RabbitClient {
 
 		}
 	}
+	
+	public void send(byte[] message, String routingKey,
+			String exchange, String corrId) throws Exception {
+		log.debug("Sending message to direct exchange:"+exchange+" with routing key:"+routingKey);
+		Connection connection = factory.newConnection();
+		Channel channel = connection.createChannel();
+		channel.exchangeDeclare(exchange, "direct", true, false, null);
+		String replyQueueName = channel.queueDeclare().getQueue();
+		log.debug("Reply queue name is "+replyQueueName);
+		channel.queueBind(replyQueueName, exchange, replyQueueName);
+		QueueingConsumer consumer = new QueueingConsumer(channel);
+		channel.basicConsume(replyQueueName, true, consumer);
+		BasicProperties props = new BasicProperties.Builder()
+				.correlationId(corrId).replyTo(replyQueueName).build();
+
+		channel.basicPublish(exchange, routingKey, props, message);
+		connection.close();
+	}	
 
 }

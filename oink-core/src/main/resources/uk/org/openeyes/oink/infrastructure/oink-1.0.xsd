@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsd:schema xmlns="http://www.openeyes.org.uk/schema/oink"
-	xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:beans="http://www.springframework.org/schema/beans"
-	targetNamespace="http://www.openeyes.org.uk/schema/oink"
-	elementFormDefault="qualified">
+<xsd:schema xmlns="http://www.openeyes.org.uk/schema/oink" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:beans="http://www.springframework.org/schema/beans"
+	targetNamespace="http://www.openeyes.org.uk/schema/oink" elementFormDefault="qualified">
 
 	<xsd:import namespace="http://www.springframework.org/schema/beans" />
 
@@ -12,8 +10,7 @@
 		<xsd:complexContent>
 			<xsd:extension base="beans:identifiedType">
 				<xsd:sequence>
-					<xsd:element name="mapping" type="MappingType"
-						maxOccurs="unbounded" minOccurs="0"></xsd:element>
+					<xsd:element name="mapping" type="MappingType" maxOccurs="unbounded" minOccurs="0"></xsd:element>
 				</xsd:sequence>
 			</xsd:extension>
 		</xsd:complexContent>

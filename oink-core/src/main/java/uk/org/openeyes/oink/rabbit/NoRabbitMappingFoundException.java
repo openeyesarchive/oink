@@ -22,4 +22,5 @@ import uk.org.openeyes.oink.exception.OinkExceptionStatusCode;
 @OinkExceptionStatusCode(404)
 public class NoRabbitMappingFoundException extends OinkException {
 
+	private static final long serialVersionUID = 3990312814735380673L;
 }

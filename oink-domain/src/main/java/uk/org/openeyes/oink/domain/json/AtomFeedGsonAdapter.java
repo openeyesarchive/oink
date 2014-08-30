@@ -30,7 +30,6 @@ import org.hl7.fhir.instance.model.AtomFeed;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
@@ -72,7 +71,6 @@ public class AtomFeedGsonAdapter implements JsonSerializer<AtomFeed>,
 			// Bug - Fhir Java Implementation serializes empty strings as NULL
 			//element = element.replaceAll("null", "\"\"");
 			
-			JsonObject ob = new JsonObject();
 			com.google.gson.JsonParser gsonParser = new com.google.gson.JsonParser();
 			return gsonParser.parse(element);
 		} catch (Exception e) {

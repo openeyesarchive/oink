@@ -22,4 +22,6 @@ import uk.org.openeyes.oink.exception.OinkExceptionStatusCode;
 @OinkExceptionStatusCode(504)
 public class SynchronousRabbitTimeoutException extends OinkException {
 
+	private static final long serialVersionUID = -4271204231637586676L;
+
 }

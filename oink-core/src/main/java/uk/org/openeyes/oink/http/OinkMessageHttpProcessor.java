@@ -229,8 +229,11 @@ public class OinkMessageHttpProcessor {
 				} else {
 					composer.compose(os, body.getBundle(), false);
 				}
-				headers.put(Exchange.CONTENT_TYPE, "application/json+fhir");
-				return os.toString();
+				headers.put(Exchange.CONTENT_TYPE,
+                        "application/json+fhir; charset=UTF-8");
+                headers.put(Exchange.CHARSET_NAME, "UTF-8");
+                String bodyStr = os.toString("UTF-8");
+                return bodyStr;
 			}
 		} catch (Exception e) {
 			throw new InvalidFhirResponseException(e.getMessage());

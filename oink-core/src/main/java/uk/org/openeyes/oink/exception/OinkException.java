@@ -21,6 +21,8 @@ package uk.org.openeyes.oink.exception;
 @OinkExceptionStatusCode(500)
 public class OinkException extends Exception {
 
+	private static final long serialVersionUID = 7918551691380140499L;
+
 	public OinkException() {
 		super();
 	}

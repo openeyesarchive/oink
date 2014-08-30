@@ -22,6 +22,8 @@ import uk.org.openeyes.oink.exception.OinkExceptionStatusCode;
 @OinkExceptionStatusCode(400)
 public class InvalidFhirRequestException extends OinkException{
 	
+	private static final long serialVersionUID = 5609068853604561096L;
+
 	public InvalidFhirRequestException(String m) {
 		super(m);
 	}

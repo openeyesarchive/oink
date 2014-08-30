@@ -20,4 +20,5 @@ import uk.org.openeyes.oink.exception.OinkException;
 
 public class FhirConversionException extends OinkException {
 
+	private static final long serialVersionUID = -159488754964242717L;
 }

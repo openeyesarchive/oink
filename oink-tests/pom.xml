@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<artifactId>oink</artifactId>
+		<groupId>uk.org.openeyes.oink</groupId>
+		<version>0.4-SNAPSHOT</version>
+	</parent>
+	<artifactId>oink-tests</artifactId>
+	<packaging>pom</packaging>
+	<name>OINK :: Integration Tests</name>
+	<description>Integration tests for OINK and the custom Apache Karaf distribution provided by OINK.</description>
+	<modules>
+		<module>oink-tests-multi-box</module>
+		<module>oink-tests-single-box</module>
+		<module>oink-tests-datagen</module>
+		<module>oink-tests-fhir-mock</module>
+	</modules>
+
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<version>${maven-bundle-plugin.version}</version>
+				<extensions>true</extensions>
+			</plugin>
+		</plugins>
+	</build>
+</project>

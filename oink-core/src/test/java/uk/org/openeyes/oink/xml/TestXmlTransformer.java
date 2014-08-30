@@ -16,6 +16,8 @@
  *******************************************************************************/
 package uk.org.openeyes.oink.xml;
 
+import static org.junit.Assert.fail;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
@@ -24,11 +26,12 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactoryConfigurationError;
 
 import org.apache.commons.io.IOUtils;
+import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.springframework.util.StringUtils;
 
 import uk.org.openeyes.oink.exception.OinkException;
-import static org.junit.Assert.*;
 
 public class TestXmlTransformer {
 	
@@ -42,6 +45,7 @@ public class TestXmlTransformer {
 		
 		XmlTransformer transformer = new XmlTransformer();
 		String result = transformer.transform(inputXml,xsl);
+		Assert.assertTrue(StringUtils.hasText(result));
 		fail("Not yet implemented");
 	}
 	

@@ -16,20 +16,13 @@
  *******************************************************************************/
 package uk.org.openeyes.oink.http;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
 
-import java.io.BufferedInputStream;
-import java.io.FileInputStream;
 import java.io.InputStream;
-import java.io.ObjectInput;
-import java.io.ObjectInputStream;
 import java.io.StringWriter;
 import java.util.HashMap;
-import java.util.LinkedList;
 
 import org.apache.commons.io.IOUtils;
-import org.hl7.fhir.instance.formats.JsonParser;
-import org.hl7.fhir.instance.formats.ParserBase.ResourceOrFeed;
 import org.junit.Test;
 
 import uk.org.openeyes.oink.domain.FhirBody;
@@ -40,13 +33,12 @@ public class TestOinkHttpConverter {
 	@Test
 	public void testReadFhirBody() throws Exception {
 
-		OinkMessageHttpProcessor conv = new OinkMessageHttpProcessor();
-
 		InputStream is = TestOinkHttpConverter.class
 				.getResourceAsStream("/example-messages/fhir/searchResults.json");
 
-		FhirBody body = conv.readFhirBody(is);
-
+		FhirBody body = OinkMessageHttpProcessor.readFhirBody(is);
+		
+		assertNotNull(body);
 	}
 
 	@Test

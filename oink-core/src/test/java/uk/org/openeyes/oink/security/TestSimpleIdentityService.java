@@ -16,11 +16,14 @@
  *******************************************************************************/
 package uk.org.openeyes.oink.security;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import javax.security.auth.Subject;
 
+import org.apache.commons.lang.StringUtils;
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -54,7 +57,6 @@ public class TestSimpleIdentityService {
 		Subject s = new Subject();
 		
 		String organisation = identityService.getOrganisation(s);
-		
 		assertNull(organisation);
 	}
 
@@ -65,6 +67,7 @@ public class TestSimpleIdentityService {
 		Subject s = null;
 		
 		String organisation = identityService.getOrganisation(s);
+		assertNull(organisation);
 	}
 	
 	@Test

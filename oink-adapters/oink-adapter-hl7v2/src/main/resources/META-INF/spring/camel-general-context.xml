@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ctx="http://www.springframework.org/schema/context"
+	xmlns:oink="http://www.openeyes.org.uk/schema/oink" xmlns:camel="http://camel.apache.org/schema/spring" xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd  
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.openeyes.org.uk/schema/oink http://www.openeyes.org.uk/schema/oink/oink-1.0.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+	<bean id="hl7codec" class="org.apache.camel.component.hl7.HL7MLLPCodec">
+		<property name="charset" value="UTF-8" />
+		<property name="validate" value="false" />
+	</bean>
+
+	<bean id="ack" class="org.apache.camel.component.hl7.AckExpression" />
+	<bean id="ackRejected" class="org.apache.camel.component.hl7.AckExpression">
+		<constructor-arg>
+			<util:constant static-field="org.apache.camel.component.hl7.AckCode.AR" />
+		</constructor-arg>
+	</bean>
+	<bean id="ackError" class="org.apache.camel.component.hl7.AckExpression">
+		<constructor-arg>
+			<util:constant static-field="org.apache.camel.component.hl7.AckCode.AE" />
+		</constructor-arg>
+	</bean>
+
+	<bean id="a01Processor" class="uk.org.openeyes.oink.hl7v2.OpenEyesADTProcessor">
+		<property name="xsltPath" value="classpath:/uk/org/openeyes/oink/adapter/hl7v2/A01.xsl" />
+		<property name="patientIdentifierMap" value="${hl7v2.identifierMap.patient:null}" />
+		<property name="practitionerIdentifierMap" value="${hl7v2.identifierMap.practitioner:null}" />
+		<property name="organizationIdentifierMap" value="${hl7v2.identifierMap.organization:null}" />
+		<property name="resolveCareProvider" value="${hl7v2.adtProcessor.resolveCareProvider:true}" />
+		<property name="resolveManagingOrganization" value="${hl7v2.adtProcessor.resolveManagingOrganization:true}" />
+		<property name="gpProfile" value="${openeyes.gpProfile:null}" />
+		<property name="practiceProfile" value="${openeyes.practiceProfile:null}" />
+		<property name="fixZTags" value="${hl7v2.adtProcessor.fixZTags:true}" />
+	</bean>
+
+	<bean id="a05Processor" class="uk.org.openeyes.oink.hl7v2.OpenEyesADTProcessor">
+		<property name="xsltPath" value="classpath:/uk/org/openeyes/oink/adapter/hl7v2/A05.xsl" />
+		<property name="patientIdentifierMap" value="${hl7v2.identifierMap.patient:null}" />
+		<property name="practitionerIdentifierMap" value="${hl7v2.identifierMap.practitioner:null}" />
+		<property name="organizationIdentifierMap" value="${hl7v2.identifierMap.organization:null}" />
+		<property name="resolveCareProvider" value="${hl7v2.adtProcessor.resolveCareProvider:true}" />
+		<property name="resolveManagingOrganization" value="${hl7v2.adtProcessor.resolveManagingOrganization:true}" />
+		<property name="gpProfile" value="${openeyes.gpProfile:null}" />
+		<property name="practiceProfile" value="${openeyes.practiceProfile:null}" />
+		<property name="fixZTags" value="${hl7v2.adtProcessor.fixZTags:true}" />
+	</bean>
+
+	<bean id="a19Processor" class="uk.org.openeyes.oink.hl7v2.A19Processor">
+		<property name="xsltPath" value="classpath:/uk/org/openeyes/oink/adapter/hl7v2/ADR.xsl" />
+		<property name="patientIdentifierMap" value="${hl7v2.identifierMap.patient:null}" />
+		<property name="practitionerIdentifierMap" value="${hl7v2.identifierMap.practitioner:null}" />
+		<property name="organizationIdentifierMap" value="${hl7v2.identifierMap.organization:null}" />
+		<property name="resolveCareProvider" value="${hl7v2.adtProcessor.resolveCareProvider:true}" />
+		<property name="resolveManagingOrganization" value="${hl7v2.adtProcessor.resolveManagingOrganization:true}" />
+		<property name="fixZTags" value="${hl7v2.adtProcessor.fixZTags:true}" />
+	</bean>
+
+	<bean id="hl7dataformat" class="org.apache.camel.component.hl7.HL7DataFormat">
+		<property name="validate" value="false" />
+	</bean>
+
+	<bean id="synchRabbitProcessor" class="uk.org.openeyes.oink.rabbit.SynchronousRabbitProcessor">
+		<constructor-arg value="5000" />
+	</bean>
+
+	<bean id="rabbitRpcErrorProcessor" class="uk.org.openeyes.oink.rabbit.OinkRPCExceptionProcessor" />
+
+	<bean id="rabbitHl7ErrorProcessor" class="uk.org.openeyes.oink.hl7v2.Hl7ExceptionProcessor" />
+
+	<bean id="isRabbitRPC" class="uk.org.openeyes.oink.rabbit.IsRabbitRPC" />
+
+	<bean id="unsupportedException" class="uk.org.openeyes.oink.hl7v2.UnsupportedHl7v2MessageException" />
+
+	<camelContext xmlns="http://camel.apache.org/schema/spring">
+
+		<!-- Accept incoming HL7 messages from TCP -->
+		<route id="hl7-tcp-consumer">
+			<from uri="mina2:tcp://{{hl7v2.host}}:{{hl7v2.port}}?sync=false&amp;codec=#hl7codec" />
+			<unmarshal ref="hl7dataformat" />
+			<to uri="direct:hl7-consumer" />
+		</route>
+
+		<!-- Accept incoming HL7 messages from Rabbit -->
+		<route id="hl7-rabbit-consumer">
+			<from
+				uri="rabbitmq://{{rabbit.host}}:{{rabbit.port}}/{{rabbit.defaultExchange}}?vhost={{rabbit.vhost}}&amp;username={{rabbit.username}}&amp;password={{rabbit.password}}&amp;routingKey={{rabbit.inboundHL7v2RoutingKey}}&amp;queue={{rabbit.inboundHL7v2QueueName}}&amp;autoDelete=false&amp;threadPoolSize={{rabbit.threadPoolSize}}" />
+			<convertBodyTo type="java.lang.String" />
+			<unmarshal ref="hl7dataformat" />
+			<to uri="direct:hl7-consumer" />
+		</route>
+
+		<!-- Handle incoming Hl7 messages -->
+
+		<!-- Accept incoming HL7 messages -->
+		<route id="hl7-consumer">
+			<from uri="direct:hl7-consumer" />
+			<onException>
+				<exception>java.lang.Exception</exception>
+				<handled>
+					<constant>true</constant>
+				</handled>
+				<process ref="rabbitHl7ErrorProcessor" />
+			</onException>
+			<choice>
+				<when>
+					<simple>${header.CamelHL7TriggerEvent} == 'A01'</simple>
+					<bean ref="a01Processor" />
+				</when>
+				<when>
+					<simple>${header.CamelHL7TriggerEvent} == 'A05' or ${header.CamelHL7TriggerEvent} == 'A28' or ${header.CamelHL7TriggerEvent} == 'A31'</simple>
+					<bean ref="a05Processor" />
+				</when>
+				<otherwise>
+					<throwException ref="unsupportedException" />
+					<stop />
+				</otherwise>
+			</choice>
+			<transform>
+				<ref>ack</ref>
+			</transform>
+		</route>
+
+		<!-- Send transformed HL7v2 message out to OINK -->
+		<!-- rabbit outgoing gateway -->
+		<route id="rabbit-rpc">
+			<from uri="direct:rabbit-rpc" />
+			<setHeader headerName="rabbitmq.ROUTING_KEY">
+				<simple>{{rabbit.outboundRoutingKey}}</simple>
+			</setHeader>
+			<setHeader headerName="rabbitmq.EXCHANGE_KEY">
+				<simple>{{rabbit.defaultExchange}}</simple>
+			</setHeader>
+			<setHeader headerName="rabbitmq.REPLY_TO">
+				<simple>{{rabbit.outboundResponseRoutingKey}}</simple>
+			</setHeader>
+			<setHeader headerName="rabbitmq.CONTENT_TYPE">
+				<constant>application/json</constant>
+			</setHeader>
+			<bean ref="synchRabbitProcessor" method="prepare" />
+			<to
+				uri="rabbitmq://{{rabbit.host}}:{{rabbit.port}}/{{rabbit.defaultExchange}}?vhost={{rabbit.vhost}}&amp;username={{rabbit.username}}&amp;password={{rabbit.password}}&amp;autoDelete=false" />
+			<bean ref="synchRabbitProcessor" method="waitForResponse" />
+			<removeHeaders pattern="*" />
+		</route>
+
+		<!-- rabbit response router -->
+		<route id="rabbit-rpc-response-router">
+			<from
+				uri="rabbitmq://{{rabbit.host}}:{{rabbit.port}}/{{rabbit.defaultExchange}}?vhost={{rabbit.vhost}}&amp;username={{rabbit.username}}&amp;password={{rabbit.password}}&amp;routingKey={{rabbit.outboundResponseRoutingKey}}&amp;autoDelete=false" />
+			<recipientList>
+				<simple>seda:${headers.rabbitmq.CORRELATIONID}</simple>
+			</recipientList>
+		</route>
+
+		<!-- dead letter route -->
+		<route id="hl7-consumer-dead-letter">
+			<from uri="direct:hl7-consumer-dead-letter" />
+			<setHeader headerName="rabbitmq.ROUTING_KEY">
+				<constant>{{rabbit.deadLetterRoutingKey}}</constant>
+			</setHeader>
+			<to
+				uri="rabbitmq://{{rabbit.host}}:{{rabbit.port}}/{{rabbit.defaultExchange}}?vhost={{rabbit.vhost}}&amp;username={{rabbit.username}}&amp;password={{rabbit.password}}&amp;autoDelete=false&amp;queue={{rabbit.deadLetterRoutingKey}}&amp;routingKey={{rabbit.deadLetterRoutingKey}}" />
+		</route>
+
+		<!-- Accept incoming OINK request for Patient Search -->
+		<route id="rabbit-consumer">
+			<from
+				uri="rabbitmq://{{rabbit.host}}:{{rabbit.port}}/{{rabbit.defaultExchange}}?vhost={{rabbit.vhost}}&amp;username={{rabbit.username}}&amp;password={{rabbit.password}}&amp;queue={{rabbit.inboundRoutingKey}}&amp;routingKey={{rabbit.inboundRoutingKey}}&amp;autoDelete=false" />
+			<onException>
+				<exception>java.lang.Exception</exception>
+				<handled>
+					<ref>isRabbitRPC</ref>
+				</handled>
+				<process ref="rabbitRpcErrorProcessor" />
+				<to uri="log:GeneralError?level=ERROR&amp;showAll=true&amp;multiline=true" />
+				<when>
+					<header>rabbitmq.ROUTING_KEY</header>
+					<to
+						uri="rabbitmq://{{rabbit.host}}:{{rabbit.port}}/{{rabbit.defaultExchange}}?vhost={{rabbit.vhost}}&amp;username={{rabbit.username}}&amp;password={{rabbit.password}}&amp;autoDelete=false" />
+				</when>
+			</onException>
+			<bean ref="a19Processor" method="buildQuery" />
+			<to uri="mina2:tcp://{{remote.host}}:{{remote.port}}?sync=true&amp;codec=#hl7codec" />
+			<unmarshal ref="hl7dataformat" />
+			<bean ref="a19Processor" method="process" />
+			<setHeader headerName="rabbitmq.CONTENT_TYPE">
+				<constant>application/json</constant>
+			</setHeader>
+			<to
+				uri="rabbitmq://{{rabbit.host}}:{{rabbit.port}}/{{rabbit.defaultExchange}}?vhost={{rabbit.vhost}}&amp;username={{rabbit.username}}&amp;password={{rabbit.password}}&amp;autoDelete=false" />
+		</route>
+
+	</camelContext>
+
+</beans>

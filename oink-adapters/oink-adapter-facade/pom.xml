@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<artifactId>oink-adapters</artifactId>
+		<groupId>uk.org.openeyes.oink</groupId>
+		<version>0.4-SNAPSHOT</version>
+	</parent>
+
+	<groupId>uk.org.openeyes.oink.adapters</groupId>
+	<artifactId>oink-adapter-facade</artifactId>
+	<packaging>bundle</packaging>
+
+	<name>OINK :: Adapters :: Facade</name>
+
+	<properties>
+		<facade.test.properties>classpath:facade-test.properties</facade.test.properties>
+	</properties>
+
+	<dependencies>
+
+		<!-- Oink -->
+		<dependency>
+			<groupId>uk.org.openeyes.oink</groupId>
+			<artifactId>oink-core</artifactId>
+			<version>${project.version}</version>
+			<type>bundle</type>
+			<exclusions>
+				<exclusion>
+					<artifactId>commons-logging</artifactId>
+					<groupId>commons-logging</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<!-- OSGi -->
+		<dependency>
+			<groupId>org.apache.felix</groupId>
+			<artifactId>org.osgi.core</artifactId>
+			<version>${felix.osgi.version}</version>
+		</dependency>
+
+		<!-- Camel -->
+		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-spring</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-jetty</artifactId>
+			<exclusions>
+				<exclusion>
+					<artifactId>commons-logging</artifactId>
+					<groupId>commons-logging</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-rabbitmq</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-http4</artifactId>
+			<exclusions>
+				<exclusion>
+					<artifactId>commons-logging</artifactId>
+					<groupId>commons-logging</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-test-spring</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<!-- Logging -->
+		<!-- NB. Use Pax-Logging Bundle in OSGi instead -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>${slf4j.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>${slf4j.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>jcl-over-slf4j</artifactId>
+			<version>${slf4j.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>${log4j.version}</version>
+		</dependency>
+
+		<!-- testing -->
+		<dependency>
+			<groupId>uk.org.openeyes.oink</groupId>
+			<artifactId>oink-core</artifactId>
+			<version>${project.version}</version>
+			<scope>test</scope>
+			<type>test-jar</type>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-jndi</artifactId>
+			<version>${jetty-jndi.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-all</artifactId>
+			<version>${mockito.version}</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<defaultGoal>install</defaultGoal>
+
+		<plugins>
+			<!-- allows the route to be run via 'mvn camel:run' -->
+			<plugin>
+				<groupId>org.apache.camel</groupId>
+				<artifactId>camel-maven-plugin</artifactId>
+				<version>${camel.version}</version>
+				<configuration>
+					<fileApplicationContextUri>
+						src/main/resources/spring-plain/camel-non-osgi-context.xml
+					</fileApplicationContextUri>
+					<systemProperties>
+						<systemProperty>
+							<key>propertiesSrc</key>
+							<value>${config}</value>
+						</systemProperty>
+					</systemProperties>
+				</configuration>
+			</plugin>
+
+			<!-- to generate the MANIFEST-FILE of the bundle -->
+			<plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<version>${maven-bundle-plugin.version}</version>
+				<extensions>true</extensions>
+				<configuration>
+					<instructions>
+						<Bundle-SymbolicName>oink-adapter-facade</Bundle-SymbolicName>
+						<Private-Package />
+						<Import-Package>*,org.springframework.security.provisioning,org.apache.camel.component.spring.security</Import-Package>
+					</instructions>
+				</configuration>
+			</plugin>
+
+			<!-- force Surefire to run the JVM as UTF-8 as this doesn't always appear to happen -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>${maven-surefire-plugin.version}</version>
+				<configuration>
+					<argLine>-Dfile.encoding=UTF-8</argLine>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-failsafe-plugin</artifactId>
+				<version>${maven-failsafe-plugin.version}</version>
+				<configuration>
+					<systemPropertyVariables>
+						<integrationTestProperties>${facade.test.properties}</integrationTestProperties>
+					</systemPropertyVariables>
+				</configuration>
+			</plugin>
+
+		</plugins>
+	</build>
+
+</project>

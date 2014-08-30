@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ctx="http://www.springframework.org/schema/context"
+	xmlns:oink="http://www.openeyes.org.uk/schema/oink" xmlns:mockito="http://www.mockito.org/spring/mockito"
+	xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.openeyes.org.uk/schema/oink http://www.openeyes.org.uk/schema/oink/oink-1.0.xsd
+       http://www.mockito.org/spring/mockito http://www.mockito.org/spring/mockito.xsd">
+
+	<bean id="customEditorConfigurer" class="org.springframework.beans.factory.config.CustomEditorConfigurer">
+		<property name="customEditors">
+			<map>
+				<entry key="java.util.Map">
+					<bean class="uk.org.openeyes.oink.spring.JSONPropertyEditor" />
+				</entry>
+			</map>
+		</property>
+	</bean>
+
+	<import resource="classpath:META-INF/spring/camel-general-context.xml" />
+
+	<!-- Override processors with Mocked versions -->
+	<mockito:mock id="a01Processor" class="uk.org.openeyes.oink.hl7v2.ADTProcessor" />
+
+	<mockito:mock id="a05Processor" class="uk.org.openeyes.oink.hl7v2.ADTProcessor" />
+
+	<mockito:mock id="a28Processor" class="uk.org.openeyes.oink.hl7v2.ADTProcessor" />
+
+	<mockito:mock id="a31Processor" class="uk.org.openeyes.oink.hl7v2.ADTProcessor" />
+
+	<bean id="bridgePropertyPlaceholder" class="org.apache.camel.spring.spi.BridgePropertyPlaceholderConfigurer">
+		<property name="location" value="classpath:hl7v2-test.properties" />
+	</bean>
+
+</beans>

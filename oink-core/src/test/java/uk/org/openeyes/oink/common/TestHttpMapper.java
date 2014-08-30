@@ -16,11 +16,11 @@
  *******************************************************************************/
 package uk.org.openeyes.oink.common;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import org.junit.Test;
 
-import uk.org.openeyes.oink.common.HttpMapper;
 import uk.org.openeyes.oink.domain.HttpMethod;
 
 public class TestHttpMapper {
