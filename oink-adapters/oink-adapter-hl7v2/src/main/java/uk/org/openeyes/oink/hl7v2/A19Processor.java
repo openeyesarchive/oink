@@ -45,6 +45,9 @@ public class A19Processor extends Hl7v2Processor {
 	private final static Logger log = LoggerFactory.getLogger(A19Processor.class);
 	
 	private RandomStringGenerator queryIdGenerator = new RandomStringGenerator(8);
+	
+	private boolean resolveCareProvider = true;
+	private boolean resolveManagingOrganization = true;
 
 	public Message buildQuery(OINKRequestMessage request) throws HL7Exception,
 			IOException, OinkException {
@@ -184,5 +187,12 @@ public class A19Processor extends Hl7v2Processor {
 		ex.getIn().removeHeader("rabbitmq.REPLY_TO");
 		log.debug("Sending response with routing key "+ex.getIn().getHeader("rabbitmq.ROUTING_KEY"));
 	}
+	
+	public void setResolveCareProvider(boolean resolveCareProvider) {
+		this.resolveCareProvider = resolveCareProvider;
+	}
 
+	public void setResolveManagingOrganization(boolean resolveManagingOrganization) {
+		this.resolveManagingOrganization = resolveManagingOrganization;
+	}	
 }
