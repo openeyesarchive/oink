@@ -46,6 +46,7 @@ import uk.org.openeyes.oink.domain.HttpMethod;
 import uk.org.openeyes.oink.domain.OINKRequestMessage;
 import uk.org.openeyes.oink.domain.OINKResponseMessage;
 import uk.org.openeyes.oink.exception.OinkException;
+import uk.org.openeyes.oink.fhir.ResourceConverter;
 
 /**
  * An extension of the {@link Hl7v2Processor} for processing ADT messages
@@ -341,6 +342,18 @@ public class ADTProcessor extends Hl7v2Processor {
 
 	private String postResource(Resource resource, Exchange ex, ProcessorContext processorContext) throws OinkException {
 
+		if(log.isDebugEnabled()) {
+			log.debug("About to POST FHIR resource of type '{}'", resource.getResourceType().toString());
+			log.debug("FHIR resource ================>");
+			String json = null;
+			try {
+				json = ResourceConverter.toJsonString(resource);
+			} catch (Exception e) {
+			}
+			log.debug("resource --------------->\n{}\n<--------------- resource", json);
+			log.debug("<================ FHIR resource");
+		}
+		
 		// Build OINKRequestMessage for Query
 		OINKRequestMessage query = buildPostRequestMessage(resource);
 		
