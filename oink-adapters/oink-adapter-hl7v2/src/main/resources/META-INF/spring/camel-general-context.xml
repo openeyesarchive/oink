@@ -56,8 +56,6 @@
 		<property name="organizationIdentifierMap" value="${hl7v2.identifierMap.organization:null}" />
 		<property name="resolveCareProvider" value="${hl7v2.adtProcessor.resolveCareProvider:true}" />
 		<property name="resolveManagingOrganization" value="${hl7v2.adtProcessor.resolveManagingOrganization:true}" />
-		<property name="gpProfile" value="${openeyes.gpProfile:null}" />
-		<property name="practiceProfile" value="${openeyes.practiceProfile:null}" />
 		<property name="fixZTags" value="${hl7v2.adtProcessor.fixZTags:true}" />
 	</bean>
 
